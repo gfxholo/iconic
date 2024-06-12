@@ -1,0 +1,132 @@
+{
+	"appItems": {
+		"help": "Abrir ayuda",
+		"settings": "Abrir ajustes",
+		"pin": "Cambiar estado de fijado",
+		"sidebarLeft": "Alternar barra lateral izquierda",
+		"sidebarRight": "Alternar barra lateral derecha"
+	},
+	"menu": {
+		"changeIcon": "Cambiar icono...",
+		"changeIcons": "Cambiar {#} iconos...",
+		"removeIcon": "Eliminar icono",
+		"removeIcons": "Eliminar {#} iconos",
+		"resetColor": "Restablecer color",
+		"resetColors": "Restablecer {#} colores"
+	},
+	"iconPicker": {
+		"changeIcon": "Cambiar icono",
+		"changeIcons": "Cambiar {#} iconos",
+		"changeEmoji": "Cambiar emoji",
+		"changeEmojis": "Cambiar {#} emojis",
+		"search": "Buscar",
+		"searchIcons": "Buscar iconos...",
+		"searchEmojis": "Buscar emojis...",
+		"changeColor": "Cambiar color",
+		"resetColor": "Restablecer color",
+		"remove": "Eliminar",
+		"emojis": "Emojis",
+		"icons": "Iconos",
+		"cancel": "Cancelar",
+		"save": "Guardar",
+		"colors": {
+			"red": "Rojo",
+			"orange": "Naranja",
+			"yellow": "Amarillo",
+			"green": "Verde",
+			"cyan": "Cian",
+			"blue": "Azul",
+			"purple": "Púrpura",
+			"pink": "Rosa",
+			"gray": "Gris"
+		}
+	},
+	"categories": {
+		"item": "Elemento",
+		"items": "Elementos",
+		"appItem": "Botón",
+		"appItems": "Botones",
+		"tab": "Pestaña",
+		"tabs": "Pestañas",
+		"file": "Archivo",
+		"files": "Archivos",
+		"folder": "Carpeta",
+		"folders": "Carpetas",
+		"group": "Grupo de marcadores",
+		"groups": "Grupos de marcadores",
+		"property": "Propiedad",
+		"properties": "Propiedades",
+		"ribbonItem": "Comando de cinta",
+		"ribbonItems": "Comandos de cinta"
+	},
+	"commands": {
+		"toggleBiggerIcons": "Alternar íconos más grandes",
+		"toggleClickableIcons": {
+			"desktop": "Alternar íconos en los que se puede hacer clic",
+			"mobile": "Alternar íconos que se pueden tocar"
+		},
+		"toggleAllFileIcons": "Alternar todos los íconos de archivos",
+		"toggleBiggerSearchResults": "Alternar resultados de búsqueda más grandes"
+	},
+	"settings": {
+		"values": {
+			"on": "Activado",
+			"off": "Desactivado",
+			"desktop": "Solo escritorio",
+			"mobile": "Solo móvil",
+			"list": "Lista de colores",
+			"rgb": "Selector RGB"
+		},
+		"headingListsAndTabs": "Íconos de listas y pestañas",
+		"biggerIcons": {
+			"name": "Iconos más grandes",
+			"desc": "Mostrar íconos más grandes que la interfaz de usuario predeterminada."
+		},
+		"clickableIcons": {
+			"nameDesktop": "Iconos en los que se puede hacer clic",
+			"nameMobile": "Iconos que se pueden tocar",
+			"descDesktop": "Haga clic en un ícono para abrir el selector de íconos.",
+			"descMobile": "Toque un ícono para abrir el selector de íconos."
+		},
+		"showAllFileIcons": {
+			"name": "Mostrar todos los íconos de archivos",
+			"desc": "Mostrar un ícono para cada archivo en el panel Archivos"
+		},
+		"headingIconPicker": "Selector de iconos",
+		"showItemName": {
+			"name": "Mostrar el nombre del elemento",
+			"desc": "Mostrar el nombre del elemento que se está editando."
+		},
+		"biggerSearchResults": {
+			"name": "Resultados de búsqueda más grandes",
+			"desc": "Mostrar íconos más grandes en los resultados de búsqueda."
+		},
+		"maxSearchResults": {
+			"name": "Resultados de búsqueda",
+			"desc": "Elige cuántos íconos quieres mostrar a la vez."
+		},
+		"colorPicker1": {
+			"name": "Selector de color principal",
+			"descDesktop": "Aparece cuando hace clic en la burbuja de color.",
+			"descMobile": "Aparece cuando toca la burbuja de color."
+		},
+		"colorPicker2": {
+			"name": "Segundo selector de color",
+			"descDesktop": "Aparece cuando haces clic secundario en la burbuja de color.",
+			"descMobile": "Aparece cuando mantienes presionada la burbuja de color."
+		},
+		"headingAdvanced": "Avanzado",
+		"uncolorHover": {
+			"name": "Paso flotante sin color",
+			"desc": "Deshabilitar el color del icono al pasar el cursor sobre un elemento."
+		},
+		"uncolorSelect": {
+			"name": "Selección sin color",
+			"desc": "Deshabilitar el color del icono mientras se selecciona el elemento."
+		},
+		"rememberDeletedItems": {
+			"name": "Recordar íconos de elementos eliminados",
+			"desc": "Mantienes tus opciones de íconos cuando eliminas elementos, en caso de que se vuelvan a agregar más tarde."
+		}
+	}
+}

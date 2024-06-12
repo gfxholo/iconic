@@ -1,0 +1,132 @@
+{
+	"appItems": {
+		"help": "Ouvrir l'aide",
+		"settings": "Ouvrir les paramètres",
+		"pin": "Basculer l'épingle",
+		"sidebarLeft": "Basculer la barre latérale gauche",
+		"sidebarRight": "Basculer la barre latérale droite"
+	},
+	"menu": {
+		"changeIcon": "Modifier l'icône...",
+		"changeIcons": "Modifier {#} icônes...",
+		"removeIcon": "Supprimer l'icône",
+		"removeIcons": "Supprimer {#} icônes",
+		"resetColor": "Réinitialiser la couleur",
+		"resetColors": "Réinitialiser {#} couleurs"
+	},
+	"iconPicker": {
+		"changeIcon": "Changer l'icône",
+		"changeIcons": "Changer {#} icônes",
+		"changeEmoji": "Changer l'émoji",
+		"changeEmojis": "Changer {#} émojis",
+		"search": "Rechercher",
+		"searchIcons": "Rechercher des icônes...",
+		"searchEmojis": "Rechercher des émojis...",
+		"changeColor": "Changer la couleur",
+		"resetColor": "Réinitialiser la couleur",
+		"remove": "Supprimer",
+		"emojis": "Émojis",
+		"icons": "Icônes",
+		"cancel": "Annuler",
+		"save": "Sauvegarder",
+		"colors": {
+			"red": "Rouge",
+			"orange": "Orange",
+			"yellow": "Jaune",
+			"green": "Vert",
+			"cyan": "Cyan",
+			"blue": "Bleu",
+			"purple": "Violet",
+			"pink": "Rose",
+			"gray": "Gris"
+		}
+	},
+	"categories": {
+		"item": "Élément",
+		"items": "Éléments",
+		"appItem": "Bouton",
+		"appItems": "Boutons",
+		"tab": "Onglet",
+		"tabs": "Onglets",
+		"file": "Fichier",
+		"files": "Fichiers",
+		"folder": "Dossier",
+		"folders": "Dossiers",
+		"group": "Groupe de signets",
+		"groups": "Groupes de signets",
+		"property": "Propriété",
+		"properties": "Propriétés",
+		"ribbonItem": "Commande du ruban",
+		"ribbonItems": "Commandes du ruban"
+	},
+	"commands": {
+		"toggleBiggerIcons": "Basculer les plus grandes icônes",
+		"toggleClickableIcons": {
+			"desktop": "Basculer les icônes cliquables",
+			"mobile": "Basculer les icônes tactiles"
+		},
+		"toggleAllFileIcons": "Basculer toutes les icônes de fichier",
+		"toggleBiggerSearchResults": "Basculer les résultats de recherche plus grands"
+	},
+	"settings": {
+		"values": {
+			"on": "Activé",
+			"off": "Désactivé",
+			"desktop": "Bureau uniquement",
+			"mobile": "Mobile uniquement",
+			"list": "Liste de couleurs",
+			"rgb": "Sélecteur RVB"
+		},
+		"headingListsAndTabs": "Icônes de liste et d'onglet",
+		"biggerIcons": {
+			"name": "Icônes plus grandes",
+			"desc": "Afficher des icônes plus grandes que l'interface utilisateur par défaut."
+		},
+		"clickableIcons": {
+			"nameDesktop": "Icônes cliquables",
+			"nameMobile": "Icônes tactiles",
+			"descDesktop": "Cliquez sur une icône pour ouvrir le sélecteur d'icônes.",
+			"descMobile": "Appuyez sur une icône pour ouvrir le sélecteur d'icônes."
+		},
+		"showAllFileIcons": {
+			"name": "Afficher toutes les icônes de fichier",
+			"desc": "Afficher une icône pour chaque fichier dans le volet Fichiers."
+		},
+		"headingIconPicker": "Sélecteur d'icônes",
+		"showItemName": {
+			"name": "Afficher le nom de l'élément",
+			"desc": "Afficher le nom de l'élément en cours de modification."
+		},
+		"biggerSearchResults": {
+			"name": "Résultats de recherche plus grands.",
+			"desc": "Afficher des icônes plus grandes dans les résultats de recherche."
+		},
+		"maxSearchResults": {
+			"name": "Résultats de la recherche",
+			"desc": "Choisissez le nombre d'icônes à afficher simultanément."
+		},
+		"colorPicker1": {
+			"name": "Sélecteur de couleurs principal",
+			"descDesktop": "S'affiche lorsque vous cliquez sur la bulle de couleur.",
+			"descMobile": "S'affiche lorsque vous touchez la bulle de couleur."
+		},
+		"colorPicker2": {
+			"name": "Deuxième sélecteur de couleurs",
+			"descDesktop": "Apparaît lorsque vous cliquez avec le bouton droit sur la bulle de couleur.",
+			"descMobile": "Apparaît lorsque vous appuyez et maintenez la bulle de couleur."
+		},
+		"headingAdvanced": "Avancé",
+		"uncolorHover": {
+			"name": "Survol non coloré",
+			"desc": "Désactiver la couleur de l'icône lors du survol d'un élément."
+		},
+		"uncolorSelect": {
+			"name": "Sélection non colorée",
+			"desc": "Désactiver la couleur de l'icône lorsque l'élément est sélectionné."
+		},
+		"rememberDeletedItems": {
+			"name": "Mémoriser les icônes des éléments supprimés",
+			"desc": "Conservez vos choix d'icônes lorsque vous supprimez des éléments, au cas où ils seraient ajoutés à nouveau plus tard."
+		}
+	}
+}

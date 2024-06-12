@@ -1,0 +1,132 @@
+{
+	"appItems": {
+		"help": "Hilfe öffnen",
+		"settings": "Einstellungen öffnen",
+		"pin": "Pin umschalten",
+		"sidebarLeft": "Linke Seitenleiste umschalten",
+		"sidebarRight": "Rechte Seitenleiste umschalten"
+	},
+	"menu": {
+		"changeIcon": "Symbol ändern...",
+		"changeIcons": "{#} Symbole ändern...",
+		"removeIcon": "Symbol entfernen",
+		"removeIcons": "{#} Symbole entfernen",
+		"resetColor": "Farbe zurücksetzen",
+		"resetColors": "{#} Farben zurücksetzen"
+	},
+	"iconPicker": {
+		"changeIcon": "Symbol ändern",
+		"changeIcons": "{#} Symbole ändern",
+		"changeEmoji": "Emoji ändern",
+		"changeEmojis": "{#} Emojis ändern",
+		"search": "Suchen",
+		"searchIcons": "Symbole suchen...",
+		"searchEmojis": "Emojis suchen...",
+		"changeColor": "Farbe ändern",
+		"resetColor": "Farbe zurücksetzen",
+		"remove": "Entfernen",
+		"emojis": "Emojis",
+		"icons": "Symbole",
+		"cancel": "Entfernen",
+		"save": "Abbrechen",
+		"colors": {
+			"red": "Rot",
+			"orange": "Orange",
+			"yellow": "Gelb",
+			"green": "Grün",
+			"cyan": "Cyan",
+			"blue": "Blau",
+			"purple": "Violett",
+			"pink": "Rosa",
+			"gray": "Grau"
+		}
+	},
+	"categories": {
+		"item": "Element",
+		"items": "Elemente",
+		"appItem": "Schaltfläche",
+		"appItems": "Schaltflächen",
+		"tab": "Tab",
+		"tabs": "Tabs",
+		"file": "Datei",
+		"files": "Dateien",
+		"folder": "Ordner",
+		"folders": "Ordner",
+		"group": "Gruppe von Lesezeichen",
+		"groups": "Gruppen von Lesezeichen",
+		"property": "Property",
+		"properties": "Properties",
+		"ribbonItem": "Sidebar-Befehl",
+		"ribbonItems": "Sidebar-Befehle"
+	},
+	"commands": {
+		"toggleBiggerIcons": "Größere Symbole umschalten",
+		"toggleClickableIcons": {
+			"desktop": "Klickbare Symbole umschalten",
+			"mobile": "Tippbare Symbole umschalten"
+		},
+		"toggleAllFileIcons": "Alle Dateisymbole umschalten",
+		"toggleBiggerSearchResults": "Größere Suchergebnisse umschalten"
+	},
+	"settings": {
+		"values": {
+			"on": "Ein",
+			"off": "Aus",
+			"desktop": "Nur Desktop",
+			"mobile": "Nur Mobilgerät",
+			"list": "Farbliste",
+			"rgb": "RGB-Auswahl"
+		},
+		"headingListsAndTabs": "Listen- & Registerkartensymbole",
+		"biggerIcons": {
+			"name": "Größere Symbole",
+			"desc": "Größere Symbole als die Standard-Benutzeroberfläche anzeigen."
+		},
+		"clickableIcons": {
+			"nameDesktop": "Anklickbare Symbole",
+			"nameMobile": "Tippbare Symbole",
+			"descDesktop": "Klicken Sie auf ein Symbol, um die Symbolauswahl zu öffnen.",
+			"descMobile": "Tippen Sie auf ein Symbol, um die Symbolauswahl zu öffnen."
+		},
+		"showAllFileIcons": {
+			"name": "Alle Dateisymbole anzeigen",
+			"desc": "Für jede Datei im Dateiexplorer ein Symbol anzeigen."
+		},
+		"headingIconPicker": "Symbolauswahl",
+		"showItemName": {
+			"name": "Elementnamen anzeigen",
+			"desc": "Den Namen des bearbeiteten Elements anzeigen."
+		},
+		"biggerSearchResults": {
+			"name": "Größere Suchergebnisse",
+			"desc": "Größere Symbole in Suchergebnissen anzeigen."
+		},
+		"maxSearchResults": {
+			"name": "Suchergebnisse",
+			"desc": "Wählen Sie aus, wie viele Symbole gleichzeitig angezeigt werden sollen."
+		},
+		"colorPicker1": {
+			"name": "Hauptfarbauswahl",
+			"descDesktop": "Erscheint, wenn Sie auf die Farbblase klicken.",
+			"descMobile": "Erscheint, wenn Sie die Farbblase berühren."
+		},
+		"colorPicker2": {
+			"name": "Zweiter Farbwähler",
+			"descDesktop": "Erscheint, wenn Sie mit der rechten Maustaste auf die Farbblase klicken.",
+			"descMobile": "Erscheint, wenn Sie die Farbblase gedrückt halten."
+		},
+		"headingAdvanced": "Erweitert",
+		"uncolorHover": {
+			"name": "Ungefärbter Hover",
+			"desc": "Symbolfarbe deaktivieren, während über einem Element schwebt."
+		},
+		"uncolorSelect": {
+			"name": "Ungefärbte Auswahl",
+			"desc": "Symbolfarbe deaktivieren, während Element ausgewählt ist."
+		},
+		"rememberDeletedItems": {
+			"name": "Symbole gelöschter Elemente merken",
+			"desc": "Behalten Sie Ihre Symbolauswahl bei, wenn Sie Elemente löschen, für den Fall, dass sie später wieder hinzugefügt werden."
+		}
+	}
+}

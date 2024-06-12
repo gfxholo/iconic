@@ -1,0 +1,132 @@
+{
+	"appItems": {
+		"help": "查看帮助",
+		"settings": "打开设置",
+		"pin": "解锁/锁定",
+		"sidebarLeft": "折叠/展开左侧边栏",
+		"sidebarRight": "折叠/展开右侧边栏"
+	},
+	"menu": {
+		"changeIcon": "更改图标……",
+		"changeIcons": "更改 {#} 个图标……",
+		"removeIcon": "删除图标",
+		"removeIcons": "删除 {#} 个图标",
+		"resetColor": "重置颜色",
+		"resetColors": "重置 {#} 种颜色"
+	},
+	"iconPicker": {
+		"changeIcon": "更改图标",
+		"changeIcons": "更改 {#} 个图标",
+		"changeEmoji": "更改表情符号",
+		"changeEmojis": "更换 {#} 个表情符号",
+		"search": "搜索",
+		"searchIcons": "搜索图标……",
+		"searchEmojis": "搜索表情符号……",
+		"changeColor": "换颜色",
+		"resetColor": "重置颜色",
+		"remove": "移除",
+		"emojis": "表情符号",
+		"icons": "图标",
+		"cancel": "取消",
+		"save": "保存",
+		"colors": {
+			"red": "红色",
+			"orange": "橙色",
+			"yellow": "黄色",
+			"green": "绿色",
+			"cyan": "青色",
+			"blue": "蓝色",
+			"purple": "紫色",
+			"pink": "粉色",
+			"gray": "灰色"
+		}
+	},
+	"categories": {
+		"item": "项",
+		"items": "项",
+		"appItem": "按钮",
+		"appItems": "按钮",
+		"tab": "标签",
+		"tabs": "标签",
+		"file": "文件",
+		"files": "文件",
+		"folder": "文件夹",
+		"folders": "文件夹",
+		"group": "书签组",
+		"groups": "书签组",
+		"property": "文档属性",
+		"properties": "文档属性",
+		"ribbonItem": "工具栏命令",
+		"ribbonItems": "工具栏命令"
+	},
+	"commands": {
+		"toggleBiggerIcons": "切换更大图标",
+		"toggleClickableIcons": {
+			"desktop": "切换可点击图标",
+			"mobile": "切换可触摸图标"
+		},
+		"toggleAllFileIcons": "切换所有文件图标",
+		"toggleBiggerSearchResults": "切换更大的搜索结果"
+	},
+	"settings": {
+		"values": {
+			"on": "开启",
+			"off": "关闭",
+			"desktop": "仅限桌面",
+			"mobile": "仅限移动设备",
+			"list": "颜色列表",
+			"rgb": "RGB 选择器"
+		},
+		"headingListsAndTabs": "列表和选项卡图标",
+		"biggerIcons": {
+			"name": "更大的图标",
+			"desc": "显示比默认 UI 更大的图标。"
+		},
+		"clickableIcons": {
+			"nameDesktop": "可点击的图标",
+			"nameMobile": "可触摸图标",
+			"descDesktop": "单击图标以打开图标选择器。",
+			"descMobile": "点击图标以打开图标选择器。"
+		},
+		"showAllFileIcons": {
+			"name": "显示所有文件图标",
+			"desc": "在文件窗格中显示每个文件的图标。"
+		},
+		"headingIconPicker": "图标选择器",
+		"showItemName": {
+			"name": "显示项目名称",
+			"desc": "显示正在编辑的项目的名称。"
+		},
+		"biggerSearchResults": {
+			"name": "更大的搜索结果",
+			"desc": "在搜索结果中显示更大的图标。"
+		},
+		"maxSearchResults": {
+			"name": "搜索结果",
+			"desc": "选择一次显示多少个图标。"
+		},
+		"colorPicker1": {
+			"name": "主颜色选择器",
+			"descDesktop": "单击颜色气泡时显示。",
+			"descMobile": "触摸颜色气泡时显示。"
+		},
+		"colorPicker2": {
+			"name": "第二个颜色选择器",
+			"descDesktop": "当您双击颜色气泡时显示。",
+			"descMobile": "当您按住颜色气泡时显示。"
+		},
+		"headingAdvanced": "高级",
+		"uncolorHover": {
+			"name": "无色悬停",
+			"desc": "悬停项目时禁用图标颜色。"
+		},
+		"uncolorSelect": {
+			"name": "无色选择",
+			"desc": "选择项目时禁用图标颜色。"
+		},
+		"rememberDeletedItems": {
+			"name": "记住已删除项目的图标",
+			"desc": "删除项目时保留您的图标选择，以防它们稍后重新添加。"
+		}
+	}
+}

@@ -1,0 +1,132 @@
+{
+	"appItems": {
+		"help": "Buka bantuan",
+		"settings": "Buka pengaturan",
+		"pin": "Aktifkan/Matikan sematan",
+		"sidebarLeft": "Buka/Tutup bilah sisi kiri",
+		"sidebarRight": "Buka/Tutup bilah sisi kanan"
+	},
+	"menu": {
+		"changeIcon": "Ubah ikon...",
+		"changeIcons": "Ubah {#} ikon...",
+		"removeIcon": "Hapus ikon",
+		"removeIcons": "Hapus {#} ikon",
+		"resetColor": "Atur ulang warna",
+		"resetColors": "Atur ulang {#} warna"
+	},
+	"iconPicker": {
+		"changeIcon": "Ubah ikon",
+		"changeIcons": "Ubah {#} ikon",
+		"changeEmoji": "Ubah emoji",
+		"changeEmojis": "Ubah {#} emoji",
+		"search": "Search",
+		"searchIcons": "Cari ikon...",
+		"searchEmojis": "Cari emoji...",
+		"changeColor": "Ganti warna",
+		"resetColor": "Atur ulang warna",
+		"remove": "Hapus",
+		"emojis": "Emoji",
+		"icons": "Ikon",
+		"cancel": "Batal",
+		"save": "Simpan",
+		"colors": {
+			"red": "Merah",
+			"orange": "Oranye",
+			"yellow": "Kuning",
+			"green": "Hijau",
+			"cyan": "Sian",
+			"blue": "Biru",
+			"purple": "Ungu",
+			"pink": "Merah muda",
+			"gray": "Abu-abu"
+		}
+	},
+	"categories": {
+		"item": "Item",
+		"items": "Item",
+		"appItem": "Tombol",
+		"appItems": "Tombol",
+		"tab": "Tab",
+		"tabs": "Tab",
+		"file": "Berkas",
+		"files": "Berkas",
+		"folder": "Folder",
+		"folders": "Folder",
+		"group": "Grup penanda buku",
+		"groups": "Grup penanda buku",
+		"property": "Properti",
+		"properties": "Properti",
+		"ribbonItem": "Perintah ribbon",
+		"ribbonItems": "Perintah ribbon"
+	},
+	"commands": {
+		"toggleBiggerIcons": "Alihkan ikon yang lebih besar",
+		"toggleClickableIcons": {
+			"desktop": "Alihkan ikon yang dapat diklik",
+			"mobile": "Alihkan ikon yang dapat diketuk"
+		},
+		"toggleAllFileIcons": "Beralih semua ikon berkas",
+		"toggleBiggerSearchResults": "Beralih hasil pencarian yang lebih besar"
+	},
+	"settings": {
+		"values": {
+			"on": "Aktif",
+			"off": "Nonaktif",
+			"desktop": "Hanya desktop",
+			"mobile": "Hanya seluler",
+			"list": "Daftar warna",
+			"rgb": "Pemilih RGB"
+		},
+		"headingListsAndTabs": "Ikon daftar & tab",
+		"biggerIcons": {
+			"name": "Ikon yang lebih besar",
+			"desc": "Tampilkan ikon yang lebih besar daripada UI default."
+		},
+		"clickableIcons": {
+			"nameDesktop": "Ikon yang dapat diklik",
+			"nameMobile": "Ikon yang dapat diketuk",
+			"descDesktop": "Klik ikon untuk membuka pemilih ikon.",
+			"descMobile": "Ketuk ikon untuk membuka pemilih ikon."
+		},
+		"showAllFileIcons": {
+			"name": "Tampilkan semua ikon berkas",
+			"desc": "Tampilkan ikon untuk setiap berkas di panel Berkas."
+		},
+		"headingIconPicker": "Pemilih ikon",
+		"showItemName": {
+			"name": "Tampilkan nama item",
+			"desc": "Tampilkan nama item yang sedang diedit."
+		},
+		"biggerSearchResults": {
+			"name": "Hasil pencarian yang lebih besar",
+			"desc": "Tampilkan ikon yang lebih besar dalam hasil pencarian."
+		},
+		"maxSearchResults": {
+			"name": "Hasil pencarian",
+			"desc": "Pilih berapa banyak ikon yang akan ditampilkan sekaligus."
+		},
+		"colorPicker1": {
+			"name": "Pemilih warna utama",
+			"descDesktop": "Muncul saat Anda mengklik gelembung warna.",
+			"descMobile": "Muncul saat Anda menyentuh gelembung warna."
+		},
+		"colorPicker2": {
+			"name": "Pemilih warna kedua",
+			"descDesktop": "Muncul saat Anda mengklik kedua gelembung warna.",
+			"descMobile": "Muncul saat Anda menekan & menahan gelembung warna."
+		},
+		"headingAdvanced": "Lanjutan",
+		"uncolorHover": {
+			"name": "Hover tidak berwarna",
+			"desc": "Nonaktifkan warna ikon saat mengarahkan kursor ke item."
+		},
+		"uncolorSelect": {
+			"name": "Pilihan tidak berwarna",
+			"desc": "Nonaktifkan warna ikon saat item dipilih."
+		},
+		"rememberDeletedItems": {
+			"name": "Ingat ikon item yang dihapus",
+			"desc": "Simpan pilihan ikon Anda saat Anda menghapus item, untuk berjaga-jaga jika nanti ditambahkan lagi."
+		}
+	}
+}

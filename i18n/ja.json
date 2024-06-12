@@ -1,0 +1,132 @@
+{
+	"appItems": {
+		"help": "ヘルプを開く",
+		"settings": "設定を開く",
+		"pin": "ピンをトグル",
+		"sidebarLeft": "左のサイドバーを開閉",
+		"sidebarRight": "右のサイドバーを開閉"
+	},
+	"menu": {
+		"changeIcon": "アイコンを変更…",
+		"changeIcons": "アイコンを {#} 個変更…",
+		"removeIcon": "アイコンを削除",
+		"removeIcons": "アイコンを {#} 個削除",
+		"resetColor": "色をリセット",
+		"resetColors": "色を {#} 個リセット"
+	},
+	"iconPicker": {
+		"changeIcon": "アイコンを変更",
+		"changeIcons": "{#}個のアイコンを変更する",
+		"changeEmoji": "絵文字を変更する",
+		"changeEmojis": "絵文字を {#} 個変更",
+		"search": "検索",
+		"searchIcons": "アイコンを検索…",
+		"searchEmojis": "絵文字を検索…",
+		"changeColor": "色を変える",
+		"resetColor": "色をリセット",
+		"remove": "削除",
+		"emojis": "絵文字",
+		"icons": "アイコン",
+		"cancel": "キャンセル",
+		"save": "保存",
+		"colors": {
+			"red": "赤",
+			"orange": "オレンジ",
+			"yellow": "黄色",
+			"green": "緑",
+			"cyan": "シアン",
+			"blue": "青",
+			"purple": "紫",
+			"pink": "ピンク",
+			"gray": "灰色"
+		}
+	},
+	"categories": {
+		"item": "項目",
+		"items": "項目",
+		"appItem": "ボタン",
+		"appItems": "ボタン",
+		"tab": "タブ",
+		"tabs": "タブ",
+		"file": "ファイル",
+		"files": "ファイル",
+		"folder": "フォルダ",
+		"folders": "フォルダ",
+		"group": "ブックマークグループ",
+		"groups": "ブックマークグループ",
+		"property": "プロパティ",
+		"properties": "プロパティ",
+		"ribbonItem": "リボンコマンド",
+		"ribbonItems": "リボンコマンド"
+	},
+	"commands": {
+		"toggleBiggerIcons": "大きいアイコンを切り替える",
+		"toggleClickableIcons": {
+			"desktop": "クリック可能なアイコンを切り替える",
+			"mobile": "タップ可能なアイコンを切り替える"
+		},
+		"toggleAllFileIcons": "すべてのファイルアイコンを切り替えます",
+		"toggleBiggerSearchResults": "検索結果を大きく切り替えます"
+	},
+	"settings": {
+		"values": {
+			"on": "オン",
+			"off": "オフ",
+			"desktop": "デスクトップのみ",
+			"mobile": "モバイルのみ",
+			"list": "色のリスト",
+			"rgb": "RGB ピッカー"
+		},
+		"headingListsAndTabs": "リストとタブのアイコン",
+		"biggerIcons": {
+			"name": "大きいアイコン",
+			"desc": "デフォルトの UI よりも大きなアイコンを表示します。"
+		},
+		"clickableIcons": {
+			"nameDesktop": "クリック可能なアイコン",
+			"nameMobile": "タップ可能なアイコン",
+			"descDesktop": "アイコンをクリックするとアイコンピッカーが開きます。",
+			"descMobile": "アイコンをタップするとアイコンピッカーが開きます。"
+		},
+		"showAllFileIcons": {
+			"name": "すべてのファイルアイコンを表示します",
+			"desc": "ファイルペイン内のすべてのファイルのアイコンを表示します。"
+		},
+		"headingIconPicker": "アイコン ピッカー",
+		"showItemName": {
+			"name": "アイテム名を表示します",
+			"desc": "編集中のアイテムの名前を表示します。"
+		},
+		"biggerSearchResults": {
+			"name": "検索結果を大きくする",
+			"desc": "検索結果に大きいアイコンを表示します。"
+		},
+		"maxSearchResults": {
+			"name": "検索結果",
+			"desc": "一度に表示するアイコンの数を選択します。"
+		},
+		"colorPicker1": {
+			"name": "メイン カラー ピッカー",
+			"descDesktop": "カラー バブルをクリックすると表示されます。",
+			"descMobile": "カラー バブルをタッチすると表示されます。"
+		},
+		"colorPicker2": {
+			"name": "2 番目のカラー ピッカー",
+			"descDesktop": "カラー バブルをセカンダリ クリックすると表示されます。",
+			"descMobile": "カラー バブルを長押しすると表示されます。"
+		},
+		"headingAdvanced": "詳細",
+		"uncolorHover": {
+			"name": "無色ホバー",
+			"desc": "アイテムにホバーしている間、アイコンの色を無効にします。"
+		},
+		"uncolorSelect": {
+			"name": "無色選択",
+			"desc": "アイテムが選択されている間、アイコンの色を無効にします。"
+		},
+		"rememberDeletedItems": {
+			"name": "削除したアイテムのアイコンを記憶する",
+			"desc": "アイテムを削除したときに、後で再度追加された場合に備えてアイコンの選択を保持します。"
+		}
+	}
+}
