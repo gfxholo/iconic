@@ -3,6 +3,8 @@
 	flex-wrap: wrap;
 	align-content: center;
 	justify-content: center;
+	overflow: clip;
+	overflow-clip-margin: 5px;
 	width: var(--icon-size);
 	height: var(--icon-size);
 	font-size: calc(var(--icon-size) * 0.9);
