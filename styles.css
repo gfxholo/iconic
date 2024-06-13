@@ -63,6 +63,7 @@
 .iconic-search-results { overflow-x: scroll; }
 .iconic-search-results > .setting-item-info { display: none; }
 .iconic-search-results > .setting-item-control { justify-content: center; }
+.is-phone .iconic-search-results { flex-direction: row !important; }
 .is-phone .iconic-search-results > .setting-item-control { width: auto !important; }
 
 /* Search result */
