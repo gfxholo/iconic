@@ -67,11 +67,11 @@ interface IconicSettings {
 	uncolorHover: boolean,
 	uncolorSelect: boolean,
 	rememberDeletedItems: boolean;
-	appIcons: { [appItemId: string]: Item };
-	tabIcons: { [tabId: string]: TabItem };
-	fileIcons: { [fileId: string]: FileItem };
-	propertyIcons: { [propId: string]: PropertyItem };
-	ribbonIcons: { [ribbonItemId: string]: RibbonItem };
+	appIcons: { [appItemId: string]: { icon?: string, color?: string } };
+	tabIcons: { [tabId: string]: { icon?: string, color?: string } };
+	fileIcons: { [fileId: string]: { icon?: string, color?: string } };
+	propertyIcons: { [propId: string]: { icon?: string, color?: string } };
+	ribbonIcons: { [ribbonItemId: string]: { icon?: string, color?: string } };
 }
 
 const DEFAULT_SETTINGS: IconicSettings = {
@@ -266,7 +266,7 @@ export default class IconicPlugin extends Plugin {
 	 * Get app item definition.
 	 */
 	getAppItem(appItemId: 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight', unloading?: boolean): AppItem {
-		const appIcon: Icon = this.settings.appIcons[appItemId] ?? {};
+		const appIcon = this.settings.appIcons[appItemId] ?? {};
 		let name, iconDefault;
 		switch (appItemId) {
 			case 'help': {
