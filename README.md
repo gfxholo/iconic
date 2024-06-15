@@ -4,7 +4,7 @@ A plugin for iconophiles, designed to blend seamlessly into vanilla Obsidian.
 
 Click almost any icon on a tab, list, or ribbon to swap in one of the 1,300+ icons included in the app, or one of the 1,900+ emojis that your device can display.
 
-![Examples](examples.png)
+![Examples](examples.webp)
 
 > ⤿ Themes: [Obsidian gruvbox](https://github.com/insanum/obsidian_gruvbox), [Catppuccin](https://github.com/catppuccin/obsidian), [Everforest Enchanted](https://github.com/FireIsGood/obsidian-everforest-enchanted)
 
@@ -30,7 +30,7 @@ Every icon and emoji is searchable by name. When you find one that sings for you
 
 You can choose one of nine basic colors per icon. These colors follow the CSS theme of your vault, so they adjust automatically when it changes. You can also choose a specific RGB color instead.
 
-![Icon picker](picker.png)
+![Icon picker](picker.webp)
 
 ## How is this plugin different from [Iconize](https://github.com/FlorianWoelki/obsidian-iconize)?
 
