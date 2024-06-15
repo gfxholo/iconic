@@ -66,21 +66,22 @@ export default class AppIconManager extends IconManager {
 		// Left sidebar toggles
 		this.sidebarLeftEls = this.sidebarLeftEls?.length > 0
 			? this.sidebarLeftEls
-			: fishAll('.sidebar-toggle-button.mod-left > .clickable-icon')
-				.concat(fishAll('.view-action.clickable-icon.mod-left-split-toggle'));
+			: fishAll('.sidebar-toggle-button.mod-left').concat(fishAll('.view-action.clickable-icon.mod-left-split-toggle'));
 		for (const sidebarLeftEl of this.sidebarLeftEls) {
 			const item = this.plugin.getAppItem('sidebarLeft', unloading);
-			this.refreshIcon(item, sidebarLeftEl);
+			const iconEl = sidebarLeftEl.hasClass('clickable-icon') ? sidebarLeftEl : sidebarLeftEl.find(':scope > .clickable-icon');
+			this.refreshIcon(item, iconEl);
 			this.setEventListener(sidebarLeftEl, 'contextmenu', event => this.onContextMenu('sidebarLeft', event));
 		}
 
 		// Right sidebar toggle
 		this.sidebarRightEl = this.sidebarRightEl
 			? this.sidebarRightEl
-			: fish('.sidebar-toggle-button.mod-right > .clickable-icon');
+			: fish('.sidebar-toggle-button.mod-right');
 		if (this.sidebarRightEl) {
 			const item = this.plugin.getAppItem('sidebarRight', unloading);
-			this.refreshIcon(item, this.sidebarRightEl);
+			const iconEl = this.sidebarRightEl.find(':scope > .clickable-icon');
+			this.refreshIcon(item, iconEl);
 			this.setEventListener(this.sidebarRightEl, 'contextmenu', event => this.onContextMenu('sidebarRight', event));
 		}
 	}
