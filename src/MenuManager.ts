@@ -10,13 +10,12 @@ const SAFETY_MARGIN = 10; // px
 export default class MenuManager {
 	private readonly plugin: IconicPlugin;
 	private menuEl: HTMLElement;
-	private readonly bodyObserver: MutationObserver;
-	private readonly highlightListeners = new Map<HTMLElement, EventListener>();
 	private queuedActions: (() => any)[] = [];
+	private readonly highlightListeners = new Map<HTMLElement, EventListener>();
 
 	constructor(plugin: IconicPlugin) {
 		this.plugin = plugin;
-		this.bodyObserver = new MutationObserver(mutations => {
+		const bodyObserver = new MutationObserver(mutations => {
 			for (const mutation of mutations) {
 				for (const addedNode of mutation.addedNodes) {
 					if (addedNode instanceof HTMLElement && addedNode.classList.contains('menu')) {
@@ -31,7 +30,7 @@ export default class MenuManager {
 				}
 			}
 		});
-		this.bodyObserver.observe(activeDocument.body, { childList: true });
+		bodyObserver.observe(activeDocument.body, { childList: true });
 	}
 
 	/**
