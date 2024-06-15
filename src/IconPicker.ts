@@ -247,13 +247,13 @@ export default class IconPicker extends Modal {
 			} else if (event.key === 'Delete' || event.key === 'Backspace') {
 				this.resetColor();
 			} else if (event.key == 'ArrowUp' || event.key === 'ArrowLeft') {
-				this.nextColor();
-			} else if (event.key == 'ArrowDown' || event.key === 'ArrowRight') {
 				this.previousColor();
+			} else if (event.key == 'ArrowDown' || event.key === 'ArrowRight') {
+				this.nextColor(); 
 			}
 		});
 		this.manager.setEventListener(this.colorPickerEl, 'wheel', event => {
-			event.deltaY + event.deltaX >= 0 ? this.nextColor() : this.previousColor();
+			event.deltaY + event.deltaX < 0 ? this.previousColor() : this.nextColor();
 		}, { passive: true });
 		this.updateColorPicker();
 
@@ -362,12 +362,12 @@ export default class IconPicker extends Modal {
 	}
 
 	/**
-	 * Select next color in list. Used by keyboard and scrollwheel events.
+	 * Select previous color in list. Used by keyboard and scrollwheel events.
 	 */
-	private nextColor(): void {
-		let index = 0;
-		if (this.color && COLORS.includes(this.color) && this.color !== COLORS.last()) {
-			index = COLORS.indexOf(this.color) + 1;
+	private previousColor(): void {
+		let index = COLORS.length - 1;
+		if (this.color && COLORS.includes(this.color) && this.color !== COLORS.first()) {
+			index = COLORS.indexOf(this.color) - 1;
 		}
 		this.color = COLORS[index];
 		this.colorResetButton.extraSettingsEl.show();
@@ -376,12 +376,12 @@ export default class IconPicker extends Modal {
 	}
 
 	/**
-	 * Select previous color in list. Used by keyboard and scrollwheel events.
+	 * Select next color in list. Used by keyboard and scrollwheel events.
 	 */
-	private previousColor(): void {
-		let index = COLORS.length - 1;
-		if (this.color && COLORS.includes(this.color) && this.color !== COLORS.first()) {
-			index = COLORS.indexOf(this.color) - 1;
+	private nextColor(): void {
+		let index = 0;
+		if (this.color && COLORS.includes(this.color) && this.color !== COLORS.last()) {
+			index = COLORS.indexOf(this.color) + 1;
 		}
 		this.color = COLORS[index];
 		this.colorResetButton.extraSettingsEl.show();
