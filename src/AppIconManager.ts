@@ -102,7 +102,6 @@ export default class AppIconManager extends IconManager {
 		menu.addItem(menuItem => menuItem
 			.setTitle(STRINGS.menu.changeIcon)
 			.setIcon('lucide-image-plus')
-			.setSection('icon')
 			.onClick(() => IconPicker.openSingle(this.plugin, appItem, (newIcon, newColor) => {
 				this.plugin.saveAppIcon(appItem, newIcon, newColor);
 				this.refreshIcons();
@@ -114,7 +113,6 @@ export default class AppIconManager extends IconManager {
 			menu.addItem(menuItem => menuItem
 				.setTitle(appItem.icon ? STRINGS.menu.removeIcon : STRINGS.menu.resetColor)
 				.setIcon(appItem.icon ? 'lucide-image-minus' : 'lucide-rotate-ccw')
-				.setSection('icon')
 				.onClick(() => {
 					this.plugin.saveAppIcon(appItem, null, null);
 					this.refreshIcons();

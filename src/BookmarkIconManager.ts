@@ -105,7 +105,7 @@ export default class BookmarkIconManager extends IconManager {
 				event.stopPropagation();
 			});
 
-			this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(bmark.id));
+			this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(bmark.id), { capture: true });
 		};
 	}
 
@@ -113,6 +113,7 @@ export default class BookmarkIconManager extends IconManager {
 	 * When user context-clicks a bookmark, add custom items to the menu.
 	 */
 	private async onContextMenu(clickedBmarkId: string): Promise<void> {
+		this.plugin.menuManager.close();
 		const clickedBmark: BookmarkItem = this.plugin.getBookmarkItem(clickedBmarkId);
 		const selectedBmarks: BookmarkItem[] = [];
 

@@ -220,7 +220,7 @@ export default class IconicPlugin extends Plugin {
 	 * Initialize all icon managers.
 	 */
 	private startIconManagers(): void {
-		this.menuManager = new MenuManager(this);
+		this.menuManager = new MenuManager();
 		this.appIconManager = new AppIconManager(this);
 		this.tabIconManager = new TabIconManager(this);
 		this.fileIconManager = new FileIconManager(this);

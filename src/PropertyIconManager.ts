@@ -69,7 +69,7 @@ export default class PropertyIconManager extends IconManager {
 				event.stopPropagation();
 			});
 
-			this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(prop.id));
+			this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(prop.id), { capture: true });
 		}
 
 		if (this.containerEl) this.setMutationObserver(this.containerEl, { subtree: true, childList: true }, () => this.refreshIcons());
@@ -80,6 +80,7 @@ export default class PropertyIconManager extends IconManager {
 	 */
 	private onContextMenu(clickedPropId: string): void {
 		navigator.vibrate(100); // Might not be supported on iOS
+		this.plugin.menuManager.close();
 		const clickedProp: PropertyItem = this.plugin.getPropertyItem(clickedPropId);
 		const selectedProps: PropertyItem[] = [];
 
