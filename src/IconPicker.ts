@@ -141,6 +141,7 @@ export default class IconPicker extends Modal {
 		
 		let categoryLabel;
 		switch (category) {
+			case 'app': categoryLabel = STRINGS.categories.appItems; break;
 			case 'tab': categoryLabel = STRINGS.categories.tabs; break;
 			case 'file': categoryLabel = STRINGS.categories.files; break;
 			case 'folder': categoryLabel = STRINGS.categories.folders; break;
