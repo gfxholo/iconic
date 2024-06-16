@@ -11,6 +11,12 @@ export default class FileIconManager extends IconManager {
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
+		this.plugin.registerEvent(this.app.workspace.on('file-menu', (menu, file) => {
+			this.onContextMenu(file.path);
+		}));
+		this.plugin.registerEvent(this.app.workspace.on('files-menu', (menu, files) => {
+			this.onContextMenu(...files.map(file => file.path));
+		}));
 		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => {
 			if (activeDocument.contains(this.containerEl)) return;
 			this.app.workspace.iterateAllLeaves(leaf => this.manageLeaf(leaf));
@@ -91,49 +97,38 @@ export default class FileIconManager extends IconManager {
 				});
 				event.stopPropagation();
 			});
-
-			this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(file.id));
 		}
 	}
 
 	/**
-	 * When user context-clicks a file, add custom items to the menu.
+	 * When user context-clicks a file, or opens a file pane menu, add custom items to the menu.
 	 */
-	private onContextMenu(clickedFileId: string): void {
+	private onContextMenu(...fileIds: string[]): void {
 		this.plugin.menuManager.close();
-		const clickedFile: FileItem = this.plugin.getFileItem(clickedFileId);
-		const selectedFiles: FileItem[] = [];
-		
-		for (const selfEl of this.containerEl?.findAll('.tree-item-self.is-selected') ?? []) {
-			if (selfEl.dataset.path) {
-				selectedFiles.push(this.plugin.getFileItem(selfEl.dataset.path));
-			}
-		}
-
-		// If clicked file is not selected, ignore selected items
-		if (!selectedFiles.some(selectedFile => selectedFile.id === clickedFile.id)) {
-			selectedFiles.length = 0;
+		const files: FileItem[] = [];
+		for (const fileId of fileIds) {
+			files.push(this.plugin.getFileItem(fileId));
 		}
 
 		// Change icon(s)
-		const changeTitle = selectedFiles.length < 2
+		const changeTitle = files.length === 1
 			? STRINGS.menu.changeIcon
-			: STRINGS.menu.changeIcons.replace('{#}', selectedFiles.length.toString());
+			: STRINGS.menu.changeIcons.replace('{#}', files.length.toString());
 		this.plugin.menuManager.addItemBetween('open', 'action', item => item
 			.setTitle(changeTitle)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')
 			.onClick(() => {
-				if (selectedFiles.length < 2) {
-					IconPicker.openSingle(this.plugin, clickedFile, (newIcon, newColor) => {
-						this.plugin.saveFileIcon(clickedFile, newIcon, newColor);
+				if (files.length === 1) {
+					IconPicker.openSingle(this.plugin, files[0], (newIcon, newColor) => {
+						this.plugin.saveFileIcon(files[0], newIcon, newColor);
 						this.refreshIcons();
 						this.plugin.tabIconManager?.refreshIcons();
 						this.plugin.bookmarkIconManager?.refreshIcons();
 					});
 				} else {
-					IconPicker.openMulti(this.plugin, selectedFiles, (newIcon, newColor) => {
-						this.plugin.saveFileIcons(selectedFiles, newIcon, newColor);
+					IconPicker.openMulti(this.plugin, files, (newIcon, newColor) => {
+						this.plugin.saveFileIcons(files, newIcon, newColor);
 						this.refreshIcons();
 						this.plugin.tabIconManager?.refreshIcons();
 						this.plugin.bookmarkIconManager?.refreshIcons();
@@ -143,26 +138,26 @@ export default class FileIconManager extends IconManager {
 		);
 
 		// Remove icon(s) / Reset color(s)
-		const anySelectedIcons = selectedFiles.some(file => file.icon);
-		const anySelectedColors = selectedFiles.some(file => file.color);
-		const removeTitle = selectedFiles.length < 2
-			? clickedFile.icon
+		const anyIcons = files.some(file => file.icon);
+		const anyColors = files.some(file => file.color);
+		const removalTitle = files.length === 1
+			? files[0].icon
 				? STRINGS.menu.removeIcon
 				: STRINGS.menu.resetColor
-			: anySelectedIcons
-				? STRINGS.menu.removeIcons.replace('{#}', selectedFiles.length.toString())
-				: STRINGS.menu.resetColors.replace('{#}', selectedFiles.length.toString())
-		const removeIcon = clickedFile.icon || anySelectedIcons ? 'lucide-image-minus' : 'lucide-rotate-ccw';
-		if (clickedFile.icon || clickedFile.color || anySelectedIcons || anySelectedColors) {
+			: anyIcons
+				? STRINGS.menu.removeIcons.replace('{#}', files.length.toString())
+				: STRINGS.menu.resetColors.replace('{#}', files.length.toString())
+		const removalIcon = anyIcons ? 'lucide-image-minus' : 'lucide-rotate-ccw';
+		if (anyIcons || anyColors) {
 			this.plugin.menuManager.addItem(item => item
-				.setTitle(removeTitle)
-				.setIcon(removeIcon)
+				.setTitle(removalTitle)
+				.setIcon(removalIcon)
 				.setSection('icon')
 				.onClick(() => {
-					if (selectedFiles.length < 2) {
-						this.plugin.saveFileIcon(clickedFile, null, null);
+					if (files.length === 1) {
+						this.plugin.saveFileIcon(files[0], null, null);
 					} else {
-						this.plugin.saveFileIcons(selectedFiles, null, null);
+						this.plugin.saveFileIcons(files, null, null);
 					}
 					this.refreshIcons();
 					this.plugin.tabIconManager?.refreshIcons();
