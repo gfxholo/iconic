@@ -42,13 +42,15 @@ export default abstract class IconManager {
 				}
 			}
 			iconEl.show();
-		} else if ('iconDefault' in item) {
-			if (item.iconDefault) {
-				setIcon(iconEl, item.iconDefault);
-				iconEl.show();
-			} else {
-				iconEl.hide();
-			}
+		} else if (iconEl.hasClass('collapse-icon')) {
+			setIcon(iconEl, 'right-triangle');
+			iconEl.removeClass('iconic-icon');
+			iconEl.show();
+		} else if ('iconDefault' in item && item.iconDefault) {
+			setIcon(iconEl, item.iconDefault);
+			iconEl.show();
+		} else {
+			iconEl.hide();
 		}
 
 		const svgEl = iconEl.find('.svg-icon');
@@ -62,12 +64,10 @@ export default abstract class IconManager {
 			}
 		}
 
-		if (onClick) {
-			if (this.plugin.enabledOnPlatform('clickableIcons')) {
-				this.setEventListener(iconEl, 'click', onClick);
-			} else {
-				this.stopEventListener(iconEl, 'click');
-			}
+		if (onClick && this.plugin.enabledOnPlatform('clickableIcons')) {
+			this.setEventListener(iconEl, 'click', onClick, { capture: true });
+		} else {
+			this.stopEventListener(iconEl, 'click');
 		}
 	}
 

@@ -82,21 +82,24 @@ export default class FileIconManager extends IconManager {
 						}
 					}
 				});
-
-				continue;
 			}
 
 			let iconEl = selfEl.find(':scope > .tree-item-icon');
 			if (!iconEl) iconEl = selfEl.createDiv({ cls: 'tree-item-icon' });
-			this.refreshIcon(file, iconEl, event => {
-				IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
-					this.plugin.saveFileIcon(file, newIcon, newColor);
-					this.refreshIcons();
-					this.plugin.tabIconManager?.refreshIcons();
-					this.plugin.bookmarkIconManager?.refreshIcons();
+
+			if (iconEl.hasClass('collapse-icon') && !file.icon) {
+				this.refreshIcon(file, iconEl); // Skip click listener if icon will be a collapse arrow
+			} else {
+				this.refreshIcon(file, iconEl, event => {
+					IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
+						this.plugin.saveFileIcon(file, newIcon, newColor);
+						this.refreshIcons();
+						this.plugin.tabIconManager?.refreshIcons();
+						this.plugin.bookmarkIconManager?.refreshIcons();
+					});
+					event.stopPropagation();
 				});
-				event.stopPropagation();
-			});
+			}
 		}
 	}
 

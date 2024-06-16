@@ -27,6 +27,13 @@
 .tree-item-icon.iconic-icon > .iconic-emoji {
 	--icon-size: var(--icon-xs);
 }
+.tree-item-icon.collapse-icon.iconic-icon > .svg-icon {
+	width: var(--icon-size);
+	height: var(--icon-size);
+	stroke-width: var(--icon-stroke);
+	color: unset;
+	transform: unset;
+}
 .iconic-bigger-icons .tree-item-icon.iconic-icon > .svg-icon {
 	--icon-size: var(--icon-s);
 	--icon-stroke: var(--icon-s-stroke-width);
