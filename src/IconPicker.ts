@@ -113,7 +113,7 @@ export default class IconPicker extends Modal {
 	static openSingle(plugin: IconicPlugin, item: Item, callback: IconPickerCallback): void {
 		const titleLabel = STRINGS.iconPicker.changeIcon;
 		const idLabel = item.name;
-		
+
 		let categoryLabel;
 		switch (item.category) {
 			case 'app': categoryLabel = STRINGS.categories.appItem; break;
@@ -134,13 +134,13 @@ export default class IconPicker extends Modal {
 	static openMulti(plugin: IconicPlugin, items: Item[], multiCallback: MultiIconPickerCallback): void {
 		const titleLabel = STRINGS.iconPicker.changeIcons.replace('{#}', items.length.toString());
 		const idLabel = items.map(item => item.name).join(', ');
-		
-		const category = items.some(item => item.category !== items[0].category) ? undefined : items[0].category;
-		const icon = items.some(item => item.icon !== items[0].icon) ? undefined : items[0].icon;
-		const color = items.some(item => item.color !== items[0].color) ? undefined : items[0].color;
-		
+
+		const everyCategory = items.every(item => item.category === items[0].category) ? items[0].category : undefined;
+		const everyIcon = items.every(item => item.icon === items[0].icon) ? items[0].icon : undefined;
+		const everyColor = items.every(item => item.color === items[0].color) ? items[0].color : undefined;
+
 		let categoryLabel;
-		switch (category) {
+		switch (everyCategory) {
 			case 'app': categoryLabel = STRINGS.categories.appItems; break;
 			case 'tab': categoryLabel = STRINGS.categories.tabs; break;
 			case 'file': categoryLabel = STRINGS.categories.files; break;
@@ -150,7 +150,7 @@ export default class IconPicker extends Modal {
 			case 'ribbon': categoryLabel = STRINGS.categories.ribbonItems; break;
 			default: categoryLabel = STRINGS.categories.items; break;
 		}
-		new IconPicker(plugin, titleLabel, categoryLabel, idLabel, icon, color, null, multiCallback).open();
+		new IconPicker(plugin, titleLabel, categoryLabel, idLabel, everyIcon, everyColor, null, multiCallback).open();
 	}
 
 	/**
