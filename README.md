@@ -1,10 +1,10 @@
 # Iconic
 
-A plugin for iconophiles, designed to blend seamlessly into vanilla Obsidian.
+A plugin for iconophiles, designed to blend seamlessly with vanilla Obsidian.
 
 Click almost any icon on a tab, list, or ribbon to swap in one of the 1,300+ icons included in the app, or one of the 1,900+ emojis that your device can display.
 
-![Examples](examples.webp)
+![Banner](banner.webp)
 
 > ⤿ Themes: [Obsidian gruvbox](https://github.com/insanum/obsidian_gruvbox), [Catppuccin](https://github.com/catppuccin/obsidian), [Everforest Enchanted](https://github.com/FireIsGood/obsidian-everforest-enchanted)
 
@@ -14,13 +14,13 @@ Most of the menus are currently machine-translated, but if you can supply more a
 ## Supported items
 
 - Tabs
-- Files
-- Bookmarks
+- Files & Folders
+- Bookmarks & Groups
 - Properties
 - Ribbon commands
 - Sidebar toggles
 - Help & Settings buttons
-- (Tablets) Pin sidebar buttons
+- (Tablets) Pin buttons
 
 ## How to use
 
@@ -34,10 +34,10 @@ You can choose one of nine basic colors per icon. These colors follow the CSS th
 
 ## How is this plugin different from [Iconize](https://github.com/FlorianWoelki/obsidian-iconize)?
 
-Both plugins can add icons to files, bookmarks, and file tabs. *Iconic* can also:
+Both plugins can add icons to files, folders, and bookmarks. *Iconic* can also:
 
 - Set icons for plugin tabs, properties, the ribbon, and some other UI buttons
-- Make icons clickable
+- Edit icons by clicking them
 - Change icons & colors in the same dialog
 - Dynamically change colors with the theme
 
