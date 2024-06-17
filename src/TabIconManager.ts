@@ -56,8 +56,11 @@ export default class TabIconManager extends IconManager {
 			} else {
 				this.refreshIcon(tab, iconEl);
 			}
-			
-			this.setEventListener(tabEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
+
+			// Set menu listener for tabs not handled by workspace.on('file-menu')
+			if (!tab.isFile || !tabEl.hasClass('is-active')) {
+				this.setEventListener(tabEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
+			}
 
 			if (Platform.isMobile) {
 				// @ts-expect-error (Private API)
