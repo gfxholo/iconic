@@ -43,6 +43,7 @@ export interface FileItem extends Item {
 	items: FileItem[] | null;
 }
 export interface BookmarkItem extends Item {
+	isFile: boolean;
 	items: BookmarkItem[] | null;
 }
 export interface PropertyItem extends Item {
@@ -70,6 +71,7 @@ interface IconicSettings {
 	appIcons: { [appItemId: string]: { icon?: string, color?: string } };
 	tabIcons: { [tabId: string]: { icon?: string, color?: string } };
 	fileIcons: { [fileId: string]: { icon?: string, color?: string } };
+	groupIcons: { [groupId: string]: { icon?: string, color?: string } };
 	propertyIcons: { [propId: string]: { icon?: string, color?: string } };
 	ribbonIcons: { [ribbonItemId: string]: { icon?: string, color?: string } };
 }
@@ -89,6 +91,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	appIcons: {},
 	tabIcons: {},
 	fileIcons: {},
+	groupIcons: {},
 	propertyIcons: {},
 	ribbonIcons: {},
 }
@@ -429,20 +432,41 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
-	 * Get array of bookF definitions.
+	 * Get array of bookmark definitions.
 	 */
 	getBookmarkItems(unloading?: boolean): BookmarkItem[] {
+		function flattenBookmarks(bmarkBases: any[]): any[] {
+			const flatArray = [];
+			for (const bmarkBase of bmarkBases) {
+				flatArray.push(bmarkBase);
+				if (bmarkBase.items) flatArray.concat(flattenBookmarks(bmarkBase.items));
+			}
+			return flatArray;
+		}
 		// @ts-expect-error (Private API)
-		const bmarkBases: any[] = this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? [];
+		const bmarkBases: any[] = flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
 		return bmarkBases.map(bmark => this.defineBookmarkItem(bmark, unloading));
 	}
 
 	/**
 	 * Get bookmark definition.
 	 */
-	getBookmarkItem(bmarkId: string, unloading?: boolean): BookmarkItem {
+	getBookmarkItem(bmarkId: string, isFile: boolean, unloading?: boolean): BookmarkItem {
+		function findBookmark(bmarkBases: any[]): any {
+			for (const bmarkBase of bmarkBases) {
+				if (isFile) {
+					if (bmarkBase.path === bmarkId) return bmarkBase;
+				} else {
+					if (bmarkBase.type === 'group' && bmarkBase.ctime === bmarkId) return bmarkBase;
+				}
+				if (bmarkBase.items) {
+					const childBase = findBookmark(bmarkBase.items);
+					if (childBase) return childBase;
+				};
+			}
+		}
 		// @ts-expect-error (Private API)
-		const bmarkBase = this.app.internalPlugins?.plugins?.bookmarks?.instance?.bookmarkLookup?.[bmarkId];
+		const bmarkBase = findBookmark(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []) ?? {};
 		return this.defineBookmarkItem(bmarkBase, unloading);
 	}
 
@@ -450,7 +474,16 @@ export default class IconicPlugin extends Plugin {
 	 * Create bookmark definition.
 	 */
 	private defineBookmarkItem(bmarkBase: any, unloading?: boolean): BookmarkItem {
-		const bmarkIcon = this.settings.fileIcons[bmarkBase.path] ?? {};
+		let id, name, bmarkIcon;
+		if (bmarkBase.type === 'file' || bmarkBase.type === 'folder') {
+			id = bmarkBase.path;
+			name = bmarkBase.path?.replace(/\.md$/, '');
+			bmarkIcon = this.settings.fileIcons[id] ?? {};
+		} else if (bmarkBase.type === 'group') {
+			id = bmarkBase.ctime;
+			name = bmarkBase.title;
+			bmarkIcon = this.settings.groupIcons[id] ?? {};
+		}
 		let iconDefault = 'lucide-file';
 		if (bmarkBase.subpath) {
 			iconDefault = 'lucide-heading';
@@ -466,12 +499,13 @@ export default class IconicPlugin extends Plugin {
 			}
 		}
 		return {
-			id: bmarkBase.path,
-			name: bmarkBase.path?.replace(/\.md$/, '') ?? null,
+			id: id,
+			name: name ?? null,
 			category: bmarkBase.type ?? 'file',
 			iconDefault: iconDefault,
-			icon: unloading ? null : bmarkIcon.icon ?? null,
-			color: unloading ? null : bmarkIcon.color ?? null,
+			icon: unloading ? null : bmarkIcon?.icon ?? null,
+			color: unloading ? null : bmarkIcon?.color ?? null,
+			isFile: bmarkBase.type === 'file' || bmarkBase.type === 'folder',
 			items: bmarkBase.items?.map((bmark: any) => this.defineBookmarkItem(bmark, unloading)) ?? null,
 		}
 	}
@@ -599,7 +633,11 @@ export default class IconicPlugin extends Plugin {
 	 * Save bookmark icon changes to settings.
 	 */
 	saveBookmarkIcon(bmark: BookmarkItem, icon: string | null, color: string | null): void {
-		this.updateIconSetting(this.settings.fileIcons, bmark.id, icon, color);
+		if (bmark.category === 'file' || bmark.category === 'folder') {
+			this.updateIconSetting(this.settings.fileIcons, bmark.id, icon, color);
+		} else if (bmark.category === 'group') {
+			this.updateIconSetting(this.settings.groupIcons, bmark.id, icon, color);
+		}
 		this.saveSettings();
 	}
 
@@ -612,7 +650,11 @@ export default class IconicPlugin extends Plugin {
 		for (const bmark of bmarks) {
 			if (icon !== undefined) bmark.icon = icon;
 			if (color !== undefined) bmark.color = color;
-			this.updateIconSetting(this.settings.fileIcons, bmark.id, bmark.icon, bmark.color);
+			if (bmark.category === 'file' || bmark.category === 'folder') {
+				this.updateIconSetting(this.settings.fileIcons, bmark.id, bmark.icon, bmark.color);
+			} else if (bmark.category === 'group') {
+				this.updateIconSetting(this.settings.groupIcons, bmark.id, bmark.icon, bmark.color);
+			}
 		}
 		this.saveSettings();
 	}
@@ -672,12 +714,13 @@ export default class IconicPlugin extends Plugin {
 
 	/**
 	 * Save settings to storage.
+	 * Item IDs are sorted for human-readability.
 	 */
 	async saveSettings(): Promise<void> {
-		// Sort item IDs for more human-readable JSON
 		this.settings.appIcons = Object.fromEntries(Object.entries(this.settings.appIcons).sort());
 		this.settings.tabIcons = Object.fromEntries(Object.entries(this.settings.tabIcons).sort());
 		this.settings.fileIcons = Object.fromEntries(Object.entries(this.settings.fileIcons).sort());
+		this.settings.groupIcons = Object.fromEntries(Object.entries(this.settings.groupIcons).sort());
 		this.settings.propertyIcons = Object.fromEntries(Object.entries(this.settings.propertyIcons).sort());
 		this.settings.ribbonIcons = Object.fromEntries(Object.entries(this.settings.ribbonIcons).sort());
 		await this.saveData(this.settings);

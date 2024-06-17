@@ -8,7 +8,7 @@ import IconPicker from './IconPicker';
  */
 export default class BookmarkIconManager extends IconManager {
 	private containerEl: HTMLElement;
-	private readonly selectionLookup = new Map<HTMLElement, string>();
+	private readonly selectionLookup = new Map<HTMLElement, BookmarkItem>();
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
@@ -38,8 +38,23 @@ export default class BookmarkIconManager extends IconManager {
 			this.stopMutationObserver(this.containerEl);
 		}
 		this.containerEl = leaf.view.containerEl.find(':scope > .view-content > div');
-		if (this.containerEl) this.setMutationObserver(this.containerEl, { subtree: true, childList: true }, mutations => {
+		if (this.containerEl) this.setMutationObserver(this.containerEl, {
+			subtree: true,
+			childList: true,
+			attributeFilter: ['class'],
+			attributeOldValue: true
+		}, mutations => {
 			for (const mutation of mutations) {
+				// Refresh when bookmarks are renamed
+				if (mutation.attributeName === 'class'
+					&& mutation.target instanceof HTMLElement
+					&& mutation.oldValue?.includes('is-being-renamed')
+					&& !mutation.target.hasClass('is-being-renamed')
+				) {
+					this.refreshIcons();
+					return;
+				}
+				// Refresh when bookmarks are added or moved
 				for (const addedNode of mutation.addedNodes) {
 					if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
 						this.refreshIcons();
@@ -73,7 +88,7 @@ export default class BookmarkIconManager extends IconManager {
 			const bmark = bmarks[itemEls.indexOf(itemEl)]
 			if (!bmark) continue;
 			const selfEl = itemEl.find(':scope > .tree-item-self');
-			if (selfEl) this.selectionLookup.set(selfEl, bmark.id);
+			if (selfEl) this.selectionLookup.set(selfEl, bmark);
 
 			if (bmark.items) {
 				if (!itemEl.hasClass('is-collapsed')) {
@@ -90,36 +105,38 @@ export default class BookmarkIconManager extends IconManager {
 						}
 					}
 				});
-
-				continue;
 			}
 
 			const iconEl = itemEl.find(':scope > .tree-item-self > .tree-item-icon');
-			if (itemEl) this.refreshIcon(bmark, iconEl, event => {
-				IconPicker.openSingle(this.plugin, bmark, (newIcon, newColor) => {
-					this.plugin.saveBookmarkIcon(bmark, newIcon, newColor);
-					this.refreshIcons();
-					this.plugin.tabIconManager?.refreshIcons();
-					this.plugin.fileIconManager?.refreshIcons();
+			if (iconEl.hasClass('collapse-icon') && !bmark.icon) {
+				this.refreshIcon(bmark, iconEl); // Skip click listener if icon will be a collapse arrow
+			} else {
+				this.refreshIcon(bmark, iconEl, event => {
+					IconPicker.openSingle(this.plugin, bmark, (newIcon, newColor) => {
+						this.plugin.saveBookmarkIcon(bmark, newIcon, newColor);
+						this.refreshIcons();
+						this.plugin.tabIconManager?.refreshIcons();
+						this.plugin.fileIconManager?.refreshIcons();
+					});
+					event.stopPropagation();
 				});
-				event.stopPropagation();
-			});
+			}
 
-			this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(bmark.id), { capture: true });
+			this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(bmark.id, bmark.isFile), { capture: true });
 		};
 	}
 
 	/**
 	 * When user context-clicks a bookmark, add custom items to the menu.
 	 */
-	private async onContextMenu(clickedBmarkId: string): Promise<void> {
+	private async onContextMenu(clickedBmarkId: string, isFile: boolean): Promise<void> {
 		this.plugin.menuManager.close();
-		const clickedBmark: BookmarkItem = this.plugin.getBookmarkItem(clickedBmarkId);
+		const clickedBmark: BookmarkItem = this.plugin.getBookmarkItem(clickedBmarkId, isFile);
 		const selectedBmarks: BookmarkItem[] = [];
 
-		for (const [selectableEl, bmarkId] of this.selectionLookup) {
+		for (const [selectableEl, bmark] of this.selectionLookup) {
 			if (selectableEl.hasClass('is-selected')) {
-				selectedBmarks.push(this.plugin.getBookmarkItem(bmarkId));
+				selectedBmarks.push(this.plugin.getBookmarkItem(bmark.id, bmark.isFile));
 			}
 		}
 
