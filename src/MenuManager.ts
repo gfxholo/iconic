@@ -42,28 +42,30 @@ export default class MenuManager {
 	}
 
 	/**
-	 * Add a menu item between two existing sections.
+	 * Add a menu item after the given sections, prioritized by array order.
 	 */
-	addItemBetween(preSection: string | null, postSection: string | null, callback: (item: MenuItem) => any): this {
+	addItemAfter(preSections: string | string[], callback: (item: MenuItem) => any): this {
 		if (this.menu) {
 			let item: MenuItem;
-			this.menu.addItem(callbackItem => {
-				item = callbackItem;
-				callback(callbackItem);
-			});
-			if (preSection || postSection) {
-				// @ts-expect-error (Private API)
-				const section: string = item.section;
-				// @ts-expect-error (Private API)
-				const sections: string[] = this.menu.sections ?? [];
-				const lastIndex = sections.length - 1;
-				const preIndex = preSection ? sections.lastIndexOf(preSection) : lastIndex;
-				const postIndex = postSection ? sections.indexOf(postSection) : lastIndex;
-				sections.remove(section);
-				sections.splice(Math.max(preIndex, postIndex), 0, section);
+			this.menu.addItem(addedItem => { item = addedItem, callback(addedItem) });
+
+			// @ts-expect-error (Private API)
+			const section: string = item.section;
+			// @ts-expect-error (Private API)
+			const sections: string[] = this.menu.sections ?? [];
+			let index = 0;
+
+			if (typeof preSections === 'string') preSections = [preSections];
+			for (const preSection of preSections) {
+				if (sections.includes(preSection)) {
+					index = sections.lastIndexOf(preSection) + 1;
+					break;
+				}
 			}
+			sections.remove(section);
+			sections.splice(index, 0, section);
 		} else {
-			this.queuedActions.push(() => this.addItemBetween(preSection, postSection, callback));
+			this.queuedActions.push(() => this.addItemAfter(preSections, callback));
 		}
 		return this;
 	}

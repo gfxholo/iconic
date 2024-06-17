@@ -100,7 +100,7 @@ export default class PropertyIconManager extends IconManager {
 		const changeTitle = selectedProps.length < 2
 			? STRINGS.menu.changeIcon
 			: STRINGS.menu.changeIcons.replace('{#}', selectedProps.length.toString());
-		this.plugin.menuManager.addItemBetween('open', 'action', item => item
+		this.plugin.menuManager.addItemAfter(['action.changeType', 'action'], item => item
 			.setTitle(changeTitle)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')

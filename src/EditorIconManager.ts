@@ -135,7 +135,7 @@ export default class EditorIconManager extends IconManager {
 		const prop = this.plugin.getPropertyItem(propId);
 
 		// Change icon
-		this.plugin.menuManager.addItemBetween('action', 'clipboard', item => item
+		this.plugin.menuManager.addItemAfter(['action.changeType', 'action'], item => item
 			.setTitle(STRINGS.menu.changeIcon)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')

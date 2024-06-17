@@ -132,7 +132,7 @@ export default class BookmarkIconManager extends IconManager {
 		const changeTitle = selectedBmarks.length < 2
 			? STRINGS.menu.changeIcon
 			: STRINGS.menu.changeIcons.replace('{#}', selectedBmarks.length.toString());
-		this.plugin.menuManager.addItemBetween('open', 'action', item => item
+		this.plugin.menuManager.addItemAfter('open', item => item
 			.setTitle(changeTitle)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')

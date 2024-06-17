@@ -117,7 +117,7 @@ export default class FileIconManager extends IconManager {
 		const changeTitle = files.length === 1
 			? STRINGS.menu.changeIcon
 			: STRINGS.menu.changeIcons.replace('{#}', files.length.toString());
-		this.plugin.menuManager.addItemBetween('open', 'action', item => item
+		this.plugin.menuManager.addItemAfter(['action-primary', 'pane', 'close', 'open'], item => item
 			.setTitle(changeTitle)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')

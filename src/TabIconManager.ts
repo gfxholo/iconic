@@ -101,7 +101,7 @@ export default class TabIconManager extends IconManager {
 	 */
 	private onTabContextMenu(tab: TabItem): void {
 		// Change icon
-		this.plugin.menuManager.addItemBetween('close', 'pane', item => item
+		this.plugin.menuManager.addItemAfter('close', item => item
 			.setTitle(STRINGS.menu.changeIcon)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')
@@ -130,7 +130,7 @@ export default class TabIconManager extends IconManager {
 	 */
 	private onFileContextMenu(file: FileItem): void {
 		// Change icon
-		this.plugin.menuManager.addItemBetween('close', 'pane', item => item
+		this.plugin.menuManager.addItemAfter('close', item => item
 			.setTitle(STRINGS.menu.changeIcon)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')
