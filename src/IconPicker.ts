@@ -156,7 +156,7 @@ export default class IconPicker extends Modal {
 	/**
 	 * @override
 	 */
-	async onOpen(): Promise<void> {
+	onOpen(): void {
 		this.containerEl.addClass('mod-confirmation');
 		this.modalEl.addClass('iconic-modal');
 		this.setTitle(this.titleLabel);
