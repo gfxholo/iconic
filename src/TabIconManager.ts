@@ -31,10 +31,9 @@ export default class TabIconManager extends IconManager {
 			if (!tabEl || !iconEl) continue;
 
 			if (tab.isRoot && this.plugin.enabledOnPlatform('clickableIcons')) {
-				let onClick: (event: MouseEvent) => any;
 				if (tab.isFile) {
 					const file = this.plugin.getFileItem(tab.id);
-					onClick = event => {
+					this.refreshIcon(tab, iconEl, event => {
 						IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
 							this.plugin.saveFileIcon(file, newIcon, newColor);
 							this.refreshIcons();
@@ -42,17 +41,16 @@ export default class TabIconManager extends IconManager {
 							this.plugin.bookmarkIconManager?.refreshIcons();
 						});
 						event.stopPropagation();
-					};
+					});
 				} else {
-					onClick = event => {
+					this.refreshIcon(tab, iconEl, event => {
 						IconPicker.openSingle(this.plugin, tab, (newIcon, newColor) => {
 							this.plugin.saveTabIcon(tab, newIcon, newColor);
 							this.refreshIcons();
 						});
 						event.stopPropagation();
-					}
+					});
 				}
-				this.refreshIcon(tab, iconEl, onClick);
 			} else {
 				this.refreshIcon(tab, iconEl);
 			}
