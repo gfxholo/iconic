@@ -250,9 +250,9 @@ export default class IconicPlugin extends Plugin {
 	 * Refresh any global classes on document body.
 	 */
 	refreshBodyClasses(): void {
-		activeDocument.body.toggleClass('iconic-bigger-icons', this.enabledOnPlatform('biggerIcons'));
-		activeDocument.body.toggleClass('iconic-clickable-icons', this.enabledOnPlatform('clickableIcons'));
-		activeDocument.body.toggleClass('iconic-bigger-search-results', this.enabledOnPlatform('biggerSearchResults'));
+		activeDocument.body.toggleClass('iconic-bigger-icons', this.isSettingEnabled('biggerIcons'));
+		activeDocument.body.toggleClass('iconic-clickable-icons', this.isSettingEnabled('clickableIcons'));
+		activeDocument.body.toggleClass('iconic-bigger-search-results', this.isSettingEnabled('biggerSearchResults'));
 		activeDocument.body.toggleClass('iconic-uncolor-hover', this.settings.uncolorHover);
 		activeDocument.body.toggleClass('iconic-uncolor-select', this.settings.uncolorSelect);
 	}
@@ -260,7 +260,7 @@ export default class IconicPlugin extends Plugin {
 	/**
 	 * Check whether setting is enabled for the current platform.
 	 */
-	enabledOnPlatform(setting: keyof IconicSettings): boolean {
+	isSettingEnabled(setting: keyof IconicSettings): boolean {
 		const state = this.settings[setting];
 		return state === 'on' || Platform.isDesktop && state === 'desktop' || Platform.isMobile && state === 'mobile';
 	}

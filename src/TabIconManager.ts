@@ -30,7 +30,7 @@ export default class TabIconManager extends IconManager {
 			const iconEl = tab.iconEl;
 			if (!tabEl || !iconEl) continue;
 
-			if (tab.isRoot && this.plugin.enabledOnPlatform('clickableIcons')) {
+			if (tab.isRoot && this.plugin.isSettingEnabled('clickableIcons')) {
 				if (tab.isFile) {
 					const file = this.plugin.getFileItem(tab.id);
 					this.refreshIcon(tab, iconEl, event => {

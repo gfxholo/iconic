@@ -89,7 +89,7 @@ export default class FileIconManager extends IconManager {
 
 			if (iconEl.hasClass('collapse-icon') && !file.icon) {
 				this.refreshIcon(file, iconEl); // Skip click listener if icon will be a collapse arrow
-			} else if (this.plugin.enabledOnPlatform('clickableIcons')) {
+			} else if (this.plugin.isSettingEnabled('clickableIcons')) {
 				this.refreshIcon(file, iconEl, event => {
 					IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
 						this.plugin.saveFileIcon(file, newIcon, newColor);

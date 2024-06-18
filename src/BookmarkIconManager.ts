@@ -110,7 +110,7 @@ export default class BookmarkIconManager extends IconManager {
 
 			if (iconEl.hasClass('collapse-icon') && !bmark.icon) {
 				this.refreshIcon(bmark, iconEl); // Skip click listener if icon will be a collapse arrow
-			} else if (this.plugin.enabledOnPlatform('clickableIcons')) {
+			} else if (this.plugin.isSettingEnabled('clickableIcons')) {
 				this.refreshIcon(bmark, iconEl, event => {
 					IconPicker.openSingle(this.plugin, bmark, (newIcon, newColor) => {
 						this.plugin.saveBookmarkIcon(bmark, newIcon, newColor);

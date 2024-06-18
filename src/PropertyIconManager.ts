@@ -62,7 +62,7 @@ export default class PropertyIconManager extends IconManager {
 			const iconEl = itemEl.find('.tree-item-self > .tree-item-icon');
 			if (!iconEl) continue;
 
-			if (this.plugin.enabledOnPlatform('clickableIcons')) {
+			if (this.plugin.isSettingEnabled('clickableIcons')) {
 				this.refreshIcon(prop, iconEl, event => {
 					IconPicker.openSingle(this.plugin, prop, (newIcon, newColor) => {
 						this.plugin.savePropertyIcon(prop, newIcon, newColor);

@@ -66,7 +66,7 @@ export default class EditorIconManager extends IconManager {
 				const prop = propEl.dataset.propertyKey
 					? this.plugin.getPropertyItem(propEl.dataset.propertyKey) : null;
 				if (!prop) return;
-				if (this.plugin.enabledOnPlatform('clickableIcons')) {
+				if (this.plugin.isSettingEnabled('clickableIcons')) {
 					IconPicker.openSingle(this.plugin, prop, (newIcon, newColor) => {
 						this.plugin.savePropertyIcon(prop, newIcon, newColor);
 						this.refreshIcons();
