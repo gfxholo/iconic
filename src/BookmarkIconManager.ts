@@ -122,7 +122,7 @@ export default class BookmarkIconManager extends IconManager {
 				});
 			}
 
-			this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(bmark.id, bmark.isFile), { capture: true });
+			this.setEventListener(selfEl, 'contextmenu', () => this.onContextMenu(bmark.id, bmark.isFile), { capture: true });
 		};
 	}
 
