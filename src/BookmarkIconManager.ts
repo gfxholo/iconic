@@ -87,8 +87,6 @@ export default class BookmarkIconManager extends IconManager {
 
 			const bmark = bmarks[itemEls.indexOf(itemEl)]
 			if (!bmark) continue;
-			const selfEl = itemEl.find(':scope > .tree-item-self');
-			if (selfEl) this.selectionLookup.set(selfEl, bmark);
 
 			if (bmark.items) {
 				if (!itemEl.hasClass('is-collapsed')) {
@@ -108,6 +106,8 @@ export default class BookmarkIconManager extends IconManager {
 			}
 
 			const iconEl = itemEl.find(':scope > .tree-item-self > .tree-item-icon');
+			if (!iconEl) continue;
+
 			if (iconEl.hasClass('collapse-icon') && !bmark.icon) {
 				this.refreshIcon(bmark, iconEl); // Skip click listener if icon will be a collapse arrow
 			} else if (this.plugin.enabledOnPlatform('clickableIcons')) {
@@ -124,7 +124,11 @@ export default class BookmarkIconManager extends IconManager {
 				this.refreshIcon(bmark, iconEl);
 			}
 
-			this.setEventListener(selfEl, 'contextmenu', () => this.onContextMenu(bmark.id, bmark.isFile), { capture: true });
+			const selfEl = itemEl.find(':scope > .tree-item-self');
+			if (selfEl) {
+				this.selectionLookup.set(selfEl, bmark);
+				this.setEventListener(selfEl, 'contextmenu', () => this.onContextMenu(bmark.id, bmark.isFile), { capture: true });
+			}
 		};
 	}
 
