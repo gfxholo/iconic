@@ -1,6 +1,6 @@
 {
 	"name": "iconic",
-	"version": "1.0.0",
+	"version": "1.0.4",
 	"description": "Customize your app icons directly from the UI, including tabs, files, bookmarks, properties, and ribbon commands.",
 	"main": "main.js",
 	"scripts": {
