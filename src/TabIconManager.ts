@@ -88,8 +88,7 @@ export default class TabIconManager extends IconManager {
 		this.plugin.menuManager.close();
 
 		if (isFile) {
-			const file = this.plugin.getFileItem(tabId);
-			if (file) this.onFileContextMenu(file)
+			this.onFileContextMenu(this.plugin.getFileItem(tabId));
 		} else {
 			const tab = this.plugin.getTabItem(tabId);
 			if (tab) this.onTabContextMenu(tab);
