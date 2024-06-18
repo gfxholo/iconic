@@ -30,7 +30,7 @@ export default class TabIconManager extends IconManager {
 			const iconEl = tab.iconEl;
 			if (!tabEl || !iconEl) continue;
 
-			if (tab.isRoot) {
+			if (tab.isRoot && this.plugin.enabledOnPlatform('clickableIcons')) {
 				let onClick: (event: MouseEvent) => any;
 				if (tab.isFile) {
 					const file = this.plugin.getFileItem(tab.id);

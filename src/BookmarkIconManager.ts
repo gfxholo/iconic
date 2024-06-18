@@ -110,7 +110,7 @@ export default class BookmarkIconManager extends IconManager {
 			const iconEl = itemEl.find(':scope > .tree-item-self > .tree-item-icon');
 			if (iconEl.hasClass('collapse-icon') && !bmark.icon) {
 				this.refreshIcon(bmark, iconEl); // Skip click listener if icon will be a collapse arrow
-			} else {
+			} else if (this.plugin.enabledOnPlatform('clickableIcons')) {
 				this.refreshIcon(bmark, iconEl, event => {
 					IconPicker.openSingle(this.plugin, bmark, (newIcon, newColor) => {
 						this.plugin.saveBookmarkIcon(bmark, newIcon, newColor);
@@ -120,6 +120,8 @@ export default class BookmarkIconManager extends IconManager {
 					});
 					event.stopPropagation();
 				});
+			} else {
+				this.refreshIcon(bmark, iconEl);
 			}
 
 			this.setEventListener(selfEl, 'contextmenu', () => this.onContextMenu(bmark.id, bmark.isFile), { capture: true });

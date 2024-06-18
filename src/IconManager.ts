@@ -64,7 +64,7 @@ export default abstract class IconManager {
 			}
 		}
 
-		if (onClick && this.plugin.enabledOnPlatform('clickableIcons')) {
+		if (onClick) {
 			this.setEventListener(iconEl, 'click', onClick, { capture: true });
 		} else {
 			this.stopEventListener(iconEl, 'click');

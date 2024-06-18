@@ -60,7 +60,10 @@ export default class PropertyIconManager extends IconManager {
 			if (!prop) continue;
 
 			const iconEl = itemEl.find('.tree-item-self > .tree-item-icon');
-			if (iconEl) this.refreshIcon(prop, iconEl, event => {
+			if (!iconEl) continue;
+
+			if (this.plugin.enabledOnPlatform('clickableIcons')) {
+				this.refreshIcon(prop, iconEl, event => {
 				IconPicker.openSingle(this.plugin, prop, (newIcon, newColor) => {
 					this.plugin.savePropertyIcon(prop, newIcon, newColor);
 					this.refreshIcons();
@@ -68,6 +71,9 @@ export default class PropertyIconManager extends IconManager {
 				});
 				event.stopPropagation();
 			});
+			} else {
+				this.refreshIcon(prop, iconEl);
+			}
 
 			this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(prop.id), { capture: true });
 		}

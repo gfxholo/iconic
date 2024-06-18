@@ -89,7 +89,7 @@ export default class FileIconManager extends IconManager {
 
 			if (iconEl.hasClass('collapse-icon') && !file.icon) {
 				this.refreshIcon(file, iconEl); // Skip click listener if icon will be a collapse arrow
-			} else {
+			} else if (this.plugin.enabledOnPlatform('clickableIcons')) {
 				this.refreshIcon(file, iconEl, event => {
 					IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
 						this.plugin.saveFileIcon(file, newIcon, newColor);
@@ -99,6 +99,8 @@ export default class FileIconManager extends IconManager {
 					});
 					event.stopPropagation();
 				});
+			} else {
+				this.refreshIcon(file, iconEl);
 			}
 		}
 	}
