@@ -481,10 +481,9 @@ export default class IconPicker extends Modal {
 				iconEl.addClass('iconic-search-result');
 				iconEl.tabIndex = 0;
 
-				this.manager.refreshIcon({
-					icon: icon,
-					color: this.color ?? null
-				}, iconEl, () => this.closeAndSave(icon, this.color));
+				this.manager.refreshIcon({ icon: icon, color: this.color ?? null }, iconEl, () => {
+					this.closeAndSave(icon, this.color)
+				});
 
 				this.manager.setEventListener(iconEl, 'keydown', event => {
 					if (event.key === 'Enter' || event.key === ' ') {
