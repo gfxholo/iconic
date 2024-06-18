@@ -64,13 +64,13 @@ export default class PropertyIconManager extends IconManager {
 
 			if (this.plugin.enabledOnPlatform('clickableIcons')) {
 				this.refreshIcon(prop, iconEl, event => {
-				IconPicker.openSingle(this.plugin, prop, (newIcon, newColor) => {
-					this.plugin.savePropertyIcon(prop, newIcon, newColor);
-					this.refreshIcons();
-					this.plugin.editorIconManager?.refreshIcons();
+					IconPicker.openSingle(this.plugin, prop, (newIcon, newColor) => {
+						this.plugin.savePropertyIcon(prop, newIcon, newColor);
+						this.refreshIcons();
+						this.plugin.editorIconManager?.refreshIcons();
+					});
+					event.stopPropagation();
 				});
-				event.stopPropagation();
-			});
 			} else {
 				this.refreshIcon(prop, iconEl);
 			}
