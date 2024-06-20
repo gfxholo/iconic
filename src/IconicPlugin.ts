@@ -715,6 +715,23 @@ export default class IconicPlugin extends Plugin {
 	 */
 	async saveSettings(): Promise<void> {
 		if (!this.settings.rememberDeletedItems) {
+			function flattenGroupIds(bmarkBases: any[]): string[] {
+				const flatArray = [];
+				for (const bmarkBase of bmarkBases) {
+					if (bmarkBase.type === 'group' && bmarkBase.items) {
+						flatArray.push(bmarkBase.ctime.toString());
+						flatArray.concat(flattenGroupIds(bmarkBase.items));
+					}
+				}
+				return flatArray;
+			}
+			// @ts-expect-error (Private API)
+			const groupIds: any[] = flattenGroupIds(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
+			for (const groupId in this.settings.groupIcons) {
+				if (!groupIds.includes(groupId)) {
+					delete this.settings.groupIcons[groupId];
+				}
+			}
 			// @ts-expect-error (Private API)
 			const propIds = Object.keys(this.app.metadataTypeManager?.properties ?? {});
 			for (const propId in this.settings.propertyIcons) {
