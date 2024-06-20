@@ -674,9 +674,6 @@ export default class IconicPlugin extends Plugin {
 	 */
 	savePropertyIcons(props: PropertyItem[], icon: string | null | undefined, color: string | null | undefined): void {
 		for (const prop of props) {
-			this.updateIconSetting(this.settings.propertyIcons, prop.id, prop.icon, prop.color);
-		}
-		for (const prop of props) {
 			if (icon !== undefined) prop.icon = icon;
 			if (color !== undefined) prop.color = color;
 			this.updateIconSetting(this.settings.propertyIcons, prop.id, prop.icon, prop.color);
