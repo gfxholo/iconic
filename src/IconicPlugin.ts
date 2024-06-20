@@ -726,7 +726,14 @@ export default class IconicPlugin extends Plugin {
 				return flatArray;
 			}
 			// @ts-expect-error (Private API)
-			const groupIds: any[] = flattenGroupIds(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
+			const fileIds: string[] = Object.keys(this.app.vault.fileMap) ?? [];
+			for (const fileId in this.settings.fileIcons) {
+				if (!fileIds.includes(fileId)) {
+					delete this.settings.fileIcons[fileId];
+				}
+			}
+			// @ts-expect-error (Private API)
+			const groupIds: string[] = flattenGroupIds(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
 			for (const groupId in this.settings.groupIcons) {
 				if (!groupIds.includes(groupId)) {
 					delete this.settings.groupIcons[groupId];
