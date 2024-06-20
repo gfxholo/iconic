@@ -463,7 +463,7 @@ export default class IconicPlugin extends Plugin {
 				if (bmarkBase.items) {
 					const childBase = findBookmark(bmarkBase.items);
 					if (childBase) return childBase;
-				};
+				}
 			}
 		}
 		// @ts-expect-error (Private API)

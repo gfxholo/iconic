@@ -16,7 +16,7 @@ export default class PropertyIconManager extends IconManager {
 				return;
 			} else {
 				this.app.workspace.iterateAllLeaves(leaf => this.manageLeaf(leaf));
-			};
+			}
 		}));
 		this.app.workspace.iterateAllLeaves(leaf => this.manageLeaf(leaf));
 	}

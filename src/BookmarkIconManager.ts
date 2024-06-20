@@ -18,7 +18,7 @@ export default class BookmarkIconManager extends IconManager {
 				return;
 			} else {
 				this.app.workspace.iterateAllLeaves(leaf => this.manageLeaf(leaf));
-			};
+			}
 		}));
 		// @ts-expect-error (Private API)
 		if (this.app.plugins?.plugins?.['obsidian-icon-folder']) {
@@ -138,7 +138,7 @@ export default class BookmarkIconManager extends IconManager {
 					}
 				}, { capture: true });
 			}
-		};
+		}
 	}
 
 	/**
