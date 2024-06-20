@@ -726,24 +726,33 @@ export default class IconicPlugin extends Plugin {
 				return flatArray;
 			}
 			// @ts-expect-error (Private API)
-			const fileIds: string[] = Object.keys(this.app.vault.fileMap) ?? [];
-			for (const fileId in this.settings.fileIcons) {
-				if (!fileIds.includes(fileId)) {
-					delete this.settings.fileIcons[fileId];
+			if (this.app.vault.fileMap) {
+				// @ts-expect-error (Private API)
+				const fileIds: string[] = Object.keys(this.app.vault.fileMap);
+				for (const fileId in this.settings.fileIcons) {
+					if (!fileIds.includes(fileId)) {
+						delete this.settings.fileIcons[fileId];
+					}
 				}
 			}
 			// @ts-expect-error (Private API)
-			const groupIds: string[] = flattenGroupIds(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
-			for (const groupId in this.settings.groupIcons) {
-				if (!groupIds.includes(groupId)) {
-					delete this.settings.groupIcons[groupId];
+			if (this.app.internalPlugins?.plugins?.bookmarks?.instance?.items) {
+				// @ts-expect-error (Private API)
+				const groupIds: string[] = flattenGroupIds(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items);
+				for (const groupId in this.settings.groupIcons) {
+					if (!groupIds.includes(groupId)) {
+						delete this.settings.groupIcons[groupId];
+					}
 				}
 			}
 			// @ts-expect-error (Private API)
-			const propIds = Object.keys(this.app.metadataTypeManager?.properties ?? {});
-			for (const propId in this.settings.propertyIcons) {
-				if (!propIds.includes(propId)) {
-					delete this.settings.propertyIcons[propId];
+			if (this.app.metadataTypeManager?.properties) {
+				// @ts-expect-error (Private API)
+				const propIds = Object.keys(this.app.metadataTypeManager?.properties);
+				for (const propId in this.settings.propertyIcons) {
+					if (!propIds.includes(propId)) {
+						delete this.settings.propertyIcons[propId];
+					}
 				}
 			}
 		}
