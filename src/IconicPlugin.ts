@@ -710,10 +710,19 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
-	 * Save settings to storage.
+	 * Save settings to storage, pruning any deleted items if necessary.
 	 * Item IDs are sorted for human-readability.
 	 */
 	async saveSettings(): Promise<void> {
+		if (!this.settings.rememberDeletedItems) {
+			// @ts-expect-error (Private API)
+			const propIds = Object.keys(this.app.metadataTypeManager?.properties ?? {});
+			for (const propId in this.settings.propertyIcons) {
+				if (!propIds.includes(propId)) {
+					delete this.settings.propertyIcons[propId];
+				}
+			}
+		}
 		this.settings.appIcons = Object.fromEntries(Object.entries(this.settings.appIcons).sort());
 		this.settings.tabIcons = Object.fromEntries(Object.entries(this.settings.tabIcons).sort());
 		this.settings.fileIcons = Object.fromEntries(Object.entries(this.settings.fileIcons).sort());
