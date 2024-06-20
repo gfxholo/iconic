@@ -8,6 +8,7 @@ import IconPicker from './IconPicker';
  */
 export default class BookmarkIconManager extends IconManager {
 	private containerEl: HTMLElement;
+	private isTouchActive = false;
 	private readonly selectionLookup = new Map<HTMLElement, BookmarkItem>();
 
 	constructor(plugin: IconicPlugin) {
@@ -127,7 +128,15 @@ export default class BookmarkIconManager extends IconManager {
 			const selfEl = itemEl.find(':scope > .tree-item-self');
 			if (selfEl) {
 				this.selectionLookup.set(selfEl, bmark);
-				this.setEventListener(selfEl, 'contextmenu', () => this.onContextMenu(bmark.id, bmark.isFile), { capture: true });
+				this.setEventListener(selfEl, 'touchstart', () => this.isTouchActive = true);
+				this.setEventListener(selfEl, 'contextmenu', () => {
+					// Mobile fires this event twice on bookmarks, so skip the mid-touch event
+					if (this.isTouchActive) {
+						this.isTouchActive = false;
+					} else {
+						this.onContextMenu(bmark.id, bmark.isFile);
+					}
+				}, { capture: true });
 			}
 		};
 	}
