@@ -1,4 +1,4 @@
-import { Command, FileView, Platform, Plugin, WorkspaceLeaf, getIconIds } from 'obsidian';
+import { Command, FileView, Platform, Plugin, TAbstractFile, TFolder, WorkspaceLeaf, getIconIds } from 'obsidian';
 import IconicSettingTab from './IconicSettingTab';
 import AppIconManager from './AppIconManager';
 import TabIconManager from './TabIconManager';
@@ -389,45 +389,46 @@ export default class IconicPlugin extends Plugin {
 	 * Get array of file definitions.
 	 */
 	getFileItems(unloading?: boolean): FileItem[] {
-		// @ts-expect-error (Private API)
-		const fileBases = this.app.vault.fileMap ?? {};
-		return Object.values(fileBases).map(fileBase => this.defineFileItem(fileBase, unloading));
+		const tFiles = this.app.vault.getAllLoadedFiles();
+		const rootFolder = tFiles.find(tFile => tFile.path === '/');
+		if (rootFolder) tFiles.remove(rootFolder);
+		return tFiles.map(tFile => this.defineFileItem(tFile, tFile.path, unloading));
 	}
 
 	/**
 	 * Get file definition.
 	 */
 	getFileItem(fileId: string, unloading?: boolean): FileItem {
-		// @ts-expect-error (Private API)
-		const fileBase = this.app.vault.fileMap?.[fileId] ?? {};
-		return this.defineFileItem(fileBase, unloading);
+		const tFile = this.app.vault.getAbstractFileByPath(fileId);
+		return this.defineFileItem(tFile, fileId, unloading);
 	}
 
 	/**
 	 * Create file definition.
+	 * If file is null, the file ID is used as a reasonable fallback.
 	 */
-	private defineFileItem(fileBase: any, unloading?: boolean): FileItem {
-		const fileIcon = this.settings.fileIcons[fileBase.path] ?? {};
+	private defineFileItem(tFile: TAbstractFile | null, fileId: string, unloading?: boolean): FileItem {
+		const fileIcon = (tFile ? this.settings.fileIcons[tFile.path] : this.settings.fileIcons[fileId]) ?? {};
 		let iconDefault = null;
 		if (fileIcon.color || this.settings.showAllFileIcons) {
-			if (fileBase.path?.endsWith('.canvas')) {
+			if (tFile?.path.endsWith('.canvas')) {
 				iconDefault = 'lucide-layout-dashboard';
-			} else if (fileBase.path?.endsWith('.pdf')) {
+			} else if (tFile?.path.endsWith('.pdf')) {
 				iconDefault = 'lucide-file-text';
-			} else if (IMAGE_EXTENSIONS.some(ext => fileBase.path?.endsWith(ext))) {
+			} else if (IMAGE_EXTENSIONS.some(ext => tFile?.path.endsWith(ext))) {
 				iconDefault = 'lucide-image';
 			} else {
 				iconDefault = 'lucide-file';
 			}
 		}
 		return {
-			id: fileBase.path,
-			name: fileBase.path?.replace(/\.md$/, '') ?? null,
-			category: fileBase.children ? 'folder' : 'file',
+			id: tFile ? tFile.path : fileId,
+			name: (tFile ? tFile.path : fileId).replace(/\.md$/, ''),
+			category: tFile instanceof TFolder ? 'folder' : 'file',
 			iconDefault: unloading ? null : iconDefault,
 			icon: unloading ? null : fileIcon.icon ?? null,
 			color: unloading ? null : fileIcon.color ?? null,
-			items: fileBase.children?.map((file: any) => this.defineFileItem(file, unloading)) ?? null,
+			items: tFile instanceof TFolder ? tFile.children.map(tChild => this.defineFileItem(tChild, tChild.path, unloading)) : null,
 		}
 	}
 
@@ -715,6 +716,11 @@ export default class IconicPlugin extends Plugin {
 	 */
 	async saveSettings(): Promise<void> {
 		if (!this.settings.rememberDeletedItems) {
+			for (const fileId in this.settings.fileIcons) {
+				if (!this.app.vault.getAbstractFileByPath(fileId)) {
+					delete this.settings.fileIcons[fileId];
+				}
+			}
 			function flattenGroupIds(bmarkBases: any[]): string[] {
 				const flatArray = [];
 				for (const bmarkBase of bmarkBases) {
@@ -724,16 +730,6 @@ export default class IconicPlugin extends Plugin {
 					}
 				}
 				return flatArray;
-			}
-			// @ts-expect-error (Private API)
-			if (this.app.vault.fileMap) {
-				// @ts-expect-error (Private API)
-				const fileIds: string[] = Object.keys(this.app.vault.fileMap);
-				for (const fileId in this.settings.fileIcons) {
-					if (!fileIds.includes(fileId)) {
-						delete this.settings.fileIcons[fileId];
-					}
-				}
 			}
 			// @ts-expect-error (Private API)
 			if (this.app.internalPlugins?.plugins?.bookmarks?.instance?.items) {
