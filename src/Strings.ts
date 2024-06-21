@@ -157,7 +157,7 @@ export default class Strings {
 
 	/**
 	 * Replace default strings with localized strings.
-	 * Default string keys are always type-safe, even if the localized JSON is incomplete or broken.
+	 * Strings and their keys are always type-safe, even if the localized JSON is incomplete or broken.
 	 */
 	private static localizeDefaultStrings(defaultStrings: any, localizedStrings: any): void {
 		for (const [key, value] of Object.entries(localizedStrings)) {
@@ -165,7 +165,7 @@ export default class Strings {
 				if (typeof value === 'object') {
 					this.localizeDefaultStrings(defaultStrings[key], value);
 				}
-			} else {
+			} else if (typeof value === 'string') {
 				defaultStrings[key] = value;
 			}
 		}
