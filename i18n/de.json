@@ -126,7 +126,7 @@
 		},
 		"rememberDeletedItems": {
 			"name": "Symbole gelöschter Elemente merken",
-			"desc": "Behalten Sie Ihre Symbolauswahl bei, wenn Sie Elemente löschen, für den Fall, dass sie später wieder hinzugefügt werden."
+			"desc": "Alle benutzerdefinierten Symbole werden wieder angezeigt, wenn ihr Element wieder existiert."
 		}
 	}
 }

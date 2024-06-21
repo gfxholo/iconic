@@ -126,7 +126,7 @@
 		},
 		"rememberDeletedItems": {
 			"name": "Ingat ikon item yang dihapus",
-			"desc": "Simpan pilihan ikon Anda saat Anda menghapus item, untuk berjaga-jaga jika nanti ditambahkan lagi."
+			"desc": "Ikon khusus apa pun akan muncul kembali ketika itemnya ada lagi."
 		}
 	}
 }

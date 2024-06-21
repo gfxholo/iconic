@@ -128,7 +128,7 @@ export default class Strings {
 		},
 		rememberDeletedItems: {
 			name: 'Remember icons of deleted items',
-			desc: 'Keep your icon choices when you delete items, in case they get re-added later.',
+			desc: 'Any custom icons will reappear when their item exists again.',
 		},
 	};
 

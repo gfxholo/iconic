@@ -126,7 +126,7 @@
 		},
 		"rememberDeletedItems": {
 			"name": "Mémoriser les icônes des éléments supprimés",
-			"desc": "Conservez vos choix d'icônes lorsque vous supprimez des éléments, au cas où ils seraient ajoutés à nouveau plus tard."
+			"desc": "Toutes les icônes personnalisées réapparaîtront lorsque leur élément existera à nouveau."
 		}
 	}
 }
