@@ -131,9 +131,9 @@ export default class IconicPlugin extends Plugin {
 		this.registerEvent(this.app.workspace.on('css-change', () => this.refreshIconManagers()));
 
 		this.registerEvent(this.app.vault.on('rename', ({ path }, oldPath) => {
-			const file = this.settings.fileIcons[oldPath];
-			if (file) {
-				this.settings.fileIcons[path] = file;
+			const fileIcon = this.settings.fileIcons[oldPath];
+			if (fileIcon) {
+				this.settings.fileIcons[path] = fileIcon;
 				delete this.settings.fileIcons[oldPath];
 				this.saveSettings();
 				this.fileIconManager?.refreshIcons();
