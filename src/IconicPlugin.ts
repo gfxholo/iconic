@@ -16,6 +16,9 @@ export { EMOJIS };
 export { STRINGS };
 
 const IMAGE_EXTENSIONS = ['.bmp', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.avif'];
+const AUDIO_EXTENSIONS = ['.mp3', '.wav', '.m4a', '.3gp', '.flac', '.ogg', '.oga', '.opus'];
+const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogv', '.mov', '.mkv'];
+const ALL_EXTENSIONS = ['.md'].concat(IMAGE_EXTENSIONS).concat(AUDIO_EXTENSIONS).concat(VIDEO_EXTENSIONS).concat('.pdf');
 
 /**
  * Base interface for all icon objects.
@@ -70,7 +73,7 @@ interface IconicSettings {
 	rememberDeletedItems: boolean;
 	appIcons: { [appItemId: string]: { icon?: string, color?: string } };
 	tabIcons: { [tabId: string]: { icon?: string, color?: string } };
-	fileIcons: { [fileId: string]: { icon?: string, color?: string } };
+	fileIcons: { [fileId: string]: { icon?: string, color?: string, unsynced?: string[] } };
 	groupIcons: { [groupId: string]: { icon?: string, color?: string } };
 	propertyIcons: { [propId: string]: { icon?: string, color?: string } };
 	ribbonIcons: { [ribbonItemId: string]: { icon?: string, color?: string } };
@@ -695,7 +698,7 @@ export default class IconicPlugin extends Plugin {
 	 */
 	private updateIconSetting(settings: any, itemId: string, icon: string | null, color: string | null): void {
 		if (icon || color) {
-			settings[itemId] = {};
+			if (!settings[itemId]) settings[itemId] = {};
 			if (icon) settings[itemId].icon = icon;
 			if (color) settings[itemId].color = color;
 		} else {
@@ -711,13 +714,81 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
-	 * Save settings to storage, pruning any deleted items if necessary.
-	 * Item IDs are sorted for human-readability.
+	 * Flag any files excluded from Sync on this device.
+	 */
+	private updateUnsyncedFiles(): void {
+		// @ts-expect-error (Private API)
+		const appId = this.app.appId;
+		// @ts-expect-error (Private API)
+		const unsyncedFolders: string[] = this.app.internalPlugins?.plugins?.sync?.instance?.ignoreFolders ?? [];
+		const unsyncedTypes: string[] = ['image', 'audio', 'video', 'pdf', 'unsupported'].filter(type =>
+			// @ts-expect-error (Private API)
+			!this.app.internalPlugins?.plugins?.sync?.instance?.allowTypes?.has(type)
+		);
+		for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
+			// Excluded folders
+			if (unsyncedFolders.some(folder => fileId === folder || fileId.startsWith(folder + '/'))) {
+				if (fileIcon.unsynced) {
+					if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
+				} else {
+					fileIcon.unsynced = [appId];
+				}
+				continue;
+			}
+			// Excluded filetypes
+			if (fileId.includes('.')) {
+				if (unsyncedTypes.includes('unsupported') && ALL_EXTENSIONS.every(ext => !fileId.endsWith(ext))) {
+					if (fileIcon.unsynced) {
+						if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
+					} else {
+						fileIcon.unsynced = [appId];
+					}
+					continue;
+				}
+				const unsyncedExtensions = [];
+				if (unsyncedTypes.includes('image')) {
+					unsyncedExtensions.push(...IMAGE_EXTENSIONS);
+				}
+				if (unsyncedTypes.includes('audio')) {
+					unsyncedExtensions.push(...AUDIO_EXTENSIONS);
+				}
+				if (unsyncedTypes.includes('video')) {
+					unsyncedExtensions.push(...VIDEO_EXTENSIONS);
+				}
+				if (unsyncedTypes.includes('pdf')) {
+					unsyncedExtensions.push('.pdf');
+				}
+				if (unsyncedExtensions.some(extension => fileId.endsWith(extension))) {
+					if (fileIcon.unsynced) {
+						if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
+					} else {
+						fileIcon.unsynced = [appId];
+					}
+					continue;
+				}
+			}
+			if (fileIcon.unsynced?.includes(appId)) {
+				fileIcon.unsynced.remove(appId);
+			}
+			if (fileIcon.unsynced?.length === 0) {
+				delete this.settings.fileIcons[fileId].unsynced;
+			}
+		}
+	}
+
+	/**
+	 * Save settings to storage.
 	 */
 	async saveSettings(): Promise<void> {
-		if (!this.settings.rememberDeletedItems) {
-			for (const fileId in this.settings.fileIcons) {
-				if (!this.app.vault.getAbstractFileByPath(fileId)) {
+		this.updateUnsyncedFiles();
+		// @ts-expect-error (Private API)
+		const isSynced = this.app.internalPlugins?.plugins?.sync?.instance?.syncing !== true;
+		// Prune icons of any deleted items
+		if (isSynced && !this.settings.rememberDeletedItems) {
+			for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
+				if (fileIcon.unsynced) { // Skip files excluded from Sync
+					continue;
+				} else if (!this.app.vault.getAbstractFileByPath(fileId)) {
 					delete this.settings.fileIcons[fileId];
 				}
 			}
@@ -752,6 +823,7 @@ export default class IconicPlugin extends Plugin {
 				}
 			}
 		}
+		// Sort item IDs for human-readability
 		this.settings.appIcons = Object.fromEntries(Object.entries(this.settings.appIcons).sort());
 		this.settings.tabIcons = Object.fromEntries(Object.entries(this.settings.tabIcons).sort());
 		this.settings.fileIcons = Object.fromEntries(Object.entries(this.settings.fileIcons).sort());
