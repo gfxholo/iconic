@@ -22,9 +22,20 @@ Most of the menus are currently machine-translated, but if you can supply more a
 - Help & Settings buttons
 - (Tablets) Pin buttons
 
+## How to install
+
+This is still a *very* new plugin, so it's not searchable inside Obsidian yet. Follow these steps to install it using the BRAT plugin:
+
+1. Open Obsidian
+2. Search for **BRAT** in the community plugins browser, then install and enable it
+3. In the settings for BRAT, click the **Add Beta Plugin** button
+4. Paste this link `https://github.com/gfxholo/iconic` and click **Add Plugin**
+
+If you don't want to use BRAT, you can also download the [latest release files](https://github.com/gfxholo/iconic/releases) (ignore the source code) and drop them inside `.obsidian/plugins/iconic/`.
+
 ## How to use
 
-Secondary-click any of the items above, then click *Change icon* from the menu. You can open menus on mobile by pressing & holding an item. Specific lists like Files, Bookmarks, and Properties let you hold <kbd>Shift</kbd> to select several items at once.
+Secondary-click an item whose icon you want to change, then click **Change icon** from the menu. You can open menus on mobile by pressing & holding an item. Certain lists like Files, Bookmarks, and Properties let you hold <kbd>Shift</kbd> to select several items at once.
 
 Every icon and emoji is searchable by name. When you find one that sings for you, click on it to confirm. Toggle the emoji picker by clicking the smiley button.
 
