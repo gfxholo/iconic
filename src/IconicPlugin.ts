@@ -781,10 +781,12 @@ export default class IconicPlugin extends Plugin {
 	 */
 	async saveSettings(): Promise<void> {
 		this.updateUnsyncedFiles();
+
 		// @ts-expect-error (Private API)
 		const isNotSyncing = this.app.internalPlugins?.plugins?.sync?.instance?.syncing !== true;
 		// @ts-expect-error (Private API)
 		const isNotPaused = this.app.internalPlugins?.plugins?.sync?.instance?.pause !== true;
+
 		// Check for any deleted items and prune their icons
 		if (isNotSyncing && isNotPaused && !this.settings.rememberDeletedItems) {
 			// @ts-expect-error (Private API)
@@ -828,6 +830,7 @@ export default class IconicPlugin extends Plugin {
 				}
 			}
 		}
+
 		// Sort item IDs for human-readability
 		this.settings.appIcons = Object.fromEntries(Object.entries(this.settings.appIcons).sort());
 		this.settings.tabIcons = Object.fromEntries(Object.entries(this.settings.tabIcons).sort());
