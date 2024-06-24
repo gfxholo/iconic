@@ -785,8 +785,11 @@ export default class IconicPlugin extends Plugin {
 		const isSynced = this.app.internalPlugins?.plugins?.sync?.instance?.syncing !== true;
 		// Prune icons of any deleted items
 		if (isSynced && !this.settings.rememberDeletedItems) {
+			// @ts-expect-error (Private API)
+			const thisAppId = this.app.appId;
 			for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
-				if (fileIcon.unsynced) { // Skip files excluded from Sync
+				// Skip file pruning if excluded from Sync on any other device
+				if (fileIcon.unsynced?.some(appId => appId !== thisAppId)) {
 					continue;
 				} else if (!this.app.vault.getAbstractFileByPath(fileId)) {
 					delete this.settings.fileIcons[fileId];
