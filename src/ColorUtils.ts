@@ -2,7 +2,7 @@ export const COLORS = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purp
 
 const REGEX_HEX_COLOR = /^#[0-9a-fA-F]{8}$|#[0-9a-fA-F]{6}$|#[0-9a-fA-F]{4}$|#[0-9a-fA-F]{3}$/;
 const REGEX_RGB_COLOR = /^rgb\( *\d{1,3} *, *\d{1,3}, *\d{1,3} *\)$/;
-const REGEX_HSL_COLOR = /^hsl\( *\d{1,3} *, *\d{1,3}%, *\d{1,3}% *\)$/;
+const REGEX_HSL_COLOR = /^hsl\( *-?\d+ *, *\d{1,3}%, *\d{1,3}% *\)$/;
 
 /**
  * Shared utility functions for setting icon colors.
@@ -65,7 +65,7 @@ export default class ColorUtils {
 				.slice(4, -1)
 				.split(',')
 				.map(str => parseInt(str));
-			const [r, g, b] = this.hslToRgb(h / 360, s / 100, l / 100)
+			const [r, g, b] = this.hslToRgb(h, s, l)
 				.map(int => int.toString(16).padStart(2, '0'));
 			return '#' + r + g + b;
 		} else {
@@ -99,7 +99,7 @@ export default class ColorUtils {
 				.slice(4, -1)
 				.split(',')
 				.map(str => parseInt(str));
-			return this.hslToRgb(h / 360, s / 100, l / 100);
+			return this.hslToRgb(h, s, l);
 		} else {
 			return [0, 0, 0];
 		}
@@ -118,57 +118,51 @@ export default class ColorUtils {
 
 	/**
 	 * Convert RGB to HSL array.
-	 * @author: mjackson
-	 * @link https://gist.github.com/mjackson/5311256
+	 * @see {@link https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB}
 	 */
 	static rgbToHsl(r: number, g: number, b: number): number[] {
-		r /= 255, g /= 255, b /= 255;
-		const max = Math.max(r, g, b), min = Math.min(r, g, b);
-		let h: number, s: number;
+		r = Math.max(Math.min(r, 255), 0) / 255;
+		g = Math.max(Math.min(g, 255), 0) / 255;
+		b = Math.max(Math.min(b, 255), 0) / 255;
+	
+		const max = Math.max(r, g, b);
+		const min = Math.min(r, g, b);
+		const chroma = max - min;
 		const l = (max + min) / 2;
-
-		if (max == min) {
-			h = s = 0; // Monochrome
-		} else {
-			const d = max - min;
-			s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-			switch (max) {
-				case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-				case g: h = (b - r) / d + 2; break;
-				case b: h = (r - g) / d + 4; break;
-			}
-			h! /= 6;
+		const s = Number.isInteger(l) ? 0 : (max - l) / Math.min(l, 1 - l);
+		let h = 0;
+	
+		if (chroma > 0) switch (max) {
+			case r: h = (g - b) / chroma % 6; break;
+			case g: h = (b - r) / chroma + 2; break;
+			case b: h = (r - g) / chroma + 4; break;
 		}
 
-		return [Math.floor(h! * 360), Math.floor(s * 100), Math.floor(l * 100)];
+		return [Math.round(h * 60), Math.round(s * 100), Math.round(l * 100)];
 	}
 
 	/**
 	 * Convert HSL to RGB array.
-	 * @author: mjackson
-	 * @link https://gist.github.com/mjackson/5311256
+	 * @see {@link https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB}
 	 */
 	static hslToRgb(h: number, s: number, l: number): number[] {
-		let r, g, b;
-		if (s == 0) {
-			r = g = b = l; // Monochrome
-		} else {
-			function hueToRgb(p: number, q: number, t: number) {
-				if (t < 0) t += 1;
-				if (t > 1) t -= 1;
-				if (t < 1 / 6) return p + (q - p) * 6 * t;
-				if (t < 1 / 2) return q;
-				if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-				return p;
-			}
+		h = ((h % 360 + 360) % 360) / 60; // Wrap any value outside 0-360
+		s = Math.max(Math.min(s, 100), 0) / 100;
+		l = Math.max(Math.min(l, 100), 0) / 100;
 
-			const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-			const p = 2 * l - q;
+		const chroma = (1 - Math.abs(2 * l - 1)) * s;
+		const x = chroma * (1 - Math.abs(h % 2 - 1));
 
-			r = hueToRgb(p, q, h + 1 / 3);
-			g = hueToRgb(p, q, h);
-			b = hueToRgb(p, q, h - 1 / 3);
-		}
+		const [rr, gg, bb] =
+			h < 1 ? [chroma, x, 0] :
+			h < 2 ? [x, chroma, 0] :
+			h < 3 ? [0, chroma, x] :
+			h < 4 ? [0, x, chroma] :
+			h < 5 ? [x, 0, chroma] :
+			h < 6 ? [chroma, 0, x] : [0, 0, 0];
+
+		const offset = l - chroma / 2;
+		const [r, g, b] = [rr + offset, gg + offset, bb + offset];
 
 		return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 	}
