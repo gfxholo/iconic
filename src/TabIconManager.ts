@@ -12,9 +12,7 @@ export default class TabIconManager extends IconManager {
 		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => this.refreshIcons()));
 		// @ts-expect-error (Private API)
 		if (this.app.plugins?.plugins?.['obsidian-icon-folder']) {
-			this.plugin.registerEvent(this.app.workspace.on('active-leaf-change', () => {
-				this.refreshIcons();
-			}));
+			this.plugin.registerEvent(this.app.workspace.on('active-leaf-change', () => this.refreshIcons()));
 		}
 		this.refreshIcons();
 	}
@@ -55,11 +53,31 @@ export default class TabIconManager extends IconManager {
 				this.refreshIcon(tab, iconEl);
 			}
 
-			// Set menu listener for tabs not handled by workspace.on('file-menu')
+			// Set menu listener if tab is not handled by workspace.on('file-menu')
 			if (!tab.isFile || !tabEl.hasClass('is-active')) {
 				this.setEventListener(tabEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
 			}
 
+			// Refresh when tab is pinned/unpinned
+			const statusEl = tabEl.find(':scope > .workspace-tab-header-inner > .workspace-tab-header-status-container');
+			if (statusEl) this.setMutationObserver(statusEl, { childList: true }, mutations => {
+				for (const mutation of mutations) {
+					for (const addedNode of mutation.addedNodes) {
+						if (addedNode instanceof HTMLElement && addedNode.hasClass('mod-pinned')) {
+							this.refreshIcons();
+							return;
+						}
+					}
+					for (const removedNode of mutation.removedNodes) {
+						if (removedNode instanceof HTMLElement && removedNode.hasClass('mod-pinned')) {
+							this.refreshIcons();
+							return;
+						}
+					}
+				}
+			});
+
+			// Update mobile sidebars
 			if (Platform.isMobile) {
 				// @ts-expect-error (Private API)
 				this.setEventListener(this.app.workspace.leftSplit.activeTabSelectEl, 'change', () => this.refreshIcons());
