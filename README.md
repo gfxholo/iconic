@@ -9,7 +9,7 @@ Click almost any icon on a tab, list, or ribbon to swap in one of the 1,300+ ico
 > ⤿ Themes: [Obsidian gruvbox](https://github.com/insanum/obsidian_gruvbox), [Catppuccin](https://github.com/catppuccin/obsidian), [Everforest Enchanted](https://github.com/FireIsGood/obsidian-everforest-enchanted)
 
 Includes language support for English, Arabic, German, Spanish, French, Indonesian, Japanese, Russian, and Simplified Chinese.
-Most of the menus are currently machine-translated, but if you can supply more accurate translations, absolutely send a message or a pull request :) 
+Most of the menus are currently machine-translated, but if you can supply more accurate translations, absolutely send a message or a pull request :)
 
 ## Supported items
 

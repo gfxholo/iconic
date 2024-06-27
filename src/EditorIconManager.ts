@@ -116,7 +116,7 @@ export default class EditorIconManager extends IconManager {
 		const propListEl: HTMLElement = view.metadataEditor?.propertyListEl;
 		if (!propListEl) return;
 		const propEls = propListEl.findAll(':scope > .metadata-property');
-		
+
 		for (const propEl of propEls) {
 			const prop = props.find(prop => prop.id === propEl.dataset.propertyKey);
 			if (!prop) return;

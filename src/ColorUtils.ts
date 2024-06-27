@@ -124,14 +124,14 @@ export default class ColorUtils {
 		r = Math.max(Math.min(r, 255), 0) / 255;
 		g = Math.max(Math.min(g, 255), 0) / 255;
 		b = Math.max(Math.min(b, 255), 0) / 255;
-	
+
 		const max = Math.max(r, g, b);
 		const min = Math.min(r, g, b);
 		const chroma = max - min;
 		const l = (max + min) / 2;
 		const s = Number.isInteger(l) ? 0 : (max - l) / Math.min(l, 1 - l);
 		let h = 0;
-	
+
 		if (chroma > 0) switch (max) {
 			case r: h = (g - b) / chroma % 6; break;
 			case g: h = (b - r) / chroma + 2; break;

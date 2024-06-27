@@ -48,7 +48,7 @@ export default class AppIconManager extends IconManager {
 		if (this.settingsEl) {
 			const settingsItem = this.plugin.getAppItem('settings', unloading);
 			this.refreshIcon(settingsItem, this.settingsEl);
-			this.setEventListener(this.settingsEl, 'contextmenu', event => this.onContextMenu('settings', event));	
+			this.setEventListener(this.settingsEl, 'contextmenu', event => this.onContextMenu('settings', event));
 		}
 
 		// Sidebar pins
@@ -95,7 +95,7 @@ export default class AppIconManager extends IconManager {
 	 */
 	onContextMenu(appItemId: 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight', event: MouseEvent) {
 		navigator?.vibrate(100); // Might not be supported on iOS
-		
+
 		this.plugin.menuManager.close();
 		const appItem = this.plugin.getAppItem(appItemId);
 		const menu = appItemId.startsWith('sidebar') && !Platform.isPhone

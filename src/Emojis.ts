@@ -1,6 +1,5 @@
 /**
  * 1,907 emojis, with alternate encodings / skin tone variants excluded.
- * 
  * @see {@link https://unicode.org/Public/emoji/15.1/emoji-test.txt}
  * @see {@link https://www.unicode.org/emoji/charts/full-emoji-list.html}
  */

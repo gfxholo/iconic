@@ -250,7 +250,7 @@ export default class IconPicker extends Modal {
 			} else if (event.key == 'ArrowUp' || event.key === 'ArrowLeft') {
 				this.previousColor();
 			} else if (event.key == 'ArrowDown' || event.key === 'ArrowRight') {
-				this.nextColor(); 
+				this.nextColor();
 			}
 		});
 		this.manager.setEventListener(this.colorPickerEl, 'wheel', event => {
@@ -331,7 +331,7 @@ export default class IconPicker extends Modal {
 		this.manager.setEventListener(saveEl, 'click', () => this.closeAndSave(this.icon, this.color));
 
 		// Hack to guarantee initial focus
-		setTimeout(() => { 
+		setTimeout(() => {
 			this.searchField.inputEl.focus();
 			this.searchField.inputEl.select();
 		}, 0);
