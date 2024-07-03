@@ -263,11 +263,10 @@ export default class IconPicker extends Modal {
 		this.searchResultsSetting.settingEl.addClass('iconic-search-results');
 		// Allow vertical scrolling to work horizontally
 		this.manager.setEventListener(this.searchResultsSetting.settingEl, 'wheel', event => {
-			if (event.deltaY === 0) return;
 			if (activeDocument.body.hasClass('mod-rtl')) {
-				this.searchResultsSetting.settingEl.scrollBy({ left: event.deltaX - event.deltaY });
+				this.searchResultsSetting.settingEl.scrollLeft -= event.deltaY;
 			} else {
-				this.searchResultsSetting.settingEl.scrollBy({ left: event.deltaX + event.deltaY });
+				this.searchResultsSetting.settingEl.scrollLeft += event.deltaY;
 			}
 		}, { passive: true });
 
