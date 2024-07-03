@@ -699,8 +699,11 @@ export default class IconicPlugin extends Plugin {
 	private updateIconSetting(settings: any, itemId: string, icon: string | null, color: string | null): void {
 		if (icon || color) {
 			if (!settings[itemId]) settings[itemId] = {};
+
 			if (icon) settings[itemId].icon = icon;
+			else delete settings[itemId].icon;
 			if (color) settings[itemId].color = color;
+			else delete settings[itemId].color;
 		} else {
 			delete settings[itemId];
 		}
