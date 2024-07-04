@@ -128,7 +128,10 @@ export default class IconicPlugin extends Plugin {
 
 		this.startIconManagers();
 		this.refreshBodyClasses();
-		this.registerEvent(this.app.workspace.on('css-change', () => this.refreshIconManagers()));
+		this.registerEvent(this.app.workspace.on('css-change', () => {
+			this.refreshIconManagers();
+			this.refreshBodyClasses();
+		}));
 
 		this.registerEvent(this.app.vault.on('rename', ({ path }, oldPath) => {
 			const fileIcon = this.settings.fileIcons[oldPath];
@@ -258,6 +261,8 @@ export default class IconicPlugin extends Plugin {
 		activeDocument.body.toggleClass('iconic-bigger-search-results', this.isSettingEnabled('biggerSearchResults'));
 		activeDocument.body.toggleClass('iconic-uncolor-hover', this.settings.uncolorHover);
 		activeDocument.body.toggleClass('iconic-uncolor-select', this.settings.uncolorSelect);
+		// @ts-expect-error (Private API)
+		activeDocument.body.toggleClass('iconic-its-theme', this.app.customCss?.theme === 'ITS Theme');
 	}
 
 	/**

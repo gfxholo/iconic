@@ -101,3 +101,18 @@
 /* Uncolored selection */
 .iconic-uncolor-select .workspace-tab-header.is-active .iconic-icon > .svg-icon { stroke: currentColor; }
 .iconic-uncolor-select .tree-item-self.is-active > .tree-item-icon.iconic-icon > .svg-icon { stroke: currentColor; }
+
+/* Community themes */
+.iconic-its-theme .tree-item-self > .tree-item-icon {
+	margin-right: 6px;
+}
+.iconic-its-theme .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon {
+	display: flex;
+	position: absolute;
+}
+.iconic-its-theme .workspace-leaf-content[data-type="file-explorer"] .tree-item-inner::before {
+	visibility: hidden;
+}
+.iconic-its-theme.hide-file-explorer-icons .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon {
+	display: none;
+}
