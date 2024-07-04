@@ -1,7 +1,7 @@
 {
 	"id": "iconic",
 	"name": "Iconic",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"minAppVersion": "1.6.0",
 	"description": "Customize your app icons directly from the UI, including tabs, files, bookmarks, properties, and ribbon commands.",
 	"author": "Holo",
