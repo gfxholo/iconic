@@ -226,6 +226,15 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
+	 * @override
+	 */
+	async onExternalSettingsChange(): Promise<void> {
+		await this.loadSettings();
+		this.refreshIconManagers();
+		this.refreshBodyClasses();
+	}
+
+	/**
 	 * Initialize all icon managers.
 	 */
 	private startIconManagers(): void {
@@ -848,15 +857,6 @@ export default class IconicPlugin extends Plugin {
 		this.settings.propertyIcons = Object.fromEntries(Object.entries(this.settings.propertyIcons).sort());
 		this.settings.ribbonIcons = Object.fromEntries(Object.entries(this.settings.ribbonIcons).sort());
 		await this.saveData(this.settings);
-	}
-
-	/**
-	 * @override
-	 */
-	async onExternalSettingsChange(): Promise<void> {
-		await this.loadSettings();
-		this.refreshIconManagers();
-		this.refreshBodyClasses();
 	}
 
 	/**
