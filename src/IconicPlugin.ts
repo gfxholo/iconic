@@ -254,15 +254,16 @@ export default class IconicPlugin extends Plugin {
 
 	/**
 	 * Refresh any global classes on document body.
+	 * @param unloading Remove all classes if true
 	 */
-	refreshBodyClasses(): void {
-		activeDocument.body.toggleClass('iconic-bigger-icons', this.isSettingEnabled('biggerIcons'));
-		activeDocument.body.toggleClass('iconic-clickable-icons', this.isSettingEnabled('clickableIcons'));
-		activeDocument.body.toggleClass('iconic-bigger-search-results', this.isSettingEnabled('biggerSearchResults'));
-		activeDocument.body.toggleClass('iconic-uncolor-hover', this.settings.uncolorHover);
-		activeDocument.body.toggleClass('iconic-uncolor-select', this.settings.uncolorSelect);
+	refreshBodyClasses(unloading?: boolean): void {
+		activeDocument.body.toggleClass('iconic-bigger-icons', unloading ? false : this.isSettingEnabled('biggerIcons'));
+		activeDocument.body.toggleClass('iconic-clickable-icons', unloading ? false : this.isSettingEnabled('clickableIcons'));
+		activeDocument.body.toggleClass('iconic-bigger-search-results', unloading ? false : this.isSettingEnabled('biggerSearchResults'));
+		activeDocument.body.toggleClass('iconic-uncolor-hover', unloading ? false : this.settings.uncolorHover);
+		activeDocument.body.toggleClass('iconic-uncolor-select', unloading ? false : this.settings.uncolorSelect);
 		// @ts-expect-error (Private API)
-		activeDocument.body.toggleClass('iconic-its-theme', this.app.customCss?.theme === 'ITS Theme');
+		activeDocument.body.toggleClass('iconic-its-theme', unloading ? false : this.app.customCss?.theme === 'ITS Theme');
 	}
 
 	/**
@@ -869,5 +870,6 @@ export default class IconicPlugin extends Plugin {
 		this.propertyIconManager?.unload();
 		this.editorIconManager?.unload();
 		this.ribbonIconManager?.unload();
+		this.refreshBodyClasses(true);
 	}
 }
