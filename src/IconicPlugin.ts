@@ -807,7 +807,7 @@ export default class IconicPlugin extends Plugin {
 				for (const bmarkBase of bmarkBases) {
 					if (bmarkBase.type === 'group' && bmarkBase.items) {
 						flatArray.push(bmarkBase.ctime.toString());
-						flatArray.concat(flattenGroupIds(bmarkBase.items));
+						flatArray.push(...flattenGroupIds(bmarkBase.items));
 					}
 				}
 				return flatArray;
