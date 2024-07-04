@@ -588,7 +588,7 @@ export default class IconicPlugin extends Plugin {
 			id: itemBase.id,
 			name: itemBase.title ?? null,
 			category: 'ribbon',
-			iconDefault: itemBase.icon ?? null,
+			iconDefault: itemBase.hidden ? null : itemBase.icon ?? null,
 			icon: unloading ? null : itemIcon.icon ?? null,
 			color: unloading ? null : itemIcon.color ?? null,
 			iconEl: itemBase.buttonEl ?? null,
