@@ -394,11 +394,20 @@ export default class IconicPlugin extends Plugin {
 		} else {
 			const tabId = leaf.view.getViewType();
 			const tabIcon = this.settings.tabIcons[tabId] ?? {};
+			let iconDefault;
+			switch (tabId) {
+				case 'empty':
+					iconDefault = isUnstacked ? null : leaf.view.icon; break;
+				case 'release-notes': // Add some sparkle to Obsidian updates
+					iconDefault = unloading ? leaf.view.icon : 'lucide-sparkle'; break;
+				default:
+					iconDefault = leaf.view.icon; break;
+			}
 			return {
 				id: tabId,
 				name: leaf.getDisplayText(),
 				category: 'tab',
-				iconDefault: tabId === 'empty' && isUnstacked ? null : leaf.view.icon,
+				iconDefault: iconDefault,
 				icon: unloading ? null : tabIcon.icon ?? null,
 				color: unloading ? null : tabIcon.color ?? null,
 				isFile: false,
