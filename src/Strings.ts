@@ -104,7 +104,7 @@ export default class Strings {
 			desc: 'Show bigger icons in search results.',
 		},
 		maxSearchResults: {
-			name: 'Max search results',
+			name: 'Maximum search results',
 			desc: 'Choose how many icons to show at once.',
 		},
 		colorPicker1: {

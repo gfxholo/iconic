@@ -102,7 +102,7 @@
 			"desc": "Tampilkan ikon yang lebih besar dalam hasil pencarian."
 		},
 		"maxSearchResults": {
-			"name": "Hasil pencarian",
+			"name": "Hasil pencarian maksimal",
 			"desc": "Pilih berapa banyak ikon yang akan ditampilkan sekaligus."
 		},
 		"colorPicker1": {

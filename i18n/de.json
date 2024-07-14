@@ -102,7 +102,7 @@
 			"desc": "Größere Symbole in Suchergebnissen anzeigen."
 		},
 		"maxSearchResults": {
-			"name": "Suchergebnisse",
+			"name": "Maximale Suchergebnisse",
 			"desc": "Wählen Sie aus, wie viele Symbole gleichzeitig angezeigt werden sollen."
 		},
 		"colorPicker1": {

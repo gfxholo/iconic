@@ -102,7 +102,7 @@
 			"desc": "Mostrar íconos más grandes en los resultados de búsqueda."
 		},
 		"maxSearchResults": {
-			"name": "Resultados de búsqueda",
+			"name": "Resultados de búsqueda máximos",
 			"desc": "Elige cuántos íconos quieres mostrar a la vez."
 		},
 		"colorPicker1": {

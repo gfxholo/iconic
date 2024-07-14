@@ -102,7 +102,7 @@
 			"desc": "在搜索结果中显示更大的图标。"
 		},
 		"maxSearchResults": {
-			"name": "搜索结果",
+			"name": "最大搜索结果",
 			"desc": "选择一次显示多少个图标。"
 		},
 		"colorPicker1": {
