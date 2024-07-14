@@ -11,8 +11,9 @@
 }
 
 /* Tabs */
-.mod-root .workspace-tab-header-inner-icon.iconic-icon {
-	display: flex !important;
+.workspace .mod-root .workspace-tab-header[data-type="markdown"] .workspace-tab-header-inner-icon,
+.workspace .mod-root .workspace-tab-header[data-type="empty"] .workspace-tab-header-inner-icon {
+	display: flex;
 }
 .iconic-bigger-icons .mod-root .workspace-tab-header-inner-icon.iconic-icon > * {
 	--icon-size: var(--icon-s);

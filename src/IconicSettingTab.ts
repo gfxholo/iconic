@@ -82,7 +82,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				this.refreshIndicator(this.indicators.clickableIcons, dropdown.getValue());
 			});
 
-		// Always show file icons
+		// Show all file icons
 		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showAllFileIcons.name)
 			.setDesc(STRINGS.settings.showAllFileIcons.desc)
@@ -91,6 +91,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.onChange(value => {
 					this.plugin.settings.showAllFileIcons = value;
 					this.plugin.saveSettings();
+					this.plugin.tabIconManager?.refreshIcons();
 					this.plugin.fileIconManager?.refreshIcons();
 				})
 			);

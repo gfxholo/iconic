@@ -200,6 +200,7 @@ export default class IconicPlugin extends Plugin {
 			callback: () => {
 				this.settings.showAllFileIcons = !this.settings.showAllFileIcons;
 				this.saveSettings();
+				this.tabIconManager?.refreshIcons();
 				this.fileIconManager?.refreshIcons();
 			}
 		}));
@@ -367,30 +368,37 @@ export default class IconicPlugin extends Plugin {
 				iconEl = this.app.workspace.rightSplit.activeTabIconEl;
 			}
 		}
+		// @ts-expect-error (Private API)
+		const isUnstacked = !leaf.parent?.isStacked;
 		if (leaf.view instanceof FileView && leaf.view.file && leaf.view.allowNoFile === false) {
 			const fileId: string = leaf.view.file.path;
 			const fileIcon = this.settings.fileIcons[fileId] ?? {};
+			// @ts-expect-error (Private API)
+			const isRoot = leaf.parent?.parent === this.app.workspace.rootSplit;
+			const isMarkdown = leaf.view.file.extension === 'md';
 			return {
 				id: fileId,
 				name: leaf.getDisplayText(),
 				category: 'file',
-				iconDefault: leaf.view.icon,
+				iconDefault: isRoot && isMarkdown && isUnstacked && !this.settings.showAllFileIcons
+					? null
+					: leaf.view.icon,
 				icon: unloading ? null : fileIcon.icon ?? null,
 				color: unloading ? null : fileIcon.color ?? null,
 				isFile: true,
-				// @ts-expect-error (Private API)
-				isRoot: leaf.parent?.parent === this.app.workspace.rootSplit,
+				isRoot: isRoot,
 				iconEl: iconEl ?? null,
 				// @ts-expect-error (Private API)
 				tabEl: leaf.tabHeaderEl ?? null,
 			}
 		} else {
-			const tabIcon = this.settings.tabIcons[leaf.view.getViewType()] ?? {};
+			const tabId = leaf.view.getViewType();
+			const tabIcon = this.settings.tabIcons[tabId] ?? {};
 			return {
-				id: leaf.view.getViewType(),
+				id: tabId,
 				name: leaf.getDisplayText(),
 				category: 'tab',
-				iconDefault: leaf.view.icon,
+				iconDefault: tabId === 'empty' && isUnstacked ? null : leaf.view.icon,
 				icon: unloading ? null : tabIcon.icon ?? null,
 				color: unloading ? null : tabIcon.color ?? null,
 				isFile: false,
