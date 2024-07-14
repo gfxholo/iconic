@@ -92,7 +92,7 @@ export default class Strings {
 		},
 		showAllFileIcons: {
 			name: 'Show all file icons',
-			desc: 'Show an icon for every file in the Files pane.',
+			desc: 'Always show a default icon for files without an icon.',
 		},
 		headingIconPicker: 'Icon picker',
 		showItemName: {

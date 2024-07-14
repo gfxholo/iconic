@@ -90,7 +90,7 @@
 		},
 		"showAllFileIcons": {
 			"name": "Mostrar todos los íconos de archivos",
-			"desc": "Mostrar un ícono para cada archivo en el panel Archivos"
+			"desc": "Mostrar siempre un ícono predeterminado para archivos sin ícono."
 		},
 		"headingIconPicker": "Selector de iconos",
 		"showItemName": {

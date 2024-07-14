@@ -90,7 +90,7 @@
 		},
 		"showAllFileIcons": {
 			"name": "Tampilkan semua ikon berkas",
-			"desc": "Tampilkan ikon untuk setiap berkas di panel Berkas."
+			"desc": "Selalu tampilkan ikon default untuk file tanpa ikon."
 		},
 		"headingIconPicker": "Pemilih ikon",
 		"showItemName": {

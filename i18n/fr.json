@@ -90,7 +90,7 @@
 		},
 		"showAllFileIcons": {
 			"name": "Afficher toutes les icônes de fichier",
-			"desc": "Afficher une icône pour chaque fichier dans le volet Fichiers."
+			"desc": "Affichez toujours une icône par défaut pour les fichiers sans icône."
 		},
 		"headingIconPicker": "Sélecteur d'icônes",
 		"showItemName": {

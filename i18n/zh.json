@@ -90,7 +90,7 @@
 		},
 		"showAllFileIcons": {
 			"name": "显示所有文件图标",
-			"desc": "在文件窗格中显示每个文件的图标。"
+			"desc": "始终为没有图标的文件显示默认图标。"
 		},
 		"headingIconPicker": "图标选择器",
 		"showItemName": {

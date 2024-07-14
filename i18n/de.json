@@ -90,7 +90,7 @@
 		},
 		"showAllFileIcons": {
 			"name": "Alle Dateisymbole anzeigen",
-			"desc": "Für jede Datei im Dateiexplorer ein Symbol anzeigen."
+			"desc": "Für Dateien ohne Symbol immer ein Standardsymbol anzeigen."
 		},
 		"headingIconPicker": "Symbolauswahl",
 		"showItemName": {
