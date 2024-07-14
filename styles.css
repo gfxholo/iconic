@@ -15,6 +15,9 @@
 .workspace .mod-root .workspace-tab-header[data-type="empty"] .workspace-tab-header-inner-icon {
 	display: flex;
 }
+.workspace .mod-stacked .iconic-emoji {
+	transform: rotate(-90deg);
+}
 .iconic-bigger-icons .mod-root .workspace-tab-header-inner-icon.iconic-icon > * {
 	--icon-size: var(--icon-s);
 	--icon-stroke: var(--icon-s-stroke-width);
