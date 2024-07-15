@@ -1,4 +1,4 @@
-import { Command, FileView, Platform, Plugin, TAbstractFile, TFolder, WorkspaceLeaf, getIconIds } from 'obsidian';
+import { Command, FileView, Platform, Plugin, TAbstractFile, TFile, TFolder, WorkspaceLeaf, getIconIds } from 'obsidian';
 import IconicSettingTab from './IconicSettingTab';
 import AppIconManager from './AppIconManager';
 import TabIconManager from './TabIconManager';
@@ -15,10 +15,10 @@ export const ICONS = new Map<string, string>();
 export { EMOJIS };
 export { STRINGS };
 
-const IMAGE_EXTENSIONS = ['.bmp', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.avif'];
-const AUDIO_EXTENSIONS = ['.mp3', '.wav', '.m4a', '.3gp', '.flac', '.ogg', '.oga', '.opus'];
-const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogv', '.mov', '.mkv'];
-const ALL_EXTENSIONS = ['.md'].concat(IMAGE_EXTENSIONS).concat(AUDIO_EXTENSIONS).concat(VIDEO_EXTENSIONS).concat('.pdf');
+const IMAGE_EXTENSIONS = ['bmp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif'];
+const AUDIO_EXTENSIONS = ['mp3', 'wav', 'm4a', '3gp', 'flac', 'ogg', 'oga', 'opus'];
+const VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogv', 'mov', 'mkv'];
+const ALL_EXTENSIONS = ['md', 'canvas', 'pdf'].concat(IMAGE_EXTENSIONS).concat(AUDIO_EXTENSIONS).concat(VIDEO_EXTENSIONS);
 
 /**
  * Base interface for all icon objects.
@@ -445,14 +445,14 @@ export default class IconicPlugin extends Plugin {
 	private defineFileItem(tFile: TAbstractFile | null, fileId: string, unloading?: boolean): FileItem {
 		const fileIcon = (tFile ? this.settings.fileIcons[tFile.path] : this.settings.fileIcons[fileId]) ?? {};
 		let iconDefault = null;
-		if (fileIcon.color || this.settings.showAllFileIcons) {
-			if (tFile?.path.endsWith('.canvas')) {
+		if (tFile instanceof TFile && (fileIcon.color || this.settings.showAllFileIcons)) {
+			if (tFile.extension === 'canvas') {
 				iconDefault = 'lucide-layout-dashboard';
-			} else if (tFile?.path.endsWith('.pdf')) {
+			} else if (tFile.extension === 'pdf') {
 				iconDefault = 'lucide-file-text';
-			} else if (IMAGE_EXTENSIONS.some(ext => tFile?.path.endsWith(ext))) {
+			} else if (IMAGE_EXTENSIONS.some(ext => tFile.extension === ext)) {
 				iconDefault = 'lucide-image';
-			} else if (AUDIO_EXTENSIONS.some(ext => tFile?.path.endsWith(ext))) {
+			} else if (AUDIO_EXTENSIONS.some(ext => tFile.extension === ext)) {
 				iconDefault = 'lucide-file-audio';
 			} else {
 				iconDefault = 'lucide-file';
@@ -532,9 +532,9 @@ export default class IconicPlugin extends Plugin {
 		} else if (!unloading) {
 			if (bmarkBase.path?.endsWith('.pdf')) {
 				iconDefault = 'lucide-file-text';
-			} else if (IMAGE_EXTENSIONS.some(ext => bmarkBase.path?.endsWith(ext))) {
+			} else if (IMAGE_EXTENSIONS.some(ext => bmarkBase.path?.endsWith('.' + ext))) {
 				iconDefault = 'lucide-image';
-			} else if (AUDIO_EXTENSIONS.some(ext => bmarkBase.path?.endsWith(ext))) {
+			} else if (AUDIO_EXTENSIONS.some(ext => bmarkBase.path?.endsWith('.' + ext))) {
 				iconDefault = 'lucide-file-audio';
 			}
 		}
@@ -775,8 +775,9 @@ export default class IconicPlugin extends Plugin {
 				continue;
 			}
 			// Excluded filetypes
-			if (fileId.includes('.')) {
-				if (unsyncedTypes.includes('unsupported') && ALL_EXTENSIONS.every(ext => !fileId.endsWith(ext))) {
+			const fileExt = fileId.match(/\.([^.]*)$/)?.[1];
+			if (fileExt) {
+				if (unsyncedTypes.includes('unsupported') && !ALL_EXTENSIONS.includes(fileExt)) {
 					if (fileIcon.unsynced) {
 						if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
 					} else {
@@ -784,20 +785,20 @@ export default class IconicPlugin extends Plugin {
 					}
 					continue;
 				}
-				const unsyncedExtensions = [];
+				const unsyncedExts = [];
 				if (unsyncedTypes.includes('image')) {
-					unsyncedExtensions.push(...IMAGE_EXTENSIONS);
+					unsyncedExts.push(...IMAGE_EXTENSIONS);
 				}
 				if (unsyncedTypes.includes('audio')) {
-					unsyncedExtensions.push(...AUDIO_EXTENSIONS);
+					unsyncedExts.push(...AUDIO_EXTENSIONS);
 				}
 				if (unsyncedTypes.includes('video')) {
-					unsyncedExtensions.push(...VIDEO_EXTENSIONS);
+					unsyncedExts.push(...VIDEO_EXTENSIONS);
 				}
 				if (unsyncedTypes.includes('pdf')) {
-					unsyncedExtensions.push('.pdf');
+					unsyncedExts.push('pdf');
 				}
-				if (unsyncedExtensions.some(extension => fileId.endsWith(extension))) {
+				if (unsyncedExts.some(ext => ext === fileExt)) {
 					if (fileIcon.unsynced) {
 						if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
 					} else {
