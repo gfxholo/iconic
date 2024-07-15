@@ -452,6 +452,8 @@ export default class IconicPlugin extends Plugin {
 				iconDefault = 'lucide-file-text';
 			} else if (IMAGE_EXTENSIONS.some(ext => tFile?.path.endsWith(ext))) {
 				iconDefault = 'lucide-image';
+			} else if (AUDIO_EXTENSIONS.some(ext => tFile?.path.endsWith(ext))) {
+				iconDefault = 'lucide-file-audio';
 			} else {
 				iconDefault = 'lucide-file';
 			}
@@ -532,6 +534,8 @@ export default class IconicPlugin extends Plugin {
 				iconDefault = 'lucide-file-text';
 			} else if (IMAGE_EXTENSIONS.some(ext => bmarkBase.path?.endsWith(ext))) {
 				iconDefault = 'lucide-image';
+			} else if (AUDIO_EXTENSIONS.some(ext => bmarkBase.path?.endsWith(ext))) {
+				iconDefault = 'lucide-file-audio';
 			}
 		}
 		return {
