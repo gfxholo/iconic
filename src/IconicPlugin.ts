@@ -368,21 +368,22 @@ export default class IconicPlugin extends Plugin {
 				iconEl = this.app.workspace.rightSplit.activeTabIconEl;
 			}
 		}
+		let iconDefault = leaf.view.icon;
 		// @ts-expect-error (Private API)
-		const isUnstacked = !leaf.parent?.isStacked;
+		const isStacked = leaf.parent?.isStacked === true;
 		if (leaf.view instanceof FileView && leaf.view.file && leaf.view.allowNoFile === false) {
-			const fileId: string = leaf.view.file.path;
+			const fileId = leaf.view.file.path;
 			const fileIcon = this.settings.fileIcons[fileId] ?? {};
 			// @ts-expect-error (Private API)
 			const isRoot = leaf.parent?.parent === this.app.workspace.rootSplit;
-			const isMarkdown = leaf.view.file.extension === 'md';
+			const isMarkdown = leaf.view.getViewType() === 'markdown';
 			return {
 				id: fileId,
 				name: leaf.getDisplayText(),
 				category: 'file',
-				iconDefault: isRoot && isMarkdown && isUnstacked && !this.settings.showAllFileIcons
+				iconDefault: isRoot && isMarkdown && !isStacked && !this.settings.showAllFileIcons
 					? null
-					: leaf.view.icon,
+					: iconDefault,
 				icon: unloading ? null : fileIcon.icon ?? null,
 				color: unloading ? null : fileIcon.color ?? null,
 				isFile: true,
@@ -397,7 +398,7 @@ export default class IconicPlugin extends Plugin {
 			let iconDefault;
 			switch (tabId) {
 				case 'empty':
-					iconDefault = isUnstacked ? null : leaf.view.icon; break;
+					iconDefault = isStacked ? leaf.view.icon : null; break;
 				case 'release-notes': // Add some sparkle to Obsidian updates
 					iconDefault = unloading ? leaf.view.icon : 'lucide-sparkle'; break;
 				default:
