@@ -79,7 +79,6 @@ export default class IconPicker extends Modal {
 
 	// State
 	private emojiMode: boolean = false;
-	private openRgbPickerNextClick: boolean = false;
 	private pauseColorPickerOnChange: boolean = false;
 	private readonly searchResults: [icon: string, iconName: string][] = [];
 
@@ -219,12 +218,13 @@ export default class IconPicker extends Modal {
 		if (!Platform.isPhone) this.searchSetting.setName(STRINGS.iconPicker.search);
 
 		// Color picker
+		let openRgbPicker = false;
 		this.colorPickerEl = this.searchSetting.controlEl.find('input[type="color"]');
 		this.colorPickerEl.tabIndex = 0;
 		this.colorPickerEl.dataset.tooltipDelay = '300';
 		this.manager.setEventListener(this.colorPickerEl, 'click', event => {
-			if (this.openRgbPickerNextClick === true) {
-				this.openRgbPickerNextClick = false;
+			if (openRgbPicker === true) {
+				openRgbPicker = false;
 			} else if (this.plugin.settings.colorPicker1 === 'list') {
 				this.openColorMenu(event.x, event.y);
 				event.preventDefault();
@@ -233,7 +233,7 @@ export default class IconPicker extends Modal {
 		this.manager.setEventListener(this.colorPickerEl, 'contextmenu', event => {
 			navigator?.vibrate(100); // Might not be supported on iOS
 			if (this.plugin.settings.colorPicker2 === 'rgb') {
-				this.openRgbPickerNextClick = true;
+				openRgbPicker = true;
 				this.colorPickerEl.click();
 			} else if (this.plugin.settings.colorPicker2 === 'list') {
 				this.openColorMenu(event.x, event.y);
