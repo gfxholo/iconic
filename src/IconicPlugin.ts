@@ -15,10 +15,11 @@ export const ICONS = new Map<string, string>();
 export { EMOJIS };
 export { STRINGS };
 
+const KNOWN_TYPES = ['image', 'audio', 'video', 'pdf', 'unsupported'];
 const IMAGE_EXTENSIONS = ['bmp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif'];
 const AUDIO_EXTENSIONS = ['mp3', 'wav', 'm4a', '3gp', 'flac', 'ogg', 'oga', 'opus'];
 const VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogv', 'mov', 'mkv'];
-const ALL_EXTENSIONS = ['md', 'canvas', 'pdf'].concat(IMAGE_EXTENSIONS).concat(AUDIO_EXTENSIONS).concat(VIDEO_EXTENSIONS);
+const KNOWN_EXTENSIONS = ['md', 'canvas', 'pdf'].concat(IMAGE_EXTENSIONS).concat(AUDIO_EXTENSIONS).concat(VIDEO_EXTENSIONS);
 
 /**
  * Base interface for all icon objects.
@@ -761,58 +762,28 @@ export default class IconicPlugin extends Plugin {
 		const appId = this.app.appId;
 		// @ts-expect-error (Private API)
 		const unsyncedFolders: string[] = this.app.internalPlugins?.plugins?.sync?.instance?.ignoreFolders ?? [];
-		const unsyncedTypes: string[] = ['image', 'audio', 'video', 'pdf', 'unsupported'].filter(type =>
-			// @ts-expect-error (Private API)
-			!this.app.internalPlugins?.plugins?.sync?.instance?.allowTypes?.has(type)
-		);
+		// @ts-expect-error (Private API)
+		const unsyncedTypes: string[] = KNOWN_TYPES.filter(type => !this.app.internalPlugins?.plugins?.sync?.instance?.allowTypes.has(type));
+
 		for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
-			// Excluded folders
-			if (unsyncedFolders.some(folder => fileId === folder || fileId.startsWith(folder + '/'))) {
-				if (fileIcon.unsynced) {
-					if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
-				} else {
-					fileIcon.unsynced = [appId];
-				}
-				continue;
+			if (!Array.isArray(fileIcon.unsynced)) {
+				delete fileIcon.unsynced;
 			}
-			// Excluded filetypes
-			const fileExt = fileId.match(/\.([^.]*)$/)?.[1];
-			if (fileExt) {
-				if (unsyncedTypes.includes('unsupported') && !ALL_EXTENSIONS.includes(fileExt)) {
-					if (fileIcon.unsynced) {
-						if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
-					} else {
-						fileIcon.unsynced = [appId];
-					}
-					continue;
-				}
-				const unsyncedExts = [];
-				if (unsyncedTypes.includes('image')) {
-					unsyncedExts.push(...IMAGE_EXTENSIONS);
-				}
-				if (unsyncedTypes.includes('audio')) {
-					unsyncedExts.push(...AUDIO_EXTENSIONS);
-				}
-				if (unsyncedTypes.includes('video')) {
-					unsyncedExts.push(...VIDEO_EXTENSIONS);
-				}
-				if (unsyncedTypes.includes('pdf')) {
-					unsyncedExts.push('pdf');
-				}
-				if (unsyncedExts.some(ext => ext === fileExt)) {
-					if (fileIcon.unsynced) {
-						if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
-					} else {
-						fileIcon.unsynced = [appId];
-					}
-					continue;
-				}
-			}
-			if (fileIcon.unsynced?.includes(appId)) {
-				fileIcon.unsynced.remove(appId);
-			}
-			if (fileIcon.unsynced?.length === 0) {
-				delete this.settings.fileIcons[fileId].unsynced;
+
+			const fileExt = fileId.match(/\.([^.]*)$/)?.[1] ?? '';
+			const unsynced = unsyncedFolders.some(folder => folder === fileId || fileId.startsWith(folder + '/')) 
+				|| unsyncedTypes.includes('unsupported') && !KNOWN_EXTENSIONS.includes(fileExt)
+				|| unsyncedTypes.includes('image') && IMAGE_EXTENSIONS.includes(fileExt)
+				|| unsyncedTypes.includes('audio') && AUDIO_EXTENSIONS.includes(fileExt)
+				|| unsyncedTypes.includes('video') && VIDEO_EXTENSIONS.includes(fileExt)
+				|| unsyncedTypes.includes('pdf') && fileExt === 'pdf';
+
+			if (unsynced) {
+				fileIcon.unsynced = fileIcon.unsynced ?? [];
+				if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
+			} else {
+				if (fileIcon.unsynced?.includes(appId)) fileIcon.unsynced?.remove(appId);
+				if (fileIcon.unsynced?.length === 0) delete fileIcon.unsynced;
 			}
 		}
 	}
