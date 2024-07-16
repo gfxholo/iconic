@@ -75,7 +75,7 @@ interface IconicSettings {
 	appIcons: { [appItemId: string]: { icon?: string, color?: string } };
 	tabIcons: { [tabId: string]: { icon?: string, color?: string } };
 	fileIcons: { [fileId: string]: { icon?: string, color?: string, unsynced?: string[] } };
-	groupIcons: { [groupId: string]: { icon?: string, color?: string } };
+	bookmarkIcons: { [groupId: string]: { icon?: string, color?: string } };
 	propertyIcons: { [propId: string]: { icon?: string, color?: string } };
 	ribbonIcons: { [ribbonItemId: string]: { icon?: string, color?: string } };
 }
@@ -95,7 +95,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	appIcons: {},
 	tabIcons: {},
 	fileIcons: {},
-	groupIcons: {},
+	bookmarkIcons: {},
 	propertyIcons: {},
 	ribbonIcons: {},
 }
@@ -522,7 +522,7 @@ export default class IconicPlugin extends Plugin {
 		} else if (bmarkBase.type === 'group') {
 			id = bmarkBase.ctime;
 			name = bmarkBase.title;
-			bmarkIcon = this.settings.groupIcons[id] ?? {};
+			bmarkIcon = this.settings.bookmarkIcons[id] ?? {};
 		}
 		let iconDefault = 'lucide-file';
 		switch (bmarkBase.type) {
@@ -687,7 +687,7 @@ export default class IconicPlugin extends Plugin {
 		if (bmark.category === 'file' || bmark.category === 'folder') {
 			this.updateIconSetting(this.settings.fileIcons, bmark.id, icon, color);
 		} else if (bmark.category === 'group') {
-			this.updateIconSetting(this.settings.groupIcons, bmark.id, icon, color);
+			this.updateIconSetting(this.settings.bookmarkIcons, bmark.id, icon, color);
 		}
 		this.saveSettings();
 	}
@@ -704,7 +704,7 @@ export default class IconicPlugin extends Plugin {
 			if (bmark.category === 'file' || bmark.category === 'folder') {
 				this.updateIconSetting(this.settings.fileIcons, bmark.id, bmark.icon, bmark.color);
 			} else if (bmark.category === 'group') {
-				this.updateIconSetting(this.settings.groupIcons, bmark.id, bmark.icon, bmark.color);
+				this.updateIconSetting(this.settings.bookmarkIcons, bmark.id, bmark.icon, bmark.color);
 			}
 		}
 		this.saveSettings();
@@ -761,6 +761,14 @@ export default class IconicPlugin extends Plugin {
 	 */
 	private async loadSettings(): Promise<void> {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+
+		// 1.0.9: Migrate groupIcons from versions 1.0.3 ~ 1.0.8
+		if ('groupIcons' in this.settings) {
+			if (Object.keys(this.settings.bookmarkIcons).length === 0) {
+				this.settings.bookmarkIcons = (this.settings as any).groupIcons;
+			}
+			delete (this.settings as any).groupIcons;
+		}
 	}
 
 	/**
@@ -820,12 +828,12 @@ export default class IconicPlugin extends Plugin {
 					delete this.settings.fileIcons[fileId];
 				}
 			}
-			function flattenGroupIds(bmarkBases: any[]): string[] {
+			function getGroupIds(bmarkBases: any[]): string[] {
 				const flatArray = [];
 				for (const bmarkBase of bmarkBases) {
 					if (bmarkBase.type === 'group' && bmarkBase.items) {
 						flatArray.push(bmarkBase.ctime.toString());
-						flatArray.push(...flattenGroupIds(bmarkBase.items));
+						flatArray.push(...getGroupIds(bmarkBase.items));
 					}
 				}
 				return flatArray;
@@ -833,10 +841,10 @@ export default class IconicPlugin extends Plugin {
 			// @ts-expect-error (Private API)
 			if (this.app.internalPlugins?.plugins?.bookmarks?.instance?.items) {
 				// @ts-expect-error (Private API)
-				const groupIds: string[] = flattenGroupIds(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items);
-				for (const groupId in this.settings.groupIcons) {
+				const groupIds = getGroupIds(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items);
+				for (const groupId in this.settings.bookmarkIcons) {
 					if (!groupIds.includes(groupId)) {
-						delete this.settings.groupIcons[groupId];
+						delete this.settings.bookmarkIcons[groupId];
 					}
 				}
 			}
@@ -856,7 +864,7 @@ export default class IconicPlugin extends Plugin {
 		this.settings.appIcons = Object.fromEntries(Object.entries(this.settings.appIcons).sort());
 		this.settings.tabIcons = Object.fromEntries(Object.entries(this.settings.tabIcons).sort());
 		this.settings.fileIcons = Object.fromEntries(Object.entries(this.settings.fileIcons).sort());
-		this.settings.groupIcons = Object.fromEntries(Object.entries(this.settings.groupIcons).sort());
+		this.settings.bookmarkIcons = Object.fromEntries(Object.entries(this.settings.bookmarkIcons).sort());
 		this.settings.propertyIcons = Object.fromEntries(Object.entries(this.settings.propertyIcons).sort());
 		this.settings.ribbonIcons = Object.fromEntries(Object.entries(this.settings.ribbonIcons).sort());
 		await this.saveData(this.settings);
