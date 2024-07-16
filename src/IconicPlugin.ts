@@ -525,20 +525,29 @@ export default class IconicPlugin extends Plugin {
 			bmarkIcon = this.settings.groupIcons[id] ?? {};
 		}
 		let iconDefault = 'lucide-file';
-		if (bmarkBase.subpath) {
-			iconDefault = 'lucide-heading';
-		} else if (bmarkBase.type === 'folder') {
-			iconDefault = 'lucide-folder';
-		} else if (bmarkBase.path?.endsWith('.canvas')) {
-			iconDefault = 'lucide-layout-dashboard';
-		} else if (!unloading) {
-			if (bmarkBase.path?.endsWith('.pdf')) {
-				iconDefault = 'lucide-file-text';
-			} else if (IMAGE_EXTENSIONS.some(ext => bmarkBase.path?.endsWith('.' + ext))) {
-				iconDefault = 'lucide-image';
-			} else if (AUDIO_EXTENSIONS.some(ext => bmarkBase.path?.endsWith('.' + ext))) {
-				iconDefault = 'lucide-file-audio';
+		switch (bmarkBase.type) {
+			case 'file': {
+				if (bmarkBase.path?.endsWith('.canvas')) {
+					iconDefault = 'lucide-layout-dashboard';
+				} else if (bmarkBase.subpath?.startsWith('#^')) {
+					iconDefault = 'lucide-toy-brick';
+				} else if (bmarkBase.subpath?.startsWith('#')) {
+					iconDefault = 'lucide-heading';
+				} else if (!unloading) {
+					if (bmarkBase.path?.endsWith('.pdf')) {
+						iconDefault = 'lucide-file-text';
+					} else if (IMAGE_EXTENSIONS.some(ext => bmarkBase.path?.endsWith('.' + ext))) {
+						iconDefault = 'lucide-image';
+					} else if (AUDIO_EXTENSIONS.some(ext => bmarkBase.path?.endsWith('.' + ext))) {
+						iconDefault = 'lucide-file-audio';
+					}
+				}
+				break;
 			}
+			case 'folder': iconDefault = 'lucide-folder'; break;
+			case 'search': iconDefault = 'lucide-search'; break;
+			case 'graph': iconDefault = 'lucide-git-fork'; break;
+			case 'url': iconDefault = 'lucide-globe-2'; break;
 		}
 		return {
 			id: id,
