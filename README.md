@@ -23,7 +23,7 @@ Includes language support for English, Arabic, German, Spanish, French, Indonesi
 
 ## How to use
 
-Secondary-click an item whose icon you want to change, then click **Change icon** from the menu. You can open menus on mobile by pressing & holding an item. Certain lists like Files, Bookmarks, and Properties let you hold <kbd>Shift</kbd> to select several items at once.
+Secondary-click an item whose icon you want to change, then click **Change icon** from the menu. You can open menus on mobile by pressing & holding an item. Certain lists like Files, Bookmarks, and Properties let you hold <kbd>Alt</kbd> or <kbd>⇧ Shift</kbd> to select multiple items at once.
 
 Every icon and emoji is searchable by name. Toggle the emoji picker by clicking the smiley button. When you find an icon that sings for you, click it to confirm.
 
