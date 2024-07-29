@@ -475,38 +475,20 @@ export default class IconicPlugin extends Plugin {
 	 * Get array of bookmark definitions.
 	 */
 	getBookmarkItems(unloading?: boolean): BookmarkItem[] {
-		function flattenBookmarks(bmarkBases: any[]): any[] {
-			const flatArray = [];
-			for (const bmarkBase of bmarkBases) {
-				flatArray.push(bmarkBase);
-				if (bmarkBase.items) flatArray.concat(flattenBookmarks(bmarkBase.items));
-			}
-			return flatArray;
-		}
 		// @ts-expect-error (Private API)
-		const bmarkBases: any[] = flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
-		return bmarkBases.map(bmark => this.defineBookmarkItem(bmark, unloading));
+		const bmarkBases: any[] = this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? [];
+		return bmarkBases.map(bmarkBase => this.defineBookmarkItem(bmarkBase, unloading));
 	}
 
 	/**
 	 * Get bookmark definition.
 	 */
 	getBookmarkItem(bmarkId: string, isFile: boolean, unloading?: boolean): BookmarkItem {
-		function findBookmark(bmarkBases: any[]): any {
-			for (const bmarkBase of bmarkBases) {
-				if (isFile) {
-					if (bmarkBase.path === bmarkId) return bmarkBase;
-				} else {
-					if (bmarkBase.type === 'group' && bmarkBase.ctime === bmarkId) return bmarkBase;
-				}
-				if (bmarkBase.items) {
-					const childBase = findBookmark(bmarkBase.items);
-					if (childBase) return childBase;
-				}
-			}
-		}
 		// @ts-expect-error (Private API)
-		const bmarkBase = findBookmark(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []) ?? {};
+		const bmarkBases = this.flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
+		const bmarkBase = bmarkBases.find(bmarkBase => {
+			return isFile && bmarkBase.path + (bmarkBase.subpath ?? '') === bmarkId || bmarkBase.ctime === bmarkId
+		}) ?? {};
 		return this.defineBookmarkItem(bmarkBase, unloading);
 	}
 
@@ -559,6 +541,18 @@ export default class IconicPlugin extends Plugin {
 			isFile: bmarkBase.type === 'file' || bmarkBase.type === 'folder',
 			items: bmarkBase.items?.map((bmark: any) => this.defineBookmarkItem(bmark, unloading)) ?? null,
 		}
+	}
+
+	/**
+	 * Flatten an array of bookmark bases to include all children.
+	 */
+	private flattenBookmarks(bmarkBases: any[]): any[] {
+		const flatArray = [];
+		for (const bmarkBase of bmarkBases) {
+			flatArray.push(bmarkBase);
+			if (bmarkBase.items) flatArray.push(...this.flattenBookmarks(bmarkBase.items));
+		}
+		return flatArray;
 	}
 
 	/**
@@ -820,6 +814,11 @@ export default class IconicPlugin extends Plugin {
 		if (isNotSyncing && isNotPaused && !this.settings.rememberDeletedItems) {
 			// @ts-expect-error (Private API)
 			const thisAppId = this.app.appId;
+			// @ts-expect-error (Private API)
+			const bmarkBases = this.flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
+			// @ts-expect-error (Private API)
+			const propBases = this.app.metadataTypeManager?.properties ?? [];
+
 			for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
 				// Skip file pruning if excluded from Sync on any other device
 				if (fileIcon.unsynced?.some(appId => appId !== thisAppId)) {
@@ -828,30 +827,20 @@ export default class IconicPlugin extends Plugin {
 					delete this.settings.fileIcons[fileId];
 				}
 			}
-			function getGroupIds(bmarkBases: any[]): string[] {
-				const flatArray = [];
-				for (const bmarkBase of bmarkBases) {
-					if (bmarkBase.type === 'group' && bmarkBase.items) {
-						flatArray.push(bmarkBase.ctime.toString());
-						flatArray.push(...getGroupIds(bmarkBase.items));
-					}
-				}
-				return flatArray;
-			}
-			// @ts-expect-error (Private API)
-			if (this.app.internalPlugins?.plugins?.bookmarks?.instance?.items) {
-				// @ts-expect-error (Private API)
-				const groupIds = getGroupIds(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items);
-				for (const groupId in this.settings.bookmarkIcons) {
-					if (!groupIds.includes(groupId)) {
-						delete this.settings.bookmarkIcons[groupId];
+
+			if (bmarkBases.length > 0) {
+				const bmarkIds = bmarkBases
+					.filter(bmarkBase => bmarkBase.type !== 'file' && bmarkBase.type !== 'folder')
+					.map(bmarkBase => bmarkBase.ctime.toString());
+				for (const bmarkId in this.settings.bookmarkIcons) {
+					if (!bmarkIds.includes(bmarkId)) {
+						delete this.settings.bookmarkIcons[bmarkId];
 					}
 				}
 			}
-			// @ts-expect-error (Private API)
-			if (this.app.metadataTypeManager?.properties) {
-				// @ts-expect-error (Private API)
-				const propIds = Object.keys(this.app.metadataTypeManager?.properties);
+
+			if (propBases.length > 0) {
+				const propIds = Object.keys(propBases);
 				for (const propId in this.settings.propertyIcons) {
 					if (!propIds.includes(propId)) {
 						delete this.settings.propertyIcons[propId];
