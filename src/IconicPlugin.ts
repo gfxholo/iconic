@@ -472,6 +472,33 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
+	 * Split a filepath into its hierarchical components.
+	 */
+	private splitFilePath(fileId = ''): {
+		path: string      // Folder tree + Filename
+		tree: string      // Folder tree only
+		filename: string  // Name.Extension
+		basename: string  // Name only
+		extension: string // Extension only
+		subpath: string   // #Subpath after extension
+	} {
+		const subpathExts = ['md', 'pdf']; // Extensions with linkable subpaths
+		const subpathStart = Math.max(...subpathExts.map(ext => {
+			const index = fileId.lastIndexOf(`.${ext}#`);
+			return index > -1 ? (index + ext.length + 1) : -1;
+		}));
+		const subpath = subpathStart > -1 ? fileId.substring(subpathStart, fileId.length) : '';
+		const path = subpathStart > -1 ? fileId.substring(0, subpathStart) : fileId;
+
+		const [, dirpath = '', filename] = path.match(/^(.*\/)?(.*)$/) ?? [];
+		const extensionStart = filename.lastIndexOf('.');
+		const extension = filename.substring(extensionStart > -1 ? extensionStart + 1 : filename.length) || '';
+		const basename = filename.substring(0, extensionStart > -1 ? extensionStart : filename.length - 1) || '';
+
+		return { path, tree: dirpath, filename, basename, extension, subpath };
+	}
+
+	/**
 	 * Get array of bookmark definitions.
 	 */
 	getBookmarkItems(unloading?: boolean): BookmarkItem[] {
