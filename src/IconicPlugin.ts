@@ -436,33 +436,36 @@ export default class IconicPlugin extends Plugin {
 	 * Get file definition.
 	 */
 	getFileItem(fileId: string, unloading?: boolean): FileItem {
-		const tFile = this.app.vault.getAbstractFileByPath(fileId);
+		const { path } = this.splitFilePath(fileId); // Ignore subpath
+		const tFile = this.app.vault.getAbstractFileByPath(path);
 		return this.defineFileItem(tFile, fileId, unloading);
 	}
 
 	/**
 	 * Create file definition.
-	 * If file is null, the file ID is used as a reasonable fallback.
 	 */
 	private defineFileItem(tFile: TAbstractFile | null, fileId: string, unloading?: boolean): FileItem {
-		const fileIcon = (tFile ? this.settings.fileIcons[tFile.path] : this.settings.fileIcons[fileId]) ?? {};
+		const { filename, basename, extension } = this.splitFilePath(fileId);
+		const fileIcon = this.settings.fileIcons[fileId] ?? {};
 		let iconDefault = null;
+
 		if (tFile instanceof TFile && (fileIcon.color || this.settings.showAllFileIcons)) {
-			if (tFile.extension === 'canvas') {
+			if (extension === 'canvas') {
 				iconDefault = 'lucide-layout-dashboard';
-			} else if (tFile.extension === 'pdf') {
+			} else if (extension === 'pdf') {
 				iconDefault = 'lucide-file-text';
-			} else if (IMAGE_EXTENSIONS.some(ext => tFile.extension === ext)) {
+			} else if (IMAGE_EXTENSIONS.includes(extension)) {
 				iconDefault = 'lucide-image';
-			} else if (AUDIO_EXTENSIONS.some(ext => tFile.extension === ext)) {
+			} else if (AUDIO_EXTENSIONS.includes(extension)) {
 				iconDefault = 'lucide-file-audio';
 			} else {
 				iconDefault = 'lucide-file';
 			}
 		}
+
 		return {
-			id: tFile ? tFile.path : fileId,
-			name: (tFile ? tFile.path : fileId).replace(/\.md$/, ''),
+			id: fileId,
+			name: extension === 'md' ? basename : filename,
 			category: tFile instanceof TFolder ? 'folder' : 'file',
 			iconDefault: unloading ? null : iconDefault,
 			icon: unloading ? null : fileIcon.icon ?? null,
@@ -523,44 +526,70 @@ export default class IconicPlugin extends Plugin {
 	 * Create bookmark definition.
 	 */
 	private defineBookmarkItem(bmarkBase: any, unloading?: boolean): BookmarkItem {
-		let id, name, bmarkIcon;
-		if (bmarkBase.type === 'file' || bmarkBase.type === 'folder') {
-			id = bmarkBase.path;
-			name = bmarkBase.path?.replace(/\.md$/, '');
-			bmarkIcon = this.settings.fileIcons[id] ?? {};
-		} else if (bmarkBase.type === 'group') {
-			id = bmarkBase.ctime;
-			name = bmarkBase.title;
-			bmarkIcon = this.settings.bookmarkIcons[id] ?? {};
-		}
-		let iconDefault = 'lucide-file';
+		const { path, filename, basename, extension } = this.splitFilePath(bmarkBase.path);
+		const subpath = bmarkBase.subpath ?? '';
+		let id, name, bmarkIcon, iconDefault = 'lucide-file';
+
 		switch (bmarkBase.type) {
 			case 'file': {
-				if (bmarkBase.path?.endsWith('.canvas')) {
+				id = path + subpath;
+				name = (extension === 'md' ? basename : filename) + subpath;
+				if (extension === 'canvas') {
 					iconDefault = 'lucide-layout-dashboard';
-				} else if (bmarkBase.subpath?.startsWith('#^')) {
+				} else if (subpath.startsWith('#^')) {
 					iconDefault = 'lucide-toy-brick';
-				} else if (bmarkBase.subpath?.startsWith('#')) {
+				} else if (subpath.startsWith('#')) {
 					iconDefault = 'lucide-heading';
 				} else if (!unloading) {
-					if (bmarkBase.path?.endsWith('.pdf')) {
+					if (extension === 'pdf') {
 						iconDefault = 'lucide-file-text';
-					} else if (IMAGE_EXTENSIONS.some(ext => bmarkBase.path?.endsWith('.' + ext))) {
+					} else if (IMAGE_EXTENSIONS.includes(extension)) {
 						iconDefault = 'lucide-image';
-					} else if (AUDIO_EXTENSIONS.some(ext => bmarkBase.path?.endsWith('.' + ext))) {
+					} else if (AUDIO_EXTENSIONS.includes(extension)) {
 						iconDefault = 'lucide-file-audio';
 					}
 				}
+				bmarkIcon = this.settings.fileIcons[id] ?? {};
 				break;
 			}
-			case 'folder': iconDefault = 'lucide-folder'; break;
-			case 'search': iconDefault = 'lucide-search'; break;
-			case 'graph': iconDefault = 'lucide-git-fork'; break;
-			case 'url': iconDefault = 'lucide-globe-2'; break;
+			case 'folder': {
+				id = path;
+				name = basename;
+				bmarkIcon = this.settings.fileIcons[id] ?? {};
+				iconDefault = 'lucide-folder';
+				break;
+			}
+			case 'group': {
+				id = bmarkBase.ctime;
+				name = bmarkBase.title;
+				bmarkIcon = this.settings.bookmarkIcons[id] ?? {};
+				break;
+			}
+			case 'search': {
+				id = bmarkBase.ctime;
+				name = bmarkBase.query;
+				bmarkIcon = this.settings.bookmarkIcons[id] ?? {};
+				iconDefault = 'lucide-search';
+				break;
+			}
+			case 'graph': {
+				id = bmarkBase.ctime;
+				name = bmarkBase.title;
+				bmarkIcon = this.settings.bookmarkIcons[id] ?? {};
+				iconDefault = 'lucide-git-fork';
+				break;
+			}
+			case 'url': {
+				id = bmarkBase.ctime;
+				name = bmarkBase.url;
+				bmarkIcon = this.settings.bookmarkIcons[id] ?? {};
+				iconDefault = 'lucide-globe-2';
+				break;
+			}
 		}
 		return {
 			id: id,
-			name: name ?? null,
+			name: name,
 			category: bmarkBase.type ?? 'file',
 			iconDefault: iconDefault,
 			icon: unloading ? null : bmarkIcon?.icon ?? null,
@@ -707,7 +736,7 @@ export default class IconicPlugin extends Plugin {
 	saveBookmarkIcon(bmark: BookmarkItem, icon: string | null, color: string | null): void {
 		if (bmark.category === 'file' || bmark.category === 'folder') {
 			this.updateIconSetting(this.settings.fileIcons, bmark.id, icon, color);
-		} else if (bmark.category === 'group') {
+		} else {
 			this.updateIconSetting(this.settings.bookmarkIcons, bmark.id, icon, color);
 		}
 		this.saveSettings();
@@ -724,7 +753,7 @@ export default class IconicPlugin extends Plugin {
 			if (color !== undefined) bmark.color = color;
 			if (bmark.category === 'file' || bmark.category === 'folder') {
 				this.updateIconSetting(this.settings.fileIcons, bmark.id, bmark.icon, bmark.color);
-			} else if (bmark.category === 'group') {
+			} else {
 				this.updateIconSetting(this.settings.bookmarkIcons, bmark.id, bmark.icon, bmark.color);
 			}
 		}
@@ -808,13 +837,13 @@ export default class IconicPlugin extends Plugin {
 				delete fileIcon.unsynced;
 			}
 
-			const fileExt = fileId.match(/\.([^.]*)$/)?.[1] ?? '';
+			const { extension } = this.splitFilePath(fileId);
 			const unsynced = unsyncedFolders.some(folder => folder === fileId || fileId.startsWith(folder + '/')) 
-				|| unsyncedTypes.includes('unsupported') && !KNOWN_EXTENSIONS.includes(fileExt)
-				|| unsyncedTypes.includes('image') && IMAGE_EXTENSIONS.includes(fileExt)
-				|| unsyncedTypes.includes('audio') && AUDIO_EXTENSIONS.includes(fileExt)
-				|| unsyncedTypes.includes('video') && VIDEO_EXTENSIONS.includes(fileExt)
-				|| unsyncedTypes.includes('pdf') && fileExt === 'pdf';
+				|| unsyncedTypes.includes('unsupported') && !KNOWN_EXTENSIONS.includes(extension)
+				|| unsyncedTypes.includes('image') && IMAGE_EXTENSIONS.includes(extension)
+				|| unsyncedTypes.includes('audio') && AUDIO_EXTENSIONS.includes(extension)
+				|| unsyncedTypes.includes('video') && VIDEO_EXTENSIONS.includes(extension)
+				|| unsyncedTypes.includes('pdf') && extension === 'pdf';
 
 			if (unsynced) {
 				fileIcon.unsynced = fileIcon.unsynced ?? [];
@@ -847,10 +876,11 @@ export default class IconicPlugin extends Plugin {
 			const propBases = this.app.metadataTypeManager?.properties ?? [];
 
 			for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
+				const { path } = this.splitFilePath(fileId);
 				// Skip file pruning if excluded from Sync on any other device
 				if (fileIcon.unsynced?.some(appId => appId !== thisAppId)) {
 					continue;
-				} else if (!this.app.vault.getAbstractFileByPath(fileId)) {
+				} else if (!this.app.vault.getAbstractFileByPath(path)) {
 					delete this.settings.fileIcons[fileId];
 				}
 			}
