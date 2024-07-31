@@ -31,7 +31,7 @@ export interface Icon {
 export interface Item extends Icon {
 	id: string;
 	name: string;
-	category: 'app' | 'tab' | 'file' | 'folder' | 'group' | 'property' | 'ribbon';
+	category: 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'property' | 'ribbon';
 	iconDefault: string | null;
 }
 export interface AppItem extends Item {

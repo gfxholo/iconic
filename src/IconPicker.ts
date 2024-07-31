@@ -120,6 +120,9 @@ export default class IconPicker extends Modal {
 			case 'file': categoryText = STRINGS.categories.file; break;
 			case 'folder': categoryText = STRINGS.categories.folder; break;
 			case 'group': categoryText = STRINGS.categories.group; break;
+			case 'search': categoryText = STRINGS.categories.search; break;
+			case 'graph': categoryText = STRINGS.categories.graph; break;
+			case 'url': categoryText = STRINGS.categories.url; break;
 			case 'property': categoryText = STRINGS.categories.property; break;
 			case 'ribbon': categoryText = STRINGS.categories.ribbonItem; break;
 			default: categoryText = STRINGS.categories.item; break;
@@ -145,6 +148,9 @@ export default class IconPicker extends Modal {
 			case 'file': categoryText = STRINGS.categories.files; break;
 			case 'folder': categoryText = STRINGS.categories.folders; break;
 			case 'group': categoryText = STRINGS.categories.groups; break;
+			case 'search': categoryText = STRINGS.categories.searches; break;
+			case 'graph': categoryText = STRINGS.categories.graphs; break;
+			case 'url': categoryText = STRINGS.categories.urls; break;
 			case 'property': categoryText = STRINGS.categories.properties; break;
 			case 'ribbon': categoryText = STRINGS.categories.ribbonItems; break;
 			default: categoryText = STRINGS.categories.items; break;
