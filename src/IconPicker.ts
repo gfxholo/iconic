@@ -60,9 +60,9 @@ export default class IconPicker extends Modal {
 	private readonly manager: IconPickerManager;
 
 	// Item
-	private readonly titleLabel: string;
-	private readonly categoryLabel: string;
-	private readonly idLabel: string;
+	private readonly titleText: string;
+	private readonly categoryText: string;
+	private readonly nameText: string;
 	private readonly icon: string | null | undefined;
 	private color: string | null | undefined;
 	private readonly callback: IconPickerCallback | null;
@@ -82,13 +82,13 @@ export default class IconPicker extends Modal {
 	private pauseColorPickerOnChange: boolean = false;
 	private readonly searchResults: [icon: string, iconName: string][] = [];
 
-	private constructor(plugin: IconicPlugin, titleLabel: string, categoryLabel: string, idLabel: string, icon: string | null | undefined, color: string | null | undefined, callback: IconPickerCallback | null, multiCallback: MultiIconPickerCallback | null) {
+	private constructor(plugin: IconicPlugin, titleText: string, categoryText: string, nameText: string,icon: string | null | undefined, color: string | null | undefined, callback: IconPickerCallback | null, multiCallback: MultiIconPickerCallback | null) {
 		super(plugin.app);
 		this.plugin = plugin;
 		this.manager = new IconPickerManager(plugin);
-		this.titleLabel = titleLabel;
-		this.categoryLabel = categoryLabel;
-		this.idLabel = idLabel;
+		this.titleText = titleText;
+		this.categoryText = categoryText;
+		this.nameText = nameText;
 		this.icon = icon;
 		this.color = color;
 		this.callback = callback;
@@ -110,46 +110,46 @@ export default class IconPicker extends Modal {
 	 * Open a dialog to change a single icon.
 	 */
 	static openSingle(plugin: IconicPlugin, item: Item, callback: IconPickerCallback): void {
-		const titleLabel = STRINGS.iconPicker.changeIcon;
-		const idLabel = item.name;
+		const title = STRINGS.iconPicker.changeIcon;
+		const nameText = item.name;
 
-		let categoryLabel;
+		let categoryText;
 		switch (item.category) {
-			case 'app': categoryLabel = STRINGS.categories.appItem; break;
-			case 'tab': categoryLabel = STRINGS.categories.tab; break;
-			case 'file': categoryLabel = STRINGS.categories.file; break;
-			case 'folder': categoryLabel = STRINGS.categories.folder; break;
-			case 'group': categoryLabel = STRINGS.categories.group; break;
-			case 'property': categoryLabel = STRINGS.categories.property; break;
-			case 'ribbon': categoryLabel = STRINGS.categories.ribbonItem; break;
-			default: categoryLabel = STRINGS.categories.item; break;
+			case 'app': categoryText = STRINGS.categories.appItem; break;
+			case 'tab': categoryText = STRINGS.categories.tab; break;
+			case 'file': categoryText = STRINGS.categories.file; break;
+			case 'folder': categoryText = STRINGS.categories.folder; break;
+			case 'group': categoryText = STRINGS.categories.group; break;
+			case 'property': categoryText = STRINGS.categories.property; break;
+			case 'ribbon': categoryText = STRINGS.categories.ribbonItem; break;
+			default: categoryText = STRINGS.categories.item; break;
 		}
-		new IconPicker(plugin, titleLabel, categoryLabel, idLabel, item.icon, item.color, callback, null).open();
+		new IconPicker(plugin, title, categoryText, nameText, item.icon, item.color, callback, null).open();
 	}
 
 	/**
 	 * Open a dialog to change multiple icons at once.
 	 */
 	static openMulti(plugin: IconicPlugin, items: Item[], multiCallback: MultiIconPickerCallback): void {
-		const titleLabel = STRINGS.iconPicker.changeIcons.replace('{#}', items.length.toString());
-		const idLabel = items.map(item => item.name).join(', ');
+		const title = STRINGS.iconPicker.changeIcons.replace('{#}', items.length.toString());
+		const nameText = items.map(item => item.name).join(', ');
 
 		const everyCategory = items.every(item => item.category === items[0].category) ? items[0].category : undefined;
 		const everyIcon = items.every(item => item.icon === items[0].icon) ? items[0].icon : undefined;
 		const everyColor = items.every(item => item.color === items[0].color) ? items[0].color : undefined;
 
-		let categoryLabel;
+		let categoryText;
 		switch (everyCategory) {
-			case 'app': categoryLabel = STRINGS.categories.appItems; break;
-			case 'tab': categoryLabel = STRINGS.categories.tabs; break;
-			case 'file': categoryLabel = STRINGS.categories.files; break;
-			case 'folder': categoryLabel = STRINGS.categories.folders; break;
-			case 'group': categoryLabel = STRINGS.categories.groups; break;
-			case 'property': categoryLabel = STRINGS.categories.properties; break;
-			case 'ribbon': categoryLabel = STRINGS.categories.ribbonItems; break;
-			default: categoryLabel = STRINGS.categories.items; break;
+			case 'app': categoryText = STRINGS.categories.appItems; break;
+			case 'tab': categoryText = STRINGS.categories.tabs; break;
+			case 'file': categoryText = STRINGS.categories.files; break;
+			case 'folder': categoryText = STRINGS.categories.folders; break;
+			case 'group': categoryText = STRINGS.categories.groups; break;
+			case 'property': categoryText = STRINGS.categories.properties; break;
+			case 'ribbon': categoryText = STRINGS.categories.ribbonItems; break;
+			default: categoryText = STRINGS.categories.items; break;
 		}
-		new IconPicker(plugin, titleLabel, categoryLabel, idLabel, everyIcon, everyColor, null, multiCallback).open();
+		new IconPicker(plugin, title, categoryText, nameText, everyIcon, everyColor, null, multiCallback).open();
 	}
 
 	/**
@@ -158,7 +158,7 @@ export default class IconPicker extends Modal {
 	onOpen(): void {
 		this.containerEl.addClass('mod-confirmation');
 		this.modalEl.addClass('iconic-modal');
-		this.setTitle(this.titleLabel);
+		this.setTitle(this.titleText);
 
 		// Item name
 		const showItemName = this.plugin.settings.showItemName === 'on'
@@ -166,8 +166,8 @@ export default class IconPicker extends Modal {
 			|| Platform.isMobile && this.plugin.settings.showItemName === 'mobile';
 		if (showItemName) {
 			new Setting(this.contentEl)
-				.setName(this.categoryLabel)
-				.addText(itemNameField => itemNameField.setValue(this.idLabel))
+				.setName(this.categoryText)
+				.addText(itemNameField => itemNameField.setValue(this.nameText))
 				.setDisabled(true);
 		}
 
