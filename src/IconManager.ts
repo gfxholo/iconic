@@ -56,11 +56,11 @@ export default abstract class IconManager {
 		const svgEl = iconEl.find('.svg-icon');
 		if (svgEl) {
 			if (ColorUtils.isNamedColor(item.color)) {
-				svgEl.setAttr('stroke', ColorUtils.getColorHex(item.color));
+				svgEl.style.setProperty('color', ColorUtils.getColorHex(item.color));
 			} else if (ColorUtils.isHexColor(item.color)) {
-				svgEl.setAttr('stroke', item.color);
+				svgEl.style.setProperty('color', item.color);
 			} else {
-				svgEl.setAttr('stroke', 'currentColor');
+				svgEl.style.removeProperty('color');
 			}
 		}
 

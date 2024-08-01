@@ -361,7 +361,7 @@ export default class IconPicker extends Modal {
 					this.updateSearchResults();
 				});
 				// @ts-expect-error (Private API)
-				menuItem.iconEl?.find('.svg-icon')?.setAttr('stroke', ColorUtils.getColorHex(color));
+				menuItem.iconEl?.find('.svg-icon')?.style.setProperty('color', ColorUtils.getColorHex(color));
 			});
 		}
 		menu.showAtPosition({ x, y });
