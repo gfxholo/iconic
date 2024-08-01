@@ -369,7 +369,6 @@ export default class IconicPlugin extends Plugin {
 				iconEl = this.app.workspace.rightSplit.activeTabIconEl;
 			}
 		}
-		let iconDefault = leaf.view.icon;
 		// @ts-expect-error (Private API)
 		const isStacked = leaf.parent?.isStacked === true;
 		if (leaf.view instanceof FileView && leaf.view.file && leaf.view.allowNoFile === false) {
@@ -384,7 +383,7 @@ export default class IconicPlugin extends Plugin {
 				category: 'file',
 				iconDefault: isRoot && isMarkdown && !isStacked && !this.settings.showAllFileIcons
 					? null
-					: iconDefault,
+					: leaf.view.getIcon(),
 				icon: unloading ? null : fileIcon.icon ?? null,
 				color: unloading ? null : fileIcon.color ?? null,
 				isFile: true,
@@ -399,11 +398,11 @@ export default class IconicPlugin extends Plugin {
 			let iconDefault;
 			switch (tabId) {
 				case 'empty':
-					iconDefault = isStacked ? leaf.view.icon : null; break;
+					iconDefault = isStacked ? leaf.view.getIcon() : null; break;
 				case 'release-notes': // Add some sparkle to Obsidian updates
-					iconDefault = unloading ? leaf.view.icon : 'lucide-sparkle'; break;
+					iconDefault = unloading ? leaf.view.getIcon() : 'lucide-sparkle'; break;
 				default:
-					iconDefault = leaf.view.icon; break;
+					iconDefault = leaf.view.getIcon(); break;
 			}
 			return {
 				id: tabId,
