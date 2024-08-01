@@ -122,13 +122,15 @@ export default class IconicPlugin extends Plugin {
 		await this.loadSettings();
 		this.addSettingTab(new IconicSettingTab(this));
 
-		// Generate ICONS map
-		getIconIds().map(id => [id, id.replace(/^lucide-/, '').replace(/-/g, ' ')])
-			.sort(([, aName], [, bName]) => aName.localeCompare(bName))
-			.forEach(([id, name]) => ICONS.set(id, name));
+		this.app.workspace.onLayoutReady(() => {
+			// Generate ICONS map
+			getIconIds().map(id => [id, id.replace(/^lucide-/, '').replace(/-/g, ' ')])
+				.sort(([, aName], [, bName]) => aName.localeCompare(bName))
+				.forEach(([id, name]) => ICONS.set(id, name));
+			this.startIconManagers();
+			this.refreshBodyClasses();
+		});
 
-		this.startIconManagers();
-		this.refreshBodyClasses();
 		this.registerEvent(this.app.workspace.on('css-change', () => {
 			this.refreshIconManagers();
 			this.refreshBodyClasses();
