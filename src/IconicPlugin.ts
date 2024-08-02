@@ -867,8 +867,11 @@ export default class IconicPlugin extends Plugin {
 		);
 
 		for (const [fileId] of fileIcons) {
-			const { path } = this.splitFilePath(fileId);
+			const { path, subpath } = this.splitFilePath(fileId);
+			const bmarkSubpath = subpath.replaceAll(/(?<!^)#|(?<!^#)\^|\s\s/g, ' ');
 			if (!this.app.vault.getAbstractFileByPath(path)) {
+				delete this.settings.fileIcons[fileId];
+			} else if (subpath && !bmarkBases.some(bmarkBase => bmarkBase.path === path && bmarkBase.subpath === bmarkSubpath)) {
 				delete this.settings.fileIcons[fileId];
 			}
 		}
