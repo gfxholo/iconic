@@ -184,6 +184,8 @@ export default class IconPicker extends Modal {
 				.setTooltip(STRINGS.iconPicker.resetColor)
 				.onClick(() => this.resetColor());
 				colorResetButton.extraSettingsEl.tabIndex = 0;
+				colorResetButton.extraSettingsEl.addClass('iconic-reset-color');
+				colorResetButton.extraSettingsEl.toggleClass('iconic-invisible', this.color === null);
 				this.manager.setEventListener(colorResetButton.extraSettingsEl, 'pointerdown', event => {
 					event.preventDefault();
 				});
@@ -192,7 +194,6 @@ export default class IconPicker extends Modal {
 						this.resetColor();
 					}
 				});
-				if (this.color === null) colorResetButton.extraSettingsEl.hide();
 				this.colorResetButton = colorResetButton;
 			})
 			.addColorPicker(colorPicker => { colorPicker
@@ -204,7 +205,7 @@ export default class IconPicker extends Modal {
 					}
 					this.color = value;
 					this.colorPickerEl.ariaLabel = this.color;
-					this.colorResetButton.extraSettingsEl.show();
+					this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
 					this.updateSearchResults();
 				});
 				this.colorPicker = colorPicker;
@@ -356,7 +357,7 @@ export default class IconPicker extends Modal {
 				.setSection('color')
 				.onClick(() => {
 					this.color = color;
-					this.colorResetButton.extraSettingsEl.show();
+					this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
 					this.updateColorPicker();
 					this.updateSearchResults();
 				});
@@ -376,7 +377,7 @@ export default class IconPicker extends Modal {
 			index = COLORS.indexOf(this.color) - 1;
 		}
 		this.color = COLORS[index];
-		this.colorResetButton.extraSettingsEl.show();
+		this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
 		this.updateColorPicker();
 		this.updateSearchResults();
 	}
@@ -390,7 +391,7 @@ export default class IconPicker extends Modal {
 			index = COLORS.indexOf(this.color) + 1;
 		}
 		this.color = COLORS[index];
-		this.colorResetButton.extraSettingsEl.show();
+		this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
 		this.updateColorPicker();
 		this.updateSearchResults();
 	}
@@ -400,7 +401,7 @@ export default class IconPicker extends Modal {
 	 */
 	private resetColor(): void {
 		this.color = null;
-		this.colorResetButton.extraSettingsEl.hide();
+		this.colorResetButton.extraSettingsEl.addClass('iconic-invisible');
 		this.updateColorPicker();
 		this.updateSearchResults();
 	}

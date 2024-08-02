@@ -95,6 +95,7 @@
 
 /* Invisibility */
 .iconic-invisible { visibility: hidden; }
+.is-phone .iconic-reset-color.iconic-invisible { display: none; }
 
 /* Uncolored hover */
 .iconic-uncolor-hover .workspace-tab-header:hover .iconic-icon > .svg-icon { stroke: currentColor; }
