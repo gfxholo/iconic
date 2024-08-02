@@ -845,45 +845,48 @@ export default class IconicPlugin extends Plugin {
 		this.updateUnsyncedFiles();
 
 		// @ts-expect-error (Private API)
-		const isNotSyncing = this.app.internalPlugins?.plugins?.sync?.instance?.syncing !== true;
+		const isSyncing = this.app.internalPlugins?.plugins?.sync?.instance?.syncing === true;
 		// @ts-expect-error (Private API)
-		const isNotPaused = this.app.internalPlugins?.plugins?.sync?.instance?.pause !== true;
+		const isPaused = this.app.internalPlugins?.plugins?.sync?.instance?.pause === true;
 
-		if (isNotSyncing && isNotPaused && !this.settings.rememberDeletedItems) {
-			// @ts-expect-error (Private API)
-			const thisAppId = this.app.appId;
-			// @ts-expect-error (Private API)
-			const bmarkBases = this.flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
-			// @ts-expect-error (Private API)
-			const propBases = this.app.metadataTypeManager?.properties ?? [];
+		// Disable pruning under these conditions
+		if (isSyncing || isPaused || this.settings.rememberDeletedItems) {
+			return;
+		}
 
-			for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
-				const { path } = this.splitFilePath(fileId);
-				// Skip file pruning if excluded from Sync on any other device
-				if (fileIcon.unsynced?.some(appId => appId !== thisAppId)) {
-					continue;
-				} else if (!this.app.vault.getAbstractFileByPath(path)) {
-					delete this.settings.fileIcons[fileId];
+		// @ts-expect-error (Private API)
+		const thisAppId = this.app.appId;
+		// @ts-expect-error (Private API)
+		const bmarkBases = this.flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
+		// @ts-expect-error (Private API)
+		const propBases = this.app.metadataTypeManager?.properties ?? [];
+
+		for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
+			const { path } = this.splitFilePath(fileId);
+			// Skip file pruning if excluded from Sync on any other device
+			if (fileIcon.unsynced?.some(appId => appId !== thisAppId)) {
+				continue;
+			} else if (!this.app.vault.getAbstractFileByPath(path)) {
+				delete this.settings.fileIcons[fileId];
+			}
+		}
+
+		if (bmarkBases.length > 0) {
+			const bmarkIds = bmarkBases
+				.filter(bmarkBase => bmarkBase.type !== 'file' && bmarkBase.type !== 'folder')
+				.map(bmarkBase => bmarkBase.ctime.toString());
+			for (const bmarkId in this.settings.bookmarkIcons) {
+				if (!bmarkIds.includes(bmarkId)) {
+					delete this.settings.bookmarkIcons[bmarkId];
 				}
 			}
+		}
 
-			if (bmarkBases.length > 0) {
-				const bmarkIds = bmarkBases
-					.filter(bmarkBase => bmarkBase.type !== 'file' && bmarkBase.type !== 'folder')
-					.map(bmarkBase => bmarkBase.ctime.toString());
-				for (const bmarkId in this.settings.bookmarkIcons) {
-					if (!bmarkIds.includes(bmarkId)) {
-						delete this.settings.bookmarkIcons[bmarkId];
-					}
-				}
-			}
-
-			if (propBases.length > 0) {
-				const propIds = Object.keys(propBases);
-				for (const propId in this.settings.propertyIcons) {
-					if (!propIds.includes(propId)) {
-						delete this.settings.propertyIcons[propId];
-					}
+		if (propBases.length > 0) {
+			const propIds = Object.keys(propBases);
+			for (const propId in this.settings.propertyIcons) {
+				if (!propIds.includes(propId)) {
+					delete this.settings.propertyIcons[propId];
 				}
 			}
 		}
