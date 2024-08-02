@@ -861,12 +861,14 @@ export default class IconicPlugin extends Plugin {
 		// @ts-expect-error (Private API)
 		const propBases = this.app.metadataTypeManager?.properties ?? [];
 
-		for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
+		const fileIcons = Object.entries(this.settings.fileIcons).filter(([fileId, fileIcon]) =>
+			// Never prune files that are unsynced on another device
+			fileIcon.unsynced?.every(appId => appId === thisAppId) ?? true
+		);
+
+		for (const [fileId] of fileIcons) {
 			const { path } = this.splitFilePath(fileId);
-			// Skip file pruning if excluded from Sync on any other device
-			if (fileIcon.unsynced?.some(appId => appId !== thisAppId)) {
-				continue;
-			} else if (!this.app.vault.getAbstractFileByPath(path)) {
+			if (!this.app.vault.getAbstractFileByPath(path)) {
 				delete this.settings.fileIcons[fileId];
 			}
 		}
