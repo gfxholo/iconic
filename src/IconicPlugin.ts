@@ -365,7 +365,7 @@ export default class IconicPlugin extends Plugin {
 			if (leaf.containerEl?.parentElement === this.app.workspace.leftSplit.activeTabContentEl) {
 				// @ts-expect-error (Private API)
 				iconEl = this.app.workspace.leftSplit.activeTabIconEl;
-			// @ts-expect-error (Private API)
+				// @ts-expect-error (Private API)
 			} else if (leaf.containerEl?.parentElement === this.app.workspace.rightSplit.activeTabContentEl) {
 				// @ts-expect-error (Private API)
 				iconEl = this.app.workspace.rightSplit.activeTabIconEl;
@@ -823,43 +823,25 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
-	 * Flag any files excluded from Sync on this device.
-	 */
-	private updateUnsyncedFiles(): void {
-		// @ts-expect-error (Private API)
-		const appId = this.app.appId;
-		// @ts-expect-error (Private API)
-		const unsyncedFolders: string[] = this.app.internalPlugins?.plugins?.sync?.instance?.ignoreFolders ?? [];
-		// @ts-expect-error (Private API)
-		const unsyncedTypes: string[] = KNOWN_TYPES.filter(type => !this.app.internalPlugins?.plugins?.sync?.instance?.allowTypes.has(type));
-
-		for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
-			if (!Array.isArray(fileIcon.unsynced)) {
-				delete fileIcon.unsynced;
-			}
-
-			const { extension } = this.splitFilePath(fileId);
-			const unsynced = unsyncedFolders.some(folder => folder === fileId || fileId.startsWith(folder + '/')) 
-				|| unsyncedTypes.includes('unsupported') && !KNOWN_EXTENSIONS.includes(extension)
-				|| unsyncedTypes.includes('image') && IMAGE_EXTENSIONS.includes(extension)
-				|| unsyncedTypes.includes('audio') && AUDIO_EXTENSIONS.includes(extension)
-				|| unsyncedTypes.includes('video') && VIDEO_EXTENSIONS.includes(extension)
-				|| unsyncedTypes.includes('pdf') && extension === 'pdf';
-
-			if (unsynced) {
-				fileIcon.unsynced = fileIcon.unsynced ?? [];
-				if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
-			} else {
-				if (fileIcon.unsynced?.includes(appId)) fileIcon.unsynced?.remove(appId);
-				if (fileIcon.unsynced?.length === 0) delete fileIcon.unsynced;
-			}
-		}
-	}
-
-	/**
 	 * Save settings to storage.
 	 */
 	async saveSettings(): Promise<void> {
+		this.pruneSettings();
+
+		// Sort item IDs for human-readability
+		this.settings.appIcons = Object.fromEntries(Object.entries(this.settings.appIcons).sort());
+		this.settings.tabIcons = Object.fromEntries(Object.entries(this.settings.tabIcons).sort());
+		this.settings.fileIcons = Object.fromEntries(Object.entries(this.settings.fileIcons).sort());
+		this.settings.bookmarkIcons = Object.fromEntries(Object.entries(this.settings.bookmarkIcons).sort());
+		this.settings.propertyIcons = Object.fromEntries(Object.entries(this.settings.propertyIcons).sort());
+		this.settings.ribbonIcons = Object.fromEntries(Object.entries(this.settings.ribbonIcons).sort());
+		await this.saveData(this.settings);
+	}
+
+	/**
+	 * Check for any deleted items and prune their icons.
+	 */
+	private pruneSettings(): void {
 		this.updateUnsyncedFiles();
 
 		// @ts-expect-error (Private API)
@@ -867,7 +849,6 @@ export default class IconicPlugin extends Plugin {
 		// @ts-expect-error (Private API)
 		const isNotPaused = this.app.internalPlugins?.plugins?.sync?.instance?.pause !== true;
 
-		// Check for any deleted items and prune their icons
 		if (isNotSyncing && isNotPaused && !this.settings.rememberDeletedItems) {
 			// @ts-expect-error (Private API)
 			const thisAppId = this.app.appId;
@@ -906,15 +887,40 @@ export default class IconicPlugin extends Plugin {
 				}
 			}
 		}
+	}
 
-		// Sort item IDs for human-readability
-		this.settings.appIcons = Object.fromEntries(Object.entries(this.settings.appIcons).sort());
-		this.settings.tabIcons = Object.fromEntries(Object.entries(this.settings.tabIcons).sort());
-		this.settings.fileIcons = Object.fromEntries(Object.entries(this.settings.fileIcons).sort());
-		this.settings.bookmarkIcons = Object.fromEntries(Object.entries(this.settings.bookmarkIcons).sort());
-		this.settings.propertyIcons = Object.fromEntries(Object.entries(this.settings.propertyIcons).sort());
-		this.settings.ribbonIcons = Object.fromEntries(Object.entries(this.settings.ribbonIcons).sort());
-		await this.saveData(this.settings);
+	/**
+	 * Flag any files excluded from Sync on this device.
+	 */
+	private updateUnsyncedFiles(): void {
+		// @ts-expect-error (Private API)
+		const appId = this.app.appId;
+		// @ts-expect-error (Private API)
+		const unsyncedFolders: string[] = this.app.internalPlugins?.plugins?.sync?.instance?.ignoreFolders ?? [];
+		// @ts-expect-error (Private API)
+		const unsyncedTypes: string[] = KNOWN_TYPES.filter(type => !this.app.internalPlugins?.plugins?.sync?.instance?.allowTypes.has(type));
+
+		for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
+			if (!Array.isArray(fileIcon.unsynced)) {
+				delete fileIcon.unsynced;
+			}
+
+			const { extension } = this.splitFilePath(fileId);
+			const unsynced = unsyncedFolders.some(folder => folder === fileId || fileId.startsWith(folder + '/'))
+				|| unsyncedTypes.includes('unsupported') && !KNOWN_EXTENSIONS.includes(extension)
+				|| unsyncedTypes.includes('image') && IMAGE_EXTENSIONS.includes(extension)
+				|| unsyncedTypes.includes('audio') && AUDIO_EXTENSIONS.includes(extension)
+				|| unsyncedTypes.includes('video') && VIDEO_EXTENSIONS.includes(extension)
+				|| unsyncedTypes.includes('pdf') && extension === 'pdf';
+
+			if (unsynced) {
+				fileIcon.unsynced = fileIcon.unsynced ?? [];
+				if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
+			} else {
+				if (fileIcon.unsynced?.includes(appId)) fileIcon.unsynced?.remove(appId);
+				if (fileIcon.unsynced?.length === 0) delete fileIcon.unsynced;
+			}
+		}
 	}
 
 	/**
