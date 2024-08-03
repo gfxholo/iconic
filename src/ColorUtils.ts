@@ -53,15 +53,14 @@ export default class ColorUtils {
 			return cssValue;
 		} else if (REGEX_RGB_COLOR.test(cssValue)) {
 			const [r, g, b] = cssValue
-				.replace(' ', '')
+				.replaceAll(/\s/g, '')
 				.slice(4, -1)
 				.split(',')
 				.map(str => parseInt(str).toString(16).padStart(2, '0'));
 			return '#' + r + g + b;
 		} else if (REGEX_HSL_COLOR.test(cssValue)) {
 			let [h, s, l] = cssValue
-				.replace(' ', '')
-				.replace('%', '')
+				.replaceAll(/[\s%]/g, '')
 				.slice(4, -1)
 				.split(',')
 				.map(str => parseInt(str));
@@ -87,15 +86,14 @@ export default class ColorUtils {
 			return [r, g, b];
 		} else if (REGEX_RGB_COLOR.test(cssValue)) {
 			const [r, g, b] = cssValue
-				.replace(' ', '')
+				.replaceAll(/\s/g, '')
 				.slice(4, -1)
 				.split(',')
 				.map(str => parseInt(str));
 			return [r, g, b];
 		} else if (REGEX_HSL_COLOR.test(cssValue)) {
 			let [h, s, l] = cssValue
-				.replace(' ', '')
-				.replace('%', '')
+				.replaceAll(/[\s%]/g, '')
 				.slice(4, -1)
 				.split(',')
 				.map(str => parseInt(str));
