@@ -357,7 +357,7 @@ export default class IconicPlugin extends Plugin {
 	/**
 	 * Create tab definition.
 	 */
-	defineTabItem(leaf: WorkspaceLeaf, unloading?: boolean): TabItem {
+	private defineTabItem(leaf: WorkspaceLeaf, unloading?: boolean): TabItem {
 		// @ts-expect-error (Private API)
 		let iconEl: HTMLElement | null = leaf.tabHeaderInnerIconEl;
 		if (Platform.isMobile) {

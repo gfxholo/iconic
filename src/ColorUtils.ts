@@ -59,7 +59,7 @@ export default class ColorUtils {
 				.map(str => parseInt(str).toString(16).padStart(2, '0'));
 			return '#' + r + g + b;
 		} else if (REGEX_HSL_COLOR.test(cssValue)) {
-			let [h, s, l] = cssValue
+			const [h, s, l] = cssValue
 				.replaceAll(/[\s%]/g, '')
 				.slice(4, -1)
 				.split(',')
@@ -92,7 +92,7 @@ export default class ColorUtils {
 				.map(str => parseInt(str));
 			return [r, g, b];
 		} else if (REGEX_HSL_COLOR.test(cssValue)) {
-			let [h, s, l] = cssValue
+			const [h, s, l] = cssValue
 				.replaceAll(/[\s%]/g, '')
 				.slice(4, -1)
 				.split(',')

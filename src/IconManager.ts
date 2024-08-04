@@ -21,7 +21,7 @@ export default abstract class IconManager {
 	/**
 	 * Refresh icon inside a given element.
 	 */
-	protected refreshIcon(item: Item | Icon, iconEl: HTMLElement, onClick?: (event: MouseEvent) => any): void {
+	protected refreshIcon(item: Item | Icon, iconEl: HTMLElement, onClick?: (event: MouseEvent) => void): void {
 		iconEl.addClass('iconic-icon');
 
 		if (item.icon) {

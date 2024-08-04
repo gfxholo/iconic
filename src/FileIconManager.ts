@@ -59,7 +59,7 @@ export default class FileIconManager extends IconManager {
 	/**
 	 * Refresh an array of file icons, including any subitems.
 	 */
-	refreshChildIcons(files: FileItem[], itemEls: HTMLElement[]): void {
+	private refreshChildIcons(files: FileItem[], itemEls: HTMLElement[]): void {
 		for (const itemEl of itemEls) {
 			itemEl.addClass('iconic-item');
 

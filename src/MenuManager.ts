@@ -5,7 +5,7 @@ import { Menu, MenuItem } from 'obsidian';
  */
 export default class MenuManager {
 	private menu: Menu | null;
-	private queuedActions: (() => any)[] = [];
+	private queuedActions: (() => void)[] = [];
 
 	constructor() {
 		const manager = this;
@@ -32,7 +32,7 @@ export default class MenuManager {
 	/**
 	 * Add a menu item.
 	 */
-	addItem(callback: (item: MenuItem) => any): this {
+	addItem(callback: (item: MenuItem) => void): this {
 		if (this.menu) {
 			this.menu.addItem(callback);
 		} else {
@@ -44,7 +44,7 @@ export default class MenuManager {
 	/**
 	 * Add a menu item after the given sections, prioritized by array order.
 	 */
-	addItemAfter(preSections: string | string[], callback: (item: MenuItem) => any): this {
+	addItemAfter(preSections: string | string[], callback: (item: MenuItem) => void): this {
 		if (this.menu) {
 			let item: MenuItem;
 			this.menu.addItem(addedItem => { item = addedItem, callback(addedItem) });

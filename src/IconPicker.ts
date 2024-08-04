@@ -28,7 +28,7 @@ class IconPickerManager extends IconManager {
 	/**
 	 * @override
 	 */
-	refreshIcon(item: Icon | Item, iconEl: HTMLElement, onClick?: ((event: MouseEvent) => any)): void {
+	refreshIcon(item: Icon | Item, iconEl: HTMLElement, onClick?: ((event: MouseEvent) => void)): void {
 		super.refreshIcon(item, iconEl, onClick);
 	}
 
@@ -40,7 +40,7 @@ class IconPickerManager extends IconManager {
 	/**
 	 * @override
 	 */
-	setEventListener<K extends keyof HTMLElementEventMap>(element: HTMLElement, type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void {
+	setEventListener<K extends keyof HTMLElementEventMap>(element: HTMLElement, type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions): void {
 		super.setEventListener(element, type, listener, options);
 	}
 
@@ -78,8 +78,8 @@ export default class IconPicker extends Modal {
 	private emojiButtonEl: HTMLElement;
 
 	// State
-	private emojiMode: boolean = false;
-	private pauseColorPickerOnChange: boolean = false;
+	private emojiMode = false;
+	private pauseColorPickerOnChange = false;
 	private readonly searchResults: [icon: string, iconName: string][] = [];
 
 	private constructor(plugin: IconicPlugin, titleText: string, categoryText: string, nameText: string,icon: string | null | undefined, color: string | null | undefined, callback: IconPickerCallback | null, multiCallback: MultiIconPickerCallback | null) {
@@ -317,10 +317,10 @@ export default class IconPicker extends Modal {
 		});
 		if (this.icon) {
 			if (ICONS.has(this.icon)) {
-				this.searchField.setValue(ICONS.get(this.icon)!);
+				this.searchField.setValue(ICONS.get(this.icon) ?? '');
 			} else if (EMOJIS.has(this.icon)) {
 				this.toggleEmojiMode();
-				this.searchField.setValue(EMOJIS.get(this.icon)!);
+				this.searchField.setValue(EMOJIS.get(this.icon) ?? '');
 			}
 		}
 
@@ -473,7 +473,7 @@ export default class IconPicker extends Modal {
 
 		// Sort matches by score
 		matches.sort(([scoreA,], [scoreB,]) => scoreA > scoreB ? -1 : +1);
-		for (const [score, iconEntry] of matches) {
+		for (const [, iconEntry] of matches) {
 			this.searchResults.push(iconEntry);
 			if (this.searchResults.length === this.plugin.settings.maxSearchResults) break;
 		}
