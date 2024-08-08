@@ -102,6 +102,21 @@ export default class FileIconManager extends IconManager {
 			} else {
 				this.refreshIcon(file, iconEl);
 			}
+
+			// Update ghost icon when dragging
+			this.setEventListener(selfEl, 'dragstart', () => {
+				if (file.icon || file.iconDefault || file.color) {
+					const ghostEl = activeDocument.body.find(':scope > .drag-ghost > .drag-ghost-self');
+					if (ghostEl) {
+						const spanEl = ghostEl.find('span');
+						const ghostIcon = (file.category === 'folder' && file.icon === null)
+							? 'lucide-folder-open'
+							: file.icon || file.iconDefault;
+						this.refreshIcon({ icon: ghostIcon, color: file.color }, ghostEl);
+						ghostEl.appendChild(spanEl);
+					}
+				}
+			});
 		}
 	}
 

@@ -138,6 +138,21 @@ export default class BookmarkIconManager extends IconManager {
 					}
 				}, { capture: true });
 			}
+
+			// Update ghost icon when dragging
+			this.setEventListener(selfEl, 'dragstart', () => {
+				if (bmark.icon || bmark.iconDefault) {
+					const ghostEl = activeDocument.body.find(':scope > .drag-ghost > .drag-ghost-self');
+					if (ghostEl) {
+						const spanEl = ghostEl.find('span');
+						const ghostIcon = (bmark.category === 'group' && bmark.icon === null)
+							? 'lucide-bookmark'
+							: bmark.icon || bmark.iconDefault;
+						this.refreshIcon({ icon: ghostIcon, color: bmark.color }, ghostEl);
+						ghostEl.appendChild(spanEl);
+					}
+				}
+			});
 		}
 	}
 
