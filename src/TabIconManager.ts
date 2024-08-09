@@ -10,10 +10,26 @@ export default class TabIconManager extends IconManager {
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
 		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => this.refreshIcons()));
+
 		// @ts-expect-error (Private API)
 		if (this.app.plugins?.plugins?.['obsidian-icon-folder']) {
 			this.plugin.registerEvent(this.app.workspace.on('active-leaf-change', () => this.refreshIcons()));
 		}
+
+		// Refresh dropdown tab list
+		const tabListEl = activeDocument.body.find('.mod-root .workspace-tab-header-tab-list > .clickable-icon');
+		if (tabListEl) this.setEventListener(tabListEl, 'click', () => {
+			const tabs = this.plugin.getTabItems().filter(tab => tab.isRoot);
+			this.plugin.menuManager.forSection('tablist', (item, i) => {
+				const tab = tabs[i];
+				if (tab) {
+					tab.iconDefault = tab.iconDefault ?? 'lucide-file';
+					// @ts-expect-error <Private API>
+					this.refreshIcon(tab, item.iconEl);
+				}
+			});
+		});
+
 		this.refreshIcons();
 	}
 
