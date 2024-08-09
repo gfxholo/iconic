@@ -53,6 +53,16 @@ export default class TabIconManager extends IconManager {
 				this.refreshIcon(tab, iconEl);
 			}
 
+			// Update ghost icon when dragging
+			this.setEventListener(tabEl, 'dragstart', () => {
+				if (tab.icon || tab.iconDefault) {
+					const ghostEl = activeDocument.body.find(':scope > .drag-ghost > .drag-ghost-icon');
+					if (ghostEl) {
+						this.refreshIcon({ icon: tab.icon ?? tab.iconDefault, color: tab.color }, ghostEl);
+					}
+				}
+			});
+
 			// Set menu listener if tab is not handled by workspace.on('file-menu')
 			if (!tab.isFile || !tabEl.hasClass('is-active')) {
 				this.setEventListener(tabEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
