@@ -54,6 +54,7 @@ export interface PropertyItem extends Item {
 	type: string | null;
 }
 export interface RibbonItem extends Item {
+	isHidden: boolean;
 	iconEl: HTMLElement | null;
 }
 
@@ -686,9 +687,10 @@ export default class IconicPlugin extends Plugin {
 			id: itemBase.id,
 			name: itemBase.title ?? null,
 			category: 'ribbon',
-			iconDefault: itemBase.hidden ? null : itemBase.icon ?? null,
+			iconDefault: itemBase.icon ?? null,
 			icon: unloading ? null : itemIcon.icon ?? null,
 			color: unloading ? null : itemIcon.color ?? null,
+			isHidden: itemBase.hidden ?? false,
 			iconEl: itemBase.buttonEl ?? null,
 		}
 	}

@@ -1,4 +1,4 @@
-import { Menu } from 'obsidian';
+import { Menu, Platform } from 'obsidian';
 import IconicPlugin, { STRINGS } from './IconicPlugin';
 import IconManager from './IconManager';
 import IconPicker from './IconPicker';
@@ -10,11 +10,31 @@ export default class RibbonIconManager extends IconManager {
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
 		this.refreshIcons();
+
 		// @ts-expect-error (Private API)
 		const containerEl: HTMLElement = this.app.workspace.leftRibbon.ribbonItemsEl;
-		// Prevent app from eating auxclick events
+
+		// Prevent ribbon from eating auxclick events
 		this.setEventListener(containerEl, 'auxclick', event => event.stopPropagation(), { capture: true });
 		this.setMutationObserver(containerEl, { childList: true }, () => this.refreshIcons());
+
+		// Refresh ribbon context menu
+		const ribbonEl = activeDocument.body.find(Platform.isDesktop
+			? '.side-dock-ribbon.mod-left.workspace-ribbon'
+			: '.side-dock-ribbon.mod-left.workspace-drawer-ribbon'
+		);
+		if (ribbonEl) this.setEventListener(ribbonEl, 'contextmenu', () => {
+			const ribbonItems = this.plugin.getRibbonItems();
+			this.plugin.menuManager.forSection('order', item => {
+				const ribbonItem = ribbonItems[0];
+				if (ribbonItem) {
+					item.setIcon(ribbonItem.icon);
+					// @ts-expect-error <Private API>
+					this.refreshIcon(ribbonItem, item.iconEl);
+					ribbonItems.shift();
+				}
+			});
+		});
 	}
 
 	/**
@@ -25,6 +45,10 @@ export default class RibbonIconManager extends IconManager {
 		for (const ribbonItem of ribbonItems) {
 			const iconEl = ribbonItem.iconEl;
 			if (!iconEl) continue;
+			if (ribbonItem.isHidden) {
+				ribbonItem.icon = null;
+				ribbonItem.iconDefault = null;
+			}
 			this.refreshIcon(ribbonItem, iconEl);
 			this.setEventListener(iconEl, 'contextmenu', event => this.onContextMenu(ribbonItem.id, event));
 		}
