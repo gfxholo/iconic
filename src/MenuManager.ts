@@ -46,24 +46,25 @@ export default class MenuManager {
 	 */
 	addItemAfter(preSections: string | string[], callback: (item: MenuItem) => void): this {
 		if (this.menu) {
-			let item: MenuItem;
-			this.menu.addItem(addedItem => { item = addedItem, callback(addedItem) });
-
-			// @ts-expect-error (Private API)
-			const section: string = item.section;
-			// @ts-expect-error (Private API)
-			const sections: string[] = this.menu.sections ?? [];
-			let index = 0;
-
 			if (typeof preSections === 'string') preSections = [preSections];
-			for (const preSection of preSections) {
-				if (sections.includes(preSection)) {
-					index = sections.lastIndexOf(preSection) + 1;
-					break;
+
+			this.menu.addItem(item => {
+				callback(item);
+				// @ts-expect-error (Private API)
+				const section: string = item.section;
+				// @ts-expect-error (Private API)
+				const sections: string[] = this.menu?.sections ?? [];
+
+				let index = 0;
+				for (const preSection of preSections) {
+					if (sections.includes(preSection)) {
+						index = sections.lastIndexOf(preSection) + 1;
+						break;
+					}
 				}
-			}
-			sections.remove(section);
-			sections.splice(index, 0, section);
+				sections.remove(section);
+				sections.splice(index, 0, section);
+			});
 		} else {
 			this.queuedActions.push(() => this.addItemAfter(preSections, callback));
 		}
