@@ -353,7 +353,6 @@ export default class IconPicker extends Modal {
 		for (const color of COLORS) {
 			menu.addItem(menuItem => { menuItem
 				.setTitle((STRINGS.iconPicker.colors as any)[color])
-				.setIcon('lucide-paint-bucket')
 				.setSection('color')
 				.onClick(() => {
 					this.color = color;
@@ -362,7 +361,7 @@ export default class IconPicker extends Modal {
 					this.updateSearchResults();
 				});
 				// @ts-expect-error (Private API)
-				menuItem.iconEl?.find('.svg-icon')?.style.setProperty('color', ColorUtils.getColorHex(color));
+				this.manager.refreshIcon({ icon: 'lucide-paint-bucket', color }, menuItem.iconEl);
 			});
 		}
 		menu.showAtPosition({ x, y });
