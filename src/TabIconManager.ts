@@ -1,5 +1,5 @@
 import { Platform } from 'obsidian';
-import IconicPlugin, { FileItem, STRINGS, TabItem } from './IconicPlugin';
+import IconicPlugin, { FileItem, TabItem, STRINGS } from './IconicPlugin';
 import IconManager from './IconManager';
 import IconPicker from './IconPicker';
 

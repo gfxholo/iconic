@@ -1,5 +1,5 @@
 import { ColorComponent, ExtraButtonComponent, Hotkey, Menu, Modal, Platform, Setting, TextComponent, prepareFuzzySearch, setIcon } from 'obsidian';
-import IconicPlugin, { ICONS, EMOJIS, STRINGS, Icon, Item } from './IconicPlugin';
+import IconicPlugin, { Item, Icon, ICONS, EMOJIS, STRINGS } from './IconicPlugin';
 import ColorUtils, { COLORS } from './ColorUtils';
 import IconManager from './IconManager';
 
@@ -28,7 +28,7 @@ class IconPickerManager extends IconManager {
 	/**
 	 * @override
 	 */
-	refreshIcon(item: Icon | Item, iconEl: HTMLElement, onClick?: ((event: MouseEvent) => void)): void {
+	refreshIcon(item: Item | Icon, iconEl: HTMLElement, onClick?: ((event: MouseEvent) => void)): void {
 		super.refreshIcon(item, iconEl, onClick);
 	}
 

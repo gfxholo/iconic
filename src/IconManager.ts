@@ -1,5 +1,5 @@
 import { App, setIcon } from 'obsidian';
-import IconicPlugin, { ICONS, EMOJIS, Item, Icon } from './IconicPlugin';
+import IconicPlugin, { Item, Icon, ICONS, EMOJIS } from './IconicPlugin';
 import ColorUtils from './ColorUtils';
 
 /**
