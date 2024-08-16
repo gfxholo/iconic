@@ -1,5 +1,5 @@
 import { Menu, Platform } from 'obsidian';
-import IconicPlugin, { STRINGS } from './IconicPlugin';
+import IconicPlugin, { RibbonItem, STRINGS } from './IconicPlugin';
 import IconManager from './IconManager';
 import IconPicker from './IconPicker';
 
@@ -35,6 +35,21 @@ export default class RibbonIconManager extends IconManager {
 				}
 			});
 		});
+
+		// Watch for ribbon configuration dialog
+		this.setMutationObserver(activeDocument.body, { childList: true }, mutations => {
+			for (const mutation of mutations) {
+				for (const addedNode of mutation.addedNodes) {
+					// Very fragile dialog detection
+					if (addedNode instanceof HTMLElement
+						&& addedNode.hasClass('modal-container')
+						&& addedNode.find('.modal-content > div > .mobile-option-setting-item')
+						&& addedNode.find('.modal-content > .modal-button-container')) {
+						this.refreshConfigIcons(addedNode);
+					}
+				}
+			}
+		});
 	}
 
 	/**
@@ -51,6 +66,39 @@ export default class RibbonIconManager extends IconManager {
 			}
 			this.refreshIcon(ribbonItem, iconEl);
 			this.setEventListener(iconEl, 'contextmenu', event => this.onContextMenu(ribbonItem.id, event));
+		}
+	}
+
+	/**
+	 * Refresh all icons in the ribbon configuration dialog.
+	 */
+	private refreshConfigIcons(containerEl: HTMLElement) {
+		const iconEls = containerEl.findAll('.mobile-option-setting-item-option-icon:not(.mobile-option-setting-drag-icon)');
+		if (iconEls.length === 0) return;
+
+		const ribbonItems = this.plugin.getRibbonItems();
+		const visibleItems = ribbonItems.filter(item => !item.isHidden);
+		const hiddenItems = ribbonItems.filter(item => item.isHidden);
+		const visibleEls = containerEl.findAll('.mobile-option-setting-item:has(.mobile-option-setting-item-remove-icon)');
+		const hiddenEls = containerEl.findAll('.mobile-option-setting-item:has(.mobile-option-setting-item-add-icon)');
+
+		const configItems = [
+			...visibleItems.map((item, i) => [item, visibleEls[i], 'mobile-option-setting-item-remove-icon'] as [RibbonItem, HTMLElement, string]),
+			...hiddenItems.map((item, i) => [item, hiddenEls[i], 'mobile-option-setting-item-add-icon'] as [RibbonItem, HTMLElement, string])
+		];
+
+		for (const [item, itemEl, buttonClass] of configItems) {
+			const iconEl = itemEl.find(':scope > .mobile-option-setting-item-option-icon');
+			const buttonEl = itemEl.find(':scope > .' + buttonClass);
+			this.refreshIcon(item, iconEl, event => {
+				IconPicker.openSingle(this.plugin, item, (newIcon, newColor) => {
+					this.plugin.saveRibbonIcon(item, newIcon, newColor);
+					this.refreshIcons();
+					this.refreshConfigIcons(containerEl);
+				});
+				event.stopPropagation();
+			});
+			this.setEventListener(buttonEl, 'click', () => this.refreshConfigIcons(containerEl));
 		}
 	}
 

@@ -66,6 +66,9 @@
 .side-dock-ribbon-action.iconic-icon > .iconic-emoji {
 	--icon-size: var(--icon-l);
 }
+.mobile-option-setting-item-option-icon.iconic-icon {
+	cursor: pointer;
+}
 
 /* Icon picker */
 .iconic-modal .setting-item-control input[type="color"] { width: auto; }
