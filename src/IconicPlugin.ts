@@ -384,7 +384,7 @@ export default class IconicPlugin extends Plugin {
 				id: fileId,
 				name: leaf.getDisplayText(),
 				category: 'file',
-				iconDefault: isRoot && isMarkdown && !isStacked && !this.settings.showAllFileIcons
+				iconDefault: isRoot && isMarkdown && !isStacked && !fileIcon.color && !this.settings.showAllFileIcons
 					? null
 					: leaf.view.getIcon(),
 				icon: unloading ? null : fileIcon.icon ?? null,
