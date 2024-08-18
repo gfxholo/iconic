@@ -82,7 +82,15 @@ export default class IconPicker extends Modal {
 	private pauseColorPickerOnChange = false;
 	private readonly searchResults: [icon: string, iconName: string][] = [];
 
-	private constructor(plugin: IconicPlugin, titleText: string, categoryText: string, nameText: string,icon: string | null | undefined, color: string | null | undefined, callback: IconPickerCallback | null, multiCallback: MultiIconPickerCallback | null) {
+	private constructor(plugin: IconicPlugin,
+		titleText: string,
+		categoryText: string,
+		nameText: string,
+		icon: string | null | undefined,
+		color: string | null | undefined,
+		callback: IconPickerCallback | null,
+		multiCallback: MultiIconPickerCallback | null)
+	{
 		super(plugin.app);
 		this.plugin = plugin;
 		this.manager = new IconPickerManager(plugin);
@@ -487,7 +495,7 @@ export default class IconPicker extends Modal {
 				iconEl.tabIndex = 0;
 
 				this.manager.refreshIcon({ icon: icon, color: this.color ?? null }, iconEl, () => {
-					this.closeAndSave(icon, this.color)
+					this.closeAndSave(icon, this.color);
 				});
 
 				this.manager.setEventListener(iconEl, 'keydown', event => {
