@@ -126,6 +126,7 @@ export default class IconicPlugin extends Plugin {
 		this.app.workspace.onLayoutReady(() => {
 			// Generate ICONS map
 			getIconIds().map(id => [id, id.replace(/^lucide-/, '').replace(/-/g, ' ')])
+				.map(([id, name]) => [id, name[0]?.toUpperCase() + name.slice(1)])
 				.sort(([, aName], [, bName]) => aName.localeCompare(bName))
 				.forEach(([id, name]) => ICONS.set(id, name));
 			this.startIconManagers();
