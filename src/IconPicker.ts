@@ -361,10 +361,16 @@ export default class IconPicker extends Modal {
 		for (const color of COLORS) {
 			menu.addItem(menuItem => { menuItem
 				.setTitle((STRINGS.iconPicker.colors as any)[color])
+				.setChecked(color === this.color)
 				.setSection('color')
 				.onClick(() => {
-					this.color = color;
-					this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
+					if (this.color === color) {
+						this.color = null;
+						this.colorResetButton.extraSettingsEl.addClass('iconic-invisible');
+					} else {
+						this.color = color;
+						this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
+					}
 					this.updateColorPicker();
 					this.updateSearchResults();
 				});
