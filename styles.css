@@ -85,12 +85,20 @@
 /* Search result */
 .iconic-search-result > * {
 	height: var(--icon-size);
-	--icon-size: var(--icon-l);
-	--icon-stroke: var(--icon-l-stroke-width);
+	--icon-size: calc(var(--icon-l) * 1.25);
+	--icon-stroke: calc(var(--icon-l-stroke-width) * 6/7);
 }
 .iconic-bigger-search-results .iconic-search-result > * {
 	--icon-size: var(--icon-xl);
 	--icon-stroke: var(--icon-xl-stroke-width);
+}
+.is-mobile .iconic-search-result > * {
+	--icon-size: var(--icon-l);
+	--icon-stroke: var(--icon-l-stroke-width);
+}
+.is-mobile.iconic-bigger-search-results .iconic-search-result > * {
+	--icon-size: var(--icon-xl);
+	--icon-stroke: var(--icon-l-stroke-width);
 }
 
 /* Indicators */
