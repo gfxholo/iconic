@@ -287,15 +287,22 @@ export default class IconPicker extends Modal {
 
 		// Match styling of bookmark edit dialog
 		const buttonContainerEl = this.modalEl.createDiv({ cls: 'modal-button-container' });
+		const buttonRowEl = Platform.isTablet ? buttonContainerEl.createDiv({ cls: 'iconic-button-row' }) : null;
 
 		// [Remove]
 		if (this.icon !== null || this.color !== null) {
-			const removeButtonEl = buttonContainerEl.createEl('button', { text: STRINGS.iconPicker.remove });
-			this.manager.setEventListener(removeButtonEl, 'click', () => this.closeAndSave(null, null));
 			if (Platform.isPhone) {
-				removeButtonEl.addClass('mod-warning');
-			} else {
-				removeButtonEl.addClasses(['mod-secondary', 'mod-destructive']);
+				const removeButtonEl = buttonContainerEl.createEl('button', {
+					cls: 'mod-warning',
+					text: STRINGS.iconPicker.remove,
+				});
+				this.manager.setEventListener(removeButtonEl, 'click', () => this.closeAndSave(null, null));
+			} else if (Platform.isTablet && buttonRowEl) {
+				const removeButtonEl = buttonRowEl.createEl('button', {
+					cls: ['mod-secondary', 'mod-destructive'],
+					text: STRINGS.iconPicker.remove,
+				});
+				this.manager.setEventListener(removeButtonEl, 'click', () => this.closeAndSave(null, null));
 			}
 		}
 
@@ -303,11 +310,11 @@ export default class IconPicker extends Modal {
 		if (Platform.isPhone) {
 			this.emojiButtonEl = this.modalEl.createEl('button', {
 				cls: ['modal-nav-action', 'mod-secondary'],
-				text: STRINGS.iconPicker.emojis
+				text: STRINGS.iconPicker.emojis,
 			});
-		} else if (Platform.isTablet) {
-			this.emojiButtonEl = buttonContainerEl.createEl('button', {
-				text: STRINGS.iconPicker.emojis
+		} else if (Platform.isTablet && buttonRowEl) {
+			this.emojiButtonEl = buttonRowEl.createEl('button', {
+				text: STRINGS.iconPicker.emojis,
 			});
 		} else {
 			this.emojiButtonEl = buttonContainerEl.createDiv({

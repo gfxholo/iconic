@@ -74,6 +74,11 @@
 .iconic-modal .setting-item-control input[type="color"] { width: auto; }
 .iconic-modal .setting-item-control input[type="text"] { width: 100%; }
 .iconic-modal .setting-item-control .search-input-container { width: 100%; }
+.is-tablet .iconic-button-row {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
 
 /* Search results container */
 .iconic-search-results { overflow-x: scroll; }
