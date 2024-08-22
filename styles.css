@@ -38,11 +38,22 @@
 	color: unset;
 	transform: unset;
 }
-.iconic-bigger-icons .tree-item-icon.iconic-icon > .svg-icon {
+.iconic-folder-icon {
+	display: flex;
+	align-self: center;
+	width: var(--size-4-4);
+	margin-inline-end: var(--size-4-1);
+	opacity: var(--icon-opacity);
+	--icon-size: var(--icon-xs);
+	--icon-stroke: var(--icon-s-stroke-width);
+}
+.iconic-bigger-icons .tree-item-icon.iconic-icon > .svg-icon,
+.iconic-bigger-icons .iconic-folder-icon > .svg-icon {
 	--icon-size: var(--icon-s);
 	--icon-stroke: var(--icon-s-stroke-width);
 }
-.iconic-bigger-icons .tree-item-icon.iconic-icon > .iconic-emoji {
+.iconic-bigger-icons .tree-item-icon.iconic-icon > .iconic-emoji,
+.iconic-bigger-icons .iconic-folder-icon > .iconic-emoji {
 	--icon-size: var(--icon-s);
 }
 .iconic-bigger-icons .tree-item.iconic-item > .tree-item-self > .tree-item-inner {
@@ -51,7 +62,8 @@
 .is-mobile .iconic-bigger-icons .tree-item.iconic-item > .tree-item-self > .tree-item-inner {
 	margin-inline-start: 3px;
 }
-.iconic-clickable-icons .tree-item-icon.iconic-icon:hover {
+.iconic-clickable-icons .tree-item-icon.iconic-icon:hover,
+.iconic-clickable-icons .iconic-folder-icon:hover {
 	cursor: pointer;
 	filter: contrast(200%);
 }

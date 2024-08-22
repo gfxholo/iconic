@@ -85,7 +85,16 @@ export default class FileIconManager extends IconManager {
 			}
 
 			let iconEl = selfEl.find(':scope > .tree-item-icon');
-			if (!iconEl) iconEl = selfEl.createDiv({ cls: 'tree-item-icon' });
+			if (iconEl && iconEl.hasClass('collapse-icon')) {
+				const collapseEl = iconEl;
+				iconEl = selfEl.find(':scope > .iconic-folder-icon');
+				if (!iconEl) {
+					iconEl = selfEl.createDiv({ cls: 'iconic-folder-icon' });
+					collapseEl.insertAdjacentElement('afterend', iconEl);
+				}
+			} else if (!iconEl) {
+				iconEl = selfEl.createDiv({ cls: 'tree-item-icon' });
+			}
 
 			if (iconEl.hasClass('collapse-icon') && !file.icon) {
 				this.refreshIcon(file, iconEl); // Skip click listener if icon will be a collapse arrow

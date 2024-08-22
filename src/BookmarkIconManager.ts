@@ -106,8 +106,19 @@ export default class BookmarkIconManager extends IconManager {
 				});
 			}
 
-			const iconEl = itemEl.find(':scope > .tree-item-self > .tree-item-icon');
-			if (!iconEl) continue;
+			const selfEl = itemEl.find(':scope > .tree-item-self');
+			let iconEl = selfEl.find(':scope > .tree-item-icon');
+
+			if (iconEl && iconEl.hasClass('collapse-icon')) {
+				const collapseEl = iconEl;
+				iconEl = selfEl.find(':scope > .iconic-folder-icon');
+				if (!iconEl) {
+					iconEl = selfEl.createDiv({ cls: 'iconic-folder-icon' });
+					collapseEl.insertAdjacentElement('afterend', iconEl);
+				}
+			} else if (!iconEl) {
+				iconEl = selfEl.createDiv({ cls: 'tree-item-icon' });
+			}
 
 			if (iconEl.hasClass('collapse-icon') && !bmark.icon) {
 				this.refreshIcon(bmark, iconEl); // Skip click listener if icon will be a collapse arrow
@@ -125,7 +136,6 @@ export default class BookmarkIconManager extends IconManager {
 				this.refreshIcon(bmark, iconEl);
 			}
 
-			const selfEl = itemEl.find(':scope > .tree-item-self');
 			if (selfEl) {
 				this.selectionLookup.set(selfEl, bmark);
 				this.setEventListener(selfEl, 'touchstart', () => this.isTouchActive = true);
