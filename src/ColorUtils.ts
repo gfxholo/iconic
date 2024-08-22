@@ -1,6 +1,7 @@
 import { RGB } from 'obsidian';
 
 export const COLORS = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple', 'pink', 'gray'];
+const REGEX_COLOR_MIX = /color-mix\(in srgb, rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)(?: (\d+)%)?, rgba?\((\d+), (\d+), ([\d.]+)(?:, ([\d.]+))?\)(?: ([\d.]+)%)?\)/;
 
 /**
  * Shared utility functions for setting icon colors.
@@ -36,7 +37,12 @@ export default class ColorUtils {
 
 		// Color properties are converted into rgb/rgba()
 		this.convertEl.style.color = rawValue;
-		return this.convertEl.style.color;
+		const rgbValue = this.convertEl.style.color;
+
+		// Value might still be wrapped in color-mix()
+		return rgbValue.startsWith('color-mix')
+			? this.mixToRgb(rgbValue)
+			: rgbValue;
 	}
 
 	/**
@@ -80,5 +86,41 @@ export default class ColorUtils {
 		}
 
 		return [Math.round(h * 60), Math.round(s * 100), Math.round(l * 100)];
+	}
+
+	/**
+	 * Convert color-mix() string into rgb/rgba() string.
+	 * @param color a color-mix() string with rgb/rgba() components
+	 */
+	private static mixToRgb(colorMix: string): string {
+		const matches = colorMix.match(REGEX_COLOR_MIX);
+		if (!matches) return 'rgb(0, 0, 0)';
+
+		let [, r1, g1, b1, a1, p1, r2, g2, b2, a2, p2] = matches.map(Number);
+
+		// Normalize any missing percentages
+		p1 = isNaN(p1) ? (isNaN(p2) ? 50 : 100 - p2) : p1;
+		p2 = isNaN(p2) ? 100 - p1 : p2;
+
+		// Scale percentages if they don't total 100
+		const total = p1 + p2;
+		if (total !== 100) {
+			p1 = (p1 / total) * 100;
+			p2 = (p2 / total) * 100;
+		}
+
+		// Mix RGB components
+		const r = Math.round((r1 * p1 + r2 * p2) / 100);
+		const g = Math.round((g1 * p1 + g2 * p2) / 100);
+		const b = Math.round((b1 * p1 + b2 * p2) / 100);
+
+		// Mix alpha components
+		a1 = isNaN(a1) ? 1 : a1;
+		a2 = isNaN(a2) ? 1 : a2;
+		const a = (a1 * p1 + a2 * p2) / 100;
+
+		return a !== 1
+			? `rgba(${r}, ${g}, ${b}, ${a})`
+			: `rgb(${r}, ${g}, ${b})`;
 	}
 }
