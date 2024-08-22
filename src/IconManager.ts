@@ -30,10 +30,7 @@ export default abstract class IconManager {
 			} else if (EMOJIS.has(item.icon)) {
 				iconEl.empty();
 				const emojiEl = iconEl.createDiv({ cls: 'iconic-emoji', text: item.icon });
-				if (item.color) {
-					const [h, s, l] = ColorUtils.toHslArray(item.color);
-					IconManager.colorFilter(emojiEl, h, s, l);
-				}
+				if (item.color) IconManager.colorFilter(emojiEl, item.color);
 			}
 			iconEl.show();
 		} else if (iconEl.hasClass('collapse-icon')) {
@@ -72,7 +69,8 @@ export default abstract class IconManager {
 	/**
 	 * Set an inline color filter on an element.
 	 */
-	private static colorFilter(element: HTMLElement, h: number, s: number, l: number) {
+	private static colorFilter(element: HTMLElement, color: string) {
+		const [h, s] = ColorUtils.toHslArray(color);
 		element.style.filter = `grayscale() sepia() hue-rotate(${h - 50}deg) saturate(${s * 5}%)`;
 	}
 
