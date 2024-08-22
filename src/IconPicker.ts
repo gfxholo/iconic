@@ -205,7 +205,7 @@ export default class IconPicker extends Modal {
 				this.colorResetButton = colorResetButton;
 			})
 			.addColorPicker(colorPicker => { colorPicker
-				.setValue(ColorUtils.getColorHex(this.color))
+				.setValueRgb(ColorUtils.toRgbObject(this.color))
 				.onChange(value => {
 					if (this.pauseColorPickerOnChange) {
 						this.pauseColorPickerOnChange = false;
@@ -458,11 +458,11 @@ export default class IconPicker extends Modal {
 	 */
 	private updateColorPicker(): void {
 		this.pauseColorPickerOnChange = true;
-		this.colorPicker.setValue(ColorUtils.getColorHex(this.color));
+		this.colorPicker.setValueRgb(ColorUtils.toRgbObject(this.color));
 
 		if (!this.color) {
 			this.colorPickerEl.ariaLabel = STRINGS.iconPicker.changeColor;
-		} else if (ColorUtils.isNamedColor(this.color)) {
+		} else if (COLORS.includes(this.color)) {
 			this.colorPickerEl.ariaLabel = (STRINGS.iconPicker.colors as any)[this.color];
 		} else {
 			this.colorPickerEl.ariaLabel = this.color;

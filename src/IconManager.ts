@@ -31,14 +31,8 @@ export default abstract class IconManager {
 				iconEl.empty();
 				const emojiEl = iconEl.createDiv({ cls: 'iconic-emoji', text: item.icon });
 				if (item.color) {
-					if (ColorUtils.isNamedColor(item.color)) {
-						const [r, g, b] = ColorUtils.getColorRgb(item.color);
-						const [h, s, l] = ColorUtils.rgbToHsl(r, g, b);
-						IconManager.colorFilter(emojiEl, h, s, l);
-					} else if (ColorUtils.isHexColor(item.color)) {
-						const [h, s, l] = ColorUtils.hexToHsl(item.color);
-						IconManager.colorFilter(emojiEl, h, s, l);
-					}
+					const [h, s, l] = ColorUtils.toHslArray(item.color);
+					IconManager.colorFilter(emojiEl, h, s, l);
 				}
 			}
 			iconEl.show();
@@ -55,10 +49,8 @@ export default abstract class IconManager {
 
 		const svgEl = iconEl.find('.svg-icon');
 		if (svgEl) {
-			if (ColorUtils.isNamedColor(item.color)) {
-				svgEl.style.setProperty('color', ColorUtils.getColorHex(item.color));
-			} else if (ColorUtils.isHexColor(item.color)) {
-				svgEl.style.setProperty('color', item.color);
+			if (item.color) {
+				svgEl.style.setProperty('color', ColorUtils.toRgb(item.color));
 			} else {
 				svgEl.style.removeProperty('color');
 			}
