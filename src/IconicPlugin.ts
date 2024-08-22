@@ -65,6 +65,7 @@ interface IconicSettings {
 	biggerIcons: string;
 	clickableIcons: string;
 	showAllFileIcons: boolean,
+	showAllFolderIcons: boolean,
 	showItemName: string;
 	biggerSearchResults: string;
 	maxSearchResults: number;
@@ -85,6 +86,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	biggerIcons: 'mobile',
 	clickableIcons: 'desktop',
 	showAllFileIcons: false,
+	showAllFolderIcons: false,
 	showItemName: 'desktop',
 	biggerSearchResults: 'mobile',
 	maxSearchResults: 50,
@@ -207,6 +209,17 @@ export default class IconicPlugin extends Plugin {
 				this.saveSettings();
 				this.tabIconManager?.refreshIcons();
 				this.fileIconManager?.refreshIcons();
+			}
+		}));
+
+		this.commands.push(this.addCommand({
+			id: 'toggle-all-folder-icons',
+			name: STRINGS.commands.toggleAllFolderIcons,
+			callback: () => {
+				this.settings.showAllFolderIcons = !this.settings.showAllFolderIcons;
+				this.saveSettings();
+				this.fileIconManager?.refreshIcons();
+				this.bookmarkIconManager?.refreshIcons();
 			}
 		}));
 
@@ -464,6 +477,8 @@ export default class IconicPlugin extends Plugin {
 			} else {
 				iconDefault = 'lucide-file';
 			}
+		} else if (tFile instanceof TFolder && (fileIcon.color || this.settings.showAllFolderIcons)) {
+			iconDefault = 'lucide-folder-closed';
 		}
 
 		return {
@@ -531,7 +546,7 @@ export default class IconicPlugin extends Plugin {
 	private defineBookmarkItem(bmarkBase: any, unloading?: boolean): BookmarkItem {
 		const { path, filename, basename, extension } = this.splitFilePath(bmarkBase.path);
 		const subpath = bmarkBase.subpath ?? '';
-		let id, name, bmarkIcon, iconDefault = 'lucide-file';
+		let id, name, bmarkIcon, iconDefault = null;
 
 		switch (bmarkBase.type) {
 			case 'file': {
@@ -543,13 +558,16 @@ export default class IconicPlugin extends Plugin {
 					iconDefault = 'lucide-toy-brick';
 				} else if (subpath.startsWith('#')) {
 					iconDefault = 'lucide-heading';
-				} else if (!unloading) {
-					if (extension === 'pdf') {
-						iconDefault = 'lucide-file-text';
-					} else if (IMAGE_EXTENSIONS.includes(extension)) {
-						iconDefault = 'lucide-image';
-					} else if (AUDIO_EXTENSIONS.includes(extension)) {
-						iconDefault = 'lucide-file-audio';
+				} else {
+					iconDefault = 'lucide-file';
+					if (!unloading) {
+						if (extension === 'pdf') {
+							iconDefault = 'lucide-file-text';
+						} else if (IMAGE_EXTENSIONS.includes(extension)) {
+							iconDefault = 'lucide-image';
+						} else if (AUDIO_EXTENSIONS.includes(extension)) {
+							iconDefault = 'lucide-file-audio';
+						}
 					}
 				}
 				bmarkIcon = this.settings.fileIcons[id] ?? {};
@@ -566,6 +584,7 @@ export default class IconicPlugin extends Plugin {
 				id = bmarkBase.ctime;
 				name = bmarkBase.title;
 				bmarkIcon = this.settings.bookmarkIcons[id] ?? {};
+				if (this.settings.showAllFolderIcons) iconDefault = 'lucide-folder-closed';
 				break;
 			}
 			case 'search': {

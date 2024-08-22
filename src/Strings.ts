@@ -74,6 +74,7 @@ export default class Strings {
 			mobile: 'Toggle tappable icons',
 		},
 		toggleAllFileIcons: 'Toggle all file icons',
+		toggleAllFolderIcons: 'Toggle all folder icons',
 		toggleBiggerSearchResults: 'Toggle bigger search results',
 	};
 	static settings = {
@@ -98,7 +99,11 @@ export default class Strings {
 		},
 		showAllFileIcons: {
 			name: 'Show all file icons',
-			desc: 'Always show a default icon for files without an icon.',
+			desc: 'Show icons for files that have no custom icon.',
+		},
+		showAllFolderIcons: {
+			name: 'Show all folder icons',
+			desc: 'Show icons for folders that have no custom icon.',
 		},
 		headingIconPicker: 'Icon picker',
 		showItemName: {
