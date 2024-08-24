@@ -73,12 +73,14 @@ export default class FileIconManager extends IconManager {
 					if (childItemEls) this.refreshChildIcons(file.items, childItemEls);
 				}
 
-				// Refresh children when folder expands
-				this.setMutationObserver(itemEl, { attributeFilter: ['class'] }, mutations => {
-					if (file.items) for (const mutation of mutations) {
-						if (mutation.target instanceof HTMLElement && !mutation.target.hasClass('is-collapsed')) {
+				// Refresh when folder expands/collapses
+				this.setMutationObserver(itemEl, { attributeFilter: ['class'], attributeOldValue: true }, mutations => {
+					for (const mutation of mutations) {
+						if (mutation.target instanceof HTMLElement && mutation.target.hasClass('is-collapsed') !== mutation.oldValue?.includes('is-collapsed')) {
 							const childItemEls = itemEl.findAll(':scope > .tree-item-children > .tree-item');
-							if (childItemEls) this.refreshChildIcons(file.items, childItemEls);
+							if (file.items && childItemEls) {
+								this.refreshChildIcons([file, ...file.items], [itemEl, ...childItemEls]);
+							}
 						}
 					}
 				});
@@ -87,6 +89,10 @@ export default class FileIconManager extends IconManager {
 			let iconEl = selfEl.find(':scope > .tree-item-icon') ?? selfEl.createDiv({ cls: 'tree-item-icon' });
 
 			if (file.items) {
+				// Toggle default icon based on expand/collapse state
+				if (file.iconDefault) file.iconDefault = iconEl.hasClass('is-collapsed')
+					? 'lucide-folder-closed'
+					: 'lucide-folder-open';
 				let folderIconEl = selfEl.find(':scope > .iconic-folder-icon:not(.tree-item-icon)');
 				if (this.plugin.settings.minimalFolderIcons) {
 					folderIconEl?.remove();
