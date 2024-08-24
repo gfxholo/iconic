@@ -110,6 +110,20 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			);
 
+		// Minimal folder icons
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.minimalFolderIcons.name)
+			.setDesc(STRINGS.settings.minimalFolderIcons.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.minimalFolderIcons)
+				.onChange(value => {
+					this.plugin.settings.minimalFolderIcons = value;
+					this.plugin.saveSettings();
+					this.plugin.fileIconManager?.refreshIcons();
+					this.plugin.bookmarkIconManager?.refreshIcons();
+				})
+			);
+
 		// HEADING: Icon picker
 		new Setting(this.containerEl).setName(STRINGS.settings.headingIconPicker).setHeading();
 

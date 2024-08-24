@@ -34,14 +34,20 @@ export default abstract class IconManager {
 			}
 			iconEl.show();
 		} else if (iconEl.hasClass('collapse-icon')) {
-			setIcon(iconEl, 'right-triangle');
-			iconEl.removeClass('iconic-icon');
-			iconEl.show();
-		} else if ('iconDefault' in item && item.iconDefault) {
-			setIcon(iconEl, item.iconDefault);
+			if (this.plugin.settings.showAllFolderIcons && 'iconDefault' in item && item.iconDefault) {
+				setIcon(iconEl, item.iconDefault);
+			} else {
+				setIcon(iconEl, 'right-triangle');
+				iconEl.removeClass('iconic-icon');
+			}
 			iconEl.show();
 		} else {
-			iconEl.hide();
+			if ('iconDefault' in item && item.iconDefault) {
+				setIcon(iconEl, item.iconDefault);
+				iconEl.show();
+			} else {
+				iconEl.hide();
+			}
 		}
 
 		const svgEl = iconEl.find('.svg-icon');

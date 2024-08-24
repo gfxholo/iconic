@@ -75,6 +75,7 @@ export default class Strings {
 		},
 		toggleAllFileIcons: 'Toggle all file icons',
 		toggleAllFolderIcons: 'Toggle all folder icons',
+		toggleMinimalFolderIcons: 'Toggle minimal folder icons',
 		toggleBiggerSearchResults: 'Toggle bigger search results',
 	};
 	static settings = {
@@ -104,6 +105,10 @@ export default class Strings {
 		showAllFolderIcons: {
 			name: 'Show all folder icons',
 			desc: 'Show icons for folders that have no custom icon.',
+		},
+		minimalFolderIcons: {
+			name: 'Minimal folder icons',
+			desc: 'Replace folder arrows with your folder icons.',
 		},
 		headingIconPicker: 'Icon picker',
 		showItemName: {

@@ -107,20 +107,24 @@ export default class BookmarkIconManager extends IconManager {
 			}
 
 			const selfEl = itemEl.find(':scope > .tree-item-self');
-			let iconEl = selfEl.find(':scope > .tree-item-icon');
+			let iconEl = selfEl.find(':scope > .tree-item-icon') ?? selfEl.createDiv({ cls: 'tree-item-icon' });
 
-			if (iconEl && iconEl.hasClass('collapse-icon')) {
-				const collapseEl = iconEl;
-				iconEl = selfEl.find(':scope > .iconic-folder-icon');
-				if (!iconEl) {
-					iconEl = selfEl.createDiv({ cls: 'iconic-folder-icon' });
-					collapseEl.insertAdjacentElement('afterend', iconEl);
+			if (bmark.items) {
+				let folderIconEl = selfEl.find(':scope > .iconic-folder-icon:not(.tree-item-icon)');
+				if (this.plugin.settings.minimalFolderIcons) {
+					folderIconEl?.remove();
+				} else {
+					const arrowColor = bmark.icon || bmark.iconDefault ? null : bmark.color;
+					this.refreshIcon({ icon: null, color: arrowColor }, iconEl);
+					folderIconEl = folderIconEl ?? selfEl.createDiv({ cls: 'iconic-folder-icon' });
+					if (iconEl.nextElementSibling !== folderIconEl) {
+						iconEl.insertAdjacentElement('afterend', folderIconEl);
+					}
+					iconEl = folderIconEl;
 				}
-			} else if (!iconEl) {
-				iconEl = selfEl.createDiv({ cls: 'tree-item-icon' });
 			}
 
-			if (iconEl.hasClass('collapse-icon') && !bmark.icon) {
+			if (iconEl.hasClass('collapse-icon') && !bmark.icon && !bmark.iconDefault) {
 				this.refreshIcon(bmark, iconEl); // Skip click listener if icon will be a collapse arrow
 			} else if (this.plugin.isSettingEnabled('clickableIcons')) {
 				this.refreshIcon(bmark, iconEl, event => {

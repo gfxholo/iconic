@@ -66,6 +66,7 @@ interface IconicSettings {
 	clickableIcons: string;
 	showAllFileIcons: boolean,
 	showAllFolderIcons: boolean,
+	minimalFolderIcons: boolean;
 	showItemName: string;
 	biggerSearchResults: string;
 	maxSearchResults: number;
@@ -87,6 +88,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	clickableIcons: 'desktop',
 	showAllFileIcons: false,
 	showAllFolderIcons: false,
+	minimalFolderIcons: false,
 	showItemName: 'desktop',
 	biggerSearchResults: 'mobile',
 	maxSearchResults: 50,
@@ -160,6 +162,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
+		// Toggle bigger icons
 		this.commands.push(this.addCommand({
 			id: 'toggle-bigger-icons',
 			name: STRINGS.commands.toggleBiggerIcons,
@@ -180,6 +183,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
+		// Toggle clickable icons
 		this.commands.push(this.addCommand({
 			id: 'toggle-clickable-icons',
 			name: Platform.isDesktop ? STRINGS.commands.toggleClickableIcons.desktop : STRINGS.commands.toggleClickableIcons.mobile,
@@ -201,6 +205,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
+		// Toggle all file icons
 		this.commands.push(this.addCommand({
 			id: 'toggle-all-file-icons',
 			name: STRINGS.commands.toggleAllFileIcons,
@@ -212,6 +217,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
+		// Toggle all folder icons
 		this.commands.push(this.addCommand({
 			id: 'toggle-all-folder-icons',
 			name: STRINGS.commands.toggleAllFolderIcons,
@@ -223,6 +229,19 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
+		// Toggle minimal folder icons
+		this.commands.push(this.addCommand({
+			id: 'toggle-minimal.folder-icons',
+			name: STRINGS.commands.toggleMinimalFolderIcons,
+			callback: () => {
+				this.settings.minimalFolderIcons = !this.settings.minimalFolderIcons;
+				this.saveSettings();
+				this.fileIconManager?.refreshIcons();
+				this.bookmarkIconManager?.refreshIcons();
+			}
+		}));
+
+		// Toggle bigger search results
 		this.commands.push(this.addCommand({
 			id: 'toggle-bigger-search-results',
 			name: STRINGS.commands.toggleBiggerSearchResults,
@@ -477,7 +496,7 @@ export default class IconicPlugin extends Plugin {
 			} else {
 				iconDefault = 'lucide-file';
 			}
-		} else if (tFile instanceof TFolder && (fileIcon.color || this.settings.showAllFolderIcons)) {
+		} else if (tFile instanceof TFolder && (fileIcon.color && !this.settings.minimalFolderIcons || this.settings.showAllFolderIcons)) {
 			iconDefault = 'lucide-folder-closed';
 		}
 
@@ -584,7 +603,9 @@ export default class IconicPlugin extends Plugin {
 				id = bmarkBase.ctime;
 				name = bmarkBase.title;
 				bmarkIcon = this.settings.bookmarkIcons[id] ?? {};
-				if (this.settings.showAllFolderIcons) iconDefault = 'lucide-folder-closed';
+				if (bmarkIcon.color && !this.settings.minimalFolderIcons || this.settings.showAllFolderIcons) {
+					iconDefault = 'lucide-folder-closed';
+				}
 				break;
 			}
 			case 'search': {
