@@ -164,6 +164,7 @@ export default class Strings {
 		switch (window.localStorage.language) {
 			case 'ar': localizedStrings = await import('../i18n/ar.json'); break;
 			case 'de': localizedStrings = await import('../i18n/de.json'); break;
+			case 'en-GB': localizedStrings = await import('../i18n/en-GB.json'); break;
 			case 'es': localizedStrings = await import('../i18n/es.json'); break;
 			case 'fr': localizedStrings = await import('../i18n/fr.json'); break;
 			case 'id': localizedStrings = await import('../i18n/id.json'); break;

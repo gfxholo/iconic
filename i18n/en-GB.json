@@ -1,0 +1,37 @@
+{
+	"menu": {
+		"resetColor": "Reset colour",
+		"resetColors": "Reset colours"
+	},
+	"iconPicker": {
+		"changeColor": "Change colour",
+		"resetColor": "Reset colour"
+	},
+	"settings": {
+		"values": {
+			"list": "List of colours"
+		},
+		"colorPicker1": {
+			"name": "Main colour picker",
+			"descDesktop": "Appears when you click the colour bubble.",
+			"descMobile": "Appears when you tap the colour bubble."
+		},
+		"colorPicker2": {
+			"name": "Second colour picker",
+			"descDesktop": "Appears when you secondary-click the colour bubble.",
+			"descMobile": "Appears when you press & hold the colour bubble."
+		},
+		"uncolorHover": {
+			"name": "Colourless hover",
+			"desc": "Disable icon colour while hovering an item."
+		},
+		"uncolorDrag": {
+			"name": "Colourless drag",
+			"desc": "Disable icon colour while dragging an item."
+		},
+		"uncolorSelect": {
+			"name": "Colourless selection",
+			"desc": "Disable icon colour while item is selected."
+		}
+	}
+}
