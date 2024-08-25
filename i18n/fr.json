@@ -133,11 +133,11 @@
 		},
 		"headingAdvanced": "Avancé",
 		"uncolorHover": {
-			"name": "Survol non coloré",
+			"name": "Survol incolore",
 			"desc": "Désactiver la couleur de l'icône lors du survol d'un élément."
 		},
 		"uncolorSelect": {
-			"name": "Sélection non colorée",
+			"name": "Sélection incolore",
 			"desc": "Désactiver la couleur de l'icône lorsque l'élément est sélectionné."
 		},
 		"rememberDeletedItems": {

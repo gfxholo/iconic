@@ -133,11 +133,11 @@
 		},
 		"headingAdvanced": "Avanzado",
 		"uncolorHover": {
-			"name": "Paso flotante sin color",
+			"name": "Flotador incoloro",
 			"desc": "Deshabilitar el color del ícono al pasar el cursor sobre un elemento."
 		},
 		"uncolorSelect": {
-			"name": "Selección sin color",
+			"name": "Selección incolora",
 			"desc": "Deshabilitar el color del ícono mientras se selecciona el elemento."
 		},
 		"rememberDeletedItems": {

@@ -133,11 +133,11 @@
 		},
 		"headingAdvanced": "Erweitert",
 		"uncolorHover": {
-			"name": "Ungefärbter Hover",
+			"name": "Farbloses Hovern",
 			"desc": "Symbolfarbe deaktivieren, während über einem Element schwebt."
 		},
 		"uncolorSelect": {
-			"name": "Ungefärbte Auswahl",
+			"name": "Farblose Auswahl",
 			"desc": "Symbolfarbe deaktivieren, während Element ausgewählt ist."
 		},
 		"rememberDeletedItems": {

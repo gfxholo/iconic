@@ -125,13 +125,13 @@
 .iconic-invisible { visibility: hidden; }
 .is-phone .iconic-reset-color.iconic-invisible { display: none; }
 
-/* Uncolored hover */
+/* Colorless hover */
 .iconic-uncolor-hover .workspace-tab-header:hover .iconic-icon > .svg-icon { stroke: currentColor; }
 .iconic-uncolor-hover .tree-item-self:hover > .tree-item-icon.iconic-icon > .svg-icon { stroke: currentColor; }
 .iconic-uncolor-hover .side-dock-ribbon-action.iconic-icon:hover > .svg-icon { stroke: currentColor; }
 .iconic-uncolor-hover .iconic-search-result:hover > .svg-icon { stroke: currentColor; }
 
-/* Uncolored selection */
+/* Colorless selection */
 .iconic-uncolor-select .workspace-tab-header.is-active .iconic-icon > .svg-icon { stroke: currentColor; }
 .iconic-uncolor-select .tree-item-self.is-active > .tree-item-icon.iconic-icon > .svg-icon { stroke: currentColor; }
 

@@ -235,7 +235,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 		// HEADING: Advanced
 		new Setting(this.containerEl).setHeading().setName(STRINGS.settings.headingAdvanced);
 
-		// Uncolored hover
+		// Colorless hover
 		new Setting(this.containerEl)
 			.setName(STRINGS.settings.uncolorHover.name)
 			.setDesc(STRINGS.settings.uncolorHover.desc)
@@ -248,7 +248,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			);
 
-		// Uncolored selection
+		// Colorless selection
 		new Setting(this.containerEl)
 			.setName(STRINGS.settings.uncolorSelect.name)
 			.setDesc(STRINGS.settings.uncolorSelect.desc)

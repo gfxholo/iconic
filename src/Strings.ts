@@ -135,11 +135,11 @@ export default class Strings {
 		},
 		headingAdvanced: 'Advanced',
 		uncolorHover: {
-			name: 'Uncolored hover',
+			name: 'Colorless hover',
 			desc: 'Disable icon color while hovering an item.',
 		},
 		uncolorSelect: {
-			name: 'Uncolored selection',
+			name: 'Colorless selection',
 			desc: 'Disable icon color while item is selected.',
 		},
 		rememberDeletedItems: {

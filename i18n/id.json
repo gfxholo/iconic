@@ -133,11 +133,11 @@
 		},
 		"headingAdvanced": "Lanjutan",
 		"uncolorHover": {
-			"name": "Hover tidak berwarna",
+			"name": "Arahkan tanpa warna",
 			"desc": "Nonaktifkan warna ikon saat mengarahkan kursor ke item."
 		},
 		"uncolorSelect": {
-			"name": "Pilihan tidak berwarna",
+			"name": "Pilihan tanpa warna",
 			"desc": "Nonaktifkan warna ikon saat item dipilih."
 		},
 		"rememberDeletedItems": {
