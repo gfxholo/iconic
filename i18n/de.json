@@ -136,9 +136,13 @@
 			"name": "Farbloses Hovern",
 			"desc": "Symbolfarbe deaktivieren, während über einem Element schwebt."
 		},
+		"uncolorDrag": {
+			"name": "Farbloses Ziehen",
+			"desc": "Symbolfarbe deaktivieren, wenn ein Element gezogen wird."
+		},
 		"uncolorSelect": {
 			"name": "Farblose Auswahl",
-			"desc": "Symbolfarbe deaktivieren, während Element ausgewählt ist."
+			"desc": "Symbolfarbe deaktivieren, während das Element ausgewählt ist."
 		},
 		"rememberDeletedItems": {
 			"name": "Symbole gelöschter Elemente merken",

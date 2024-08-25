@@ -134,7 +134,11 @@
 		"headingAdvanced": "Avancé",
 		"uncolorHover": {
 			"name": "Survol incolore",
-			"desc": "Désactiver la couleur de l'icône lors du survol d'un élément."
+			"desc": "Désactiver la couleur de l'icône lorsque vous survolez un élément."
+		},
+		"uncolorDrag": {
+			"name": "Glissement incolore",
+			"desc": "Désactiver la couleur de l'icône lorsque vous faites glisser un élément."
 		},
 		"uncolorSelect": {
 			"name": "Sélection incolore",

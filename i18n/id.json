@@ -136,6 +136,10 @@
 			"name": "Arahkan tanpa warna",
 			"desc": "Nonaktifkan warna ikon saat mengarahkan kursor ke item."
 		},
+		"uncolorDrag": {
+			"name": "Seret tanpa warna",
+			"desc": "Nonaktifkan warna ikon saat menyeret item."
+		},
 		"uncolorSelect": {
 			"name": "Pilihan tanpa warna",
 			"desc": "Nonaktifkan warna ikon saat item dipilih."
