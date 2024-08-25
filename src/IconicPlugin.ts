@@ -73,6 +73,7 @@ interface IconicSettings {
 	colorPicker1: string;
 	colorPicker2: string;
 	uncolorHover: boolean,
+	uncolorDrag: boolean,
 	uncolorSelect: boolean,
 	rememberDeletedItems: boolean;
 	appIcons: { [appItemId: string]: { icon?: string, color?: string } };
@@ -95,6 +96,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	colorPicker1: 'list',
 	colorPicker2: 'rgb',
 	uncolorHover: false,
+	uncolorDrag: false,
 	uncolorSelect: false,
 	rememberDeletedItems: false,
 	appIcons: {},
@@ -308,6 +310,7 @@ export default class IconicPlugin extends Plugin {
 		activeDocument.body.toggleClass('iconic-clickable-icons', unloading ? false : this.isSettingEnabled('clickableIcons'));
 		activeDocument.body.toggleClass('iconic-bigger-search-results', unloading ? false : this.isSettingEnabled('biggerSearchResults'));
 		activeDocument.body.toggleClass('iconic-uncolor-hover', unloading ? false : this.settings.uncolorHover);
+		activeDocument.body.toggleClass('iconic-uncolor-drag', unloading ? false : this.settings.uncolorDrag);
 		activeDocument.body.toggleClass('iconic-uncolor-select', unloading ? false : this.settings.uncolorSelect);
 		// @ts-expect-error (Private API)
 		activeDocument.body.toggleClass('iconic-its-theme', unloading ? false : this.app.customCss?.theme === 'ITS Theme');

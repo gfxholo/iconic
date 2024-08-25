@@ -133,6 +133,11 @@
 	color: currentColor !important;
 }
 
+/* Colorless drag */
+.iconic-uncolor-drag > .drag-ghost .svg-icon {
+	color: currentColor !important;
+}
+
 /* Colorless selection */
 .iconic-uncolor-select .workspace-tab-header.is-active .iconic-icon > .svg-icon,
 .iconic-uncolor-select .tree-item-self.is-active > .tree-item-icon.iconic-icon > .svg-icon {

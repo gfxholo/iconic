@@ -248,6 +248,19 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			);
 
+		// Colorless drag
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.uncolorDrag.name)
+			.setDesc(STRINGS.settings.uncolorDrag.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.uncolorDrag)
+				.onChange(value => {
+					this.plugin.settings.uncolorDrag = value;
+					this.plugin.saveSettings();
+					this.plugin.refreshBodyClasses();
+				})
+			);
+
 		// Colorless selection
 		new Setting(this.containerEl)
 			.setName(STRINGS.settings.uncolorSelect.name)

@@ -138,6 +138,10 @@ export default class Strings {
 			name: 'Colorless hover',
 			desc: 'Disable icon color while hovering an item.',
 		},
+		uncolorDrag: {
+			name: 'Colorless drag',
+			desc: 'Disable icon color while dragging item.',
+		},
 		uncolorSelect: {
 			name: 'Colorless selection',
 			desc: 'Disable icon color while item is selected.',
