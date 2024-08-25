@@ -72,6 +72,8 @@
 			"mobile": "切换可触摸图标"
 		},
 		"toggleAllFileIcons": "切换所有文件图标",
+		"toggleAllFolderIcons": "切换所有文件夹图标",
+		"toggleMinimalFolderIcons": "切换最小文件夹图标",
 		"toggleBiggerSearchResults": "切换更大的搜索结果"
 	},
 	"settings": {
@@ -96,7 +98,15 @@
 		},
 		"showAllFileIcons": {
 			"name": "显示所有文件图标",
-			"desc": "始终为没有图标的文件显示默认图标。"
+			"desc": "显示没有自定义图标的文件图标。"
+		},
+		"showAllFolderIcons": {
+			"name": "显示所有文件夹图标",
+			"desc": "显示没有自定义图标的文件夹图标。"
+		},
+		"minimalFolderIcons": {
+			"name": "最小文件夹图标",
+			"desc": "用您的文件夹图标替换文件夹箭头。"
 		},
 		"headingIconPicker": "图标选择器",
 		"showItemName": {

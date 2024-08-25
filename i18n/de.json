@@ -72,6 +72,8 @@
 			"mobile": "Tippbare Symbole umschalten"
 		},
 		"toggleAllFileIcons": "Alle Dateisymbole umschalten",
+		"toggleAllFolderIcons": "Alle Ordnersymbole umschalten",
+		"toggleMinimalFolderIcons": "Minimale Ordnersymbole umschalten",
 		"toggleBiggerSearchResults": "Größere Suchergebnisse umschalten"
 	},
 	"settings": {
@@ -96,7 +98,15 @@
 		},
 		"showAllFileIcons": {
 			"name": "Alle Dateisymbole anzeigen",
-			"desc": "Für Dateien ohne Symbol immer ein Standardsymbol anzeigen."
+			"desc": "Symbole für Dateien anzeigen, die kein benutzerdefiniertes Symbol haben."
+		},
+		"showAllFolderIcons": {
+			"name": "Alle Ordnersymbole anzeigen",
+			"desc": "Symbole für Ordner anzeigen, die kein benutzerdefiniertes Symbol haben."
+		},
+		"minimalFolderIcons": {
+			"name": "Minimale Ordnersymbole",
+			"desc": "Ordnerpfeile durch Ihre Ordnersymbole ersetzen."
 		},
 		"headingIconPicker": "Symbolauswahl",
 		"showItemName": {

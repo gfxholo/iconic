@@ -72,6 +72,8 @@
 			"mobile": "Basculer les icônes tactiles"
 		},
 		"toggleAllFileIcons": "Basculer toutes les icônes de fichier",
+		"toggleAllFolderIcons": "Basculer toutes les icônes de dossier",
+		"toggleMinimalFolderIcons": "Basculer les icônes de dossier minimales",
 		"toggleBiggerSearchResults": "Basculer les résultats de recherche plus grands"
 	},
 	"settings": {
@@ -95,8 +97,16 @@
 			"descMobile": "Appuyez sur une icône pour ouvrir le sélecteur d'icônes."
 		},
 		"showAllFileIcons": {
-			"name": "Afficher toutes les icônes de fichier",
-			"desc": "Affichez toujours une icône par défaut pour les fichiers sans icône."
+			"name": "Afficher toutes les icônes de fichiers",
+			"desc": "Afficher les icônes des fichiers qui n'ont pas d'icône personnalisée."
+		},
+		"showAllFolderIcons": {
+			"name": "Afficher toutes les icônes de dossiers",
+			"desc": "Afficher les icônes des dossiers qui n'ont pas d'icône personnalisée."
+		},
+		"minimalFolderIcons": {
+			"name": "Icônes de dossier minimales",
+			"desc": "Remplacez les flèches de dossier par vos icônes de dossier."
 		},
 		"headingIconPicker": "Sélecteur d'icônes",
 		"showItemName": {

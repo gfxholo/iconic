@@ -72,6 +72,8 @@
 			"mobile": "Alihkan ikon yang dapat diketuk"
 		},
 		"toggleAllFileIcons": "Beralih semua ikon berkas",
+		"toggleAllFolderIcons": "Beralih semua ikon folder",
+		"toggleMinimalFolderIcons": "Beralih ikon folder minimal",
 		"toggleBiggerSearchResults": "Beralih hasil pencarian yang lebih besar"
 	},
 	"settings": {
@@ -96,7 +98,15 @@
 		},
 		"showAllFileIcons": {
 			"name": "Tampilkan semua ikon berkas",
-			"desc": "Selalu tampilkan ikon default untuk file tanpa ikon."
+			"desc": "Tampilkan ikon untuk berkas yang tidak memiliki ikon khusus."
+		},
+		"showAllFolderIcons": {
+			"name": "Tampilkan semua ikon folder",
+			"desc": "Tampilkan ikon untuk folder yang tidak memiliki ikon khusus."
+		},
+		"minimalFolderIcons": {
+			"name": "Ikon folder minimal",
+			"desc": "Ganti tanda panah folder dengan ikon folder Anda."
 		},
 		"headingIconPicker": "Pemilih ikon",
 		"showItemName": {

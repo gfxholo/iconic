@@ -71,7 +71,9 @@
 			"desktop": "クリック可能なアイコンを切り替える",
 			"mobile": "タップ可能なアイコンを切り替える"
 		},
-		"toggleAllFileIcons": "すべてのファイルアイコンを切り替えます",
+		"toggleAllFileIcons": "すべてのファイルアイコンを切り替える",
+		"toggleAllFolderIcons": "すべてのフォルダアイコンを切り替える",
+		"toggleMinimalFolderIcons": "最小限のフォルダアイコンを切り替える",
 		"toggleBiggerSearchResults": "検索結果を大きく切り替えます"
 	},
 	"settings": {
@@ -95,8 +97,16 @@
 			"descMobile": "アイコンをタップするとアイコンピッカーが開きます。"
 		},
 		"showAllFileIcons": {
-			"name": "すべてのファイルアイコンを表示します",
-			"desc": "アイコンのないファイルの場合は常にデフォルトのアイコンを表示します。"
+			"name": "すべてのファイルアイコンを表示する",
+			"desc": "カスタムアイコンのないファイルのアイコンを表示します。"
+		},
+		"showAllFolderIcons": {
+			"name": "すべてのフォルダアイコンを表示する",
+			"desc": "カスタムアイコンのないフォルダのアイコンを表示します。"
+		},
+		"minimalFolderIcons": {
+			"name": "最小限のフォルダアイコン",
+			"desc": "フォルダの矢印をフォルダアイコンに置き換えます。"
 		},
 		"headingIconPicker": "アイコン ピッカー",
 		"showItemName": {

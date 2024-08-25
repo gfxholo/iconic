@@ -7,26 +7,26 @@
 		"sidebarRight": "Alternar barra lateral derecha"
 	},
 	"menu": {
-		"changeIcon": "Cambiar icono...",
-		"changeIcons": "Cambiar {#} iconos...",
-		"removeIcon": "Eliminar icono",
-		"removeIcons": "Eliminar {#} iconos",
+		"changeIcon": "Cambiar ícono...",
+		"changeIcons": "Cambiar {#} íconos...",
+		"removeIcon": "Eliminar ícono",
+		"removeIcons": "Eliminar {#} íconos",
 		"resetColor": "Restablecer color",
 		"resetColors": "Restablecer {#} colores"
 	},
 	"iconPicker": {
-		"changeIcon": "Cambiar icono",
-		"changeIcons": "Cambiar {#} iconos",
+		"changeIcon": "Cambiar ícono",
+		"changeIcons": "Cambiar {#} íconos",
 		"changeEmoji": "Cambiar emoji",
 		"changeEmojis": "Cambiar {#} emojis",
 		"search": "Buscar",
-		"searchIcons": "Buscar iconos...",
+		"searchIcons": "Buscar íconos...",
 		"searchEmojis": "Buscar emojis...",
 		"changeColor": "Cambiar color",
 		"resetColor": "Restablecer color",
 		"remove": "Eliminar",
 		"emojis": "Emojis",
-		"icons": "Iconos",
+		"icons": "Íconos",
 		"cancel": "Cancelar",
 		"save": "Guardar",
 		"colors": {
@@ -72,6 +72,8 @@
 			"mobile": "Alternar íconos que se pueden tocar"
 		},
 		"toggleAllFileIcons": "Alternar todos los íconos de archivos",
+		"toggleAllFolderIcons": "Alternar todos los íconos de carpetas",
+		"toggleMinimalFolderIcons": "Alternar íconos de carpeta mínimos",
 		"toggleBiggerSearchResults": "Alternar resultados de búsqueda más grandes"
 	},
 	"settings": {
@@ -85,20 +87,28 @@
 		},
 		"headingListsAndTabs": "Íconos de listas y pestañas",
 		"biggerIcons": {
-			"name": "Iconos más grandes",
+			"name": "Íconos más grandes",
 			"desc": "Mostrar íconos más grandes que la interfaz de usuario predeterminada."
 		},
 		"clickableIcons": {
-			"nameDesktop": "Iconos en los que se puede hacer clic",
-			"nameMobile": "Iconos que se pueden tocar",
+			"nameDesktop": "Íconos en los que se puede hacer clic",
+			"nameMobile": "Íconos que se pueden tocar",
 			"descDesktop": "Haga clic en un ícono para abrir el selector de íconos.",
 			"descMobile": "Toque un ícono para abrir el selector de íconos."
 		},
 		"showAllFileIcons": {
 			"name": "Mostrar todos los íconos de archivos",
-			"desc": "Mostrar siempre un ícono predeterminado para archivos sin ícono."
+			"desc": "Mostrar íconos para archivos sin un ícono personalizado."
 		},
-		"headingIconPicker": "Selector de iconos",
+		"showAllFolderIcons": {
+			"name": "Mostrar todos los íconos de carpetas",
+			"desc": "Mostrar íconos para carpetas que no tienen íconos personalizados."
+		},
+		"minimalFolderIcons": {
+			"name": "Íconos de carpeta mínimos",
+			"desc": "Reemplazar las flechas de carpeta con los íconos de carpeta."
+		},
+		"headingIconPicker": "Selector de íconos",
 		"showItemName": {
 			"name": "Mostrar el nombre del elemento",
 			"desc": "Mostrar el nombre del elemento que se está editando."
@@ -124,11 +134,11 @@
 		"headingAdvanced": "Avanzado",
 		"uncolorHover": {
 			"name": "Paso flotante sin color",
-			"desc": "Deshabilitar el color del icono al pasar el cursor sobre un elemento."
+			"desc": "Deshabilitar el color del ícono al pasar el cursor sobre un elemento."
 		},
 		"uncolorSelect": {
 			"name": "Selección sin color",
-			"desc": "Deshabilitar el color del icono mientras se selecciona el elemento."
+			"desc": "Deshabilitar el color del ícono mientras se selecciona el elemento."
 		},
 		"rememberDeletedItems": {
 			"name": "Recordar íconos de elementos eliminados",
