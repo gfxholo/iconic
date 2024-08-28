@@ -28,17 +28,17 @@
 }
 
 /* List items */
-.tree-item-icon.iconic-icon > .iconic-emoji {
+.tree-item-self > .iconic-icon > .iconic-emoji {
 	--icon-size: var(--icon-xs);
 }
-.tree-item-icon.collapse-icon.iconic-icon > .svg-icon {
+.tree-item-self > .tree-item-icon.collapse-icon.iconic-icon > .svg-icon {
 	width: var(--icon-size);
 	height: var(--icon-size);
 	stroke-width: var(--icon-stroke);
 	color: unset;
 	transform: unset;
 }
-.iconic-folder-icon {
+.tree-item-self > .iconic-sidekick {
 	display: flex;
 	align-self: center;
 	width: var(--size-4-4);
@@ -47,13 +47,11 @@
 	--icon-size: var(--icon-xs);
 	--icon-stroke: var(--icon-s-stroke-width);
 }
-.iconic-bigger-icons .tree-item-icon.iconic-icon > .svg-icon,
-.iconic-bigger-icons .iconic-folder-icon > .svg-icon {
+.iconic-bigger-icons .tree-item-self > .iconic-icon > .svg-icon {
 	--icon-size: var(--icon-s);
 	--icon-stroke: var(--icon-s-stroke-width);
 }
-.iconic-bigger-icons .tree-item-icon.iconic-icon > .iconic-emoji,
-.iconic-bigger-icons .iconic-folder-icon > .iconic-emoji {
+.iconic-bigger-icons .tree-item-self > .iconic-icon > .iconic-emoji {
 	--icon-size: var(--icon-s);
 }
 .iconic-bigger-icons .tree-item.iconic-item > .tree-item-self > .tree-item-inner {
@@ -62,8 +60,7 @@
 .is-mobile .iconic-bigger-icons .tree-item.iconic-item > .tree-item-self > .tree-item-inner {
 	margin-inline-start: 3px;
 }
-.iconic-clickable-icons .tree-item-icon.iconic-icon:hover,
-.iconic-clickable-icons .iconic-folder-icon:hover {
+.iconic-clickable-icons .tree-item-self > .iconic-icon:hover {
 	cursor: pointer;
 	filter: contrast(200%);
 }

@@ -116,13 +116,13 @@ export default class BookmarkIconManager extends IconManager {
 				if (bmark.iconDefault) bmark.iconDefault = iconEl.hasClass('is-collapsed')
 					? 'lucide-folder-closed'
 					: 'lucide-folder-open';
-				let folderIconEl = selfEl.find(':scope > .iconic-folder-icon:not(.tree-item-icon)');
+				let folderIconEl = selfEl.find(':scope > .iconic-sidekick:not(.tree-item-icon)');
 				if (this.plugin.settings.minimalFolderIcons || !this.plugin.settings.showAllFolderIcons && !bmark.icon && !bmark.iconDefault) {
 					folderIconEl?.remove();
 				} else {
 					const arrowColor = bmark.icon || bmark.iconDefault ? null : bmark.color;
 					this.refreshIcon({ icon: null, color: arrowColor }, iconEl);
-					folderIconEl = folderIconEl ?? selfEl.createDiv({ cls: 'iconic-folder-icon' });
+					folderIconEl = folderIconEl ?? selfEl.createDiv({ cls: 'iconic-sidekick' });
 					if (iconEl.nextElementSibling !== folderIconEl) {
 						iconEl.insertAdjacentElement('afterend', folderIconEl);
 					}

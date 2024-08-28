@@ -93,13 +93,13 @@ export default class FileIconManager extends IconManager {
 				if (file.iconDefault) file.iconDefault = iconEl.hasClass('is-collapsed')
 					? 'lucide-folder-closed'
 					: 'lucide-folder-open';
-				let folderIconEl = selfEl.find(':scope > .iconic-folder-icon:not(.tree-item-icon)');
+				let folderIconEl = selfEl.find(':scope > .iconic-sidekick:not(.tree-item-icon)');
 				if (this.plugin.settings.minimalFolderIcons || !this.plugin.settings.showAllFolderIcons && !file.icon && !file.iconDefault) {
 					folderIconEl?.remove();
 				} else {
 					const arrowColor = file.icon || file.iconDefault ? null : file.color;
 					this.refreshIcon({ icon: null, color: arrowColor }, iconEl);
-					folderIconEl = folderIconEl ?? selfEl.createDiv({ cls: 'iconic-folder-icon' });
+					folderIconEl = folderIconEl ?? selfEl.createDiv({ cls: 'iconic-sidekick' });
 					if (iconEl.nextElementSibling !== folderIconEl) {
 						iconEl.insertAdjacentElement('afterend', folderIconEl);
 					}
