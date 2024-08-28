@@ -54,7 +54,7 @@
 .iconic-bigger-icons .tree-item-self > .iconic-icon > .iconic-emoji {
 	--icon-size: var(--icon-s);
 }
-.iconic-bigger-icons .tree-item.iconic-item > .tree-item-self > .tree-item-inner {
+.iconic-bigger-icons .iconic-item > .tree-item-self > .tree-item-inner {
 	margin-inline-start: 1.5px;
 }
 .is-mobile .iconic-bigger-icons .tree-item.iconic-item > .tree-item-self > .tree-item-inner {
@@ -141,17 +141,26 @@
 	color: currentColor !important;
 }
 
-/* Community themes */
-.iconic-its-theme .tree-item-self > .tree-item-icon {
+/* Theme: ITS Theme */
+.iconic-theme-its .tree-item-self > .tree-item-icon {
 	margin-right: 6px;
 }
-.iconic-its-theme .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon {
-	display: flex;
+.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon {
 	position: absolute;
 }
-.iconic-its-theme .workspace-leaf-content[data-type="file-explorer"] .tree-item-inner::before {
-	visibility: hidden;
+.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content {
+	margin-inline-start: var(--size-4-5);
 }
-.iconic-its-theme.hide-file-explorer-icons .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon {
+.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content::before,
+.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title-content::before {
 	display: none;
+}
+.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .nav-folder-collapse-indicator {
+	display: flex;
+}
+.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:not(:has(.iconic-sidekick)) > .nav-folder-title-content {
+	margin-inline-start: var(--size-4-5);
+}
+.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .iconic-sidekick {
+	margin-inline-start: var(--size-4-5);
 }

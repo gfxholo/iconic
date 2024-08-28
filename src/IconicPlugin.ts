@@ -312,8 +312,10 @@ export default class IconicPlugin extends Plugin {
 		activeDocument.body.toggleClass('iconic-uncolor-hover', unloading ? false : this.settings.uncolorHover);
 		activeDocument.body.toggleClass('iconic-uncolor-drag', unloading ? false : this.settings.uncolorDrag);
 		activeDocument.body.toggleClass('iconic-uncolor-select', unloading ? false : this.settings.uncolorSelect);
+
 		// @ts-expect-error (Private API)
-		activeDocument.body.toggleClass('iconic-its-theme', unloading ? false : this.app.customCss?.theme === 'ITS Theme');
+		const themeName = this.app.customCss?.theme;
+		activeDocument.body.toggleClass('iconic-theme-its', unloading ? false : themeName === 'ITS Theme');
 	}
 
 	/**
