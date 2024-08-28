@@ -94,7 +94,7 @@ export default class FileIconManager extends IconManager {
 					? 'lucide-folder-closed'
 					: 'lucide-folder-open';
 				let folderIconEl = selfEl.find(':scope > .iconic-folder-icon:not(.tree-item-icon)');
-				if (this.plugin.settings.minimalFolderIcons) {
+				if (this.plugin.settings.minimalFolderIcons || !this.plugin.settings.showAllFolderIcons && !file.icon && !file.iconDefault) {
 					folderIconEl?.remove();
 				} else {
 					const arrowColor = file.icon || file.iconDefault ? null : file.color;

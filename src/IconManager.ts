@@ -41,13 +41,11 @@ export default abstract class IconManager {
 				iconEl.removeClass('iconic-icon');
 			}
 			iconEl.show();
+		} else if ('iconDefault' in item && item.iconDefault) {
+			setIcon(iconEl, item.iconDefault);
+			iconEl.show();
 		} else {
-			if ('iconDefault' in item && item.iconDefault) {
-				setIcon(iconEl, item.iconDefault);
-				iconEl.show();
-			} else {
-				iconEl.hide();
-			}
+			iconEl.hide();
 		}
 
 		const svgEl = iconEl.find('.svg-icon');
