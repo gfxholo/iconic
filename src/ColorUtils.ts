@@ -42,7 +42,7 @@ export default class ColorUtils {
 		// Value might still be wrapped in color-mix()
 		return rgbValue.startsWith('color-mix')
 			? this.mixToRgb(rgbValue)
-			: rgbValue;
+			: rgbValue || 'rgb(0, 0, 0)';
 	}
 
 	/**
