@@ -186,3 +186,15 @@
 .iconic-theme-sanctum .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:has(.iconic-sidekick) > .nav-folder-title-content::before {
 	display: none;
 }
+
+/* Theme: Shimmering Focus */
+.iconic-theme-shimmer :is(.style-settings-collapse-indicator, .collapse-icon) > .svg-icon.svg-icon.svg-icon.svg-icon {
+	width: var(--icon-xs);
+	stroke-width: var(--icon-xs-stroke-width);
+	height: unset;
+	margin-left: unset;
+}
+.iconic-theme-shimmer.iconic-bigger-icons :is(.style-settings-collapse-indicator, .collapse-icon) > .svg-icon.svg-icon.svg-icon.svg-icon {
+	width: var(--icon-s);
+	stroke-width: var(--icon-s-stroke-width);
+}
