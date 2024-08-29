@@ -178,6 +178,14 @@
 	display: none;
 }
 
+/* Theme: Cyber Glow */
+.iconic-theme-cglow .workspace-leaf-content[data-type="file-explorer"] .tree-item-self > .tree-item-inner::before {
+	display: none;
+}
+.iconic-theme-cglow .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon.collapse-icon.nav-folder-collapse-indicator {
+	display: flex;
+}
+
 /* Theme: ITS Theme */
 .iconic-theme-its .tree-item-self > .tree-item-icon {
 	margin-right: 6px;

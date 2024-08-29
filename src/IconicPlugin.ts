@@ -318,6 +318,7 @@ export default class IconicPlugin extends Plugin {
 		activeDocument.body.toggleClass('iconic-theme-btopaz', unloading ? false : themeName === 'Blue Topaz');
 		activeDocument.body.toggleClass('iconic-theme-border', unloading ? false : themeName === 'Border');
 		activeDocument.body.toggleClass('iconic-theme-cat', unloading ? false : themeName === 'Catppuccin');
+		activeDocument.body.toggleClass('iconic-theme-cglow', unloading ? false : themeName === 'Cyber Glow');
 		activeDocument.body.toggleClass('iconic-theme-its', unloading ? false : themeName === 'ITS Theme');
 		activeDocument.body.toggleClass('iconic-theme-mflow', unloading ? false : themeName === 'Mado Miniflow');
 		activeDocument.body.toggleClass('iconic-theme-sanctum', unloading ? false : themeName === 'Sanctum');
