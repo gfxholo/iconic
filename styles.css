@@ -291,3 +291,8 @@
 .iconic-theme-terminal .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .collapse-icon.iconic-icon::before {
 	display: none;
 }
+
+/* Theme: Ukiyo */
+.iconic-theme-ukiyo .workspace-leaf > .workspace-leaf-content[data-type="file-explorer"] > .nav-files-container.node-insert-event {
+	padding: var(--size-4-1) var(--size-4-3) var(--size-4-6) var(--size-4-3);
+}
