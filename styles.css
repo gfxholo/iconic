@@ -158,6 +158,11 @@
 	display: flex;
 }
 
+/* Theme: Catppuccin */
+.iconic-theme-cat .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title-content::before {
+	display: none;
+}
+
 /* Theme: ITS Theme */
 .iconic-theme-its .tree-item-self > .tree-item-icon {
 	margin-right: 6px;
