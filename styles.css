@@ -202,6 +202,14 @@
 	margin-inline-start: var(--size-4-5);
 }
 
+/* Theme: Mado Miniflow */
+.iconic-theme-mflow .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item:not(.mod-collapsible) {
+	margin-inline-start: var(--size-4-2);
+}
+.iconic-theme-mflow .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title > .collapse-icon {
+	display: flex;
+}
+
 /* Theme: Sanctum */
 .iconic-theme-sanctum .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:has(.iconic-sidekick) > .nav-folder-title-content::before {
 	display: none;
