@@ -122,20 +122,16 @@
 .iconic-invisible { visibility: hidden; }
 .is-phone .iconic-reset-color.iconic-invisible { display: none; }
 
-/* Colorless hover */
+/* Colorless settings */
 .iconic-uncolor-hover .workspace-tab-header:hover .iconic-icon > .svg-icon,
 .iconic-uncolor-hover .tree-item-self:hover > .tree-item-icon.iconic-icon > .svg-icon,
 .iconic-uncolor-hover .side-dock-ribbon-action.iconic-icon:hover > .svg-icon,
 .iconic-uncolor-hover .iconic-search-result:hover > .svg-icon {
 	color: currentColor !important;
 }
-
-/* Colorless drag */
 .iconic-uncolor-drag > .drag-ghost .svg-icon {
 	color: currentColor !important;
 }
-
-/* Colorless selection */
 .iconic-uncolor-select .workspace-tab-header.is-active .iconic-icon > .svg-icon,
 .iconic-uncolor-select .tree-item-self.is-active > .tree-item-icon.iconic-icon > .svg-icon {
 	color: currentColor !important;
