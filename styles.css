@@ -290,6 +290,15 @@
 	stroke-width: var(--icon-s-stroke-width);
 }
 
+/* Theme: Sodalite */
+.iconic-theme-sodalite .workspace-leaf-content[data-type="file-explorer"] .nav-files-container {
+	padding-inline-start: var(--size-4-3);
+	padding-inline-end: var(--size-4-3);
+}
+.iconic-theme-sodalite .workspace-leaf-content[data-type="file-explorer"] .tree-item-inner::before {
+	display: none;
+}
+
 /* Theme: Spectrum */
 .iconic-theme-spectrum .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title > .nav-folder-title-content::before {
 	display: none;
