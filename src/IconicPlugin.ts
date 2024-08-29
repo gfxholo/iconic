@@ -321,6 +321,7 @@ export default class IconicPlugin extends Plugin {
 		activeDocument.body.toggleClass('iconic-theme-its', unloading ? false : themeName === 'ITS Theme');
 		activeDocument.body.toggleClass('iconic-theme-sanctum', unloading ? false : themeName === 'Sanctum');
 		activeDocument.body.toggleClass('iconic-theme-shimmer', unloading ? false : themeName === 'Shimmering Focus');
+		activeDocument.body.toggleClass('iconic-theme-terminal', unloading ? false : themeName === 'Terminal');
 	}
 
 	/**

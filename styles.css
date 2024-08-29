@@ -218,3 +218,8 @@
 	width: var(--icon-s);
 	stroke-width: var(--icon-s-stroke-width);
 }
+
+/* Theme: Terminal */
+.iconic-theme-terminal .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .collapse-icon.iconic-icon::before {
+	display: none;
+}
