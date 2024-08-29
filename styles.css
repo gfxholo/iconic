@@ -245,6 +245,31 @@
 	display: none;
 }
 
+/* Theme: Shiba Inu */
+.iconic-theme-shiba.theme-light:not(.default-light-theme, .lily-light, .ivory-light, .sky-light, .stone-light) {
+	--color-red: rgb(240, 68, 114);
+	--color-orange: rgb(249, 102, 50);
+	--color-yellow: rgb(228, 147, 32);
+	--color-green: rgb(64, 155, 40);
+	--color-cyan: rgb(23, 146, 153);
+	--color-blue: rgb(71, 143, 238);
+	--color-purple: rgb(176, 110, 201);
+	--color-pink: rgb(215, 125, 146);
+}
+.iconic-theme-shiba.theme-dark:not(.default-dark-theme, .Lilac-dark, .pure-dark, .warm-dark) {
+	--color-red: rgb(255, 98, 107);
+	--color-orange: rgb(247, 157, 124);
+	--color-yellow: rgb(249, 226, 175);
+	--color-green: rgb(56, 198, 141);
+	--color-cyan: rgb(104, 188, 204);
+	--color-blue: rgb(147, 183, 245);
+	--color-purple: rgb(196, 167, 231);
+	--color-pink: rgb(243, 137, 143);
+}
+.iconic-theme-shiba .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content::before {
+	display: none;
+}
+
 /* Theme: Shimmering Focus */
 .iconic-theme-shimmer :is(.style-settings-collapse-indicator, .collapse-icon) > .svg-icon.svg-icon.svg-icon.svg-icon {
 	width: var(--icon-xs);
