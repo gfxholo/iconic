@@ -45,6 +45,7 @@ export default abstract class IconManager {
 			setIcon(iconEl, item.iconDefault);
 			iconEl.show();
 		} else {
+			iconEl.removeClass('iconic-icon');
 			iconEl.hide();
 		}
 
