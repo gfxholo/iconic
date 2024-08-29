@@ -219,6 +219,11 @@
 	stroke-width: var(--icon-s-stroke-width);
 }
 
+/* Theme: Spectrum */
+.iconic-theme-spectrum .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title > .nav-folder-title-content::before {
+	display: none;
+}
+
 /* Theme: Terminal */
 .iconic-theme-terminal .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .collapse-icon.iconic-icon::before {
 	display: none;
