@@ -158,6 +158,21 @@
 	display: flex;
 }
 
+/* Theme: Border */
+.iconic-theme-border .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .nav-file-title::before {
+	display: none;
+}
+.iconic-theme-border .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item > .tree-item-self.mod-collapsible > .collapse-icon {
+	-webkit-mask-image: none;
+	background-color: transparent;
+}
+.iconic-theme-border .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item-self.mod-collapsible > .collapse-icon > .svg-icon {
+	color: unset;
+}
+.iconic-theme-border .workspace-leaf-content[data-type="file-explorer"] .tree-item > .tree-item-self:is(.nav-file-title, .nav-folder.mod-root > .nav-folder-title)::before {
+	display: none;
+}
+
 /* Theme: Catppuccin */
 .iconic-theme-cat .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title-content::before {
 	display: none;
