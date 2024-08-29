@@ -186,6 +186,14 @@
 	display: flex;
 }
 
+/* Theme: Discordian */
+.iconic-theme-discord .workspace-leaf-content[data-type="file-explorer"] .nav-file-title > .tree-item-icon {
+	margin-inline-start: 0;
+}
+.iconic-theme-discord .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content {
+	margin-inline-start: var(--size-4-5);
+}
+
 /* Theme: ITS Theme */
 .iconic-theme-its .tree-item-self > .tree-item-icon {
 	margin-right: 6px;
