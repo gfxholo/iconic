@@ -210,6 +210,28 @@
 	margin-inline-start: var(--size-4-5);
 }
 
+/* Theme: LYT Mode */
+.iconic-theme-lyt .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item-inner {
+	padding-inline-start: var(--size-4-2);
+}
+.iconic-theme-lyt .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .iconic-sidekick {
+	margin-inline-start: var(--size-4-2);
+	margin-inline-end: 0;
+}
+.iconic-theme-lyt .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item-icon:not(.collapse-icon) {
+	margin-inline-start: calc(-0.5 * var(--size-4-5));
+}
+.iconic-theme-lyt .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .mod-collapsible:not(:has(.iconic-sidekick)) > .tree-item-inner {
+	padding-inline-start: var(--size-4-2);
+	margin-inline-start: var(--size-4-2);
+}
+.iconic-theme-lyt .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) :not(.mod-collapsible) > .tree-item-inner {
+	margin-inline-start: var(--size-4-2);
+}
+.iconic-theme-lyt .workspace-leaf-content > :is(.nav-files-container, .view-content).node-insert-event {
+	padding: var(--size-4-1) var(--size-4-3) var(--size-4-6) var(--size-4-3);
+}
+
 /* Theme: Mado Miniflow */
 .iconic-theme-mflow .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item:not(.mod-collapsible) {
 	margin-inline-start: var(--size-4-2);
