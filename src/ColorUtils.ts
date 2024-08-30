@@ -40,9 +40,13 @@ export default class ColorUtils {
 		const rgbValue = this.convertEl.style.color;
 
 		// Value might still be wrapped in color-mix()
-		return rgbValue.startsWith('color-mix')
-			? this.mixToRgb(rgbValue)
-			: rgbValue || 'rgb(0, 0, 0)';
+		if (rgbValue.startsWith('color-mix')) {
+			return this.mixToRgb(rgbValue);
+		} else if (rgbValue.startsWith('rgb')) {
+			return rgbValue;
+		} else {
+			return 'rgb(0, 0, 0)';
+		}
 	}
 
 	/**
