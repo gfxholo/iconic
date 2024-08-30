@@ -291,19 +291,12 @@ export default class IconPicker extends Modal {
 
 		// [Remove]
 		if (this.icon !== null || this.color !== null) {
-			if (Platform.isPhone) {
-				const removeButtonEl = buttonContainerEl.createEl('button', {
-					cls: 'mod-warning',
-					text: STRINGS.iconPicker.remove,
-				});
-				this.manager.setEventListener(removeButtonEl, 'click', () => this.closeAndSave(null, null));
-			} else if (Platform.isTablet && buttonRowEl) {
-				const removeButtonEl = buttonRowEl.createEl('button', {
-					cls: ['mod-secondary', 'mod-destructive'],
-					text: STRINGS.iconPicker.remove,
-				});
-				this.manager.setEventListener(removeButtonEl, 'click', () => this.closeAndSave(null, null));
-			}
+			const parentEl = Platform.isTablet && buttonRowEl ? buttonRowEl : buttonContainerEl;
+			const removeButtonEl = parentEl.createEl('button', {
+				cls: Platform.isPhone ? 'mod-warning' : ['mod-secondary', 'mod-destructive'],
+				text: STRINGS.iconPicker.remove,
+			});
+			this.manager.setEventListener(removeButtonEl, 'click', () => this.closeAndSave(null, null));
 		}
 
 		// [Emojis]
