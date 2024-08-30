@@ -1,3 +1,7 @@
+body {
+	--ltr-icons: .lucide-check, .lucide-help-circle, .sidebar-left, .sidebar-right;
+}
+
 .iconic-icon > .iconic-emoji {
 	display: flex;
 	flex-wrap: wrap;
@@ -37,6 +41,9 @@
 	stroke-width: var(--icon-stroke);
 	color: unset;
 	transform: unset;
+}
+.mod-rtl .tree-item-self > .tree-item-icon.collapse-icon.iconic-icon > .svg-icon:not(var(--ltr-icons)) {
+	transform: scale(-1, 1);
 }
 .tree-item-self > .iconic-sidekick {
 	display: flex;
