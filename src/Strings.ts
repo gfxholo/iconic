@@ -140,7 +140,7 @@ export default class Strings {
 		},
 		uncolorDrag: {
 			name: 'Colorless drag',
-			desc: 'Disable icon color while dragging item.',
+			desc: 'Disable icon color while dragging an item.',
 		},
 		uncolorSelect: {
 			name: 'Colorless selection',
