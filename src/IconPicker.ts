@@ -79,7 +79,8 @@ export default class IconPicker extends Modal {
 
 	// State
 	private emojiMode = false;
-	private pauseColorPickerOnChange = false;
+	private colorPickerPaused = false;
+	private colorPickerHovered = false;
 	private readonly searchResults: [icon: string, iconName: string][] = [];
 
 	private constructor(plugin: IconicPlugin,
@@ -207,8 +208,8 @@ export default class IconPicker extends Modal {
 			.addColorPicker(colorPicker => { colorPicker
 				.setValueRgb(ColorUtils.toRgbObject(this.color))
 				.onChange(value => {
-					if (this.pauseColorPickerOnChange) {
-						this.pauseColorPickerOnChange = false;
+					if (this.colorPickerPaused) {
+						this.colorPickerPaused = false;
 						return;
 					}
 					this.color = value;
@@ -237,6 +238,8 @@ export default class IconPicker extends Modal {
 		this.colorPickerEl = this.searchSetting.controlEl.find('input[type="color"]');
 		this.colorPickerEl.tabIndex = 0;
 		this.colorPickerEl.dataset.tooltipDelay = '300';
+		this.manager.setEventListener(this.colorPickerEl, 'pointerenter', () => this.colorPickerHovered = true);
+		this.manager.setEventListener(this.colorPickerEl, 'pointerleave', () => this.colorPickerHovered = false);
 		this.manager.setEventListener(this.colorPickerEl, 'click', event => {
 			if (openRgbPicker === true) {
 				openRgbPicker = false;
@@ -386,6 +389,7 @@ export default class IconPicker extends Modal {
 		this.color = COLORS[index];
 		this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
 		this.updateColorPicker();
+		this.updateColorTooltip();
 		this.updateSearchResults();
 	}
 
@@ -400,6 +404,7 @@ export default class IconPicker extends Modal {
 		this.color = COLORS[index];
 		this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
 		this.updateColorPicker();
+		this.updateColorTooltip();
 		this.updateSearchResults();
 	}
 
@@ -410,6 +415,7 @@ export default class IconPicker extends Modal {
 		this.color = null;
 		this.colorResetButton.extraSettingsEl.addClass('iconic-invisible');
 		this.updateColorPicker();
+		this.updateColorTooltip();
 		this.updateSearchResults();
 	}
 
@@ -444,7 +450,7 @@ export default class IconPicker extends Modal {
 	 * Update color of color picker without triggering its onChange() callback.
 	 */
 	private updateColorPicker(): void {
-		this.pauseColorPickerOnChange = true;
+		this.colorPickerPaused = true;
 		this.colorPicker.setValueRgb(ColorUtils.toRgbObject(this.color));
 
 		if (!this.color) {
@@ -453,6 +459,19 @@ export default class IconPicker extends Modal {
 			this.colorPickerEl.ariaLabel = (STRINGS.iconPicker.colors as any)[this.color];
 		} else {
 			this.colorPickerEl.ariaLabel = this.color;
+		}
+	}
+
+	/**
+	 * Update tooltip currently displayed for the color picker.
+	 */
+	private updateColorTooltip() {
+		const tooltip = activeDocument.body.find(':scope > .tooltip');
+		if (tooltip && this.colorPickerHovered) {
+			tooltip.textContent = this.color
+				? (STRINGS.iconPicker.colors as any)[this.color]
+				: STRINGS.iconPicker.changeColor;
+			tooltip.style.removeProperty('width');
 		}
 	}
 
