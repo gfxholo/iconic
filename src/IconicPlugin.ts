@@ -34,9 +34,7 @@ export interface Item extends Icon {
 	category: 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'property' | 'ribbon';
 	iconDefault: string | null;
 }
-export interface AppItem extends Item {
-	// No other properties
-}
+export type AppItem = Item;
 export interface TabItem extends Item {
 	isFile: boolean;
 	isActive: boolean;
