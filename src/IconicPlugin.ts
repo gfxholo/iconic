@@ -457,7 +457,7 @@ export default class IconicPlugin extends Plugin {
 			let iconDefault;
 			switch (tabId) {
 				case 'empty':
-					iconDefault = isStacked ? leaf.view.getIcon() : null; break;
+					iconDefault = !isRoot || isStacked || tabIcon.color ? leaf.view.getIcon() : null; break;
 				case 'release-notes': // Add some sparkle to Obsidian updates
 					iconDefault = unloading ? leaf.view.getIcon() : 'lucide-sparkle'; break;
 				default:
