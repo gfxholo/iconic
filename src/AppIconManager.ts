@@ -1,7 +1,7 @@
-import { Menu, Platform } from "obsidian";
-import IconicPlugin, { STRINGS } from "./IconicPlugin";
-import IconManager from "./IconManager";
-import IconPicker from "./IconPicker";
+import { Menu, Platform } from 'obsidian';
+import IconicPlugin, { STRINGS } from './IconicPlugin';
+import IconManager from './IconManager';
+import IconPicker from './IconPicker';
 
 /**
  * Handles icons of system buttons in the window frame and vault switcher.
