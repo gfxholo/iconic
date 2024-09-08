@@ -10,11 +10,7 @@ export default class TabIconManager extends IconManager {
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
 		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => this.refreshIcons()));
-
-		// @ts-expect-error (Private API)
-		if (this.app.plugins?.plugins?.['obsidian-icon-folder']) {
-			this.plugin.registerEvent(this.app.workspace.on('active-leaf-change', () => this.refreshIcons()));
-		}
+		this.plugin.registerEvent(this.app.workspace.on('active-leaf-change', () => this.refreshIcons()));
 
 		// Refresh dropdown tab list
 		const tabListEl = activeDocument.body.find('.mod-root .workspace-tab-header-tab-list > .clickable-icon');
@@ -79,8 +75,10 @@ export default class TabIconManager extends IconManager {
 				}
 			});
 
-			// Set menu listener if tab is not handled by workspace.on('file-menu')
-			if (!tab.isFile || !tabEl.hasClass('is-active')) {
+			// Skip menu listener if tab is handled by workspace.on('file-menu')
+			if (tab.isFile && (tab.isActive || tab.isStacked)) {
+				this.stopEventListener(tabEl, 'contextmenu');
+			} else {
 				this.setEventListener(tabEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
 			}
 

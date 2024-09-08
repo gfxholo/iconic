@@ -1,4 +1,4 @@
-import { Command, FileView, Platform, Plugin, TAbstractFile, TFile, TFolder, WorkspaceLeaf, getIconIds } from 'obsidian';
+import { Command, FileView, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceLeaf, getIconIds } from 'obsidian';
 import IconicSettingTab from './IconicSettingTab';
 import AppIconManager from './AppIconManager';
 import TabIconManager from './TabIconManager';
@@ -39,7 +39,9 @@ export interface AppItem extends Item {
 }
 export interface TabItem extends Item {
 	isFile: boolean;
+	isActive: boolean;
 	isRoot: boolean;
+	isStacked: boolean;
 	iconEl: HTMLElement | null;
 	tabEl: HTMLElement | null;
 }
@@ -425,12 +427,14 @@ export default class IconicPlugin extends Plugin {
 			}
 		}
 		// @ts-expect-error (Private API)
+		const isActive = leaf.view === this.app.workspace.getActiveViewOfType(View) || leaf.tabHeaderEl?.hasClass('is-active');
+		// @ts-expect-error (Private API)
+		const isRoot = leaf.parent?.parent === this.app.workspace.rootSplit;
+		// @ts-expect-error (Private API)
 		const isStacked = leaf.parent?.isStacked === true;
 		if (leaf.view instanceof FileView && leaf.view.file && leaf.view.allowNoFile === false) {
 			const fileId = leaf.view.file.path;
 			const fileIcon = this.settings.fileIcons[fileId] ?? {};
-			// @ts-expect-error (Private API)
-			const isRoot = leaf.parent?.parent === this.app.workspace.rootSplit;
 			const isMarkdown = leaf.view.getViewType() === 'markdown';
 			return {
 				id: fileId,
@@ -442,7 +446,9 @@ export default class IconicPlugin extends Plugin {
 				icon: unloading ? null : fileIcon.icon ?? null,
 				color: unloading ? null : fileIcon.color ?? null,
 				isFile: true,
+				isActive: isActive,
 				isRoot: isRoot,
+				isStacked: isStacked,
 				iconEl: iconEl ?? null,
 				// @ts-expect-error (Private API)
 				tabEl: leaf.tabHeaderEl ?? null,
@@ -467,8 +473,9 @@ export default class IconicPlugin extends Plugin {
 				icon: unloading ? null : tabIcon.icon ?? null,
 				color: unloading ? null : tabIcon.color ?? null,
 				isFile: false,
-				// @ts-expect-error (Private API)
-				isRoot: leaf.parent?.parent === this.app.workspace.rootSplit,
+				isActive: isActive,
+				isRoot: isRoot,
+				isStacked: isStacked,
 				iconEl: iconEl ?? null,
 				// @ts-expect-error (Private API)
 				tabEl: leaf.tabHeaderEl ?? null,
