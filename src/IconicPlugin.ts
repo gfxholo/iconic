@@ -686,7 +686,7 @@ export default class IconicPlugin extends Plugin {
 	getPropertyItems(unloading?: boolean): PropertyItem[] {
 		// @ts-expect-error (Private API)
 		const propBases: any[] = Object.values(this.app.metadataTypeManager?.properties) ?? [];
-		return propBases.map(prop => this.definePropertyItem(prop, unloading));
+		return propBases.map(propBase => this.definePropertyItem(propBase, unloading));
 	}
 
 	/**
@@ -694,7 +694,8 @@ export default class IconicPlugin extends Plugin {
 	 */
 	getPropertyItem(propId: string, unloading?: boolean): PropertyItem {
 		// @ts-expect-error (Private API)
-		const propBase: any = this.app.metadataTypeManager?.properties[propId] ?? {};
+		const propBases: any[] = Object.values(this.app.metadataTypeManager?.properties) ?? [];
+		const propBase = propBases.find(propBase => propBase.name === propId) ?? {};
 		return this.definePropertyItem(propBase, unloading);
 	}
 
