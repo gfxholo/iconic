@@ -287,12 +287,11 @@ export default class IconPicker extends Modal {
 
 		// Match styling of bookmark edit dialog
 		const buttonContainerEl = this.modalEl.createDiv({ cls: 'modal-button-container' });
-		const buttonRowEl = Platform.isTablet ? buttonContainerEl.createDiv({ cls: 'iconic-button-row' }) : null;
+		const buttonRowEl = Platform.isMobile ? buttonContainerEl.createDiv({ cls: 'iconic-button-row' }) : null;
 
 		// [Remove]
 		if (this.icon !== null || this.color !== null) {
-			const parentEl = Platform.isTablet && buttonRowEl ? buttonRowEl : buttonContainerEl;
-			const removeButtonEl = parentEl.createEl('button', {
+			const removeButtonEl = (buttonRowEl ?? buttonContainerEl).createEl('button', {
 				cls: Platform.isPhone ? 'mod-warning' : ['mod-secondary', 'mod-destructive'],
 				text: STRINGS.iconPicker.remove,
 			});
@@ -300,19 +299,14 @@ export default class IconPicker extends Modal {
 		}
 
 		// [Emojis]
-		if (Platform.isPhone) {
-			this.emojiButtonEl = this.modalEl.createEl('button', {
-				cls: ['modal-nav-action', 'mod-secondary'],
-				text: STRINGS.iconPicker.emojis,
-			});
-		} else if (Platform.isTablet && buttonRowEl) {
+		if (Platform.isMobile && buttonRowEl) {
 			this.emojiButtonEl = buttonRowEl.createEl('button', {
 				text: STRINGS.iconPicker.emojis,
 			});
 		} else {
 			this.emojiButtonEl = buttonContainerEl.createDiv({
 				cls: ['clickable-icon', 'setting-editor-extra-setting-button'],
-				attr: { tabIndex: 0, 'aria-label': STRINGS.iconPicker.emojis, 'data-tooltip-position': 'top' }
+				attr: { tabIndex: 0, 'aria-label': STRINGS.iconPicker.emojis, 'data-tooltip-position': 'top' },
 			});
 			setIcon(this.emojiButtonEl, 'lucide-smile-plus');
 		}
@@ -333,10 +327,10 @@ export default class IconPicker extends Modal {
 		}
 
 		// [Cancel]
-		if (!Platform.isPhone) {
-			const cancelEl = buttonContainerEl.createEl('button', { cls: 'mod-cancel', text: STRINGS.iconPicker.cancel });
-			this.manager.setEventListener(cancelEl, 'click', () => this.close());
-		}
+		const cancelEl = Platform.isPhone
+			? this.modalEl.createEl('button', { cls: ['modal-nav-action', 'mod-secondary'], text: STRINGS.iconPicker.cancel })
+			: buttonContainerEl.createEl('button', { cls: 'mod-cancel', text: STRINGS.iconPicker.cancel });
+		this.manager.setEventListener(cancelEl, 'click', () => this.close());
 
 		// [Save]
 		const saveEl = Platform.isPhone

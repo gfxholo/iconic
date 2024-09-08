@@ -90,10 +90,16 @@ body {
 .iconic-modal .setting-item-control input[type="color"] { width: auto; }
 .iconic-modal .setting-item-control input[type="text"] { width: 100%; }
 .iconic-modal .setting-item-control .search-input-container { width: 100%; }
-.is-tablet .iconic-button-row {
+.is-mobile .iconic-button-row {
 	display: flex;
 	flex-direction: row;
+	gap: var(--size-4-3);
+}
+.is-phone .iconic-button-row > button {
 	width: 100%;
+}
+.is-tablet .iconic-button-row > button:not(.mod-destructive) {
+	margin-inline-start: auto;
 }
 
 /* Search results container */
