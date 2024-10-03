@@ -466,7 +466,8 @@ export default class IconPicker extends Modal {
 	private updateColorTooltip() {
 		const tooltip = activeDocument.body.find(':scope > .tooltip');
 		if (tooltip && this.colorPickerHovered) {
-			tooltip.textContent = this.color
+			const textNode = tooltip.firstChild ?? tooltip;
+			textNode.nodeValue = this.color
 				? (STRINGS.iconPicker.colors as any)[this.color]
 				: STRINGS.iconPicker.changeColor;
 			tooltip.style.removeProperty('width');
