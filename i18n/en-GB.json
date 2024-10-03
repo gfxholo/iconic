@@ -5,7 +5,10 @@
 	},
 	"iconPicker": {
 		"changeColor": "Change colour",
-		"resetColor": "Reset colour"
+		"resetColor": "Reset colour",
+		"colors": {
+			"gray": "Grey"
+		}
 	},
 	"settings": {
 		"values": {
