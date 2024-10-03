@@ -79,6 +79,7 @@ export default class IconPicker extends Modal {
 
 	// State
 	private emojiMode = false;
+	private modeButtonHovered = false;
 	private colorPickerPaused = false;
 	private colorPickerHovered = false;
 	private readonly searchResults: [icon: string, iconName: string][] = [];
@@ -311,8 +312,10 @@ export default class IconPicker extends Modal {
 			});
 			setIcon(this.emojiButtonEl, 'lucide-smile-plus');
 		}
-		this.manager.setEventListener(this.emojiButtonEl, 'click', () => this.toggleEmojiMode());
+		this.manager.setEventListener(this.emojiButtonEl, 'pointerenter', () => this.modeButtonHovered = true);
+		this.manager.setEventListener(this.emojiButtonEl, 'pointerleave', () => this.modeButtonHovered = false);
 		this.manager.setEventListener(this.emojiButtonEl, 'pointerdown', event => event.preventDefault()); // Prevent focus theft
+		this.manager.setEventListener(this.emojiButtonEl, 'click', () => this.toggleEmojiMode());
 		this.manager.setEventListener(this.emojiButtonEl, 'keydown', event => {
 			if (event.key === 'Enter' || event.key === ' ') {
 				this.toggleEmojiMode();
@@ -441,6 +444,7 @@ export default class IconPicker extends Modal {
 				this.emojiButtonEl.ariaLabel = STRINGS.iconPicker.emojis;
 			}
 		}
+		this.updateModeTooltip();
 		this.updateSearchResults();
 	}
 
@@ -463,14 +467,30 @@ export default class IconPicker extends Modal {
 	/**
 	 * Update tooltip currently displayed for the color picker.
 	 */
-	private updateColorTooltip() {
-		const tooltip = activeDocument.body.find(':scope > .tooltip');
-		if (tooltip && this.colorPickerHovered) {
-			const textNode = tooltip.firstChild ?? tooltip;
-			textNode.nodeValue = this.color
+	private updateColorTooltip(): void {
+		if (!this.colorPickerHovered) return;
+
+		const tooltipEl = activeDocument.body.find(':scope > .tooltip');
+		if (tooltipEl && tooltipEl.firstChild) {
+			tooltipEl.style.removeProperty('width');
+			tooltipEl.firstChild.nodeValue = this.color
 				? (STRINGS.iconPicker.colors as any)[this.color]
 				: STRINGS.iconPicker.changeColor;
-			tooltip.style.removeProperty('width');
+		}
+	}
+
+	/**
+	 * Update tooltip currently displayed for the mode button.
+	 */
+	private updateModeTooltip(): void {
+		if (!this.modeButtonHovered) return;
+
+		const tooltipEl = activeDocument.body.find(':scope > .tooltip');
+		if (tooltipEl && tooltipEl.firstChild) {
+			tooltipEl.style.removeProperty('width');
+			tooltipEl.firstChild.nodeValue = this.emojiMode
+				? STRINGS.iconPicker.icons
+				: STRINGS.iconPicker.emojis;
 		}
 	}
 
