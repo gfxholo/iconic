@@ -15,11 +15,12 @@ export const ICONS = new Map<string, string>();
 export { EMOJIS };
 export { STRINGS };
 
-const KNOWN_TYPES = ['image', 'audio', 'video', 'pdf', 'unsupported'];
+const OPENABLE_TYPES = ['markdown', 'canvas', 'audio', 'video', 'pdf'];
+const SYNCABLE_TYPES = ['image', 'audio', 'video', 'pdf', 'unsupported'];
 const IMAGE_EXTENSIONS = ['bmp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif'];
 const AUDIO_EXTENSIONS = ['mp3', 'wav', 'm4a', '3gp', 'flac', 'ogg', 'oga', 'opus'];
 const VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogv', 'mov', 'mkv'];
-const KNOWN_EXTENSIONS = ['md', 'canvas', 'pdf'].concat(IMAGE_EXTENSIONS).concat(AUDIO_EXTENSIONS).concat(VIDEO_EXTENSIONS);
+const SYNCABLE_EXTENSIONS = ['md', 'canvas', 'pdf'].concat(IMAGE_EXTENSIONS).concat(AUDIO_EXTENSIONS).concat(VIDEO_EXTENSIONS);
 
 /**
  * Base interface for all icon objects.
@@ -398,9 +399,11 @@ export default class IconicPlugin extends Plugin {
 	 * Get tab definition.
 	 */
 	getTabItem(tabId: string, unloading?: boolean): TabItem | null {
-		let tab = null;
+		let tab: TabItem | null = null;
 		this.app.workspace.iterateAllLeaves(leaf => {
-			if (leaf.view.getViewType() === tabId || leaf.view instanceof FileView && leaf.view.file?.path === tabId && leaf.view.allowNoFile === false) {
+			if (tab) return;
+			const tabType = leaf.view.getViewType();
+			if (tabType === tabId || OPENABLE_TYPES.includes(tabType) && leaf.view.getState().file === tabId) {
 				tab = this.defineTabItem(leaf, unloading);
 			}
 		});
@@ -424,16 +427,19 @@ export default class IconicPlugin extends Plugin {
 				iconEl = this.app.workspace.rightSplit.activeTabIconEl;
 			}
 		}
+
+		const tabType = leaf.view.getViewType();
 		// @ts-expect-error (Private API)
 		const isActive = leaf.view === this.app.workspace.getActiveViewOfType(View) || leaf.tabHeaderEl?.hasClass('is-active');
-		// @ts-expect-error (Private API)
 		const isRoot = leaf.parent?.parent === this.app.workspace.rootSplit;
 		// @ts-expect-error (Private API)
 		const isStacked = leaf.parent?.isStacked === true;
-		if (leaf.view instanceof FileView && leaf.view.file && leaf.view.allowNoFile === false) {
-			const fileId = leaf.view.file.path;
+
+		if (OPENABLE_TYPES.includes(tabType)) {
+			const filePath = leaf.view.getState().file; // Used because view.file is undefined on deferred views
+			const fileId = typeof filePath === 'string' ? filePath : '';
 			const fileIcon = this.settings.fileIcons[fileId] ?? {};
-			const isMarkdown = leaf.view.getViewType() === 'markdown';
+			const isMarkdown = tabType === 'markdown';
 			return {
 				id: fileId,
 				name: leaf.getDisplayText(),
@@ -452,10 +458,9 @@ export default class IconicPlugin extends Plugin {
 				tabEl: leaf.tabHeaderEl ?? null,
 			}
 		} else {
-			const tabId = leaf.view.getViewType();
-			const tabIcon = this.settings.tabIcons[tabId] ?? {};
+			const tabIcon = this.settings.tabIcons[tabType] ?? {};
 			let iconDefault;
-			switch (tabId) {
+			switch (tabType) {
 				case 'empty':
 					iconDefault = !isRoot || isStacked || tabIcon.color ? leaf.view.getIcon() : null; break;
 				case 'release-notes': // Add some sparkle to Obsidian updates
@@ -464,7 +469,7 @@ export default class IconicPlugin extends Plugin {
 					iconDefault = leaf.view.getIcon(); break;
 			}
 			return {
-				id: tabId,
+				id: tabType,
 				name: leaf.getDisplayText(),
 				category: 'tab',
 				iconDefault: iconDefault,
@@ -974,7 +979,7 @@ export default class IconicPlugin extends Plugin {
 		// @ts-expect-error (Private API)
 		const unsyncedFolders: string[] = this.app.internalPlugins?.plugins?.sync?.instance?.ignoreFolders ?? [];
 		// @ts-expect-error (Private API)
-		const unsyncedTypes: string[] = KNOWN_TYPES.filter(type => !this.app.internalPlugins?.plugins?.sync?.instance?.allowTypes.has(type));
+		const unsyncedTypes: string[] = SYNCABLE_TYPES.filter(type => !this.app.internalPlugins?.plugins?.sync?.instance?.allowTypes.has(type));
 
 		for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
 			if (!Array.isArray(fileIcon.unsynced)) {
@@ -983,7 +988,7 @@ export default class IconicPlugin extends Plugin {
 
 			const { extension } = this.splitFilePath(fileId);
 			const unsynced = unsyncedFolders.some(folder => folder === fileId || fileId.startsWith(folder + '/'))
-				|| unsyncedTypes.includes('unsupported') && !KNOWN_EXTENSIONS.includes(extension)
+				|| unsyncedTypes.includes('unsupported') && !SYNCABLE_EXTENSIONS.includes(extension)
 				|| unsyncedTypes.includes('image') && IMAGE_EXTENSIONS.includes(extension)
 				|| unsyncedTypes.includes('audio') && AUDIO_EXTENSIONS.includes(extension)
 				|| unsyncedTypes.includes('video') && VIDEO_EXTENSIONS.includes(extension)
