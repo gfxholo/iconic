@@ -131,11 +131,26 @@ export default class IconicPlugin extends Plugin {
 		this.addSettingTab(new IconicSettingTab(this));
 
 		this.app.workspace.onLayoutReady(() => {
-			// Generate ICONS map
-			getIconIds().map(id => [id, id.replace(/^lucide-/, '').replace(/-/g, ' ')])
-				.map(([id, name]) => [id, name[0]?.toUpperCase() + name.slice(1)])
-				.sort(([, aName], [, bName]) => aName.localeCompare(bName))
-				.forEach(([id, name]) => ICONS.set(id, name));
+			// Generate icon names from available icon IDs
+			getIconIds().map(id => {
+				let name = id;
+				name = name.replace(/^lucide-/, '').replaceAll('-', ' ');
+				name = (name[0]?.toUpperCase() + name.slice(1))
+				.replace(/^Tv/, 'TV')
+				.replace(/ 2x 2$/, ' 2x2')
+				.replace(/ 3x 3$/, ' 3x3')
+				.replace(/ 3d$/, ' 3D')
+				.replace(/ az$/, ' AZ')
+				.replace(/ za$/, ' ZA')
+				.replace(/ x$/, ' X')
+				.replace(/ x2$/, ' X2')
+				return [id, name];
+			})
+			// Sort icon names alphabetically
+			.sort(([, aName], [, bName]) => aName.localeCompare(bName))
+			// Populate ICONS map
+			.forEach(([id, name]) => ICONS.set(id, name));
+			
 			this.startIconManagers();
 			this.refreshBodyClasses();
 		});
