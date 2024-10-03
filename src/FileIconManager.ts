@@ -15,7 +15,7 @@ export default class FileIconManager extends IconManager {
 			this.onContextMenu(tFile.path);
 		}));
 		this.plugin.registerEvent(this.app.workspace.on('files-menu', (menu, tFiles) => {
-			this.onContextMenu(...tFiles.map(file => file.path));
+			this.onContextMenu(...tFiles.map(tFile => tFile.path));
 		}));
 		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => {
 			if (activeDocument.contains(this.containerEl)) return;
