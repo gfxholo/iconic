@@ -358,7 +358,7 @@ export default class IconPicker extends Modal {
 		const menu = new Menu();
 		for (const color of COLORS) {
 			menu.addItem(menuItem => { menuItem
-				.setTitle((STRINGS.iconPicker.colors as any)[color])
+				.setTitle(STRINGS.iconPicker.colors[color as keyof typeof STRINGS.iconPicker.colors])
 				.setChecked(color === this.color)
 				.setSection('color')
 				.onClick(() => {
@@ -458,7 +458,7 @@ export default class IconPicker extends Modal {
 		if (!this.color) {
 			this.colorPickerEl.ariaLabel = STRINGS.iconPicker.changeColor;
 		} else if (COLORS.includes(this.color)) {
-			this.colorPickerEl.ariaLabel = (STRINGS.iconPicker.colors as any)[this.color];
+			this.colorPickerEl.ariaLabel = STRINGS.iconPicker.colors[this.color as keyof typeof STRINGS.iconPicker.colors];
 		} else {
 			this.colorPickerEl.ariaLabel = this.color;
 		}
@@ -473,8 +473,8 @@ export default class IconPicker extends Modal {
 		const tooltipEl = activeDocument.body.find(':scope > .tooltip');
 		if (tooltipEl && tooltipEl.firstChild) {
 			tooltipEl.style.removeProperty('width');
-			tooltipEl.firstChild.nodeValue = this.color
-				? (STRINGS.iconPicker.colors as any)[this.color]
+			tooltipEl.firstChild.nodeValue = this.color && this.color in STRINGS.iconPicker.colors
+				? STRINGS.iconPicker.colors[this.color as keyof typeof STRINGS.iconPicker.colors]
 				: STRINGS.iconPicker.changeColor;
 		}
 	}

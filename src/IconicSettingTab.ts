@@ -6,14 +6,14 @@ import IconicPlugin, { STRINGS } from './IconicPlugin';
  */
 export default class IconicSettingTab extends PluginSettingTab {
 	private readonly plugin: IconicPlugin;
-	private readonly indicators: {
-		biggerIcons: ExtraButtonComponent,
-		clickableIcons: ExtraButtonComponent,
-		showItemName: ExtraButtonComponent,
-		biggerSearchResults: ExtraButtonComponent,
-		colorPicker1: ExtraButtonComponent,
-		colorPicker2: ExtraButtonComponent,
-	} = {} as any;
+	private readonly indicators = {
+		biggerIcons: undefined as unknown,
+		clickableIcons: undefined as unknown,
+		showItemName: undefined as unknown,
+		biggerSearchResults: undefined as unknown,
+		colorPicker1: undefined as unknown,
+		colorPicker2: undefined as unknown,
+	} as Record<string, ExtraButtonComponent>;
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin.app, plugin);

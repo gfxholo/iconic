@@ -903,10 +903,13 @@ export default class IconicPlugin extends Plugin {
 
 		// 1.0.9: Migrate groupIcons from versions 1.0.3 ~ 1.0.8
 		if ('groupIcons' in this.settings) {
-			if (Object.keys(this.settings.bookmarkIcons).length === 0) {
-				this.settings.bookmarkIcons = (this.settings as any).groupIcons;
+			type GroupSettings = IconicSettings & {
+				groupIcons?: {},
 			}
-			delete (this.settings as any).groupIcons;
+			if (Object.keys(this.settings.bookmarkIcons).length === 0) {
+				this.settings.bookmarkIcons = (this.settings as GroupSettings).groupIcons ?? {};
+			}
+			delete (this.settings as GroupSettings).groupIcons;
 		}
 	}
 
