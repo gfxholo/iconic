@@ -107,6 +107,20 @@ export default class RibbonIconManager extends IconManager {
 				this.refreshIcons();
 				this.refreshConfigIcons(containerEl);
 			});
+
+			// @ts-expect-error (Private API)
+			const quickItemId = this.app.vault.getConfig('mobileQuickRibbonItem');
+			if (quickItemId) {
+				const quickItem = this.plugin.getRibbonItem(quickItemId);
+				const quickIconEl = containerEl.find('.setting-item-control > .extra-setting-button');
+				this.refreshIcon(quickItem, quickIconEl, () => {
+					IconPicker.openSingle(this.plugin, quickItem, (newIcon, newColor) => {
+						this.plugin.saveRibbonIcon(quickItem, newIcon, newColor);
+						this.refreshConfigIcons(containerEl);
+						this.refreshIcons();
+					});
+				});
+			}
 		}
 
 		const iconEls = containerEl.findAll('.mobile-option-setting-item-option-icon:not(.mobile-option-setting-drag-icon)');
