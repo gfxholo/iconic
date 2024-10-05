@@ -59,7 +59,11 @@ export default class RibbonIconManager extends IconManager {
 		if (Platform.isPhone) {
 			// @ts-expect-error (Private API)
 			const ribbonButtonEl = this.app.mobileNavbar.ribbonMenuItemEl;
-			if (ribbonButtonEl) this.setEventListener(ribbonButtonEl, 'contextmenu', () => {
+			if (!ribbonButtonEl) return;
+
+			// @ts-expect-error (Private API)
+			const quickItemId = this.app.vault.getConfig('mobileQuickRibbonItem');
+			const ribbonButtonListener = () => {
 				const ribbonItems = this.plugin.getRibbonItems().filter(item => !item.isHidden);
 				this.plugin.menuManager.forSection('', item => {
 					const ribbonItem = ribbonItems[0];
@@ -70,7 +74,14 @@ export default class RibbonIconManager extends IconManager {
 						ribbonItems.shift();
 					}
 				});
-			});
+			}
+			if (quickItemId) {
+				const quickItem = this.plugin.getRibbonItem(quickItemId);
+				this.refreshIcon(quickItem, ribbonButtonEl);
+			} else {
+				this.setEventListener(ribbonButtonEl, 'click', ribbonButtonListener);
+			}
+			this.setEventListener(ribbonButtonEl, 'contextmenu', ribbonButtonListener);
 		} else {
 			const ribbonItems = this.plugin.getRibbonItems(unloading);
 			for (const ribbonItem of ribbonItems) {
@@ -90,6 +101,14 @@ export default class RibbonIconManager extends IconManager {
 	 * Refresh all icons in the ribbon configuration dialog.
 	 */
 	private refreshConfigIcons(containerEl: HTMLElement) {
+		if (Platform.isPhone) {
+			const quickDropdownEl = containerEl.find('.setting-item-control > .dropdown');
+			if (quickDropdownEl) this.setEventListener(quickDropdownEl, 'change', () => {
+				this.refreshIcons();
+				this.refreshConfigIcons(containerEl);
+			});
+		}
+
 		const iconEls = containerEl.findAll('.mobile-option-setting-item-option-icon:not(.mobile-option-setting-drag-icon)');
 		if (iconEls.length === 0) return;
 
