@@ -29,7 +29,7 @@ export default class RibbonIconManager extends IconManager {
 				const ribbonItem = ribbonItems[0];
 				if (ribbonItem) {
 					item.setIcon(ribbonItem.icon);
-					// @ts-expect-error <Private API>
+					// @ts-expect-error (Private API)
 					this.refreshIcon(ribbonItem, item.iconEl);
 					ribbonItems.shift();
 				}

@@ -20,7 +20,7 @@ export default class TabIconManager extends IconManager {
 				const tab = tabs[i];
 				if (tab) {
 					tab.iconDefault = tab.iconDefault ?? 'lucide-file';
-					// @ts-expect-error <Private API>
+					// @ts-expect-error (Private API)
 					this.refreshIcon(tab, item.iconEl);
 				}
 			});

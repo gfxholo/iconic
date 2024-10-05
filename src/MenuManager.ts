@@ -88,7 +88,7 @@ export default class MenuManager {
 	 */
 	forSection(section: string, callback: (item: MenuItem, index: number) => void): this {
 		if (this.menu) {
-			// @ts-expect-error <Private API>
+			// @ts-expect-error (Private API)
 			const items = (this.menu.items as MenuItem[]).filter(item => item.section === section);
 			for (let i = 0; i < items.length; i++) {
 				callback(items[i], i);
