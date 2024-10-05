@@ -56,16 +56,33 @@ export default class RibbonIconManager extends IconManager {
 	 * Refresh all ribbon icons.
 	 */
 	refreshIcons(unloading?: boolean): void {
-		const ribbonItems = this.plugin.getRibbonItems(unloading);
-		for (const ribbonItem of ribbonItems) {
-			const iconEl = ribbonItem.iconEl;
-			if (!iconEl) continue;
-			if (ribbonItem.isHidden) {
-				ribbonItem.icon = null;
-				ribbonItem.iconDefault = null;
+		if (Platform.isPhone) {
+			// @ts-expect-error (Private API)
+			const ribbonButtonEl = this.app.mobileNavbar.ribbonMenuItemEl;
+			if (ribbonButtonEl) this.setEventListener(ribbonButtonEl, 'contextmenu', () => {
+				const ribbonItems = this.plugin.getRibbonItems().filter(item => !item.isHidden);
+				this.plugin.menuManager.forSection('', item => {
+					const ribbonItem = ribbonItems[0];
+					if (ribbonItem) {
+						item.setIcon(ribbonItem.icon);
+						// @ts-expect-error (Private API)
+						this.refreshIcon(ribbonItem, item.iconEl);
+						ribbonItems.shift();
+					}
+				});
+			});
+		} else {
+			const ribbonItems = this.plugin.getRibbonItems(unloading);
+			for (const ribbonItem of ribbonItems) {
+				const iconEl = ribbonItem.iconEl;
+				if (!iconEl) continue;
+				if (ribbonItem.isHidden) {
+					ribbonItem.icon = null;
+					ribbonItem.iconDefault = null;
+				}
+				this.refreshIcon(ribbonItem, iconEl);
+				this.setEventListener(iconEl, 'contextmenu', event => this.onContextMenu(ribbonItem.id, event));
 			}
-			this.refreshIcon(ribbonItem, iconEl);
-			this.setEventListener(iconEl, 'contextmenu', event => this.onContextMenu(ribbonItem.id, event));
 		}
 	}
 
