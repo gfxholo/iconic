@@ -73,14 +73,16 @@ export default class FileIconManager extends IconManager {
 					if (childItemEls) this.refreshChildIcons(file.items, childItemEls);
 				}
 
-				// Refresh when folder expands/collapses
-				this.setMutationObserver(itemEl, { attributeFilter: ['class'], attributeOldValue: true }, mutations => {
-					for (const mutation of mutations) {
-						if (mutation.target instanceof HTMLElement && mutation.target.hasClass('is-collapsed') !== mutation.oldValue?.includes('is-collapsed')) {
-							const childItemEls = itemEl.findAll(':scope > .tree-item-children > .tree-item');
-							if (file.items && childItemEls) {
-								this.refreshChildIcons([file, ...file.items], [itemEl, ...childItemEls]);
-							}
+				this.setMutationObserver(itemEl, { attributeFilter: ['class', 'data-path'], attributeOldValue: true, subtree: true }, mutations => {
+					if (mutations.some(mutation => {
+						// Refresh when a child item changes data-path
+						return mutation.attributeName === 'data-path'
+						// Refresh when folder expands/collapses
+						|| mutation.target instanceof HTMLElement && mutation.target.hasClass('is-collapsed') !== mutation.oldValue?.includes('is-collapsed');
+					})) {
+						const childItemEls = itemEl.findAll(':scope > .tree-item-children > .tree-item');
+						if (file.items && childItemEls) {
+							this.refreshChildIcons([file, ...file.items], [itemEl, ...childItemEls]);
 						}
 					}
 				});
