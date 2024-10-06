@@ -146,6 +146,10 @@ export default class Strings {
 			name: 'Colorless selection',
 			desc: 'Disable icon color while item is selected.',
 		},
+		uncolorQuick: {
+			name: 'Colorless ribbon button',
+			desc: 'Disable icon color for the quick access ribbon button on mobile.'
+		},
 		rememberDeletedItems: {
 			name: 'Remember icons of deleted items',
 			desc: 'Any custom icons will reappear when their item exists again.',

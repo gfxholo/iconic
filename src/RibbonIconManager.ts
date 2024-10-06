@@ -77,6 +77,7 @@ export default class RibbonIconManager extends IconManager {
 			}
 			if (quickItemId) {
 				const quickItem = this.plugin.getRibbonItem(quickItemId);
+				if (this.plugin.settings.uncolorQuick) quickItem.color = null;
 				this.refreshIcon(quickItem, ribbonButtonEl);
 			} else {
 				this.setEventListener(ribbonButtonEl, 'click', ribbonButtonListener);

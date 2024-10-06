@@ -274,6 +274,19 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			);
 
+		// Colorless ribbon buttonn
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.uncolorQuick.name)
+			.setDesc(STRINGS.settings.uncolorQuick.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.uncolorQuick)
+				.onChange(value => {
+					this.plugin.settings.uncolorQuick = value;
+					this.plugin.saveSettings();
+					this.plugin.ribbonIconManager.refreshIcons();
+				})
+			);
+
 		// Remember icons of deleted items
 		new Setting(this.containerEl)
 			.setName(STRINGS.settings.rememberDeletedItems.name)

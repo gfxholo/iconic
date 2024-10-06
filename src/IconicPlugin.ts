@@ -76,6 +76,7 @@ interface IconicSettings {
 	uncolorHover: boolean,
 	uncolorDrag: boolean,
 	uncolorSelect: boolean,
+	uncolorQuick: boolean,
 	rememberDeletedItems: boolean;
 	appIcons: { [appItemId: string]: { icon?: string, color?: string } };
 	tabIcons: { [tabId: string]: { icon?: string, color?: string } };
@@ -99,6 +100,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	uncolorHover: false,
 	uncolorDrag: false,
 	uncolorSelect: false,
+	uncolorQuick: false,
 	rememberDeletedItems: false,
 	appIcons: {},
 	tabIcons: {},
