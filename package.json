@@ -1,7 +1,7 @@
 {
 	"name": "iconic",
-	"version": "1.0.14",
-	"description": "Customize your Obsidian icons directly from the UI, including tabs, files, bookmarks, properties, and ribbon commands.",
+	"version": "1.0.15",
+	"description": "Customize your icons and their colors directly from the UI, including tabs, files, bookmarks, properties, and ribbon commands.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
