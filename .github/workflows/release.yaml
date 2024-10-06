@@ -1,5 +1,9 @@
 name: Release Obsidian plugin
 
+env:
+    PLUGIN_NAME: iconic
+    PLUGIN_VERSION: ${GITHUB_REF#refs/tags/}
+
 on:
   push:
     tags:
@@ -22,13 +26,17 @@ jobs:
           npm install
           npm run build
 
+      - name: Create zip archive
+        run: |
+          mkdir ${{ env.PLUGIN_NAME }}
+          cp main.js manifest.json styles.css ${{ env.PLUGIN_NAME }}
+          zip -r -9 ${{ env.PLUGIN_NAME }}-${{ env.PLUGIN_VERSION }}.zip ${{ env.PLUGIN_NAME }}
+
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tag="${GITHUB_REF#refs/tags/}"
-
-          gh release create "$tag" \
-            --title="$tag" \
+          gh release create "${{ env.PLUGIN_VERSION }}" \
+            --title="${{ env.PLUGIN_VERSION }}" \
             --draft \
-            main.js manifest.json styles.css
+            main.js manifest.json styles.css ${{ env.PLUGIN_NAME }}-${{ env.PLUGIN_VERSION }}.zip
