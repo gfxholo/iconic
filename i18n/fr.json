@@ -144,6 +144,10 @@
 			"name": "Sélection incolore",
 			"desc": "Désactiver la couleur de l'icône lorsque l'élément est sélectionné."
 		},
+		"uncolorQuick": {
+			"name": "Bouton de ruban incolore",
+			"desc": "Désactiver la couleur de l'icône pour le bouton de ruban d'accès rapide sur mobile."
+		},
 		"rememberDeletedItems": {
 			"name": "Mémoriser les icônes des éléments supprimés",
 			"desc": "Toutes les icônes personnalisées réapparaîtront lorsque leur élément existera à nouveau."

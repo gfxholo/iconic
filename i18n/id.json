@@ -144,6 +144,10 @@
 			"name": "Pilihan tanpa warna",
 			"desc": "Nonaktifkan warna ikon saat item dipilih."
 		},
+		"uncolorQuick": {
+			"name": "Tombol ribbon tanpa warna",
+			"desc": "Nonaktifkan warna ikon untuk akses cepat tombol ribbon di ponsel."
+		},
 		"rememberDeletedItems": {
 			"name": "Ingat ikon item yang dihapus",
 			"desc": "Ikon khusus apa pun akan muncul kembali ketika itemnya ada lagi."

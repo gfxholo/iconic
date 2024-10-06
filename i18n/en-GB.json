@@ -32,6 +32,10 @@
 			"name": "Colourless drag",
 			"desc": "Disable icon colour while dragging an item."
 		},
+		"uncolorQuick": {
+			"name": "Colourless ribbon button",
+			"desc": "Disable icon colour for the quick access ribbon button on mobile."
+		},
 		"uncolorSelect": {
 			"name": "Colourless selection",
 			"desc": "Disable icon colour while item is selected."

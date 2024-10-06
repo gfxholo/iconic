@@ -144,6 +144,10 @@
 			"name": "Farblose Auswahl",
 			"desc": "Symbolfarbe deaktivieren, während das Element ausgewählt ist."
 		},
+		"uncolorQuick": {
+			"name": "Farblose Ribbon-Schaltfläche",
+			"desc": "Symbolfarbe deaktivieren, für die Schnellzugriff zu Ribbon-Schaltfläche auf Mobilgeräten."
+		},
 		"rememberDeletedItems": {
 			"name": "Symbole gelöschter Elemente merken",
 			"desc": "Alle benutzerdefinierten Symbole werden wieder angezeigt, wenn ihr Element wieder existiert."

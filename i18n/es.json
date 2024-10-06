@@ -144,6 +144,10 @@
 			"name": "Selección incolora",
 			"desc": "Desactivar el color del ícono mientras el elemento está seleccionado."
 		},
+		"uncolorQuick": {
+			"name": "Botón de cinta incolora",
+			"desc": "Desactivar el color del icono para el botón de cinta de acceso rápido en móvile."
+		},
 		"rememberDeletedItems": {
 			"name": "Recordar íconos de elementos eliminados",
 			"desc": "Cualquier ícono personalizado reaparecerá cuando su elemento vuelva a existir."
