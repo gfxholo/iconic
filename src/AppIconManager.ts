@@ -7,6 +7,8 @@ import ColorUtils from './ColorUtils';
 const SVG_INFO = { attr: { 'aria-hidden': false, width: 12, height: 12, viewBox: '0 0 12 12' } };
 const MINIMIZE_RECT = { attr: { fill: 'currentColor', width: 10, height: 1, x: 1, y: 6 } };
 const MAXIMIZE_RECT = { attr: { width: 9, height: 9, x: 1.5, y: 1.5, fill: 'none', stroke: 'currentColor' } };
+const UNMAXIMIZE_PATH_1 = { attr: { d: 'M1.5 3.5H8.5V10.5H1.5V3.5Z', stroke: 'currentColor' } };
+const UNMAXIMIZE_PATH_2 = { attr: { d: 'M4 2H10V8H9V9H11V1H3V3H4V2Z', fill: 'currentColor' } };
 const CLOSE_PATH_1 = { attr: { fill: 'currentColor', 'fill-rule': 'evenodd', d: 'M10.052 10.968 1.03 1.93l.849-.848 9.023 9.037-.849.848Z' } };
 const CLOSE_PATH_2 = { attr: { fill: 'currentColor', 'fill-rule': 'evenodd', d: 'M1.023 10.112 10.06 1.09l.848.85-9.037 9.023-.848-.85Z' } };
 
@@ -103,6 +105,9 @@ export default class AppIconManager extends IconManager {
 			}
 		}
 
+		// Buttons below are desktop-only
+		if (!Platform.isDesktop) return;
+
 		// Minimize
 		if (!activeDocument.contains(this.minimizeEl)) {
 			this.stopEventListener(this.minimizeEl, 'contextmenu');
@@ -121,23 +126,8 @@ export default class AppIconManager extends IconManager {
 			this.setEventListener(this.minimizeEl, 'contextmenu', event => this.onContextMenu('minimize', event));
 		}
 
-		// Maximize
-		if (!activeDocument.contains(this.maximizeEl)) {
-			this.stopEventListener(this.maximizeEl, 'contextmenu');
-			this.maximizeEl = fish('.titlebar-button.mod-maximize');
-		}
-		if (this.maximizeEl) {
-			const item = this.plugin.getAppItem('maximize', unloading);
-			if (item.icon) {
-				this.refreshIcon(item, this.maximizeEl);
-			} else {
-				this.maximizeEl.empty();
-				this.maximizeEl.removeClass('iconic-icon');
-				const rectEl = this.maximizeEl.createSvg('svg', SVG_INFO).createSvg('rect', MAXIMIZE_RECT);
-				if (item.color) rectEl.style.stroke = ColorUtils.toRgb(item.color);
-			}
-			this.setEventListener(this.maximizeEl, 'contextmenu', event => this.onContextMenu('maximize', event));
-		}
+		// Maximize / Restore down
+		this.refreshMaximizeIcon(unloading);
 
 		// Close
 		if (!activeDocument.contains(this.closeEl)) {
@@ -160,6 +150,48 @@ export default class AppIconManager extends IconManager {
 				}
 			}
 			this.setEventListener(this.closeEl, 'contextmenu', event => this.onContextMenu('close', event));
+		}
+	}
+
+	/**
+	 * Refresh maximize icon only. This button can have two states: maximized or unmaximized.
+	 */
+	private refreshMaximizeIcon(unloading?: boolean) {
+		// @ts-expect-error (Electron API)
+		const isMaximized = activeWindow.electron.remote.getCurrentWindow().isMaximized() ?? true;
+
+		if (this.maximizeEl) this.stopMutationObserver(this.maximizeEl);
+		if (!activeDocument.contains(this.maximizeEl)) {
+			this.stopEventListener(this.maximizeEl, 'contextmenu');
+			this.maximizeEl = fish('.titlebar-button.mod-maximize');
+		}
+		if (this.maximizeEl) {
+			const item = this.plugin.getAppItem(isMaximized ? 'unmaximize' : 'maximize', unloading);
+			if (item.icon) {
+				this.refreshIcon(item, this.maximizeEl);
+			} else {
+				this.maximizeEl.empty();
+				this.maximizeEl.removeClass('iconic-icon');
+				const svgEl = this.maximizeEl.createSvg('svg', SVG_INFO);
+				if (isMaximized) {
+					svgEl.style.fill = 'none';
+					const pathEl1 = svgEl.createSvg('path', UNMAXIMIZE_PATH_1);
+					const pathEl2 = svgEl.createSvg('path', UNMAXIMIZE_PATH_2);
+					if (item.color) {
+						pathEl1.style.stroke = ColorUtils.toRgb(item.color);
+						pathEl2.style.fill = ColorUtils.toRgb(item.color);
+					}
+				} else {
+					const rectEl = svgEl.createSvg('rect', MAXIMIZE_RECT);
+					if (item.color) rectEl.style.stroke = ColorUtils.toRgb(item.color);
+				}
+			}
+			this.setEventListener(this.maximizeEl, 'contextmenu', event => {
+				this.onContextMenu(isMaximized ? 'unmaximize' : 'maximize', event);
+			});
+			this.setMutationsObserver(this.maximizeEl, { childList: true }, () => {
+				this.refreshMaximizeIcon();
+			});
 		}
 	}
 

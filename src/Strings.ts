@@ -7,6 +7,7 @@ export default class Strings {
 		sidebarRight: 'Toggle right sidebar',
 		minimize: 'Minimize',
 		maximize: 'Maximize',
+		unmaximize: 'Restore down',
 		close: 'Close window',
 	};
 	static menu = {

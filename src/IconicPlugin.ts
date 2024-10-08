@@ -14,7 +14,7 @@ import STRINGS from './Strings';
 export const ICONS = new Map<string, string>();
 export { EMOJIS };
 export { STRINGS };
-export type AppItemId = 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight' | 'minimize' | 'maximize' | 'close';
+export type AppItemId = 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight' | 'minimize' | 'maximize' | 'unmaximize' | 'close';
 
 const OPENABLE_TYPES = ['markdown', 'canvas', 'audio', 'video', 'pdf'];
 const SYNCABLE_TYPES = ['image', 'audio', 'video', 'pdf', 'unsupported'];
@@ -393,6 +393,7 @@ export default class IconicPlugin extends Plugin {
 			}
 			case 'minimize': name = STRINGS.appItems.minimize; break;
 			case 'maximize': name = STRINGS.appItems.maximize; break;
+			case 'unmaximize': name = STRINGS.appItems.unmaximize; break;
 			case 'close': name = STRINGS.appItems.close; break;
 		}
 		return {
