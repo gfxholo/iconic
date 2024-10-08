@@ -99,7 +99,8 @@ export default abstract class IconManager {
 	/**
 	 * Stop an event listener (of the given element & type) set by this {@link IconManager}.
 	 */
-	protected stopEventListener(element: HTMLElement, type: keyof HTMLElementEventMap): void {
+	protected stopEventListener(element: HTMLElement | null, type: keyof HTMLElementEventMap): void {
+		if (!element) return;
 		const listenerMap = this.eventListeners.get(type);
 		if (listenerMap?.has(element)) {
 			const { listener, options } = listenerMap.get(element)!;
