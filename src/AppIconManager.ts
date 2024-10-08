@@ -9,8 +9,8 @@ import IconPicker from './IconPicker';
 export default class AppIconManager extends IconManager {
 	private helpEl: HTMLElement | null;
 	private settingsEl: HTMLElement | null;
-	private pinEls: HTMLElement[];
-	private sidebarLeftEls: HTMLElement[];
+	private pinEls: HTMLElement[] = [];
+	private sidebarLeftEls: HTMLElement[] = [];
 	private sidebarRightEl: HTMLElement | null;
 
 	constructor(plugin: IconicPlugin) {
@@ -21,13 +21,17 @@ export default class AppIconManager extends IconManager {
 
 	/**
 	 * Refresh all app icons.
+	 * 
+	 * Some button elements get replaced by the app when switching workspaces,
+	 * so always confirm icons from a previous refresh are still attached to the DOM.
 	 */
 	refreshIcons(unloading?: boolean): void {
 		// Help
 		if (Platform.isDesktop) {
-			this.helpEl = this.helpEl
-				? this.helpEl
-				: fish('.workspace-drawer-vault-actions > .clickable-icon:has(.svg-icon.help)');
+			if (!activeDocument.contains(this.helpEl)) {
+				this.stopEventListener(this.helpEl, 'contextmenu');
+				this.helpEl = fish('.workspace-drawer-vault-actions > .clickable-icon:has(.svg-icon.help)');
+			}
 			if (this.helpEl) {
 				const helpItem = this.plugin.getAppItem('help', unloading);
 				this.refreshIcon(helpItem, this.helpEl);
@@ -36,13 +40,10 @@ export default class AppIconManager extends IconManager {
 		}
 
 		// Settings
-		if (Platform.isDesktop) {
-			this.settingsEl = this.settingsEl
-				? this.settingsEl
-				: fish('.workspace-drawer-vault-actions > .clickable-icon:has(.svg-icon.lucide-settings)');
-		} else {
-			this.settingsEl = this.settingsEl
-				? this.settingsEl
+		if (!activeDocument.contains(this.settingsEl)) {
+			this.stopEventListener(this.settingsEl, 'contextmenu');
+			this.settingsEl = Platform.isDesktop
+				? fish('.workspace-drawer-vault-actions > .clickable-icon:has(.svg-icon.lucide-settings)')
 				: fish('.workspace-drawer-header-icon.mod-settings');
 		}
 		if (this.settingsEl) {
@@ -53,9 +54,10 @@ export default class AppIconManager extends IconManager {
 
 		// Sidebar pins
 		if (Platform.isMobile) {
-			this.pinEls = this.pinEls?.length > 0
-				? this.pinEls
-				: fishAll('.workspace-drawer-header-icon.mod-pin');
+			if (this.pinEls.length === 0 || this.pinEls.some(el => !activeDocument.contains(el))) {
+				for (const el of this.pinEls) this.stopEventListener(el, 'contextmenu');
+				this.pinEls = fishAll('.workspace-drawer-header-icon.mod-pin');
+			}
 			for (const pinEl of this.pinEls) {
 				const pinItem = this.plugin.getAppItem('pin', unloading);
 				this.refreshIcon(pinItem, pinEl);
@@ -64,9 +66,10 @@ export default class AppIconManager extends IconManager {
 		}
 
 		// Left sidebar toggles
-		this.sidebarLeftEls = this.sidebarLeftEls?.length > 0
-			? this.sidebarLeftEls
-			: fishAll('.sidebar-toggle-button.mod-left').concat(fishAll('.view-action.clickable-icon.mod-left-split-toggle'));
+		if (this.sidebarLeftEls.length === 0 || this.sidebarLeftEls.some(el => !activeDocument.contains(el))) {
+			for (const el of this.sidebarLeftEls) this.stopEventListener(el, 'contextmenu');
+			this.sidebarLeftEls = fishAll('.sidebar-toggle-button.mod-left').concat(fishAll('.view-action.clickable-icon.mod-left-split-toggle'));
+		}
 		for (const sidebarLeftEl of this.sidebarLeftEls) {
 			const iconEl = sidebarLeftEl.hasClass('clickable-icon') ? sidebarLeftEl : sidebarLeftEl.find(':scope > .clickable-icon');
 			if (iconEl) {
@@ -77,9 +80,10 @@ export default class AppIconManager extends IconManager {
 		}
 
 		// Right sidebar toggle
-		this.sidebarRightEl = this.sidebarRightEl
-			? this.sidebarRightEl
-			: fish('.sidebar-toggle-button.mod-right');
+		if (!activeDocument.contains(this.sidebarRightEl)) {
+			this.stopEventListener(this.sidebarRightEl, 'contextmenu');
+			this.sidebarRightEl = fish('.sidebar-toggle-button.mod-right');
+		}
 		if (this.sidebarRightEl) {
 			const iconEl = this.sidebarRightEl.find(':scope > .clickable-icon');
 			if (iconEl) {
