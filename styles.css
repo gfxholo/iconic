@@ -14,6 +14,11 @@ body {
 	font-size: calc(var(--icon-size) * 0.9);
 }
 
+/* Window controls */
+.titlebar-button.iconic-icon {
+	padding: 0 13px;
+}
+
 /* Tabs */
 .workspace .mod-root .workspace-tab-header[data-type="markdown"] .workspace-tab-header-inner-icon,
 .workspace .mod-root .workspace-tab-header[data-type="empty"] .workspace-tab-header-inner-icon {

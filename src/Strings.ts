@@ -4,7 +4,10 @@ export default class Strings {
 		settings: 'Open settings',
 		pin: 'Toggle pin',
 		sidebarLeft: 'Toggle left sidebar',
-		sidebarRight: 'Toggle right sidebar'
+		sidebarRight: 'Toggle right sidebar',
+		minimize: 'Minimize',
+		maximize: 'Maximize',
+		close: 'Close window',
 	};
 	static menu = {
 		changeIcon: 'Change icon...',

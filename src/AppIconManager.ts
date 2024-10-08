@@ -1,7 +1,14 @@
 import { Menu, Platform } from 'obsidian';
-import IconicPlugin, { STRINGS } from './IconicPlugin';
+import IconicPlugin, { STRINGS, AppItemId } from './IconicPlugin';
 import IconManager from './IconManager';
 import IconPicker from './IconPicker';
+import ColorUtils from './ColorUtils';
+
+const SVG_INFO = { attr: { 'aria-hidden': false, width: 12, height: 12, viewBox: '0 0 12 12' } };
+const MINIMIZE_RECT = { attr: { fill: 'currentColor', width: 10, height: 1, x: 1, y: 6 } };
+const MAXIMIZE_RECT = { attr: { width: 9, height: 9, x: 1.5, y: 1.5, fill: 'none', stroke: 'currentColor' } };
+const CLOSE_PATH_1 = { attr: { fill: 'currentColor', 'fill-rule': 'evenodd', d: 'M10.052 10.968 1.03 1.93l.849-.848 9.023 9.037-.849.848Z' } };
+const CLOSE_PATH_2 = { attr: { fill: 'currentColor', 'fill-rule': 'evenodd', d: 'M1.023 10.112 10.06 1.09l.848.85-9.037 9.023-.848-.85Z' } };
 
 /**
  * Handles icons of system buttons in the window frame and vault switcher.
@@ -12,6 +19,9 @@ export default class AppIconManager extends IconManager {
 	private pinEls: HTMLElement[] = [];
 	private sidebarLeftEls: HTMLElement[] = [];
 	private sidebarRightEl: HTMLElement | null;
+	private minimizeEl: HTMLElement | null;
+	private maximizeEl: HTMLElement | null;
+	private closeEl: HTMLElement | null;
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
@@ -92,12 +102,71 @@ export default class AppIconManager extends IconManager {
 				this.setEventListener(this.sidebarRightEl, 'contextmenu', event => this.onContextMenu('sidebarRight', event));
 			}
 		}
+
+		// Minimize
+		if (!activeDocument.contains(this.minimizeEl)) {
+			this.stopEventListener(this.minimizeEl, 'contextmenu');
+			this.minimizeEl = fish('.titlebar-button.mod-minimize');
+		}
+		if (this.minimizeEl) {
+			const item = this.plugin.getAppItem('minimize', unloading);
+			if (item.icon) {
+				this.refreshIcon(item, this.minimizeEl);
+			} else {
+				this.minimizeEl.empty();
+				this.minimizeEl.removeClass('iconic-icon');
+				const rectEl = this.minimizeEl.createSvg('svg', SVG_INFO).createSvg('rect', MINIMIZE_RECT);
+				if (item.color) rectEl.style.fill = ColorUtils.toRgb(item.color);
+			}
+			this.setEventListener(this.minimizeEl, 'contextmenu', event => this.onContextMenu('minimize', event));
+		}
+
+		// Maximize
+		if (!activeDocument.contains(this.maximizeEl)) {
+			this.stopEventListener(this.maximizeEl, 'contextmenu');
+			this.maximizeEl = fish('.titlebar-button.mod-maximize');
+		}
+		if (this.maximizeEl) {
+			const item = this.plugin.getAppItem('maximize', unloading);
+			if (item.icon) {
+				this.refreshIcon(item, this.maximizeEl);
+			} else {
+				this.maximizeEl.empty();
+				this.maximizeEl.removeClass('iconic-icon');
+				const rectEl = this.maximizeEl.createSvg('svg', SVG_INFO).createSvg('rect', MAXIMIZE_RECT);
+				if (item.color) rectEl.style.stroke = ColorUtils.toRgb(item.color);
+			}
+			this.setEventListener(this.maximizeEl, 'contextmenu', event => this.onContextMenu('maximize', event));
+		}
+
+		// Close
+		if (!activeDocument.contains(this.closeEl)) {
+			this.stopEventListener(this.closeEl, 'contextmenu');
+			this.closeEl = fish('.titlebar-button.mod-close');
+		}
+		if (this.closeEl) {
+			const item = this.plugin.getAppItem('close', unloading);
+			if (item.icon) {
+				this.refreshIcon(item, this.closeEl);
+			} else {
+				this.closeEl.empty();
+				this.closeEl.removeClass('iconic-icon');
+				const svgEl = this.closeEl.createSvg('svg', SVG_INFO);
+				const pathEl1 = svgEl.createSvg('path', CLOSE_PATH_1);
+				const pathEl2 = svgEl.createSvg('path', CLOSE_PATH_2);
+				if (item.color) {
+					pathEl1.style.fill = ColorUtils.toRgb(item.color);
+					pathEl2.style.fill = ColorUtils.toRgb(item.color);
+				}
+			}
+			this.setEventListener(this.closeEl, 'contextmenu', event => this.onContextMenu('close', event));
+		}
 	}
 
 	/**
 	 * When user context-clicks an app item, open a menu or add custom items to the existing menu.
 	 */
-	onContextMenu(appItemId: 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight', event: MouseEvent) {
+	private onContextMenu(appItemId: AppItemId, event: MouseEvent) {
 		navigator?.vibrate(100); // Might not be supported on iOS
 
 		this.plugin.menuManager.close();

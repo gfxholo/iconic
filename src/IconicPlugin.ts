@@ -14,6 +14,7 @@ import STRINGS from './Strings';
 export const ICONS = new Map<string, string>();
 export { EMOJIS };
 export { STRINGS };
+export type AppItemId = 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight' | 'minimize' | 'maximize' | 'close';
 
 const OPENABLE_TYPES = ['markdown', 'canvas', 'audio', 'video', 'pdf'];
 const SYNCABLE_TYPES = ['image', 'audio', 'video', 'pdf', 'unsupported'];
@@ -361,7 +362,7 @@ export default class IconicPlugin extends Plugin {
 	/**
 	 * Get app item definition.
 	 */
-	getAppItem(appItemId: 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight', unloading?: boolean): AppItem {
+	getAppItem(appItemId: AppItemId, unloading?: boolean): AppItem {
 		const appIcon = this.settings.appIcons[appItemId] ?? {};
 		let name, iconDefault;
 		switch (appItemId) {
@@ -390,10 +391,13 @@ export default class IconicPlugin extends Plugin {
 				iconDefault = 'sidebar-right';
 				break;
 			}
+			case 'minimize': name = STRINGS.appItems.minimize; break;
+			case 'maximize': name = STRINGS.appItems.maximize; break;
+			case 'close': name = STRINGS.appItems.close; break;
 		}
 		return {
 			id: appItemId,
-			name: name ?? null,
+			name: name ?? '',
 			category: 'app',
 			iconDefault: iconDefault ?? null,
 			icon: unloading ? null : appIcon.icon ?? null,
