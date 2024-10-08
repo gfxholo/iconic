@@ -16,7 +16,7 @@ export default class RibbonIconManager extends IconManager {
 
 		// Prevent ribbon from eating auxclick events
 		this.setEventListener(containerEl, 'auxclick', event => event.stopPropagation(), { capture: true });
-		this.setMutationObserver(containerEl, { childList: true }, () => this.refreshIcons());
+		this.setMutationsObserver(containerEl, { childList: true }, () => this.refreshIcons());
 
 		// Refresh ribbon context menu
 		const ribbonEl = activeDocument.body.find(Platform.isDesktop
@@ -37,16 +37,14 @@ export default class RibbonIconManager extends IconManager {
 		});
 
 		// Watch for ribbon configuration dialog
-		this.setMutationObserver(activeDocument.body, { childList: true }, mutations => {
-			for (const mutation of mutations) {
-				for (const addedNode of mutation.addedNodes) {
-					// Very fragile dialog detection
-					if (addedNode instanceof HTMLElement
-						&& addedNode.hasClass('modal-container')
-						&& addedNode.find('.modal-content > div > .mobile-option-setting-item')
-						&& addedNode.find('.modal-content > .modal-button-container')) {
-						this.refreshConfigIcons(addedNode);
-					}
+		this.setMutationObserver(activeDocument.body, { childList: true }, mutation => {
+			for (const addedNode of mutation.addedNodes) {
+				// Very fragile dialog detection
+				if (addedNode instanceof HTMLElement
+					&& addedNode.hasClass('modal-container')
+					&& addedNode.find('.modal-content > div > .mobile-option-setting-item')
+					&& addedNode.find('.modal-content > .modal-button-container')) {
+					this.refreshConfigIcons(addedNode);
 				}
 			}
 		});

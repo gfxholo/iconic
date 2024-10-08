@@ -28,19 +28,18 @@ export default class FileIconManager extends IconManager {
 	 * Start managing the given leaf if has a matching type.
 	 */
 	private manageLeaf(leaf: WorkspaceLeaf) {
-		if (leaf.getViewState().type !== 'file-explorer') {
-			return;
-		} else if (this.containerEl) {
-			this.stopMutationObserver(this.containerEl);
-		}
+		if (leaf.getViewState().type !== 'file-explorer') return;
+
+		this.stopMutationObserver(this.containerEl);
 		this.containerEl = leaf.view.containerEl.find(':scope > .nav-files-container > div');
-		if (this.containerEl) this.setMutationObserver(this.containerEl, { subtree: true, childList: true }, mutations => {
-			for (const mutation of mutations) {
-				for (const addedNode of mutation.addedNodes) {
-					if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
-						this.refreshIcons();
-						return;
-					}
+		this.setMutationObserver(this.containerEl, {
+			subtree: true,
+			childList: true,
+		}, mutation => {
+			for (const addedNode of mutation.addedNodes) {
+				if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
+					this.refreshIcons();
+					return;
 				}
 			}
 		});
@@ -73,7 +72,11 @@ export default class FileIconManager extends IconManager {
 					if (childItemEls) this.refreshChildIcons(file.items, childItemEls);
 				}
 
-				this.setMutationObserver(itemEl, { attributeFilter: ['class', 'data-path'], attributeOldValue: true, subtree: true }, mutations => {
+				this.setMutationsObserver(itemEl, {
+					subtree: true,
+					attributeFilter: ['class', 'data-path'],
+					attributeOldValue: true,
+				}, mutations => {
 					if (mutations.some(mutation => {
 						// Refresh when a child item changes data-path
 						return mutation.attributeName === 'data-path'

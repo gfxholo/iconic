@@ -33,34 +33,30 @@ export default class BookmarkIconManager extends IconManager {
 	 * Start managing this leaf if has a matching type.
 	 */
 	private manageLeaf(leaf: WorkspaceLeaf) {
-		if (leaf.getViewState().type !== 'bookmarks') {
-			return;
-		} else if (this.containerEl) {
-			this.stopMutationObserver(this.containerEl);
-		}
+		if (leaf.getViewState().type !== 'bookmarks') return;
+		
+		this.stopMutationObserver(this.containerEl);
 		this.containerEl = leaf.view.containerEl.find(':scope > .view-content > div');
-		if (this.containerEl) this.setMutationObserver(this.containerEl, {
+		this.setMutationObserver(this.containerEl, {
 			subtree: true,
 			childList: true,
 			attributeFilter: ['class'],
 			attributeOldValue: true
-		}, mutations => {
-			for (const mutation of mutations) {
-				// Refresh when bookmarks are renamed
-				if (mutation.attributeName === 'class'
-					&& mutation.target instanceof HTMLElement
-					&& mutation.oldValue?.includes('is-being-renamed')
-					&& !mutation.target.hasClass('is-being-renamed')
-				) {
+		}, mutation => {
+			// Refresh when bookmarks are renamed
+			if (mutation.attributeName === 'class'
+				&& mutation.target instanceof HTMLElement
+				&& mutation.oldValue?.includes('is-being-renamed')
+				&& !mutation.target.hasClass('is-being-renamed')
+			) {
+				this.refreshIcons();
+				return;
+			}
+			// Refresh when bookmarks are added or moved
+			for (const addedNode of mutation.addedNodes) {
+				if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
 					this.refreshIcons();
 					return;
-				}
-				// Refresh when bookmarks are added or moved
-				for (const addedNode of mutation.addedNodes) {
-					if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
-						this.refreshIcons();
-						return;
-					}
 				}
 			}
 		});
@@ -96,13 +92,14 @@ export default class BookmarkIconManager extends IconManager {
 				}
 
 				// Refresh when folder expands/collapses
-				this.setMutationObserver(itemEl, { attributeFilter: ['class'], attributeOldValue: true }, mutations => {
-					for (const mutation of mutations) {
-						if (mutation.target instanceof HTMLElement && mutation.target.hasClass('is-collapsed') !== mutation.oldValue?.includes('is-collapsed')) {
-							const childItemEls = itemEl.findAll(':scope > .tree-item-children > .tree-item');
-							if (bmark.items && childItemEls) {
-								this.refreshChildIcons([bmark, ...bmark.items], [itemEl, ...childItemEls]);
-							}
+				this.setMutationObserver(itemEl, {
+					attributeFilter: ['class'],
+					attributeOldValue: true
+				}, mutation => {
+					if (mutation.target instanceof HTMLElement && mutation.target.hasClass('is-collapsed') !== mutation.oldValue?.includes('is-collapsed')) {
+						const childItemEls = itemEl.findAll(':scope > .tree-item-children > .tree-item');
+						if (bmark.items && childItemEls) {
+							this.refreshChildIcons([bmark, ...bmark.items], [itemEl, ...childItemEls]);
 						}
 					}
 				});

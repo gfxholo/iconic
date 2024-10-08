@@ -84,19 +84,17 @@ export default class TabIconManager extends IconManager {
 
 			// Refresh when tab is pinned/unpinned
 			const statusEl = tabEl.find(':scope > .workspace-tab-header-inner > .workspace-tab-header-status-container');
-			if (statusEl) this.setMutationObserver(statusEl, { childList: true }, mutations => {
-				for (const mutation of mutations) {
-					for (const addedNode of mutation.addedNodes) {
-						if (addedNode instanceof HTMLElement && addedNode.hasClass('mod-pinned')) {
-							this.refreshIcons();
-							return;
-						}
+			this.setMutationObserver(statusEl, { childList: true }, mutation => {
+				for (const addedNode of mutation.addedNodes) {
+					if (addedNode instanceof HTMLElement && addedNode.hasClass('mod-pinned')) {
+						this.refreshIcons();
+						return;
 					}
-					for (const removedNode of mutation.removedNodes) {
-						if (removedNode instanceof HTMLElement && removedNode.hasClass('mod-pinned')) {
-							this.refreshIcons();
-							return;
-						}
+				}
+				for (const removedNode of mutation.removedNodes) {
+					if (removedNode instanceof HTMLElement && removedNode.hasClass('mod-pinned')) {
+						this.refreshIcons();
+						return;
 					}
 				}
 			});

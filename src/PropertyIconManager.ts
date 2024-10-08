@@ -25,19 +25,18 @@ export default class PropertyIconManager extends IconManager {
 	 * Start managing this leaf if has a matching type.
 	 */
 	private manageLeaf(leaf: WorkspaceLeaf) {
-		if (leaf.getViewState().type !== 'all-properties') {
-			return;
-		} else if (this.containerEl) {
-			this.stopMutationObserver(this.containerEl);
-		}
+		if (leaf.getViewState().type !== 'all-properties') return;
+
+		this.stopMutationObserver(this.containerEl);
 		this.containerEl = leaf.view.containerEl.find(':scope > .view-content > div');
-		if (this.containerEl) this.setMutationObserver(this.containerEl, { subtree: true, childList: true }, mutations => {
-			for (const mutation of mutations) {
-				for (const addedNode of mutation.addedNodes) {
-					if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
-						this.refreshIcons();
-						return;
-					}
+		this.setMutationObserver(this.containerEl, {
+			subtree: true,
+			childList: true,
+		}, mutation => {
+			for (const addedNode of mutation.addedNodes) {
+				if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
+					this.refreshIcons();
+					return;
 				}
 			}
 		});
@@ -78,7 +77,10 @@ export default class PropertyIconManager extends IconManager {
 			this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(prop.id), { capture: true });
 		}
 
-		if (this.containerEl) this.setMutationObserver(this.containerEl, { subtree: true, childList: true }, () => this.refreshIcons());
+		this.setMutationsObserver(this.containerEl, {
+			subtree: true,
+			childList: true,
+		}, () => this.refreshIcons());
 	}
 
 	/**

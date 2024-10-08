@@ -81,7 +81,7 @@ export default abstract class IconManager {
 
 	/**
 	 * Set an event listener which will be removed when plugin unloads.
-	 * Replaces any previous listener of the same element & type.
+	 * Replaces any listener (of the same element & type) set by this {@link IconManager}.
 	 */
 	protected setEventListener<K extends keyof HTMLElementEventMap>(element: HTMLElement, type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void {
 		if (!this.eventListeners.has(type)) {
@@ -97,7 +97,7 @@ export default abstract class IconManager {
 	}
 
 	/**
-	 * Stop event listener of the given element & type.
+	 * Stop an event listener (of the given element & type) set by this {@link IconManager}.
 	 */
 	protected stopEventListener(element: HTMLElement, type: keyof HTMLElementEventMap): void {
 		const listenerMap = this.eventListeners.get(type);
@@ -122,20 +122,34 @@ export default abstract class IconManager {
 
 	/**
 	 * Set a mutation observer which will be removed when plugin unloads.
-	 * Replaces any previous observer of the same element.
+	 * Replaces any observer (of the same element) set by this {@link IconManager}.
+	 * 
+	 * Callback runs once per mutation.
 	 */
-	protected setMutationObserver(element: HTMLElement, options: MutationObserverInit, callback: MutationCallback): MutationObserver {
+	protected setMutationObserver(element: HTMLElement | null, options: MutationObserverInit, callback: (mutation: MutationRecord) => void): void {
+		this.setMutationsObserver(element, options, mutations => {
+			for (const mutation of mutations) callback(mutation);
+		});
+	}
+
+	/**
+	 * Set a mutation observer which will be removed when plugin unloads.
+	 * Replaces any observer (of the same element) set by this {@link IconManager}.
+	 * 
+	 * Callback runs once per batch of mutations.
+	 */
+	protected setMutationsObserver(element: HTMLElement | null, options: MutationObserverInit, callback: MutationCallback): void {
+		if (!element) return;
 		const observer = new MutationObserver(callback);
 		if (this.mutationObservers.has(element)) {
 			this.mutationObservers.get(element)?.disconnect();
 		}
 		observer.observe(element, options);
 		this.mutationObservers.set(element, observer);
-		return observer;
 	}
 
 	/**
-	 * Stop mutation observer of the given element.
+	 * Stop a mutation observer (of the given element) set by this {@link IconManager}.
 	 */
 	protected stopMutationObserver(element: HTMLElement): void {
 		this.mutationObservers.get(element)?.disconnect();

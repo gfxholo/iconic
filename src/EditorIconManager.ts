@@ -11,13 +11,11 @@ export default class EditorIconManager extends IconManager {
 		super(plugin);
 
 		// Watch for property suggestion menus
-		this.setMutationObserver(activeDocument.body, { childList: true }, mutations => {
+		this.setMutationObserver(activeDocument.body, { childList: true }, mutation => {
 			if (!activeDocument.activeElement?.hasClass('metadata-property-key-input')) return;
-			for (const mutation of mutations) {
-				for (const addedNode of mutation.addedNodes) {
-					if (addedNode instanceof HTMLElement && addedNode.hasClass('suggestion-container')) {
-						this.onSuggestionMenu(addedNode);
-					}
+			for (const addedNode of mutation.addedNodes) {
+				if (addedNode instanceof HTMLElement && addedNode.hasClass('suggestion-container')) {
+					this.onSuggestionMenu(addedNode);
 				}
 			}
 		});
@@ -44,17 +42,18 @@ export default class EditorIconManager extends IconManager {
 	 * @param propsEl Element with class 'metadata-properties'
 	 */
 	private observeProperties(propsEl: HTMLElement) {
-		this.setMutationObserver(propsEl, { subtree: true, childList: true }, mutations => {
-			for (const mutation of mutations) {
-				if (mutation.target instanceof HTMLElement && mutation.target.hasClass('metadata-property-icon')) {
+		this.setMutationObserver(propsEl, {
+			subtree: true,
+			childList: true
+		}, mutation => {
+			if (mutation.target instanceof HTMLElement && mutation.target.hasClass('metadata-property-icon')) {
+				this.refreshIcons();
+				return;
+			}
+			for (const addedNode of mutation.addedNodes) {
+				if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
 					this.refreshIcons();
 					return;
-				}
-				for (const addedNode of mutation.addedNodes) {
-					if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
-						this.refreshIcons();
-						return;
-					}
 				}
 			}
 		});
@@ -177,7 +176,10 @@ export default class EditorIconManager extends IconManager {
 			}
 		}
 
-		this.setMutationObserver(suggestMenuEl, { subtree: true, childList: true }, () => {
+		this.setMutationsObserver(suggestMenuEl, {
+			subtree: true,
+			childList: true,
+		}, () => {
 			this.onSuggestionMenu(suggestMenuEl);
 		});
 	}
