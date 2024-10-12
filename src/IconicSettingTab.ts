@@ -283,7 +283,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.onChange(value => {
 					this.plugin.settings.uncolorQuick = value;
 					this.plugin.saveSettings();
-					this.plugin.ribbonIconManager.refreshIcons();
+					this.plugin.ribbonIconManager?.refreshIcons();
 				})
 			);
 

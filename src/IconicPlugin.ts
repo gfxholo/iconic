@@ -117,13 +117,13 @@ const DEFAULT_SETTINGS: IconicSettings = {
 export default class IconicPlugin extends Plugin {
 	settings: IconicSettings;
 	menuManager: MenuManager;
-	appIconManager: AppIconManager;
-	tabIconManager: TabIconManager;
-	fileIconManager: FileIconManager;
-	bookmarkIconManager: BookmarkIconManager;
-	propertyIconManager: PropertyIconManager;
-	editorIconManager: EditorIconManager;
-	ribbonIconManager: RibbonIconManager;
+	appIconManager?: AppIconManager;
+	tabIconManager?: TabIconManager;
+	fileIconManager?: FileIconManager;
+	bookmarkIconManager?: BookmarkIconManager;
+	propertyIconManager?: PropertyIconManager;
+	editorIconManager?: EditorIconManager;
+	ribbonIconManager?: RibbonIconManager;
 	commands: Command[] = [];
 
 	/**
@@ -298,13 +298,13 @@ export default class IconicPlugin extends Plugin {
 	 */
 	private startIconManagers(): void {
 		this.menuManager = new MenuManager();
-		this.appIconManager = new AppIconManager(this);
-		this.tabIconManager = new TabIconManager(this);
-		this.fileIconManager = new FileIconManager(this);
-		this.bookmarkIconManager = new BookmarkIconManager(this);
-		this.propertyIconManager = new PropertyIconManager(this);
-		this.editorIconManager = new EditorIconManager(this);
-		this.ribbonIconManager = new RibbonIconManager(this);
+		try { this.appIconManager = new AppIconManager(this) } catch (e) { console.error(e) }
+		try { this.tabIconManager = new TabIconManager(this) } catch (e) { console.error(e) }
+		try { this.fileIconManager = new FileIconManager(this) } catch (e) { console.error(e) }
+		try { this.bookmarkIconManager = new BookmarkIconManager(this) } catch (e) { console.error(e) }
+		try { this.propertyIconManager = new PropertyIconManager(this) } catch (e) { console.error(e) }
+		try { this.editorIconManager = new EditorIconManager(this) } catch (e) { console.error(e) }
+		try { this.ribbonIconManager = new RibbonIconManager(this) } catch (e) { console.error(e) }
 	}
 
 	/**
