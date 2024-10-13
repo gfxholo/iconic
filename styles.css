@@ -14,6 +14,9 @@ body {
 	font-size: calc(var(--icon-size) * 0.9);
 }
 
+/* RGB converter */
+.iconic-rgb-converter { display: none; }
+
 /* Window controls */
 .titlebar-button.iconic-icon {
 	padding: 0 13px;

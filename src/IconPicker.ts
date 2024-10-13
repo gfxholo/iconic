@@ -3,6 +3,8 @@ import IconicPlugin, { Item, Icon, ICONS, EMOJIS, STRINGS } from './IconicPlugin
 import ColorUtils, { COLORS } from './ColorUtils';
 import IconManager from './IconManager';
 
+const COLOR_KEYS = [...COLORS.keys()];
+
 /**
  * Callback for setting icon & color of a single item.
  */
@@ -356,7 +358,7 @@ export default class IconPicker extends Modal {
 	 */
 	private openColorMenu(x: number, y: number): void {
 		const menu = new Menu();
-		for (const color of COLORS) {
+		for (const color of COLOR_KEYS) {
 			menu.addItem(menuItem => { menuItem
 				.setTitle(STRINGS.iconPicker.colors[color as keyof typeof STRINGS.iconPicker.colors])
 				.setChecked(color === this.color)
@@ -383,11 +385,11 @@ export default class IconPicker extends Modal {
 	 * Select previous color in list. Used by keyboard and scrollwheel events.
 	 */
 	private previousColor(): void {
-		let index = COLORS.length - 1;
-		if (this.color && COLORS.includes(this.color) && this.color !== COLORS.first()) {
-			index = COLORS.indexOf(this.color) - 1;
+		let index = COLOR_KEYS.length - 1;
+		if (this.color && COLOR_KEYS.includes(this.color) && this.color !== COLOR_KEYS.first()) {
+			index = COLOR_KEYS.indexOf(this.color) - 1;
 		}
-		this.color = COLORS[index];
+		this.color = COLOR_KEYS[index];
 		this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
 		this.updateColorPicker();
 		this.updateColorTooltip();
@@ -399,10 +401,10 @@ export default class IconPicker extends Modal {
 	 */
 	private nextColor(): void {
 		let index = 0;
-		if (this.color && COLORS.includes(this.color) && this.color !== COLORS.last()) {
-			index = COLORS.indexOf(this.color) + 1;
+		if (this.color && COLOR_KEYS.includes(this.color) && this.color !== COLOR_KEYS.last()) {
+			index = COLOR_KEYS.indexOf(this.color) + 1;
 		}
-		this.color = COLORS[index];
+		this.color = COLOR_KEYS[index];
 		this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
 		this.updateColorPicker();
 		this.updateColorTooltip();
@@ -457,7 +459,7 @@ export default class IconPicker extends Modal {
 
 		if (!this.color) {
 			this.colorPickerEl.ariaLabel = STRINGS.iconPicker.changeColor;
-		} else if (COLORS.includes(this.color)) {
+		} else if (COLOR_KEYS.includes(this.color)) {
 			this.colorPickerEl.ariaLabel = STRINGS.iconPicker.colors[this.color as keyof typeof STRINGS.iconPicker.colors];
 		} else {
 			this.colorPickerEl.ariaLabel = this.color;
