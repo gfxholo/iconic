@@ -94,6 +94,7 @@ export default class IconPicker extends Modal {
 	private emojiModeButton: ExtraButtonComponent;
 	private mobileModeButton: ButtonComponent;
 	private colorPickerEl: HTMLElement;
+	private mobileTooltipEl: HTMLElement | null;
 
 	// State
 	private colorPickerPaused = false;
@@ -128,6 +129,12 @@ export default class IconPicker extends Modal {
 				this.scope.register(hotkey.modifiers, hotkey.key, command.callback);
 			}
 		}
+
+		// Clear mobile tooltip when dialog is touched
+		this.manager.setEventListener(this.modalEl, 'pointerdown', () => {
+			this.mobileTooltipEl?.remove();
+			this.mobileTooltipEl = null;
+		});
 
 		// Update color picker tooltip when it appears, in case the ariaLabel has changed
 		this.manager.setMutationObserver(activeDocument.body, { childList: true }, mutation => {
@@ -311,6 +318,11 @@ export default class IconPicker extends Modal {
 			} else {
 				this.searchResultsSetting.settingEl.scrollLeft += event.deltaY;
 			}
+		}, { passive: true });
+		// Clear mobile tooltip when scrolling
+		this.manager.setEventListener(this.searchResultsSetting.settingEl, 'scroll', () => {
+			this.mobileTooltipEl?.remove();
+			this.mobileTooltipEl = null;
 		}, { passive: true });
 
 		// Match styling of bookmark edit dialog
@@ -557,6 +569,31 @@ export default class IconPicker extends Modal {
 	}
 
 	/**
+	 * Display a long-press tooltip for mobile users.
+	 */
+	private setMobileTooltip(iconEl: HTMLElement, label: string): void {
+		this.mobileTooltipEl?.remove();
+		this.mobileTooltipEl = null;
+		const iconRect = iconEl.getBoundingClientRect();
+		const left = Math.max(0, iconRect.left + iconRect.width / 2);
+		const top = iconRect.top - 48;
+		this.mobileTooltipEl = activeDocument.body.createDiv({
+			cls: ['tooltip', 'mod-top'],
+			text: label,
+		});
+		this.mobileTooltipEl.createDiv('tooltip-arrow');
+		this.mobileTooltipEl.style.fontSize = 'var(--font-ui-medium)';
+		this.mobileTooltipEl.style.left = left + 'px';
+		this.mobileTooltipEl.style.top = top + 'px';
+		this.mobileTooltipEl.style.width = 'auto';
+		this.mobileTooltipEl.style.whiteSpace = 'nowrap';
+		const rect = this.mobileTooltipEl.getBoundingClientRect();
+		if (rect.left < 0) {
+			this.mobileTooltipEl.style.left = left + rect.left + 'px';
+		}
+	}
+
+	/**
 	 * Update search results based on current query.
 	 */
 	private updateSearchResults(): void {
@@ -601,6 +638,11 @@ export default class IconPicker extends Modal {
 					this.closeAndSave(icon, this.color);
 				});
 
+				if (Platform.isMobile) this.manager.setEventListener(iconEl, 'contextmenu', () => {
+					navigator.vibrate(100);
+					this.setMobileTooltip(iconEl, iconName);
+				});
+
 				this.manager.setEventListener(iconEl, 'keydown', event => {
 					if (event.key === 'Enter' || event.key === ' ') {
 						this.closeAndSave(icon, this.color);
@@ -634,6 +676,7 @@ export default class IconPicker extends Modal {
 	 */
 	onClose(): void {
 		this.contentEl.empty();
+		this.mobileTooltipEl?.remove();
 		this.manager.stopEventListeners();
 		this.manager.stopMutationObservers();
 		this.plugin.saveSettings(); // Save any changes to dialogState
