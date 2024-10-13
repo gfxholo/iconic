@@ -52,6 +52,20 @@ class IconPickerManager extends IconManager {
 	stopEventListeners(): void {
 		super.stopEventListeners();
 	}
+
+	/**
+	 * @override
+	 */
+	setMutationObserver(element: HTMLElement | null, options: MutationObserverInit, callback: (mutation: MutationRecord) => void): void {
+		super.setMutationObserver(element, options, callback);
+	}
+
+	/**
+	 * @override
+	 */
+	stopMutationObservers(): void {
+		super.stopMutationObservers();
+	}
 }
 
 /**
@@ -114,6 +128,15 @@ export default class IconPicker extends Modal {
 				this.scope.register(hotkey.modifiers, hotkey.key, command.callback);
 			}
 		}
+
+		// Update color picker tooltip when it appears, in case the ariaLabel has changed
+		this.manager.setMutationObserver(activeDocument.body, { childList: true }, mutation => {
+			for (const addedNode of mutation.addedNodes) {
+				if (addedNode instanceof HTMLElement && addedNode.hasClass('tooltip')) {
+					if (this.colorPickerHovered) this.updateColorTooltip();
+				}
+			}
+		});
 	}
 
 	/**
@@ -418,7 +441,6 @@ export default class IconPicker extends Modal {
 		this.color = COLOR_KEYS[index];
 		this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
 		this.updateColorPicker();
-		this.updateColorTooltip();
 		this.updateSearchResults();
 	}
 
@@ -433,7 +455,6 @@ export default class IconPicker extends Modal {
 		this.color = COLOR_KEYS[index];
 		this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
 		this.updateColorPicker();
-		this.updateColorTooltip();
 		this.updateSearchResults();
 	}
 
@@ -518,20 +539,20 @@ export default class IconPicker extends Modal {
 		} else {
 			this.colorPickerEl.ariaLabel = this.color;
 		}
+
+		if (this.colorPickerHovered) {
+			this.updateColorTooltip();
+		}
 	}
 
 	/**
 	 * Update tooltip currently displayed for the color picker.
 	 */
 	private updateColorTooltip(): void {
-		if (!this.colorPickerHovered) return;
-
 		const tooltipEl = activeDocument.body.find(':scope > .tooltip');
 		if (tooltipEl && tooltipEl.firstChild) {
 			tooltipEl.style.removeProperty('width');
-			tooltipEl.firstChild.nodeValue = this.color && this.color in STRINGS.iconPicker.colors
-				? STRINGS.iconPicker.colors[this.color as keyof typeof STRINGS.iconPicker.colors]
-				: STRINGS.iconPicker.changeColor;
+			tooltipEl.firstChild.nodeValue = this.colorPickerEl.ariaLabel;
 		}
 	}
 
@@ -614,6 +635,7 @@ export default class IconPicker extends Modal {
 	onClose(): void {
 		this.contentEl.empty();
 		this.manager.stopEventListeners();
+		this.manager.stopMutationObservers();
 		this.plugin.saveSettings(); // Save any changes to dialogState
 	}
 }
