@@ -95,7 +95,10 @@ body {
 }
 
 /* Icon picker */
-.iconic-modal .setting-item-control input[type="color"] { width: auto; }
+.iconic-modal .setting-item-control input[type="color"] {
+	height: auto;
+	width: auto;
+}
 .iconic-modal .setting-item-control input[type="text"] { width: 100%; }
 .iconic-modal .setting-item-control .search-input-container { width: 100%; }
 .theme-dark .iconic-modal .iconic-mode-selected {
