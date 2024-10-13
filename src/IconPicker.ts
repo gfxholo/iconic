@@ -1,4 +1,4 @@
-import { ColorComponent, ExtraButtonComponent, Hotkey, Menu, Modal, Platform, Setting, TextComponent, prepareFuzzySearch, setIcon } from 'obsidian';
+import { ButtonComponent, ColorComponent, ExtraButtonComponent, Hotkey, Menu, Modal, Platform, Setting, TextComponent, prepareFuzzySearch } from 'obsidian';
 import IconicPlugin, { Item, Icon, ICONS, EMOJIS, STRINGS } from './IconicPlugin';
 import ColorUtils, { COLORS } from './ColorUtils';
 import IconManager from './IconManager';
@@ -72,12 +72,12 @@ export default class IconPicker extends Modal {
 
 	// Components
 	private searchSetting: Setting;
+	private searchResultsSetting: Setting;
 	private colorResetButton: ExtraButtonComponent;
 	private colorPicker: ColorComponent;
 	private searchField: TextComponent;
-	private searchResultsSetting: Setting;
+	private emojiButton: ButtonComponent;
 	private colorPickerEl: HTMLElement;
-	private emojiButtonEl: HTMLElement;
 
 	// State
 	private emojiMode = false;
@@ -295,33 +295,41 @@ export default class IconPicker extends Modal {
 
 		// [Remove]
 		if (this.icon !== null || this.color !== null) {
-			const removeButtonEl = (buttonRowEl ?? buttonContainerEl).createEl('button', {
-				cls: Platform.isPhone ? 'mod-warning' : ['mod-secondary', 'mod-destructive'],
-				text: STRINGS.iconPicker.remove,
-			});
-			this.manager.setEventListener(removeButtonEl, 'click', () => this.closeAndSave(null, null));
+			new ButtonComponent(buttonRowEl ?? buttonContainerEl)
+				.setButtonText(STRINGS.iconPicker.remove)
+				.onClick(() => this.closeAndSave(null, null))
+				.buttonEl.addClasses(Platform.isPhone
+					? ['mod-warning']
+					: ['mod-secondary', 'mod-destructive']
+				);
 		}
 
 		// [Emojis]
 		if (Platform.isMobile && buttonRowEl) {
-			this.emojiButtonEl = buttonRowEl.createEl('button', {
-				text: STRINGS.iconPicker.emojis,
-			});
+			this.emojiButton = new ButtonComponent(buttonRowEl)
+				.setButtonText(STRINGS.iconPicker.emojis);
 		} else {
-			this.emojiButtonEl = buttonContainerEl.createDiv({
-				cls: ['clickable-icon', 'setting-editor-extra-setting-button'],
-				attr: { tabIndex: 0, 'aria-label': STRINGS.iconPicker.emojis, 'data-tooltip-position': 'top' },
-			});
-			setIcon(this.emojiButtonEl, 'lucide-smile-plus');
+			this.emojiButton = new ButtonComponent(buttonContainerEl)
+				.setIcon('lucide-smile-plus')
+				.setTooltip(STRINGS.iconPicker.emojis, { placement: 'top' })
+				.onClick(() => this.toggleEmojiMode());
+			this.emojiButton.buttonEl.addClasses([
+				'clickable-icon',
+				'setting-editor-extra-setting-button',
+			]);
+			this.emojiButton.buttonEl.tabIndex = 0;
 		}
-		this.manager.setEventListener(this.emojiButtonEl, 'pointerenter', () => this.modeButtonHovered = true);
-		this.manager.setEventListener(this.emojiButtonEl, 'pointerleave', () => this.modeButtonHovered = false);
-		this.manager.setEventListener(this.emojiButtonEl, 'pointerdown', event => event.preventDefault()); // Prevent focus theft
-		this.manager.setEventListener(this.emojiButtonEl, 'click', () => this.toggleEmojiMode());
-		this.manager.setEventListener(this.emojiButtonEl, 'keydown', event => {
-			if (event.key === 'Enter' || event.key === ' ') {
-				this.toggleEmojiMode();
-			}
+		this.manager.setEventListener(this.emojiButton.buttonEl, 'pointerenter', () => {
+			this.modeButtonHovered = true;
+		});
+		this.manager.setEventListener(this.emojiButton.buttonEl, 'pointerleave', () => {
+			this.modeButtonHovered = false;
+		});
+		this.manager.setEventListener(this.emojiButton.buttonEl, 'pointerdown', event => {
+			event.preventDefault(); // Prevent focus theft
+		});
+		this.manager.setEventListener(this.emojiButton.buttonEl, 'keydown', event => {
+			if (event.key === 'Enter' || event.key === ' ') this.toggleEmojiMode();
 		});
 		if (this.icon) {
 			if (ICONS.has(this.icon)) {
@@ -333,22 +341,25 @@ export default class IconPicker extends Modal {
 		}
 
 		// [Cancel]
-		const cancelEl = Platform.isPhone
-			? this.modalEl.createEl('button', { cls: ['modal-nav-action', 'mod-secondary'], text: STRINGS.iconPicker.cancel })
-			: buttonContainerEl.createEl('button', { cls: 'mod-cancel', text: STRINGS.iconPicker.cancel });
-		this.manager.setEventListener(cancelEl, 'click', () => this.close());
+		new ButtonComponent(Platform.isPhone ? this.modalEl : buttonContainerEl)
+			.setButtonText(STRINGS.iconPicker.cancel)
+			.onClick(() => this.close())
+			.buttonEl.addClasses(Platform.isPhone
+				? ['modal-nav-action', 'mod-secondary']
+				: ['mod-cancel']
+			);
 
 		// [Save]
-		const saveEl = Platform.isPhone
-			? this.modalEl.createEl('button', { cls: ['modal-nav-action', 'mod-cta'], text: STRINGS.iconPicker.save })
-			: buttonContainerEl.createEl('button', { cls: 'mod-cta', text: STRINGS.iconPicker.save });
-		this.manager.setEventListener(saveEl, 'click', () => this.closeAndSave(this.icon, this.color));
+		new ButtonComponent(Platform.isPhone ? this.modalEl : buttonContainerEl)
+			.setButtonText(STRINGS.iconPicker.save)
+			.onClick(() => this.closeAndSave(this.icon, this.color))
+			.buttonEl.addClasses(Platform.isPhone
+				? ['modal-nav-action', 'mod-cta']
+				: ['mod-cta']
+			);
 
 		// Hack to guarantee initial focus
-		setTimeout(() => {
-			this.searchField.inputEl.focus();
-			this.searchField.inputEl.select();
-		}, 0);
+		activeWindow.requestAnimationFrame(() => this.searchField.inputEl.select());
 
 		this.updateSearchResults();
 	}
@@ -428,25 +439,24 @@ export default class IconPicker extends Modal {
 	private toggleEmojiMode(): void {
 		this.emojiMode = !this.emojiMode;
 		if (this.emojiMode) {
-			this.setTitle(STRINGS.iconPicker.changeEmoji);
-			this.searchField.setPlaceholder(STRINGS.iconPicker.searchEmojis);
-			if (Platform.isMobile) {
-				this.emojiButtonEl.setText(STRINGS.iconPicker.icons);
-			} else {
-				setIcon(this.emojiButtonEl, 'lucide-image-plus');
-				this.emojiButtonEl.ariaLabel = STRINGS.iconPicker.icons;
-			}
-		} else {
 			this.setTitle(STRINGS.iconPicker.changeIcon);
 			this.searchField.setPlaceholder(STRINGS.iconPicker.searchIcons);
 			if (Platform.isMobile) {
-				this.emojiButtonEl.setText(STRINGS.iconPicker.emojis);
+				this.emojiButton.setButtonText(STRINGS.iconPicker.icons);
 			} else {
-				setIcon(this.emojiButtonEl, 'lucide-smile-plus');
-				this.emojiButtonEl.ariaLabel = STRINGS.iconPicker.emojis;
+				this.emojiButton.setIcon('lucide-image-plus');
+				this.emojiButton.setTooltip(STRINGS.iconPicker.icons, { placement: 'top' });
+			}
+		} else {
+			this.setTitle(STRINGS.iconPicker.changeEmoji);
+			this.searchField.setPlaceholder(STRINGS.iconPicker.searchEmojis);
+			if (Platform.isMobile) {
+				this.emojiButton.setButtonText(STRINGS.iconPicker.emojis);
+			} else {
+				this.emojiButton.setIcon('lucide-smile-plus');
+				this.emojiButton.setTooltip(STRINGS.iconPicker.emojis, { placement: 'top' });
 			}
 		}
-		this.updateModeTooltip();
 		this.updateSearchResults();
 	}
 
@@ -478,21 +488,6 @@ export default class IconPicker extends Modal {
 			tooltipEl.firstChild.nodeValue = this.color && this.color in STRINGS.iconPicker.colors
 				? STRINGS.iconPicker.colors[this.color as keyof typeof STRINGS.iconPicker.colors]
 				: STRINGS.iconPicker.changeColor;
-		}
-	}
-
-	/**
-	 * Update tooltip currently displayed for the mode button.
-	 */
-	private updateModeTooltip(): void {
-		if (!this.modeButtonHovered) return;
-
-		const tooltipEl = activeDocument.body.find(':scope > .tooltip');
-		if (tooltipEl && tooltipEl.firstChild) {
-			tooltipEl.style.removeProperty('width');
-			tooltipEl.firstChild.nodeValue = this.emojiMode
-				? STRINGS.iconPicker.icons
-				: STRINGS.iconPicker.emojis;
 		}
 	}
 
