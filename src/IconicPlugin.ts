@@ -79,6 +79,10 @@ interface IconicSettings {
 	uncolorSelect: boolean,
 	uncolorQuick: boolean,
 	rememberDeletedItems: boolean;
+	dialogState: {
+		iconMode: boolean;
+		emojiMode: boolean;
+	},
 	appIcons: { [appItemId: string]: { icon?: string, color?: string } };
 	tabIcons: { [tabId: string]: { icon?: string, color?: string } };
 	fileIcons: { [fileId: string]: { icon?: string, color?: string, unsynced?: string[] } };
@@ -103,6 +107,10 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	uncolorSelect: false,
 	uncolorQuick: false,
 	rememberDeletedItems: false,
+	dialogState: {
+		iconMode: true,
+		emojiMode: false,
+	},
 	appIcons: {},
 	tabIcons: {},
 	fileIcons: {},

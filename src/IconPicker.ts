@@ -76,12 +76,12 @@ export default class IconPicker extends Modal {
 	private colorResetButton: ExtraButtonComponent;
 	private colorPicker: ColorComponent;
 	private searchField: TextComponent;
-	private emojiButton: ButtonComponent;
+	private iconModeButton: ExtraButtonComponent;
+	private emojiModeButton: ExtraButtonComponent;
+	private mobileModeButton: ButtonComponent;
 	private colorPickerEl: HTMLElement;
 
 	// State
-	private emojiMode = false;
-	private modeButtonHovered = false;
 	private colorPickerPaused = false;
 	private colorPickerHovered = false;
 	private readonly searchResults: [icon: string, iconName: string][] = [];
@@ -172,6 +172,7 @@ export default class IconPicker extends Modal {
 	 * @override
 	 */
 	onOpen(): void {
+		const { dialogState } = this.plugin.settings;
 		this.containerEl.addClass('mod-confirmation');
 		this.modalEl.addClass('iconic-modal');
 		this.setTitle(this.titleText);
@@ -304,40 +305,54 @@ export default class IconPicker extends Modal {
 				);
 		}
 
-		// [Emojis]
-		if (Platform.isMobile && buttonRowEl) {
-			this.emojiButton = new ButtonComponent(buttonRowEl)
-				.setButtonText(STRINGS.iconPicker.emojis);
-		} else {
-			this.emojiButton = new ButtonComponent(buttonContainerEl)
-				.setIcon('lucide-smile-plus')
-				.setTooltip(STRINGS.iconPicker.emojis, { placement: 'top' })
-				.onClick(() => this.toggleEmojiMode());
-			this.emojiButton.buttonEl.addClasses([
-				'clickable-icon',
-				'setting-editor-extra-setting-button',
-			]);
-			this.emojiButton.buttonEl.tabIndex = 0;
-		}
-		this.manager.setEventListener(this.emojiButton.buttonEl, 'pointerenter', () => {
-			this.modeButtonHovered = true;
-		});
-		this.manager.setEventListener(this.emojiButton.buttonEl, 'pointerleave', () => {
-			this.modeButtonHovered = false;
-		});
-		this.manager.setEventListener(this.emojiButton.buttonEl, 'pointerdown', event => {
-			event.preventDefault(); // Prevent focus theft
-		});
-		this.manager.setEventListener(this.emojiButton.buttonEl, 'keydown', event => {
-			if (event.key === 'Enter' || event.key === ' ') this.toggleEmojiMode();
-		});
+		// Auto-select the most useful mode
 		if (this.icon) {
 			if (ICONS.has(this.icon)) {
+				dialogState.iconMode = true;
 				this.searchField.setValue(ICONS.get(this.icon) ?? '');
 			} else if (EMOJIS.has(this.icon)) {
-				this.toggleEmojiMode();
+				dialogState.emojiMode = false;
 				this.searchField.setValue(EMOJIS.get(this.icon) ?? '');
+			} else {
+				this.searchField.setValue(this.icon);
 			}
+		} else if (!dialogState.iconMode && !dialogState.emojiMode) {
+			dialogState.iconMode = true;
+		}
+
+		// BUTTONS: Toggle icons & emojis
+		if (Platform.isMobile && buttonRowEl) {
+			this.mobileModeButton = new ButtonComponent(buttonRowEl)
+				.onClick(() => this.toggleMobileSearchMode());
+			this.manager.setEventListener(this.mobileModeButton.buttonEl, 'pointerdown', event => {
+				event.preventDefault(); // Prevent focus theft
+			});
+			this.manager.setEventListener(this.mobileModeButton.buttonEl, 'keydown', event => {
+				if (event.key === 'Enter' || event.key === ' ') this.toggleMobileSearchMode();
+			});
+			this.updateMobileSearchMode();
+		} else {
+			this.iconModeButton = new ExtraButtonComponent(buttonContainerEl)
+				.setTooltip('Toggle icons', { placement: 'top' })
+				.onClick(() => {
+					dialogState.iconMode = !dialogState.iconMode;
+					this.updateDesktopSearchMode();
+				});
+			this.emojiModeButton = new ExtraButtonComponent(buttonContainerEl)
+				.setTooltip('Toggle emojis', { placement: 'top' })
+				.onClick(() => {
+					dialogState.emojiMode = !dialogState.emojiMode;
+					this.updateDesktopSearchMode();
+				});
+			this.iconModeButton.extraSettingsEl.tabIndex = 0;
+			this.emojiModeButton.extraSettingsEl.tabIndex = 0;
+			this.manager.setEventListener(this.iconModeButton.extraSettingsEl, 'pointerdown', event => {
+				event.preventDefault(); // Prevent focus theft
+			});
+			this.manager.setEventListener(this.emojiModeButton.extraSettingsEl, 'pointerdown', event => {
+				event.preventDefault(); // Prevent focus theft
+			});
+			this.updateDesktopSearchMode();
 		}
 
 		// [Cancel]
@@ -433,30 +448,59 @@ export default class IconPicker extends Modal {
 		this.updateSearchResults();
 	}
 
-	/**
-	 * Toggle between icon search and emoji search.
-	 */
-	private toggleEmojiMode(): void {
-		this.emojiMode = !this.emojiMode;
-		if (this.emojiMode) {
+	private toggleMobileSearchMode(): void {
+		const { dialogState } = this.plugin.settings;
+		if (dialogState.iconMode && dialogState.emojiMode) {
+			dialogState.iconMode = true;
+			dialogState.emojiMode = false;
+		} else if (dialogState.iconMode) {
+			dialogState.iconMode = false;
+			dialogState.emojiMode = true;
+		} else {
+			dialogState.iconMode = true;
+			dialogState.emojiMode = true;
+		}
+
+		this.updateMobileSearchMode();
+	}
+
+	private updateMobileSearchMode(): void {
+		const { dialogState } = this.plugin.settings;
+		if (dialogState.iconMode && dialogState.emojiMode) {
+			this.setTitle(STRINGS.iconPicker.changeMix);
+			this.searchField.setPlaceholder(STRINGS.iconPicker.searchMix);
+			this.mobileModeButton?.setButtonText(STRINGS.iconPicker.icons);
+		} else if (dialogState.iconMode) {
 			this.setTitle(STRINGS.iconPicker.changeIcon);
 			this.searchField.setPlaceholder(STRINGS.iconPicker.searchIcons);
-			if (Platform.isMobile) {
-				this.emojiButton.setButtonText(STRINGS.iconPicker.icons);
-			} else {
-				this.emojiButton.setIcon('lucide-image-plus');
-				this.emojiButton.setTooltip(STRINGS.iconPicker.icons, { placement: 'top' });
-			}
+			this.mobileModeButton?.setButtonText(STRINGS.iconPicker.emojis);
 		} else {
 			this.setTitle(STRINGS.iconPicker.changeEmoji);
 			this.searchField.setPlaceholder(STRINGS.iconPicker.searchEmojis);
-			if (Platform.isMobile) {
-				this.emojiButton.setButtonText(STRINGS.iconPicker.emojis);
-			} else {
-				this.emojiButton.setIcon('lucide-smile-plus');
-				this.emojiButton.setTooltip(STRINGS.iconPicker.emojis, { placement: 'top' });
-			}
+			this.mobileModeButton?.setButtonText(STRINGS.iconPicker.mixed);
 		}
+
+		this.updateSearchResults();
+	}
+
+	private updateDesktopSearchMode(): void {
+		const { dialogState } = this.plugin.settings;
+		this.iconModeButton.setIcon(dialogState.iconMode ? 'lucide-image' : 'lucide-square');
+		this.emojiModeButton.setIcon(dialogState.emojiMode ? 'lucide-smile' : 'lucide-circle');
+		this.iconModeButton.extraSettingsEl.toggleClass('iconic-mode-selected', dialogState.iconMode);
+		this.emojiModeButton.extraSettingsEl.toggleClass('iconic-mode-selected', dialogState.emojiMode);
+
+		if (dialogState.iconMode && dialogState.emojiMode) {
+			this.setTitle(STRINGS.iconPicker.changeMix);
+			this.searchField.setPlaceholder(STRINGS.iconPicker.searchMix);
+		} else if (dialogState.emojiMode) {
+			this.setTitle(STRINGS.iconPicker.changeEmoji);
+			this.searchField.setPlaceholder(STRINGS.iconPicker.searchEmojis);
+		} else {
+			this.setTitle(STRINGS.iconPicker.changeIcon);
+			this.searchField.setPlaceholder(STRINGS.iconPicker.searchIcons);
+		}
+
 		this.updateSearchResults();
 	}
 
@@ -498,7 +542,10 @@ export default class IconPicker extends Modal {
 		const query = this.searchField.getValue();
 		const fuzzySearch = prepareFuzzySearch(query);
 		const matches: [score: number, iconEntry: [string, string]][] = [];
-		const iconEntries = this.emojiMode ? [...EMOJIS] : [...ICONS];
+		const iconEntries = [
+			...(this.plugin.settings.dialogState.iconMode ? ICONS : []),
+			...(this.plugin.settings.dialogState.emojiMode ? EMOJIS : []),
+		];
 
 		this.searchResults.length = 0;
 		this.searchResultsSetting.clear();
@@ -567,5 +614,6 @@ export default class IconPicker extends Modal {
 	onClose(): void {
 		this.contentEl.empty();
 		this.manager.stopEventListeners();
+		this.plugin.saveSettings(); // Save any changes to dialogState
 	}
 }
