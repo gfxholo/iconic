@@ -156,7 +156,7 @@ export default class AppIconManager extends IconManager {
 	/**
 	 * Refresh maximize icon only. This button can have two states: maximized or unmaximized.
 	 */
-	private refreshMaximizeIcon(unloading?: boolean) {
+	private refreshMaximizeIcon(unloading?: boolean): void {
 		// @ts-expect-error (Electron API)
 		const isMaximized = activeWindow.electron.remote.getCurrentWindow().isMaximized() ?? true;
 
@@ -198,7 +198,7 @@ export default class AppIconManager extends IconManager {
 	/**
 	 * When user context-clicks an app item, open a menu or add custom items to the existing menu.
 	 */
-	private onContextMenu(appItemId: AppItemId, event: MouseEvent) {
+	private onContextMenu(appItemId: AppItemId, event: MouseEvent): void {
 		navigator?.vibrate(100); // Might not be supported on iOS
 
 		this.plugin.menuManager.close();

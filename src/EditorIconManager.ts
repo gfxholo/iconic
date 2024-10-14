@@ -110,7 +110,7 @@ export default class EditorIconManager extends IconManager {
 	/**
 	 * Refresh all property icons in a single MarkdownView.
 	*/
-	private refreshViewIcons(props: PropertyItem[], view: MarkdownView) {
+	private refreshViewIcons(props: PropertyItem[], view: MarkdownView): void {
 		// @ts-expect-error (Private API)
 		const propListEl: HTMLElement = view.metadataEditor?.propertyListEl;
 		if (!propListEl) return;

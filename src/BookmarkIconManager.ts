@@ -32,7 +32,7 @@ export default class BookmarkIconManager extends IconManager {
 	/**
 	 * Start managing this leaf if has a matching type.
 	 */
-	private manageLeaf(leaf: WorkspaceLeaf) {
+	private manageLeaf(leaf: WorkspaceLeaf): void {
 		if (leaf.getViewState().type !== 'bookmarks') return;
 		
 		this.stopMutationObserver(this.containerEl);
@@ -82,7 +82,7 @@ export default class BookmarkIconManager extends IconManager {
 		for (const itemEl of itemEls) {
 			itemEl.addClass('iconic-item');
 
-			const bmark = bmarks[itemEls.indexOf(itemEl)]
+			const bmark = bmarks[itemEls.indexOf(itemEl)];
 			if (!bmark) continue;
 
 			if (bmark.items) {

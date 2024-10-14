@@ -76,7 +76,7 @@ export default abstract class IconManager {
 	/**
 	 * Set an inline color filter on an element.
 	 */
-	private static colorFilter(element: HTMLElement, color: string) {
+	private static colorFilter(element: HTMLElement, color: string): void {
 		const [h, s] = ColorUtils.toHslArray(color);
 		element.style.filter = `grayscale() sepia() hue-rotate(${h - 50}deg) saturate(${s * 5}%)`;
 	}

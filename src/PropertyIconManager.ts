@@ -24,7 +24,7 @@ export default class PropertyIconManager extends IconManager {
 	/**
 	 * Start managing this leaf if has a matching type.
 	 */
-	private manageLeaf(leaf: WorkspaceLeaf) {
+	private manageLeaf(leaf: WorkspaceLeaf): void {
 		if (leaf.getViewState().type !== 'all-properties') return;
 
 		this.stopMutationObserver(this.containerEl);

@@ -4,6 +4,7 @@ import AppIconManager from './AppIconManager';
 import TabIconManager from './TabIconManager';
 import FileIconManager from './FileIconManager';
 import BookmarkIconManager from './BookmarkIconManager';
+import TagIconManager from './TagIconManager';
 import PropertyIconManager from './PropertyIconManager';
 import EditorIconManager from './EditorIconManager';
 import RibbonIconManager from './RibbonIconManager';
@@ -33,7 +34,7 @@ export interface Icon {
 export interface Item extends Icon {
 	id: string;
 	name: string;
-	category: 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'property' | 'ribbon';
+	category: 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'tag' | 'property' | 'ribbon';
 	iconDefault: string | null;
 }
 export type AppItem = Item;
@@ -51,6 +52,9 @@ export interface FileItem extends Item {
 export interface BookmarkItem extends Item {
 	isFile: boolean;
 	items: BookmarkItem[] | null;
+}
+export interface TagItem extends Item {
+	items: TagItem[] | null;
 }
 export interface PropertyItem extends Item {
 	type: string | null;
@@ -87,6 +91,7 @@ interface IconicSettings {
 	tabIcons: { [tabId: string]: { icon?: string, color?: string } };
 	fileIcons: { [fileId: string]: { icon?: string, color?: string, unsynced?: string[] } };
 	bookmarkIcons: { [groupId: string]: { icon?: string, color?: string } };
+	tagIcons: { [tagId: string]: { icon?: string, color?: string } };
 	propertyIcons: { [propId: string]: { icon?: string, color?: string } };
 	ribbonIcons: { [ribbonItemId: string]: { icon?: string, color?: string } };
 }
@@ -115,6 +120,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	tabIcons: {},
 	fileIcons: {},
 	bookmarkIcons: {},
+	tagIcons: {},
 	propertyIcons: {},
 	ribbonIcons: {},
 }
@@ -129,6 +135,7 @@ export default class IconicPlugin extends Plugin {
 	tabIconManager?: TabIconManager;
 	fileIconManager?: FileIconManager;
 	bookmarkIconManager?: BookmarkIconManager;
+	tagIconManager?: TagIconManager;
 	propertyIconManager?: PropertyIconManager;
 	editorIconManager?: EditorIconManager;
 	ribbonIconManager?: RibbonIconManager;
@@ -255,6 +262,7 @@ export default class IconicPlugin extends Plugin {
 				this.saveSettings();
 				this.fileIconManager?.refreshIcons();
 				this.bookmarkIconManager?.refreshIcons();
+				this.tagIconManager?.refreshIcons();
 			}
 		}));
 
@@ -267,6 +275,7 @@ export default class IconicPlugin extends Plugin {
 				this.saveSettings();
 				this.fileIconManager?.refreshIcons();
 				this.bookmarkIconManager?.refreshIcons();
+				this.tagIconManager?.refreshIcons();
 			}
 		}));
 
@@ -295,7 +304,7 @@ export default class IconicPlugin extends Plugin {
 	/**
 	 * @override
 	 */
-	async onExternalSettingsChange(): Promise<void> {
+	async onExternalSettingsChange(): Promise<any> {
 		await this.loadSettings();
 		this.refreshIconManagers();
 		this.refreshBodyClasses();
@@ -309,6 +318,7 @@ export default class IconicPlugin extends Plugin {
 		try { this.appIconManager = new AppIconManager(this) } catch (e) { console.error(e) }
 		try { this.tabIconManager = new TabIconManager(this) } catch (e) { console.error(e) }
 		try { this.fileIconManager = new FileIconManager(this) } catch (e) { console.error(e) }
+		try { this.tagIconManager = new TagIconManager(this) } catch (e) { console.error(e) }
 		try { this.bookmarkIconManager = new BookmarkIconManager(this) } catch (e) { console.error(e) }
 		try { this.propertyIconManager = new PropertyIconManager(this) } catch (e) { console.error(e) }
 		try { this.editorIconManager = new EditorIconManager(this) } catch (e) { console.error(e) }
@@ -323,6 +333,7 @@ export default class IconicPlugin extends Plugin {
 		this.tabIconManager?.refreshIcons();
 		this.fileIconManager?.refreshIcons();
 		this.bookmarkIconManager?.refreshIcons();
+		this.tagIconManager?.refreshIcons();
 		this.propertyIconManager?.refreshIcons();
 		this.editorIconManager?.refreshIcons();
 		this.ribbonIconManager?.refreshIcons();
@@ -714,6 +725,74 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
+	 * Get array of tag definitions.
+	 */
+	getTagItems(unloading?: boolean): TagItem[] {
+		// @ts-expect-error (Private API)
+		const tagHashes: string[] = Object.keys(this.app.metadataCache.getTags()) ?? [];
+		const tagBases = tagHashes.map(tagHash => {
+			return {
+				id: tagHash.replace('#', ''),
+				name: tagHash,
+				items: this.getChildTagBases(tagHash, tagHashes),
+			}
+		});
+		return tagBases.map(tagBase => this.defineTagItem(tagBase, unloading));
+	}
+
+	/**
+	 * Get tag definition.
+	 */
+	getTagItem(tagId: string, unloading?: boolean): TagItem | null {
+		const tagHash = '#' + tagId;
+		// @ts-expect-error (Private API)
+		const tagHashes: string[] = Object.keys(this.app.metadataCache.getTags()) ?? [];
+		const childTagBases = this.getChildTagBases(tagHash, tagHashes);
+		return tagHashes.includes(tagHash)
+			? this.defineTagItem({
+				id: tagId,
+				name: tagHash,
+				items: childTagBases.length > 0 ? childTagBases : null,
+			}, unloading) : null;
+	}
+
+	/**
+	 * Create tag definition.
+	 */
+	private defineTagItem(tagBase: any, unloading?: boolean): TagItem {
+		const tagIcon = this.settings.tagIcons[tagBase.id] ?? {};
+		const childTagItems = tagBase.items?.map((childBase: any) => this.defineTagItem(childBase, unloading));
+
+		return {
+			id: tagBase.id,
+			name: tagBase.name,
+			category: 'tag',
+			iconDefault: null,
+			icon: unloading ? null : tagIcon.icon ?? null,
+			color: unloading ? null : tagIcon.color ?? null,
+			items: childTagItems?.length > 0 ? childTagItems : null,
+		};
+	}
+
+	/**
+	 * Get array of tag bases that share a given parent.
+	 */
+	private getChildTagBases(parentTagHash: string, tagHashes: string[]): any[] {
+		const tagBases = [];
+		const parentTagSlash = parentTagHash + '/';
+		for (const tagHash of tagHashes) {
+			if (tagHash.startsWith(parentTagSlash) && !tagHash.replace(parentTagSlash, '').includes('/')) {
+				tagBases.push({
+					id: tagHash.replace('#', ''),
+					name: tagHash,
+					items: this.getChildTagBases(tagHash, tagHashes),
+				});
+			}
+		}
+		return tagBases;
+	}
+
+	/**
 	 * Get array of property definitions.
 	 */
 	getPropertyItems(unloading?: boolean): PropertyItem[] {
@@ -861,6 +940,14 @@ export default class IconicPlugin extends Plugin {
 				this.updateIconSetting(this.settings.bookmarkIcons, bmark.id, bmark.icon, bmark.color);
 			}
 		}
+		this.saveSettings();
+	}
+
+	/**
+	 * Save tag icon changes to settings.
+	 */
+	saveTagIcon(tag: TagItem, icon: string | null, color: string | null): void {
+		this.updateIconSetting(this.settings.tagIcons, tag.id, icon, color);
 		this.saveSettings();
 	}
 
@@ -1045,6 +1132,7 @@ export default class IconicPlugin extends Plugin {
 		this.tabIconManager?.unload();
 		this.fileIconManager?.unload();
 		this.bookmarkIconManager?.unload();
+		this.tagIconManager?.unload();
 		this.propertyIconManager?.unload();
 		this.editorIconManager?.unload();
 		this.ribbonIconManager?.unload();

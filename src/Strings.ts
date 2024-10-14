@@ -70,6 +70,8 @@ export default class Strings {
 		graphs: 'Graphs',
 		url: 'URL',
 		urls: 'URLs',
+		tag: 'Tag',
+		tags: 'Tags',
 		property: 'Property',
 		properties: 'Properties',
 		ribbonItem: 'Ribbon command',

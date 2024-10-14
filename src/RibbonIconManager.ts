@@ -99,7 +99,7 @@ export default class RibbonIconManager extends IconManager {
 	/**
 	 * Refresh all icons in the ribbon configuration dialog.
 	 */
-	private refreshConfigIcons(containerEl: HTMLElement) {
+	private refreshConfigIcons(containerEl: HTMLElement): void {
 		if (Platform.isPhone) {
 			const quickDropdownEl = containerEl.find('.setting-item-control > .dropdown');
 			if (quickDropdownEl) this.setEventListener(quickDropdownEl, 'change', () => {
