@@ -3,7 +3,7 @@ body {
 }
 
 .iconic-icon > .iconic-emoji {
-	display: flex;
+	display: inline-flex;
 	flex-wrap: wrap;
 	align-content: center;
 	justify-content: center;
@@ -77,6 +77,31 @@ body {
 }
 .iconic-clickable-icons .tree-item-self > .iconic-icon:hover {
 	cursor: pointer;
+	filter: contrast(200%);
+}
+
+/* Tags */
+a.tag {
+	--icon-size: var(--icon-xs);
+	display: inline-flex;
+	vertical-align: middle;
+	align-items: center;
+	gap: var(--size-4-1);
+}
+.multi-select-pill > .iconic-icon {
+	display: flex;
+	margin-inline-start: var(--size-4-2);
+	margin-inline-end: var(--size-4-1);
+}
+.multi-select-pill > .iconic-icon + .multi-select-pill-content {
+	margin-inline-start: 0;
+}
+.multi-select-pill > .iconic-icon + .multi-select-pill-content + .multi-select-pill-remove-button {
+	color: inherit;
+}
+.iconic-clickable-icons .tag > .iconic-icon:hover,
+.iconic-clickable-icons .multi-select-pill > .iconic-icon:hover {
+	cursor: var(--cursor-link);
 	filter: contrast(200%);
 }
 

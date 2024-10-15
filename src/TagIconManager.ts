@@ -91,6 +91,7 @@ export default class TagIconManager extends IconManager {
 					IconPicker.openSingle(this.plugin, tag, (newIcon, newColor) => {
 						this.plugin.saveTagIcon(tag, newIcon, newColor);
 						this.refreshIcons();
+						this.plugin.editorIconManager?.refreshIcons();
 					});
 					event.stopPropagation();
 				});
@@ -107,7 +108,7 @@ export default class TagIconManager extends IconManager {
 	/**
 	 * When user context-clicks a tag, add custom items to the menu.
 	 */
-	private onContextMenu(tagId: string, event: MouseEvent): void {
+	onContextMenu(tagId: string, event: MouseEvent): void {
 		navigator?.vibrate(100); // Not supported on iOS
 		this.plugin.menuManager.close();
 		const tag = this.plugin.getTagItem(tagId);
@@ -122,6 +123,7 @@ export default class TagIconManager extends IconManager {
 			.onClick(() => IconPicker.openSingle(this.plugin, tag, (newIcon, newColor) => {
 				this.plugin.saveTagIcon(tag, newIcon, newColor);
 				this.refreshIcons();
+				this.plugin.editorIconManager?.refreshIcons();
 			}))
 		);
 
@@ -134,6 +136,7 @@ export default class TagIconManager extends IconManager {
 				.onClick(() => {
 					this.plugin.saveTagIcon(tag, null, null);
 					this.refreshIcons();
+					this.plugin.editorIconManager?.refreshIcons();
 				})
 			);
 		}
