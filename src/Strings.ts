@@ -87,6 +87,7 @@ export default class Strings {
 		toggleAllFolderIcons: 'Toggle all folder icons',
 		toggleMinimalFolderIcons: 'Toggle minimal folder icons',
 		toggleBiggerSearchResults: 'Toggle bigger search results',
+		changeIconCurrentFile: 'Change icon of the current file',
 	};
 	static settings = {
 		values: {

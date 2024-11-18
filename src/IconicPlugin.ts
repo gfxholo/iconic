@@ -11,6 +11,7 @@ import RibbonIconManager from './RibbonIconManager';
 import MenuManager from './MenuManager';
 import EMOJIS from './Emojis';
 import STRINGS from './Strings';
+import IconPicker from './IconPicker';
 
 export const ICONS = new Map<string, string>();
 export { EMOJIS };
@@ -299,6 +300,26 @@ export default class IconicPlugin extends Plugin {
 				this.refreshBodyClasses();
 			}
 		}));
+
+		// Change icon of the current file
+		this.addCommand({
+			id: 'change-icon-current-file',
+			name: STRINGS.commands.changeIconCurrentFile,
+			checkCallback: checking => {
+				const tFile = this.app.workspace.getActiveFile();
+				if (tFile === null) return false;
+
+				const file = this.getFileItem(tFile.path);
+				if (checking) return file !== null;
+
+				IconPicker.openSingle(this, file, (newIcon, newColor) => {
+					this.saveFileIcon(file, newIcon, newColor);
+					this.fileIconManager?.refreshIcons();
+					this.tabIconManager?.refreshIcons();
+					this.bookmarkIconManager?.refreshIcons();
+				});
+			},
+		});
 	}
 
 	/**
