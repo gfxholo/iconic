@@ -110,7 +110,7 @@ export default class TagIconManager extends IconManager {
 	 */
 	onContextMenu(tagId: string, event: MouseEvent): void {
 		navigator?.vibrate(100); // Not supported on iOS
-		this.plugin.menuManager.close();
+		this.plugin.menuManager.closeAndFlush();
 		const tag = this.plugin.getTagItem(tagId);
 		if (!tag) return;
 

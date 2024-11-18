@@ -100,10 +100,18 @@ export default class MenuManager {
 	}
 
 	/**
-	 * Close menu and discard the object.
+	 * Flush any queued actions from a previous menu.
 	 */
-	close(): void {
+	flush(): void {
+		this.queuedActions.length = 0;
+	}
+
+	/**
+	 * Close menu and flush any queued actions.
+	 */
+	closeAndFlush(): void {
 		this.menu?.close();
 		this.menu = null;
+		this.flush();
 	}
 }

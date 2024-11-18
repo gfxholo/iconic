@@ -201,7 +201,7 @@ export default class AppIconManager extends IconManager {
 	private onContextMenu(appItemId: AppItemId, event: MouseEvent): void {
 		navigator?.vibrate(100); // Might not be supported on iOS
 
-		this.plugin.menuManager.close();
+		this.plugin.menuManager.closeAndFlush();
 		const appItem = this.plugin.getAppItem(appItemId);
 		const menu = appItemId.startsWith('sidebar') && !Platform.isPhone
 			? this.plugin.menuManager

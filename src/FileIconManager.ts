@@ -149,7 +149,7 @@ export default class FileIconManager extends IconManager {
 	 * When user context-clicks a file, or opens a file pane menu, add custom items to the menu.
 	 */
 	private onContextMenu(...fileIds: string[]): void {
-		this.plugin.menuManager.close();
+		this.plugin.menuManager.closeAndFlush();
 		const files: FileItem[] = [];
 		for (const fileId of fileIds) {
 			files.push(this.plugin.getFileItem(fileId));

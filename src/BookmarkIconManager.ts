@@ -177,7 +177,7 @@ export default class BookmarkIconManager extends IconManager {
 	 * When user context-clicks a bookmark, add custom items to the menu.
 	 */
 	private onContextMenu(clickedBmarkId: string, isFile: boolean): void {
-		this.plugin.menuManager.close();
+		this.plugin.menuManager.closeAndFlush();
 		const clickedBmark: BookmarkItem = this.plugin.getBookmarkItem(clickedBmarkId, isFile);
 		const selectedBmarks: BookmarkItem[] = [];
 

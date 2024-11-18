@@ -156,7 +156,7 @@ export default class RibbonIconManager extends IconManager {
 	 */
 	private onContextMenu(ribbonItemId: string, event: MouseEvent): void {
 		navigator.vibrate(100); // Might not be supported on iOS
-		this.plugin.menuManager.close();
+		this.plugin.menuManager.closeAndFlush();
 		const ribbonItem = this.plugin.getRibbonItem(ribbonItemId);
 
 		// Change icon

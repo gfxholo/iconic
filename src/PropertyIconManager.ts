@@ -88,7 +88,7 @@ export default class PropertyIconManager extends IconManager {
 	 */
 	private onContextMenu(clickedPropId: string): void {
 		navigator.vibrate(100); // Might not be supported on iOS
-		this.plugin.menuManager.close();
+		this.plugin.menuManager.closeAndFlush();
 		const clickedProp: PropertyItem = this.plugin.getPropertyItem(clickedPropId);
 		const selectedProps: PropertyItem[] = [];
 

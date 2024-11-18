@@ -313,7 +313,7 @@ export default class EditorIconManager extends IconManager {
 	 */
 	private onPropertyContextMenu(propId: string): void {
 		navigator?.vibrate(100); // Might not be supported on iOS
-		this.plugin.menuManager.close();
+		this.plugin.menuManager.closeAndFlush();
 		const prop = this.plugin.getPropertyItem(propId);
 
 		// Change icon
@@ -348,7 +348,7 @@ export default class EditorIconManager extends IconManager {
 	 */
 	private onTagContextMenu(tagId: string, isEditingMode?: boolean): void {
 		navigator?.vibrate(100); // Not supported on iOS
-		this.plugin.menuManager.close();
+		this.plugin.menuManager.closeAndFlush();
 		const tag = this.plugin.getTagItem(tagId);
 		if (!tag) return;
 

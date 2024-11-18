@@ -123,7 +123,7 @@ export default class TabIconManager extends IconManager {
 	 * When user context-clicks a tab, add custom items to the menu.
 	 */
 	private onContextMenu(tabId: string, isFile: boolean) {
-		this.plugin.menuManager.close();
+		this.plugin.menuManager.closeAndFlush();
 
 		if (isFile) {
 			this.onFileContextMenu(this.plugin.getFileItem(tabId));
@@ -137,6 +137,8 @@ export default class TabIconManager extends IconManager {
 	 * Add custom items to a tab menu.
 	 */
 	private onTabContextMenu(tab: TabItem): void {
+		this.plugin.menuManager.flush();
+
 		// Change icon
 		this.plugin.menuManager.addItemAfter('close', item => item
 			.setTitle(STRINGS.menu.changeIcon)
@@ -166,6 +168,8 @@ export default class TabIconManager extends IconManager {
 	 * Add custom items to a file tab menu.
 	 */
 	private onFileContextMenu(file: FileItem): void {
+		this.plugin.menuManager.flush();
+
 		// Change icon
 		this.plugin.menuManager.addItemAfter('close', item => item
 			.setTitle(STRINGS.menu.changeIcon)
