@@ -79,10 +79,10 @@ interface IconicSettings {
 	maxSearchResults: number;
 	colorPicker1: string;
 	colorPicker2: string;
-	uncolorHover: boolean,
-	uncolorDrag: boolean,
-	uncolorSelect: boolean,
-	uncolorQuick: boolean,
+	uncolorHover: boolean;
+	uncolorDrag: boolean;
+	uncolorSelect: boolean;
+	uncolorQuick: boolean;
 	rememberDeletedItems: boolean;
 	dialogState: {
 		iconMode: boolean;
@@ -199,7 +199,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
-		// Toggle bigger icons
+		// COMMAND: Toggle bigger icons
 		this.commands.push(this.addCommand({
 			id: 'toggle-bigger-icons',
 			name: STRINGS.commands.toggleBiggerIcons,
@@ -220,7 +220,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
-		// Toggle clickable icons
+		// COMMAND: Toggle clickable icons
 		this.commands.push(this.addCommand({
 			id: 'toggle-clickable-icons',
 			name: Platform.isDesktop ? STRINGS.commands.toggleClickableIcons.desktop : STRINGS.commands.toggleClickableIcons.mobile,
@@ -242,7 +242,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
-		// Toggle all file icons
+		// COMMAND: Toggle all file icons
 		this.commands.push(this.addCommand({
 			id: 'toggle-all-file-icons',
 			name: STRINGS.commands.toggleAllFileIcons,
@@ -254,7 +254,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
-		// Toggle all folder icons
+		// COMMAND: Toggle all folder icons
 		this.commands.push(this.addCommand({
 			id: 'toggle-all-folder-icons',
 			name: STRINGS.commands.toggleAllFolderIcons,
@@ -267,7 +267,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
-		// Toggle minimal folder icons
+		// COMMAND: Toggle minimal folder icons
 		this.commands.push(this.addCommand({
 			id: 'toggle-minimal.folder-icons',
 			name: STRINGS.commands.toggleMinimalFolderIcons,
@@ -280,7 +280,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
-		// Toggle bigger search results
+		// COMMAND: Toggle bigger search results
 		this.commands.push(this.addCommand({
 			id: 'toggle-bigger-search-results',
 			name: STRINGS.commands.toggleBiggerSearchResults,
@@ -301,7 +301,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
-		// Change icon of the current file
+		// COMMAND: Change icon of the current file
 		this.addCommand({
 			id: 'change-icon-current-file',
 			name: STRINGS.commands.changeIconCurrentFile,
