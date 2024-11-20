@@ -159,7 +159,7 @@ export default class Strings {
 		},
 		uncolorQuick: {
 			name: 'Colorless ribbon button',
-			desc: 'Disable icon color for the quick access ribbon button on mobile.'
+			desc: 'Disable icon color for the quick access ribbon button on mobile.',
 		},
 		rememberDeletedItems: {
 			name: 'Remember icons of deleted items',

@@ -1910,5 +1910,5 @@ export default new Map<string, string>([
 	['🇿🇼', 'Flag: Zimbabwe'],
 	['🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Flag: England'],
 	['🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'Flag: Scotland'],
-	['🏴󠁧󠁢󠁷󠁬󠁳󠁿', 'Flag: Wales']
+	['🏴󠁧󠁢󠁷󠁬󠁳󠁿', 'Flag: Wales'],
 ]);
