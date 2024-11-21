@@ -88,13 +88,13 @@ interface IconicSettings {
 		iconMode: boolean;
 		emojiMode: boolean;
 	},
-	appIcons: { [appItemId: string]: { icon?: string, color?: string } };
-	tabIcons: { [tabId: string]: { icon?: string, color?: string } };
-	fileIcons: { [fileId: string]: { icon?: string, color?: string, unsynced?: string[] } };
-	bookmarkIcons: { [groupId: string]: { icon?: string, color?: string } };
-	tagIcons: { [tagId: string]: { icon?: string, color?: string } };
-	propertyIcons: { [propId: string]: { icon?: string, color?: string } };
-	ribbonIcons: { [ribbonItemId: string]: { icon?: string, color?: string } };
+	appIcons: Record<string, { icon?: string, color?: string }>;
+	tabIcons: Record<string, { icon?: string, color?: string }>;
+	fileIcons: Record<string, { icon?: string, color?: string, unsynced?: string[] }>;
+	bookmarkIcons: Record<string, { icon?: string, color?: string }>;
+	tagIcons: Record<string, { icon?: string, color?: string }>;
+	propertyIcons: Record<string, { icon?: string, color?: string }>;
+	ribbonIcons: Record<string, { icon?: string, color?: string }>;
 }
 
 const DEFAULT_SETTINGS: IconicSettings = {
