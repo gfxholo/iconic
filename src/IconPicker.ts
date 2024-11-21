@@ -206,7 +206,7 @@ export default class IconPicker extends Modal {
 	onOpen(): void {
 		const { dialogState } = this.plugin.settings;
 		this.containerEl.addClass('mod-confirmation');
-		this.modalEl.addClass('iconic-modal');
+		this.modalEl.addClass('iconic-icon-picker');
 		this.setTitle(this.titleText);
 
 		// Item name
