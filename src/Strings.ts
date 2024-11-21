@@ -18,6 +18,17 @@ export default class Strings {
 		resetColor: 'Reset color',
 		resetColors: 'Reset {#} colors',
 	};
+	static rulePicker = {
+		selectPage: 'Select a page',
+		fileRules: 'File rules',
+		folderRules: 'Folder rules',
+		rules: 'Rules',
+		addRule: 'Add rule',
+		editRule: 'Edit rule',
+		removeRule: 'Remove rule',
+		untitledRule: 'Untitled rule',
+		drag: 'Drag to rearrange',
+	};
 	static iconPicker = {
 		changeIcon: 'Change icon',
 		changeIcons: 'Change {#} icons',
@@ -76,8 +87,11 @@ export default class Strings {
 		properties: 'Properties',
 		ribbonItem: 'Ribbon command',
 		ribbonItems: 'Ribbon commands',
+		rule: 'Rule',
+		rules: 'Rules',
 	};
 	static commands = {
+		openRulebook: 'Open rulebook',
 		toggleBiggerIcons: 'Toggle bigger icons',
 		toggleClickableIcons: {
 			desktop: 'Toggle clickable icons',
@@ -97,6 +111,11 @@ export default class Strings {
 			mobile: 'Mobile only',
 			list: 'List of colors',
 			rgb: 'RGB picker',
+		},
+		rulebook: {
+			name: 'Rulebook',
+			desc: 'Set up automated rules for file and folder icons.',
+			manage: 'Manage',
 		},
 		headingListsAndTabs: 'List & tab icons',
 		biggerIcons: {

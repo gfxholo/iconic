@@ -166,6 +166,7 @@ export default class IconPicker extends Modal {
 			case 'tag': categoryText = STRINGS.categories.tag; break;
 			case 'property': categoryText = STRINGS.categories.property; break;
 			case 'ribbon': categoryText = STRINGS.categories.ribbonItem; break;
+			case 'rule': categoryText = STRINGS.categories.rule; break;
 			default: categoryText = STRINGS.categories.item; break;
 		}
 		new IconPicker(plugin, title, categoryText, nameText, item.icon, item.color, callback, null).open();
@@ -195,6 +196,7 @@ export default class IconPicker extends Modal {
 			case 'tag': categoryText = STRINGS.categories.tags; break;
 			case 'property': categoryText = STRINGS.categories.properties; break;
 			case 'ribbon': categoryText = STRINGS.categories.ribbonItems; break;
+			case 'rule': categoryText = STRINGS.categories.rules; break;
 			default: categoryText = STRINGS.categories.items; break;
 		}
 		new IconPicker(plugin, title, categoryText, nameText, everyIcon, everyColor, null, multiCallback).open();

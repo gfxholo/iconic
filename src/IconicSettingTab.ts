@@ -1,5 +1,6 @@
 import { ExtraButtonComponent, Platform, PluginSettingTab, Setting } from 'obsidian';
 import IconicPlugin, { STRINGS } from './IconicPlugin';
+import RulePicker from './RulePicker';
 
 /**
  * Exposes UI settings for the plugin.
@@ -25,6 +26,19 @@ export default class IconicSettingTab extends PluginSettingTab {
 	 */
 	display(): void {
 		this.containerEl.empty();
+
+		// Rules
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.rulebook.name)
+			.setDesc(STRINGS.settings.rulebook.desc)
+			.addButton(button => { button
+				.setButtonText(STRINGS.settings.rulebook.manage)
+				.onClick(() => {
+					// @ts-expect-error (Private API)
+					this.app.setting.close();
+					RulePicker.open(this.plugin);
+				});
+			});
 
 		// HEADING: Lists & tabs
 		new Setting(this.containerEl).setName(STRINGS.settings.headingListsAndTabs).setHeading();
@@ -76,7 +90,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.refreshIndicator(this.indicators.clickableIcons, value);
 					this.plugin.settings.clickableIcons = value;
 					this.plugin.saveSettings();
-					this.plugin.refreshIconManagers();
+					this.plugin.refreshManagers();
 					this.plugin.refreshBodyClasses();
 				});
 				this.refreshIndicator(this.indicators.clickableIcons, dropdown.getValue());

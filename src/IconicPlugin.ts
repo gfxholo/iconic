@@ -1,5 +1,7 @@
 import { Command, FileView, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceLeaf, getIconIds } from 'obsidian';
 import IconicSettingTab from './IconicSettingTab';
+import MenuManager from './MenuManager';
+import RuleManager, { RulePage } from './RuleManager';
 import AppIconManager from './AppIconManager';
 import TabIconManager from './TabIconManager';
 import FileIconManager from './FileIconManager';
@@ -8,10 +10,10 @@ import TagIconManager from './TagIconManager';
 import PropertyIconManager from './PropertyIconManager';
 import EditorIconManager from './EditorIconManager';
 import RibbonIconManager from './RibbonIconManager';
-import MenuManager from './MenuManager';
 import EMOJIS from './Emojis';
 import STRINGS from './Strings';
 import IconPicker from './IconPicker';
+import RulePicker from './RulePicker';
 
 export const ICONS = new Map<string, string>();
 export { EMOJIS };
@@ -35,7 +37,7 @@ export interface Icon {
 export interface Item extends Icon {
 	id: string;
 	name: string;
-	category: 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'tag' | 'property' | 'ribbon';
+	category: 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'tag' | 'property' | 'ribbon' | 'rule';
 	iconDefault: string | null;
 }
 export type AppItem = Item;
@@ -87,6 +89,7 @@ interface IconicSettings {
 	dialogState: {
 		iconMode: boolean;
 		emojiMode: boolean;
+		rulePage: RulePage;
 	},
 	appIcons: Record<string, { icon?: string, color?: string }>;
 	tabIcons: Record<string, { icon?: string, color?: string }>;
@@ -95,6 +98,20 @@ interface IconicSettings {
 	tagIcons: Record<string, { icon?: string, color?: string }>;
 	propertyIcons: Record<string, { icon?: string, color?: string }>;
 	ribbonIcons: Record<string, { icon?: string, color?: string }>;
+	fileRules: Array<{
+		id?: string,
+		name?: string,
+		icon?: string,
+		color?: string,
+		enabled?: boolean,
+	}>;
+	folderRules: Array<{
+		id?: string,
+		name?: string,
+		icon?: string,
+		color?: string,
+		enabled?: boolean,
+	}>;
 }
 
 const DEFAULT_SETTINGS: IconicSettings = {
@@ -116,6 +133,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	dialogState: {
 		iconMode: true,
 		emojiMode: false,
+		rulePage: 'file',
 	},
 	appIcons: {},
 	tabIcons: {},
@@ -124,6 +142,8 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	tagIcons: {},
 	propertyIcons: {},
 	ribbonIcons: {},
+	fileRules: [],
+	folderRules: [],
 }
 
 /**
@@ -132,6 +152,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 export default class IconicPlugin extends Plugin {
 	settings: IconicSettings;
 	menuManager: MenuManager;
+	ruleManager: RuleManager;
 	appIconManager?: AppIconManager;
 	tabIconManager?: TabIconManager;
 	fileIconManager?: FileIconManager;
@@ -170,12 +191,12 @@ export default class IconicPlugin extends Plugin {
 			// Populate ICONS map
 			.forEach(([id, name]) => ICONS.set(id, name));
 			
-			this.startIconManagers();
+			this.startManagers();
 			this.refreshBodyClasses();
 		});
 
 		this.registerEvent(this.app.workspace.on('css-change', () => {
-			this.refreshIconManagers();
+			this.refreshManagers();
 			this.refreshBodyClasses();
 		}));
 
@@ -198,6 +219,20 @@ export default class IconicPlugin extends Plugin {
 				this.bookmarkIconManager?.refreshIcons();
 			}
 		}));
+
+		// RIBBON: Open rulebook
+		this.addRibbonIcon(
+			'lucide-book-image',
+			STRINGS.commands.openRulebook,
+			() => RulePicker.open(this)
+		);
+
+		// COMMAND: Open rulebook
+		this.addCommand({
+			id: 'open-rulebook',
+			name: STRINGS.commands.openRulebook,
+			callback: () => RulePicker.open(this),
+		});
 
 		// COMMAND: Toggle bigger icons
 		this.commands.push(this.addCommand({
@@ -237,7 +272,7 @@ export default class IconicPlugin extends Plugin {
 					else if (this.settings.clickableIcons === 'off') this.settings.clickableIcons = 'mobile';
 				}
 				this.saveSettings();
-				this.refreshIconManagers();
+				this.refreshManagers();
 				this.refreshBodyClasses();
 			}
 		}));
@@ -327,15 +362,16 @@ export default class IconicPlugin extends Plugin {
 	 */
 	async onExternalSettingsChange(): Promise<any> {
 		await this.loadSettings();
-		this.refreshIconManagers();
+		this.refreshManagers();
 		this.refreshBodyClasses();
 	}
 
 	/**
-	 * Initialize all icon managers.
+	 * Initialize all manager instances.
 	 */
-	private startIconManagers(): void {
+	private startManagers(): void {
 		this.menuManager = new MenuManager();
+		this.ruleManager = new RuleManager(this);
 		try { this.appIconManager = new AppIconManager(this) } catch (e) { console.error(e) }
 		try { this.tabIconManager = new TabIconManager(this) } catch (e) { console.error(e) }
 		try { this.fileIconManager = new FileIconManager(this) } catch (e) { console.error(e) }
@@ -347,9 +383,9 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
-	 * Refresh all icon managers.
+	 * Refresh all manager instances.
 	 */
-	refreshIconManagers(): void {
+	refreshManagers(): void {
 		this.appIconManager?.refreshIcons();
 		this.tabIconManager?.refreshIcons();
 		this.fileIconManager?.refreshIcons();
