@@ -103,6 +103,12 @@ interface IconicSettings {
 		name?: string,
 		icon?: string,
 		color?: string,
+		match?: string,
+		conditions?: Array<{
+			source?: string,
+			operator?: string,
+			value?: string,
+		}>,
 		enabled?: boolean,
 	}>;
 	folderRules: Array<{
@@ -110,6 +116,12 @@ interface IconicSettings {
 		name?: string,
 		icon?: string,
 		color?: string,
+		match?: string,
+		conditions?: Array<{
+			source?: string,
+			operator?: string,
+			value?: string,
+		}>,
 		enabled?: boolean,
 	}>;
 }
@@ -641,7 +653,7 @@ export default class IconicPlugin extends Plugin {
 	/**
 	 * Split a filepath into its hierarchical components.
 	 */
-	private splitFilePath(fileId = ''): {
+	splitFilePath(fileId = ''): {
 		path: string      // Folder tree + Filename
 		tree: string      // Folder tree only
 		filename: string  // Name.Extension

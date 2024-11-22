@@ -1,6 +1,7 @@
-import { Modal, Setting } from 'obsidian';
+import { ExtraButtonComponent, Modal, Setting, ToggleComponent } from 'obsidian';
 import IconicPlugin, { Icon, Item, STRINGS } from './IconicPlugin';
 import { RulePage, RuleItem } from './RuleManager';
+import RuleEditor from './RuleEditor';
 import IconManager from './IconManager';
 import IconPicker from './IconPicker';
 import ColorUtils from './ColorUtils';
@@ -196,6 +197,10 @@ class RuleSetting extends Setting {
 		super(containerEl);
 		this.settingEl.addClass('iconic-rule');
 
+		// Components
+		let iconButton: ExtraButtonComponent;
+		let ruleToggle: ToggleComponent;
+
 		// BUTTON: Rule icon
 		this.addExtraButton(button => { button
 			.setTooltip(STRINGS.iconPicker.changeIcon)
@@ -214,6 +219,7 @@ class RuleSetting extends Setting {
 			}, button.extraSettingsEl);
 			button.extraSettingsEl.addClass('iconic-rule-icon');
 			this.settingEl.prepend(button.extraSettingsEl); // Move button to left side
+			iconButton = button;
 		});
 
 		// FIELD: Rule name
@@ -239,7 +245,22 @@ class RuleSetting extends Setting {
 		// BUTTON: Edit rule
 		this.addExtraButton(button => { button
 			.setIcon('lucide-settings')
-			.setTooltip(STRINGS.rulePicker.editRule);
+			.setTooltip(STRINGS.rulePicker.editRule)
+			.onClick(() => RuleEditor.open(plugin, page, rule, newRule => {
+				if (newRule) {
+					rule = newRule;
+					this.setName(newRule.name);
+					iconManager.refreshIcon({
+						icon: newRule.icon ?? plugin.ruleManager.getPageIcon(page),
+						color: newRule.color,
+					}, iconButton.extraSettingsEl);
+					ruleToggle.setValue(newRule.enabled);
+					plugin.ruleManager.saveRule(page, newRule);
+				} else {
+					this.settingEl.remove();
+					plugin.ruleManager.deleteRule(page, rule.id);
+				}
+			}));
 		});
 
 		// TOGGLE: Enable/disable rule
@@ -249,6 +270,7 @@ class RuleSetting extends Setting {
 				rule.enabled = value;
 				plugin.ruleManager.saveRule(page, rule);
 			});
+			ruleToggle = toggle;
 		});
 
 		// BUTTON: Drag handle

@@ -205,6 +205,46 @@ a.tag {
 	justify-content: flex-start;
 }
 
+/* Rule editor */
+.is-mobile .mod-confirmation > .modal.iconic-rule-editor {
+	background-color: var(--modal-background);
+}
+.iconic-rule-editor .setting-item:first-child input[type="text"] { width: 100%; }
+.iconic-condition input[type="time"] {
+	border: var(--input-border-width) solid var(--background-modifier-border);
+	border-radius: var(--input-radius);
+	padding: var(--size-4-1) var(--size-4-2);
+	background: var(--background-modifier-form-field);
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+	font-family: inherit;
+}
+.iconic-condition > .setting-item-control > select.dropdown {
+	width: 0;
+	flex: 1 1 fit-content;
+	height: var(--input-height);
+}
+.iconic-condition > .setting-item-control > input {
+	width: 0;
+	flex: 1 1 fit-content;
+}
+.iconic-condition .iconic-control-column > input { height: var(--input-height); }
+.iconic-condition .iconic-control-column {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-2);
+	width: 100%;
+}
+.iconic-condition .iconic-dropdown-row {
+	display: flex;
+	flex-direction: row;
+	gap: var(--size-4-2);
+	width: 100%;
+}
+.is-phone .iconic-condition input {
+	text-align: center;
+}
+
 /* Indicators */
 .iconic-indicator { pointer-events: none; }
 

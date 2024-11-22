@@ -6,7 +6,14 @@ export type RulePage = 'file' | 'folder';
 
 export interface RuleItem extends Item {
 	category: 'rule';
+	match: 'all' | 'any' | 'none';
+	conditions: ConditionItem[];
 	enabled: boolean;
+}
+export interface ConditionItem {
+	source: string;
+	operator: string;
+	value: string;
 }
 
 /**
@@ -74,6 +81,8 @@ export default class RuleManager {
 			iconDefault: 'lucide-file',
 			icon: ruleBase.icon ?? null,
 			color: ruleBase.color ?? null,
+			match: ruleBase.match ?? 'all',
+			conditions: ruleBase.conditions ?? [],
 			enabled: ruleBase.enabled ?? false,
 		}
 	}
@@ -106,6 +115,8 @@ export default class RuleManager {
 			iconDefault: null,
 			icon: null,
 			color: null,
+			match: 'all',
+			conditions: [{ source: 'name', operator: 'contains', value: '' }],
 			enabled: true,
 		}
 		this.saveRule(page, newRule);
@@ -129,6 +140,18 @@ export default class RuleManager {
 		else delete ruleBase.icon;
 		if (newRule.color) ruleBase.color = newRule.color;
 		else delete ruleBase.color;
+		if (newRule.match) ruleBase.match = newRule.match;
+		else delete ruleBase.match;
+		if (newRule.conditions.length > 0) {
+			ruleBase.conditions = newRule.conditions.map(({ source, operator, value }) => {
+				const conditionBase: any = {};
+				if (source) conditionBase.source = source;
+				if (operator) conditionBase.operator = operator;
+				if (value) conditionBase.value = value;
+				return conditionBase;
+			});
+		}
+		else delete ruleBase.conditions;
 		if (typeof newRule.enabled === 'boolean') ruleBase.enabled = newRule.enabled;
 		else delete ruleBase.enabled;
 
