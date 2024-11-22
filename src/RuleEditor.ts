@@ -1,6 +1,7 @@
 import { ButtonComponent, DropdownComponent, ExtraButtonComponent, Modal, Platform, Setting, TextComponent } from 'obsidian';
-import IconicPlugin, { Icon, Item, STRINGS } from './IconicPlugin';
+import IconicPlugin, { Icon, Item, FileItem, STRINGS } from './IconicPlugin';
 import { RulePage, RuleItem, ConditionItem } from './RuleManager';
+import RuleChecker from './RuleChecker';
 import IconManager from './IconManager';
 import IconPicker from './IconPicker';
 import ColorUtils from './ColorUtils';
@@ -508,11 +509,13 @@ export default class RuleEditor extends Modal {
 	private readonly page: RulePage;
 	private readonly rule: RuleItem;
 	private readonly callback: RuleEditorCallback | null;
+	private matches: FileItem[] = [];
 
 	// Components
 	private readonly condEls: HTMLElement[] = [];
 	private nameField: TextComponent;
 	private addCondSetting: Setting;
+	private matchesButton: ButtonComponent;
 
 	private constructor(plugin: IconicPlugin, page: RulePage, rule: RuleItem, callback: RuleEditorCallback | null) {
 		super(plugin.app);
@@ -601,6 +604,7 @@ export default class RuleEditor extends Modal {
 					buttonEls.forEach(buttonEl => buttonEl.removeClass('mod-cta'));
 					button.buttonEl.addClass('mod-cta');
 					this.rule.match = 'all';
+					this.updateMatchesButton();
 				});
 				buttonEls.push(button.buttonEl);
 			})
@@ -612,6 +616,7 @@ export default class RuleEditor extends Modal {
 					buttonEls.forEach(buttonEl => buttonEl.removeClass('mod-cta'));
 					button.buttonEl.addClass('mod-cta');
 					this.rule.match = 'any';
+					this.updateMatchesButton();
 				});
 				buttonEls.push(button.buttonEl);
 			})
@@ -623,6 +628,7 @@ export default class RuleEditor extends Modal {
 					buttonEls.forEach(buttonEl => buttonEl.removeClass('mod-cta'));
 					button.buttonEl.addClass('mod-cta');
 					this.rule.match = 'none';
+					this.updateMatchesButton();
 				});
 				buttonEls.push(button.buttonEl);
 			});
@@ -659,6 +665,15 @@ export default class RuleEditor extends Modal {
 				: ['mod-secondary', 'mod-destructive']
 			);
 
+		// [Matches]
+		this.matchesButton = new ButtonComponent(buttonRowEl ? buttonRowEl : buttonContainerEl)
+			.setButtonText(STRINGS.ruleEditor.buttonNoMatches)
+			.onClick(() => RuleChecker.open(this.plugin, this.page, this.matches))
+			.setDisabled(this.rule.conditions === null)
+			.setTooltip(this.rule.conditions === null ? 'No conditions added' : '',
+				{ placement: 'top', delay: 100 }
+			);
+
 		// [Cancel]
 		new ButtonComponent(Platform.isPhone ? this.modalEl : buttonContainerEl)
 			.setButtonText(STRINGS.iconPicker.cancel)
@@ -676,6 +691,8 @@ export default class RuleEditor extends Modal {
 				? ['modal-nav-action', 'mod-cta']
 				: ['mod-cta']
 			);
+
+		this.updateMatchesButton();
 	}
 
 	/**
@@ -687,6 +704,7 @@ export default class RuleEditor extends Modal {
 			this.plugin,
 			this.page,
 			condition,
+			() => this.updateMatchesButton(),
 			() => this.removeCondition(condition),
 		);
 		this.condEls.push(condSetting.settingEl);
@@ -694,6 +712,7 @@ export default class RuleEditor extends Modal {
 		if (this.addCondSetting) {
 			condSetting.settingEl.insertAdjacentElement('afterend', this.addCondSetting.settingEl);
 		}
+		this.updateMatchesButton();
 	}
 
 	/**
@@ -716,6 +735,43 @@ export default class RuleEditor extends Modal {
 	 */
 	private removeCondition(condition: ConditionItem): void {
 		this.rule.conditions.remove(condition);
+		this.updateMatchesButton();
+	}
+
+	/**
+	 * Update number displayed on the matches button.
+	 */
+	private async updateMatchesButton(): Promise<void> {
+		if (!this.matchesButton) return;
+
+		// Show a loading spinner if check takes longer than 100ms
+		const timeoutId = setTimeout(() => {
+			// @ts-expect-error (Private API)
+			this.matchesButton.setLoading(true);
+			this.matchesButton.setDisabled(true);
+		}, 100);
+
+		// Update matches
+		switch (this.page) {
+			case 'file': this.matches = this.plugin.ruleManager.judgeFiles(this.rule, new Date(), true); break;
+			case 'folder': this.matches = this.plugin.ruleManager.judgeFolders(this.rule, new Date(), true); break;
+		}
+		clearTimeout(timeoutId);
+
+		// Update button
+		switch (this.matches.length) {
+			case 0: this.matchesButton.setButtonText(STRINGS.ruleEditor.buttonNoMatches); break;
+			case 1: this.matchesButton.setButtonText(STRINGS.ruleEditor.buttonMatch); break;
+			default: {
+				this.matchesButton.setButtonText(
+					STRINGS.ruleEditor.buttonMatches.replace('{#}', this.matches.length.toString())
+				);
+				break;
+			}
+		}
+		// @ts-expect-error (Private API)
+		this.matchesButton.setLoading(false);
+		this.matchesButton.setDisabled(this.matches.length === 0);
 	}
 
 	/**
@@ -755,6 +811,7 @@ class ConditionSetting extends Setting {
 	private valOptions: DropdownOptions | undefined;
 
 	// Callbacks
+	private readonly onChange: () => void;
 	private readonly onRemove: () => void;
 
 	constructor(
@@ -762,12 +819,14 @@ class ConditionSetting extends Setting {
 		plugin: IconicPlugin,
 		page: RulePage,
 		condition: ConditionItem,
+		onChange: () => void,
 		onRemove: () => void,
 	) {
 		super(containerEl);
 		this.plugin = plugin;
 		this.page = page;
 		this.condition = condition;
+		this.onChange = onChange;
 		this.onRemove = onRemove;
 		this.settingEl.addClass('iconic-condition');
 		this.infoEl.remove();
@@ -811,11 +870,17 @@ class ConditionSetting extends Setting {
 
 		// FIELD: Value
 		this.valField = new TextComponent(ctrlContainer)
-			.onChange(value => this.condition.value = value);
+			.onChange(value => {
+				this.condition.value = value;
+				this.onChange();
+			});
 
 		// DROPDOWN: Value
 		this.valDropdown = new DropdownComponent(ctrlContainer)
-			.onChange(value => this.condition.value = value);
+			.onChange(value => {
+				this.condition.value = value;
+				this.onChange();
+			});
 
 		// BUTTON: Drag handle
 		this.addExtraButton(button => { button
@@ -993,5 +1058,7 @@ class ConditionSetting extends Setting {
 		} else {
 			this.valDropdown.selectEl.hide();
 		}
+
+		this.onChange();
 	}
 }

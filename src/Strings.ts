@@ -37,6 +37,9 @@ export default class Strings {
 		resetCondition: 'Reset condition',
 		removeCondition: 'Remove condition',
 		removeRule: 'Remove rule',
+		buttonMatch: '1 match',
+		buttonMatches: '{#} matches',
+		buttonNoMatches: 'No matches',
 		enterName: 'Give this rule a name',
 		enterValue: 'Enter a value',
 		enterRegex: 'Enter a regex',
@@ -193,6 +196,14 @@ export default class Strings {
 			11: 'November',
 			12: 'December',
 		},
+	};
+	static ruleChecker = {
+		fileMatch: '1 matching file',
+		folderMatch: '1 matching folder',
+		filesMatch: '{#} matching files',
+		foldersMatch: '{#} matching folders',
+		highlight: 'Highlight',
+		headingMatches: 'Matches',
 	};
 	static iconPicker = {
 		changeIcon: 'Change icon',

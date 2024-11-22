@@ -245,6 +245,24 @@ a.tag {
 	text-align: center;
 }
 
+/* Rule checker */
+.is-mobile .mod-confirmation > .modal.iconic-rule-checker {
+	background-color: var(--modal-background);
+}
+.iconic-matches {
+	padding-top: 0.75em;
+	border-top: 1px solid var(--background-modifier-border);
+	margin: 0;
+}
+.iconic-match {
+	padding: var(--size-4-1);
+}
+.iconic-highlight-tree .iconic-match-tree,
+.iconic-highlight-name .iconic-match-name,
+.iconic-highlight-extension .iconic-match-extension {
+	color: var(--text-accent);
+}
+
 /* Indicators */
 .iconic-indicator { pointer-events: none; }
 
