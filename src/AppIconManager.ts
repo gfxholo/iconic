@@ -199,7 +199,7 @@ export default class AppIconManager extends IconManager {
 	 * When user context-clicks an app item, open a menu or add custom items to the existing menu.
 	 */
 	private onContextMenu(appItemId: AppItemId, event: MouseEvent): void {
-		navigator?.vibrate(100); // Might not be supported on iOS
+		navigator?.vibrate(100); // Not supported on iOS
 
 		this.plugin.menuManager.closeAndFlush();
 		const appItem = this.plugin.getAppItem(appItemId);

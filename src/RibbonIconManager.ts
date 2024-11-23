@@ -155,7 +155,7 @@ export default class RibbonIconManager extends IconManager {
 	 * When user context-clicks a ribbon command, open a menu.
 	 */
 	private onContextMenu(ribbonItemId: string, event: MouseEvent): void {
-		navigator.vibrate(100); // Might not be supported on iOS
+		navigator?.vibrate(100); // Not supported on iOS
 		this.plugin.menuManager.closeAndFlush();
 		const ribbonItem = this.plugin.getRibbonItem(ribbonItemId);
 
