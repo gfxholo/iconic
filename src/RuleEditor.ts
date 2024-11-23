@@ -702,9 +702,12 @@ export default class RuleEditor extends Modal {
 		const condSetting = new ConditionSetting(
 			this.contentEl,
 			this.plugin,
+			this.iconManager,
 			this.page,
 			condition,
+			this.condEls,
 			() => this.updateMatchesButton(),
+			(toIndex) => this.moveCondition(condition, toIndex),
 			() => this.removeCondition(condition),
 		);
 		this.condEls.push(condSetting.settingEl);
@@ -728,6 +731,16 @@ export default class RuleEditor extends Modal {
 		if (this.addCondSetting) {
 			this.addCondSetting.settingEl.scrollIntoView({ behavior: 'smooth' });
 		}
+	}
+
+	/**
+	 * Move a condition within the rule.
+	 */
+	private moveCondition(condition: ConditionItem, toIndex: number): void {
+		const index = this.rule.conditions.indexOf(condition);
+		if (index < 0) return;
+		this.rule.conditions.splice(index, 1);
+		this.rule.conditions.splice(toIndex, 0, condition);
 	}
 
 	/**
@@ -791,6 +804,10 @@ export default class RuleEditor extends Modal {
 		this.contentEl.empty();
 		this.iconManager.stopEventListeners();
 		this.iconManager.stopMutationObservers();
+		// Clean up any drag ghosts left hanging when dialog is closed
+		for (const ghostEl of activeDocument.body.findAll(':scope > .drag-reorder-ghost')) {
+			ghostEl.remove();
+		}
 	}
 }
 
@@ -803,30 +820,38 @@ class ConditionSetting extends Setting {
 	private readonly condition: ConditionItem;
 
 	// Components
+	private readonly condEls: HTMLElement[];
 	private removeButton: ExtraButtonComponent;
 	private srcDropdown: DropdownComponent;
 	private opDropdown: DropdownComponent;
 	private valField: TextComponent;
 	private valDropdown: DropdownComponent;
 	private valOptions: DropdownOptions | undefined;
+	private ghostCondEl: HTMLElement | undefined;
 
 	// Callbacks
 	private readonly onChange: () => void;
+	private readonly onMove: (toIndex: number) => void;
 	private readonly onRemove: () => void;
 
 	constructor(
 		containerEl: HTMLElement,
 		plugin: IconicPlugin,
+		iconManager: RuleEditorManager,
 		page: RulePage,
 		condition: ConditionItem,
+		condEls: HTMLElement[],
 		onChange: () => void,
+		onMove: (toIndex: number) => void,
 		onRemove: () => void,
 	) {
 		super(containerEl);
 		this.plugin = plugin;
 		this.page = page;
 		this.condition = condition;
+		this.condEls = condEls;
 		this.onChange = onChange;
+		this.onMove = onMove;
 		this.onRemove = onRemove;
 		this.settingEl.addClass('iconic-condition');
 		this.infoEl.remove();
@@ -887,6 +912,32 @@ class ConditionSetting extends Setting {
 			.setIcon('lucide-menu')
 			.setTooltip(STRINGS.rulePicker.drag)
 			.extraSettingsEl.addClass('iconic-drag');
+
+			// Drag & drop (mouse)
+			iconManager.setEventListener(button.extraSettingsEl, 'pointerdown', () => {
+				this.settingEl.draggable = true;
+			});
+			iconManager.setEventListener(this.settingEl, 'dragstart', event => {
+				this.onDragStart(event.clientX, event.clientY, button.extraSettingsEl);
+			});
+			iconManager.setEventListener(this.settingEl, 'drag', event => {
+				this.onDrag(event.clientX, event.clientY, button.extraSettingsEl);
+			});
+			iconManager.setEventListener(this.settingEl, 'dragend', () => this.onDragEnd());
+
+			// Drag & drop (multi-touch)
+			iconManager.setEventListener(button.extraSettingsEl, 'touchstart', event => {
+				event.preventDefault(); // Prevent dragstart
+				const touch = event.targetTouches[0];
+				this.onDragStart(touch.clientX, touch.clientY, button.extraSettingsEl);
+			});
+			iconManager.setEventListener(button.extraSettingsEl, 'touchmove', event => {
+				event.preventDefault(); // Prevent scrolling
+				const touch = event.targetTouches[0];
+				this.onDrag(touch.clientX, touch.clientY, button.extraSettingsEl);
+			});
+			iconManager.setEventListener(button.extraSettingsEl, 'touchend', () => this.onDragEnd());
+			iconManager.setEventListener(button.extraSettingsEl, 'touchcancel', () => this.onDragEnd());
 		});
 
 		if (this.condition.source.startsWith('property:')) {
@@ -894,6 +945,68 @@ class ConditionSetting extends Setting {
 		} else {
 			this.refreshDropdowns();
 		}
+	}
+
+	private onDragStart(x: number, y: number, dragButtonEl: HTMLElement): void {
+		navigator?.vibrate(100); // Not supported on iOS
+		// Create drag ghost
+		this.ghostCondEl = activeDocument.body.createDiv({ cls: 'drag-reorder-ghost' });
+		this.ghostCondEl.setCssStyles({
+			width: this.settingEl.clientWidth + 'px',
+			height: this.settingEl.clientHeight + 'px',
+			left: x - this.settingEl.clientWidth + dragButtonEl.clientWidth / 2 + 'px',
+			top: y - this.settingEl.clientHeight / 2 + 'px',
+		});
+		this.ghostCondEl.appendChild(this.settingEl.cloneNode(true));
+		// Show correct values in ghost dropdowns
+		const ghostSelectEls = this.ghostCondEl.findAll('select') as HTMLSelectElement[];
+		if (ghostSelectEls[0]) ghostSelectEls[0].value = this.condition.source;
+		if (ghostSelectEls[1]) ghostSelectEls[1].value = this.condition.operator;
+		// Show drop zone effect
+		this.settingEl.addClass('drag-ghost-hidden');
+		// Hack to hide the browser-native drag ghost
+		this.settingEl.style.opacity = '0%';
+		activeWindow.requestAnimationFrame(() => this.settingEl.style.removeProperty('opacity'));
+	}
+
+	private onDrag(x: number, y: number, dragButtonEl: HTMLElement): void {
+		// Ignore initial (0, 0) event
+		if (x === 0 && y === 0) return;
+		// Update ghost position
+		this.ghostCondEl?.setCssStyles({
+			left: x - this.settingEl.clientWidth + dragButtonEl.clientWidth / 2 + 'px',
+			top: y - this.settingEl.clientHeight / 2 + 'px',
+		});
+		// Get position in list
+		const index = this.condEls.indexOf(this.settingEl);
+		// If ghost is dragged into condition above, swap the conditions
+		const prevCondEl = this.condEls[index - 1];
+		const prevOverdrag = prevCondEl?.clientHeight * 0.25 || 0;
+		if (prevCondEl && y < prevCondEl.getBoundingClientRect().bottom - prevOverdrag) {
+			navigator?.vibrate(100); // Not supported on iOS
+			prevCondEl.insertAdjacentElement('beforebegin', this.settingEl);
+			this.condEls.splice(index, 1);
+			this.condEls.splice(index - 1, 0, this.settingEl);
+		}
+		// If ghost is dragged into condition below, swap the conditions
+		const nextCondEl = this.condEls[index + 1];
+		const nextOverdrag = nextCondEl?.clientHeight * 0.25 || 0;
+		if (nextCondEl && y > nextCondEl.getBoundingClientRect().top + nextOverdrag) {
+			navigator?.vibrate(100); // Not supported on iOS
+			nextCondEl.insertAdjacentElement('afterend', this.settingEl);
+			this.condEls.splice(index, 1);
+			this.condEls.splice(index + 1, 0, this.settingEl);
+		}
+	}
+
+	private onDragEnd(): void {
+		this.ghostCondEl?.remove();
+		delete this.ghostCondEl;
+		this.settingEl.removeClass('drag-ghost-hidden');
+		this.settingEl.removeAttribute('draggable');
+		// Save condition position
+		const toIndex = this.condEls.indexOf(this.settingEl);
+		if (toIndex > -1) this.onMove(toIndex);
 	}
 
 	/**

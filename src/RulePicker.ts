@@ -156,6 +156,7 @@ export default class RulePicker extends Modal {
 			this.iconManager,
 			this.plugin.settings.dialogState.rulePage,
 			rule,
+			this.ruleEls,
 			isNewRule,
 		);
 		this.ruleEls.push(ruleSetting.settingEl);
@@ -177,7 +178,14 @@ export default class RulePicker extends Modal {
 	 * @override
 	 */
 	onClose(): void {
+		this.ruleEls.length = 0;
 		this.contentEl.empty();
+		this.iconManager.stopEventListeners();
+		this.iconManager.stopMutationObservers();
+		// Clean up any drag ghosts left hanging when dialog is closed
+		for (const ghostEl of activeDocument.body.findAll(':scope > .drag-reorder-ghost')) {
+			ghostEl.remove();
+		}
 		this.plugin.saveSettings(); // Save any changes to dialogState
 	}
 }
@@ -186,15 +194,28 @@ export default class RulePicker extends Modal {
  * Setting for displaying a rule item.
  */
 class RuleSetting extends Setting {
+	private readonly plugin: IconicPlugin;
+	private readonly page: RulePage;
+	private readonly rule: RuleItem;
+
+	// Components
+	private readonly ruleEls: HTMLElement[];
+	private ghostRuleEl: HTMLElement | undefined;
+
 	constructor(
 		containerEl: HTMLElement,
 		plugin: IconicPlugin,
 		iconManager: RulePickerManager,
 		page: RulePage,
 		rule: RuleItem,
+		ruleEls: HTMLElement[],
 		isNewRule = false,
 	) {
 		super(containerEl);
+		this.plugin = plugin;
+		this.page = page;
+		this.rule = rule;
+		this.ruleEls = ruleEls;
 		this.settingEl.addClass('iconic-rule');
 
 		// Components
@@ -278,7 +299,91 @@ class RuleSetting extends Setting {
 			.setIcon('lucide-menu')
 			.setTooltip(STRINGS.rulePicker.drag)
 			.extraSettingsEl.addClass('iconic-drag');
+
+			// Drag & drop (mouse)
+			iconManager.setEventListener(button.extraSettingsEl, 'pointerdown', () => {
+				this.settingEl.draggable = true;
+			});
+			iconManager.setEventListener(this.settingEl, 'dragstart', event => {
+				this.onDragStart(event.clientX, event.clientY, button.extraSettingsEl);
+			});
+			iconManager.setEventListener(this.settingEl, 'drag', event => {
+				this.onDrag(event.clientX, event.clientY, button.extraSettingsEl);
+			});
+			iconManager.setEventListener(this.settingEl, 'dragend', () => this.onDragEnd());
+
+			// Drag & drop (multi-touch)
+			iconManager.setEventListener(button.extraSettingsEl, 'touchstart', event => {
+				event.preventDefault(); // Prevent dragstart
+				const touch = event.targetTouches[0];
+				this.onDragStart(touch.clientX, touch.clientY, button.extraSettingsEl);
+			});
+			iconManager.setEventListener(button.extraSettingsEl, 'touchmove', event => {
+				event.preventDefault(); // Prevent scrolling
+				const touch = event.targetTouches[0];
+				this.onDrag(touch.clientX, touch.clientY, button.extraSettingsEl);
+			});
+			iconManager.setEventListener(button.extraSettingsEl, 'touchend', () => this.onDragEnd());
+			iconManager.setEventListener(button.extraSettingsEl, 'touchcancel', () => this.onDragEnd());
 		});
+	}
+
+	private onDragStart(x: number, y: number, dragButtonEl: HTMLElement): void {
+		navigator?.vibrate(100); // Not supported on iOS
+		// Create drag ghost
+		this.ghostRuleEl = activeDocument.body.createDiv({ cls: 'drag-reorder-ghost' });
+		this.ghostRuleEl.setCssStyles({
+			width: this.settingEl.clientWidth + 'px',
+			height: this.settingEl.clientHeight + 'px',
+			left: x - this.settingEl.clientWidth + dragButtonEl.clientWidth / 2 + 'px',
+			top: y - this.settingEl.clientHeight / 2 + 'px',
+		});
+		this.ghostRuleEl.appendChild(this.settingEl.cloneNode(true));
+		// Display drop zone effect
+		this.settingEl.addClass('drag-ghost-hidden');
+		// Hack to hide the browser-native drag ghost
+		this.settingEl.style.opacity = '0%';
+		activeWindow.requestAnimationFrame(() => this.settingEl.style.removeProperty('opacity'));
+	}
+
+	private onDrag(x: number, y: number, dragButtonEl: HTMLElement): void {
+		// Ignore initial (0, 0) event
+		if (x === 0 && y === 0) return;
+		// Update ghost position
+		this.ghostRuleEl?.setCssStyles({
+			left: x - this.settingEl.clientWidth + dragButtonEl.clientWidth / 2 + 'px',
+			top: y - this.settingEl.clientHeight / 2 + 'px',
+		});
+		// Get position in list
+		const index = this.ruleEls.indexOf(this.settingEl);
+		// If ghost is dragged into rule above, swap the rules
+		const prevRuleEl = this.ruleEls[index - 1];
+		const prevOverdrag = prevRuleEl?.clientHeight * 0.25 || 0;
+		if (prevRuleEl && y < prevRuleEl.getBoundingClientRect().bottom - prevOverdrag) {
+			navigator?.vibrate(100); // Not supported on iOS
+			prevRuleEl.insertAdjacentElement('beforebegin', this.settingEl);
+			this.ruleEls.splice(index, 1);
+			this.ruleEls.splice(index - 1, 0, this.settingEl);
+		}
+		// If ghost is dragged into rule below, swap the rules
+		const nextRuleEl = this.ruleEls[index + 1];
+		const nextOverdrag = nextRuleEl?.clientHeight * 0.25 || 0;
+		if (nextRuleEl && y > nextRuleEl.getBoundingClientRect().top + nextOverdrag) {
+			navigator?.vibrate(100); // Not supported on iOS
+			nextRuleEl.insertAdjacentElement('afterend', this.settingEl);
+			this.ruleEls.splice(index, 1);
+			this.ruleEls.splice(index + 1, 0, this.settingEl);
+		}
+	}
+
+	private onDragEnd(): void {
+		this.ghostRuleEl?.remove();
+		delete this.ghostRuleEl;
+		this.settingEl.removeClass('drag-ghost-hidden');
+		this.settingEl.removeAttribute('draggable');
+		// Save rule position
+		const toIndex = this.ruleEls.indexOf(this.settingEl);
+		if (toIndex > -1) this.plugin.ruleManager.moveRule(this.page, this.rule, toIndex);
 	}
 
 	/**

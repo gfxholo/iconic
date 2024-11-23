@@ -125,6 +125,21 @@ export default class RuleManager {
 	}
 
 	/**
+	 * Move rule within a given page.
+	 */
+	moveRule(page: RulePage, rule: RuleItem, toIndex: number): void {
+		const ruleBases = this.getRuleBases(page);
+		const ruleBase = ruleBases.find(ruleBase => ruleBase.id === rule.id);
+		if (!ruleBase) return;
+
+		const index = ruleBases.indexOf(ruleBase);
+		ruleBases.splice(index, 1);
+		ruleBases.splice(toIndex, 0, ruleBase);
+
+		this.plugin.saveSettings();
+	}
+
+	/**
 	 * Save rule to a given page.
 	 */
 	saveRule(page: RulePage, newRule: RuleItem): void {
