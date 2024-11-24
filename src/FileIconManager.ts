@@ -32,14 +32,20 @@ export default class FileIconManager extends IconManager {
 
 		this.stopMutationObserver(this.containerEl);
 		this.containerEl = leaf.view.containerEl.find(':scope > .nav-files-container > div');
-		this.setMutationObserver(this.containerEl, {
+		this.setMutationsObserver(this.containerEl, {
 			subtree: true,
 			childList: true,
-		}, mutation => {
-			for (const addedNode of mutation.addedNodes) {
-				if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
+			attributeFilter: ['data-path'],
+		}, mutations => {
+			for (const mutation of mutations) {
+				if (mutation.attributeName === 'data-path') {
 					this.refreshIcons();
 					return;
+				} else for (const addedNode of mutation.addedNodes) {
+					if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
+						this.refreshIcons();
+						return;
+					}
 				}
 			}
 		});
