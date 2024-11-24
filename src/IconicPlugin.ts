@@ -672,7 +672,7 @@ export default class IconicPlugin extends Plugin {
 		const [, tree = '', filename] = path.match(/^(.*\/)?(.*)$/) ?? [];
 		const extensionStart = filename.lastIndexOf('.');
 		const extension = filename.substring(extensionStart > -1 ? extensionStart + 1 : filename.length) || '';
-		const basename = filename.substring(0, extensionStart > -1 ? extensionStart : filename.length - 1) || '';
+		const basename = filename.substring(0, extensionStart > -1 ? extensionStart : filename.length) || '';
 
 		return { path, tree, filename, basename, extension, subpath };
 	}
