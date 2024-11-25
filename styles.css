@@ -35,7 +35,7 @@ body {
 	--icon-stroke: var(--icon-s-stroke-width);
 }
 .iconic-clickable-icons .mod-root .workspace-tab-header-inner-icon.iconic-icon:hover {
-	cursor: pointer;
+	cursor: var(--cursor-link);
 	filter: contrast(200%);
 }
 
@@ -76,7 +76,7 @@ body {
 	margin-inline-start: 3px;
 }
 .iconic-clickable-icons .tree-item-self > .iconic-icon:hover {
-	cursor: pointer;
+	cursor: var(--cursor-link);
 	filter: contrast(200%);
 }
 
@@ -107,7 +107,7 @@ a.tag {
 
 /* Properties editor */
 .iconic-clickable-icons .metadata-property-icon.iconic-icon:hover {
-	cursor: pointer;
+	cursor: var(--cursor-link);
 	filter: contrast(200%);
 }
 
@@ -116,7 +116,7 @@ a.tag {
 	--icon-size: var(--icon-l);
 }
 .mobile-option-setting-item-option-icon.iconic-icon {
-	cursor: pointer;
+	cursor: var(--cursor-link);
 }
 
 /* Icon picker */
