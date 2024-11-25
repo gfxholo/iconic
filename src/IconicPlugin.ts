@@ -646,7 +646,9 @@ export default class IconicPlugin extends Plugin {
 			iconDefault: unloading ? null : iconDefault,
 			icon: unloading ? null : fileIcon.icon ?? null,
 			color: unloading ? null : fileIcon.color ?? null,
-			items: tFile instanceof TFolder ? tFile.children.map(tChild => this.defineFileItem(tChild, tChild.path, unloading)) : null,
+			items: tFile instanceof TFolder
+				? tFile.children.map(tChild => this.defineFileItem(tChild, tChild.path, unloading))
+				: null,
 		}
 	}
 
