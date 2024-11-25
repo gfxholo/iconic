@@ -218,7 +218,7 @@ export default class Strings {
 		searchMix: 'Search icons / emojis...',
 		changeColor: 'Change color',
 		resetColor: 'Reset color',
-		remove: 'Remove',
+		removeIcon: 'Remove icon',
 		removeIcons: 'Remove {#} icons',
 		icons: 'Icons',
 		emojis: 'Emojis',

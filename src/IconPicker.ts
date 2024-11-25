@@ -336,7 +336,7 @@ export default class IconPicker extends Modal {
 		// [Remove]
 		if (this.icon !== null || this.color !== null) {
 			new ButtonComponent(buttonRowEl ?? buttonContainerEl)
-				.setButtonText(STRINGS.iconPicker.remove)
+				.setButtonText(STRINGS.iconPicker.removeIcon)
 				.onClick(() => this.closeAndSave(null, null))
 				.buttonEl.addClasses(Platform.isPhone
 					? ['mod-warning']
