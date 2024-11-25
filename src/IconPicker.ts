@@ -301,9 +301,9 @@ export default class IconPicker extends Modal {
 				event.preventDefault();
 			} else if (event.key === 'Delete' || event.key === 'Backspace') {
 				this.resetColor();
-			} else if (event.key == 'ArrowUp' || event.key === 'ArrowLeft') {
+			} else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
 				this.previousColor();
-			} else if (event.key == 'ArrowDown' || event.key === 'ArrowRight') {
+			} else if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
 				this.nextColor();
 			}
 		});
