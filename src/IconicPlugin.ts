@@ -541,7 +541,7 @@ export default class IconicPlugin extends Plugin {
 		const tabType = leaf.view.getViewType();
 		// @ts-expect-error (Private API)
 		const isActive = leaf.view === this.app.workspace.getActiveViewOfType(View) || leaf.tabHeaderEl?.hasClass('is-active');
-		const isRoot = leaf.parent?.parent === this.app.workspace.rootSplit;
+		const isRoot = leaf.getRoot() === this.app.workspace.rootSplit;
 		// @ts-expect-error (Private API)
 		const isStacked = leaf.parent?.isStacked === true;
 
