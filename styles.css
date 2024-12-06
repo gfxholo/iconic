@@ -123,6 +123,7 @@ a.tag {
 .is-mobile .mod-confirmation > .modal.iconic-icon-picker {
 	background-color: var(--modal-background);
 }
+.iconic-icon-picker .callout + .setting-item { border-top: none; }
 .iconic-icon-picker .setting-item-control input[type="color"] {
 	height: auto;
 	width: auto;
