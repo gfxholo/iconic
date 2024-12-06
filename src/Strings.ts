@@ -17,6 +17,7 @@ export default class Strings {
 		removeIcons: 'Remove {#} icons',
 		resetColor: 'Reset color',
 		resetColors: 'Reset {#} colors',
+		editRule: 'Edit rule...',
 	};
 	static rulePicker = {
 		selectPage: 'Select a page',

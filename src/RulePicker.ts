@@ -147,6 +147,23 @@ export default class RulePicker extends Modal {
 	}
 
 	/**
+	 * Refresh any icon managers influenced by the current page.
+	 */
+	private refreshPageManagers(): void {
+		switch (this.plugin.settings.dialogState.rulePage) {
+			case 'file': {
+				this.plugin.tabIconManager?.refreshIcons();
+				this.plugin.fileIconManager?.refreshIcons();
+				this.plugin.bookmarkIconManager?.refreshIcons();
+			}
+			case 'folder': {
+				this.plugin.fileIconManager?.refreshIcons();
+				this.plugin.bookmarkIconManager?.refreshIcons();
+			}
+		}
+	}
+
+	/**
 	 * Append a given rule to the page.
 	 */
 	private appendRule(rule: RuleItem, isNewRule?: boolean): void {
@@ -157,6 +174,7 @@ export default class RulePicker extends Modal {
 			this.plugin.settings.dialogState.rulePage,
 			rule,
 			this.ruleEls,
+			() => this.refreshPageManagers(),
 			isNewRule,
 		);
 		this.ruleEls.push(ruleSetting.settingEl);
@@ -202,6 +220,9 @@ class RuleSetting extends Setting {
 	private readonly ruleEls: HTMLElement[];
 	private ghostRuleEl: HTMLElement | undefined;
 
+	// Callbacks
+	private readonly onRulingChange: () => void;
+
 	constructor(
 		containerEl: HTMLElement,
 		plugin: IconicPlugin,
@@ -209,6 +230,7 @@ class RuleSetting extends Setting {
 		page: RulePage,
 		rule: RuleItem,
 		ruleEls: HTMLElement[],
+		onRulingChange: () => void,
 		isNewRule = false,
 	) {
 		super(containerEl);
@@ -216,6 +238,7 @@ class RuleSetting extends Setting {
 		this.page = page;
 		this.rule = rule;
 		this.ruleEls = ruleEls;
+		this.onRulingChange = onRulingChange;
 		this.settingEl.addClass('iconic-rule');
 
 		// Components
@@ -232,7 +255,8 @@ class RuleSetting extends Setting {
 				}, button.extraSettingsEl);
 				rule.icon = newIcon;
 				rule.color = newColor;
-				plugin.ruleManager.saveRule(page, rule);
+				const isRulingChanged = plugin.ruleManager.saveRule(page, rule);
+				if (isRulingChanged) onRulingChange();
 			}));
 			iconManager.refreshIcon({
 				icon: rule.icon ?? plugin.ruleManager.getPageIcon(page),
@@ -268,6 +292,7 @@ class RuleSetting extends Setting {
 			.setIcon('lucide-settings')
 			.setTooltip(STRINGS.rulePicker.editRule)
 			.onClick(() => RuleEditor.open(plugin, page, rule, newRule => {
+				let isRulingChanged;
 				if (newRule) {
 					rule = newRule;
 					this.setName(newRule.name);
@@ -276,11 +301,12 @@ class RuleSetting extends Setting {
 						color: newRule.color,
 					}, iconButton.extraSettingsEl);
 					ruleToggle.setValue(newRule.enabled);
-					plugin.ruleManager.saveRule(page, newRule);
+					isRulingChanged = plugin.ruleManager.saveRule(page, newRule);
 				} else {
 					this.settingEl.remove();
-					plugin.ruleManager.deleteRule(page, rule.id);
+					isRulingChanged = plugin.ruleManager.deleteRule(page, rule.id);
 				}
+				if (isRulingChanged) onRulingChange();
 			}));
 		});
 
@@ -289,7 +315,8 @@ class RuleSetting extends Setting {
 			.setValue(rule.enabled)
 			.onChange(value => {
 				rule.enabled = value;
-				plugin.ruleManager.saveRule(page, rule);
+				const isRulingChanged = plugin.ruleManager.saveRule(page, rule);
+				if (isRulingChanged) onRulingChange();
 			});
 			ruleToggle = toggle;
 		});

@@ -1,5 +1,6 @@
 import { Platform } from 'obsidian';
 import IconicPlugin, { FileItem, TabItem, STRINGS } from './IconicPlugin';
+import RuleEditor from './RuleEditor';
 import IconManager from './IconManager';
 import IconPicker from './IconPicker';
 
@@ -40,10 +41,15 @@ export default class TabIconManager extends IconManager {
 			const iconEl = tab.iconEl;
 			if (!tabEl || !iconEl) continue;
 
+			// Check for an icon ruling
+			const rule = tab.isFile
+				? this.plugin.ruleManager.checkRuling('file', tab.id, unloading) ?? tab
+				: tab;
+
 			if (tab.isRoot && this.plugin.isSettingEnabled('clickableIcons')) {
 				if (tab.isFile) {
 					const file = this.plugin.getFileItem(tab.id);
-					this.refreshIcon(tab, iconEl, event => {
+					this.refreshIcon(rule, iconEl, event => {
 						IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
 							this.plugin.saveFileIcon(file, newIcon, newColor);
 							this.refreshIcons();
@@ -53,7 +59,7 @@ export default class TabIconManager extends IconManager {
 						event.stopPropagation();
 					});
 				} else {
-					this.refreshIcon(tab, iconEl, event => {
+					this.refreshIcon(rule, iconEl, event => {
 						IconPicker.openSingle(this.plugin, tab, (newIcon, newColor) => {
 							this.plugin.saveTabIcon(tab, newIcon, newColor);
 							this.refreshIcons();
@@ -62,15 +68,15 @@ export default class TabIconManager extends IconManager {
 					});
 				}
 			} else {
-				this.refreshIcon(tab, iconEl);
+				this.refreshIcon(rule, iconEl);
 			}
 
 			// Update ghost icon when dragging
 			this.setEventListener(tabEl, 'dragstart', () => {
-				if (tab.icon || tab.iconDefault) {
+				if (rule.icon || rule.iconDefault) {
 					const ghostEl = activeDocument.body.find(':scope > .drag-ghost > .drag-ghost-icon');
 					if (ghostEl) {
-						this.refreshIcon({ icon: tab.icon ?? tab.iconDefault, color: tab.color }, ghostEl);
+						this.refreshIcon({ icon: rule.icon ?? rule.iconDefault, color: rule.color }, ghostEl);
 					}
 				}
 			});
@@ -196,6 +202,26 @@ export default class TabIconManager extends IconManager {
 					this.plugin.bookmarkIconManager?.refreshIcons();
 				})
 			);
+		}
+
+		// Edit rule
+		const rule = this.plugin.ruleManager.checkRuling('file', file.id);
+		if (rule) {
+			this.plugin.menuManager.addItem(item => { item
+				.setTitle(STRINGS.menu.editRule)
+				.setIcon('lucide-image-play')
+				.setSection('icon')
+				.onClick(() => RuleEditor.open(this.plugin, 'file', rule, newRule => {
+					const isRulingChanged = newRule
+						? this.plugin.ruleManager.saveRule('file', newRule)
+						: this.plugin.ruleManager.deleteRule('file', rule.id);
+					if (isRulingChanged) {
+						this.refreshIcons();
+						this.plugin.fileIconManager?.refreshIcons();
+						this.plugin.bookmarkIconManager?.refreshIcons();
+					}
+				}));
+			});
 		}
 	}
 }

@@ -22,9 +22,13 @@ export interface ConditionItem {
  */
 export default class RuleManager {
 	private readonly plugin: IconicPlugin;
+	private readonly fileRulings = new Map<string, RuleItem>();
+	private readonly folderRulings = new Map<string, RuleItem>();
 
 	constructor(plugin: IconicPlugin) {
 		this.plugin = plugin;
+		this.updateRulings('file');
+		this.updateRulings('folder');
 	}
 
 	/**
@@ -125,24 +129,25 @@ export default class RuleManager {
 	}
 
 	/**
-	 * Move rule within a given page.
+	 * Move rule within a given page, and return true if this changes any rulings.
 	 */
-	moveRule(page: RulePage, rule: RuleItem, toIndex: number): void {
+	moveRule(page: RulePage, rule: RuleItem, toIndex: number): boolean {
 		const ruleBases = this.getRuleBases(page);
 		const ruleBase = ruleBases.find(ruleBase => ruleBase.id === rule.id);
-		if (!ruleBase) return;
+		if (!ruleBase) return false;
 
 		const index = ruleBases.indexOf(ruleBase);
 		ruleBases.splice(index, 1);
 		ruleBases.splice(toIndex, 0, ruleBase);
 
 		this.plugin.saveSettings();
+		return this.updateRulings(page);
 	}
 
 	/**
-	 * Save rule to a given page.
+	 * Save rule to a given page, and return true if this changes any rulings.
 	 */
-	saveRule(page: RulePage, newRule: RuleItem): void {
+	saveRule(page: RulePage, newRule: RuleItem): boolean {
 		const ruleBases = this.getRuleBases(page);
 		let ruleBase = ruleBases.find(rule => rule.id === newRule.id);
 		if (!ruleBase) {
@@ -172,17 +177,146 @@ export default class RuleManager {
 		else delete ruleBase.enabled;
 
 		this.plugin.saveSettings();
+		return this.updateRulings(page);
 	}
 
 	/**
-	 * Delete rule from a given page.
+	 * Delete rule from a given page, and return true if this changes any rulings.
 	 */
-	deleteRule(page: RulePage, ruleId: string): void {
+	deleteRule(page: RulePage, ruleId: string): boolean {
 		const ruleBases = this.getRuleBases(page);
 		const index = ruleBases.findIndex(ruleBase => ruleBase.id === ruleId);
-		if (index === -1) return;
+		if (index === -1) return false;
 		ruleBases.splice(index, 1);
+
 		this.plugin.saveSettings();
+		return this.updateRulings(page);
+	}
+
+	/**
+	 * Check the ruling for a given item.
+	 */
+	checkRuling(page: RulePage, itemId: string, unloading?: boolean): RuleItem | null {
+		if (unloading) return null;
+		switch (page) {
+			case 'file': return this.fileRulings.get(itemId) ?? null;
+			case 'folder': return this.folderRulings.get(itemId) ?? null;
+		}
+	}
+
+	/**
+	 * Update rulings for a given page, and return true if this changes any rulings.
+	 */
+	updateRulings(page: RulePage): boolean {
+		const now = new Date(); // Use this timestamp to check any chronological conditions
+		const enabledRules = this.getRules(page).filter(rule => rule.enabled);
+
+		// If no rules are enabled, clear out the rulings
+		if (enabledRules.length === 0) {
+			switch (page) {
+				case 'file': if (this.fileRulings.size > 0) {
+					this.fileRulings.clear();
+					return true;
+				}
+				case 'folder': if (this.folderRulings.size > 0) {
+					this.folderRulings.clear();
+					return true;
+				}
+			}
+			return false;
+		}
+
+		let currentRule: RuleItem | undefined;
+		let matchedRule: RuleItem | undefined;
+		let anyRulingsChanged = false;
+
+		switch (page) {
+			case 'file': {
+				const files = this.plugin.getFileItems().filter(file => !file.items);
+				// Prune file rulings (remove files that no longer exist)
+				const existingIds = files.map(file => file.id);
+				for (const [fileId] of this.fileRulings) {
+					if (!existingIds.contains(fileId)) {
+						this.fileRulings.delete(fileId);
+						anyRulingsChanged = true;
+					}
+				}
+				// Update file rulings
+				for (const file of files) {
+					// Judge whether a rule matches this file
+					matchedRule = undefined;
+					for (const rule of enabledRules) {
+						if (this.judgeFile(file, rule, now)) {
+							matchedRule = rule;
+							break;
+						}
+					}
+					// Compare against any current ruling
+					currentRule = this.fileRulings.get(file.id);
+					if (matchedRule) {
+						this.fileRulings.set(file.id, matchedRule);
+						anyRulingsChanged = anyRulingsChanged || RuleManager.distinguish(currentRule, matchedRule);
+					} else if (currentRule) {
+						this.fileRulings.delete(file.id);
+						anyRulingsChanged = anyRulingsChanged || true;
+					}
+				}
+				break;
+			}
+			case 'folder': {
+				const folders = this.plugin.getFileItems().filter(folder => folder.items);
+				// Prune folder rulings (remove folders that no longer exist)
+				const folderIds = folders.map(folder => folder.id);
+				for (const [folderId] of this.folderRulings) {
+					if (!folderIds.contains(folderId)) {
+						this.folderRulings.delete(folderId);
+						anyRulingsChanged = true;
+					}
+				}
+				// Update folder rulings
+				for (const folder of folders) {
+					matchedRule = undefined;
+					// Judge whether a rule matches this folder
+					for (const enabledRule of enabledRules) {
+						if (this.judgeFile(folder, enabledRule, now)) {
+							matchedRule = enabledRule;
+							break;
+						}
+					}
+					// Compare against any current ruling
+					currentRule = this.folderRulings.get(folder.id);
+					if (matchedRule) {
+						this.folderRulings.set(folder.id, matchedRule);
+						anyRulingsChanged = anyRulingsChanged || RuleManager.distinguish(currentRule, matchedRule);
+					} else if (currentRule) {
+						this.folderRulings.delete(folder.id);
+						anyRulingsChanged = anyRulingsChanged || true;
+					}
+				}
+				break;
+			}
+		}
+
+		return anyRulingsChanged;
+	}
+
+	/**
+	 * Check whether two rules have any different properties.
+	 */
+	private static distinguish(rule1: RuleItem | undefined, rule2: RuleItem | undefined): boolean {
+		return (rule1 === undefined) !== (rule2 === undefined)
+			|| rule1?.enabled !== rule2?.enabled
+			|| rule1?.id !== rule2?.id
+			|| rule1?.name !== rule2?.name
+			|| rule1?.icon !== rule2?.icon
+			|| rule1?.color !== rule2?.color
+			|| rule1?.match !== rule2?.match
+			|| rule1?.conditions?.length !== rule2?.conditions?.length
+			|| rule1?.conditions?.some((condition, i) => {
+				return condition.source !== rule2?.conditions[i].source
+					|| condition.operator !== rule2?.conditions[i].operator
+					|| condition.value !== rule2?.conditions[i].value;
+			}) === true;
 	}
 
 	/**
@@ -354,6 +488,9 @@ export default class RuleManager {
 				case 'datetimeIs': isConditionMatched = RuleManager.compareDatetimes(source, operator, value); break;
 				case 'datetimeIsBefore': isConditionMatched = RuleManager.compareDatetimes(source, operator, value); break;
 				case 'datetimeIsAfter': isConditionMatched = RuleManager.compareDatetimes(source, operator, value); break;
+				case 'isNow': isConditionMatched = RuleManager.compareDatetimes(source, 'datetimeIs', now); break;
+				case 'isBeforeNow': isConditionMatched = RuleManager.compareDatetimes(source, 'datetimeIsBefore', value); break;
+				case 'isAfterNow': isConditionMatched = RuleManager.compareDatetimes(source, 'datetimeIsAfter', value); break;
 				case 'timeIs': isConditionMatched = RuleManager.compareTimes(source, operator, value); break;
 				case 'timeIsBefore': isConditionMatched = RuleManager.compareTimes(source, operator, value); break;
 				case 'timeIsAfter': isConditionMatched = RuleManager.compareTimes(source, operator, value); break;
@@ -361,6 +498,8 @@ export default class RuleManager {
 				case 'dateIsBefore': isConditionMatched = RuleManager.compareDates(source, operator, value); break;
 				case 'dateIsAfter': isConditionMatched = RuleManager.compareDates(source, operator, value); break;
 				case 'isToday': isConditionMatched = RuleManager.compareDates(source, 'dateIs', now); break;
+				case 'isBeforeToday': isConditionMatched = RuleManager.compareDates(source, 'dateIsBefore', now); break;
+				case 'isAfterToday': isConditionMatched = RuleManager.compareDates(source, 'dateIsAfter', now); break;
 				case 'isLessDaysAgo': isConditionMatched = RuleManager.compareRelativeDates(source, operator, value, now); break;
 				case 'isMoreDaysAgo': isConditionMatched = RuleManager.compareRelativeDates(source, operator, value, now); break;
 				case 'weekdayIs': isConditionMatched = RuleManager.compareWeekdays(source, operator, value); break;

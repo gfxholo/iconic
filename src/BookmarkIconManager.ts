@@ -1,5 +1,7 @@
 import { WorkspaceLeaf } from 'obsidian';
 import IconicPlugin, { BookmarkItem, STRINGS } from './IconicPlugin';
+import { RuleItem } from './RuleManager';
+import RuleEditor from './RuleEditor';
 import IconManager from './IconManager';
 import IconPicker from './IconPicker';
 
@@ -71,24 +73,30 @@ export default class BookmarkIconManager extends IconManager {
 		const itemEls = this.containerEl?.findAll(':scope > .tree-item');
 		if (itemEls) {
 			this.selectionLookup.clear();
-			this.refreshChildIcons(bmarks, itemEls);
+			this.refreshChildIcons(bmarks, itemEls, unloading);
 		}
 	}
 
 	/**
 	 * Refresh an array of bookmark icons, including any subitems.
 	 */
-	private refreshChildIcons(bmarks: BookmarkItem[], itemEls: HTMLElement[]) {
+	private refreshChildIcons(bmarks: BookmarkItem[], itemEls: HTMLElement[], unloading?: boolean) {
 		for (const itemEl of itemEls) {
 			itemEl.addClass('iconic-item');
 
 			const bmark = bmarks[itemEls.indexOf(itemEl)];
 			if (!bmark) continue;
 
+			// Check for an icon ruling
+			let rule: RuleItem | BookmarkItem = bmark;
+			if (bmark.category === 'file' || bmark.category === 'folder') {
+				rule = this.plugin.ruleManager.checkRuling(bmark.category, bmark.id, unloading) ?? bmark;
+			}
+
 			if (bmark.items) {
 				if (!itemEl.hasClass('is-collapsed')) {
 					const childItemEls = itemEl.findAll(':scope > .tree-item-children > .tree-item');
-					if (childItemEls) this.refreshChildIcons(bmark.items, childItemEls);
+					if (childItemEls) this.refreshChildIcons(bmark.items, childItemEls, unloading);
 				}
 
 				// Refresh when folder expands/collapses
@@ -114,10 +122,10 @@ export default class BookmarkIconManager extends IconManager {
 					? 'lucide-folder-closed'
 					: 'lucide-folder-open';
 				let folderIconEl = selfEl.find(':scope > .iconic-sidekick:not(.tree-item-icon)');
-				if (this.plugin.settings.minimalFolderIcons || !this.plugin.settings.showAllFolderIcons && !bmark.icon && !bmark.iconDefault) {
+				if (this.plugin.settings.minimalFolderIcons || !this.plugin.settings.showAllFolderIcons && !rule.icon && !rule.iconDefault) {
 					folderIconEl?.remove();
 				} else {
-					const arrowColor = bmark.icon || bmark.iconDefault ? null : bmark.color;
+					const arrowColor = rule.icon || rule.iconDefault ? null : rule.color;
 					this.refreshIcon({ icon: null, color: arrowColor }, iconEl);
 					folderIconEl = folderIconEl ?? selfEl.createDiv({ cls: 'iconic-sidekick' });
 					if (iconEl.nextElementSibling !== folderIconEl) {
@@ -127,10 +135,10 @@ export default class BookmarkIconManager extends IconManager {
 				}
 			}
 
-			if (iconEl.hasClass('collapse-icon') && !bmark.icon && !bmark.iconDefault) {
+			if (iconEl.hasClass('collapse-icon') && !rule.icon && !rule.iconDefault) {
 				this.refreshIcon(bmark, iconEl); // Skip click listener if icon will be a collapse arrow
 			} else if (this.plugin.isSettingEnabled('clickableIcons')) {
-				this.refreshIcon(bmark, iconEl, event => {
+				this.refreshIcon(rule, iconEl, event => {
 					IconPicker.openSingle(this.plugin, bmark, (newIcon, newColor) => {
 						this.plugin.saveBookmarkIcon(bmark, newIcon, newColor);
 						this.refreshIcons();
@@ -140,7 +148,7 @@ export default class BookmarkIconManager extends IconManager {
 					event.stopPropagation();
 				});
 			} else {
-				this.refreshIcon(bmark, iconEl);
+				this.refreshIcon(rule, iconEl);
 			}
 
 			if (selfEl) {
@@ -158,14 +166,14 @@ export default class BookmarkIconManager extends IconManager {
 
 			// Update ghost icon when dragging
 			this.setEventListener(selfEl, 'dragstart', () => {
-				if (bmark.icon || bmark.iconDefault || bmark.color) {
+				if (rule.icon || rule.iconDefault || rule.color) {
 					const ghostEl = activeDocument.body.find(':scope > .drag-ghost > .drag-ghost-self');
 					if (ghostEl) {
 						const spanEl = ghostEl.find('span');
-						const ghostIcon = (bmark.category === 'group' && bmark.icon === null)
+						const ghostIcon = (bmark.category === 'group' && rule.icon === null)
 							? 'lucide-bookmark'
-							: bmark.icon || bmark.iconDefault;
-						this.refreshIcon({ icon: ghostIcon, color: bmark.color }, ghostEl);
+							: rule.icon || rule.iconDefault;
+						this.refreshIcon({ icon: ghostIcon, color: rule.color }, ghostEl);
 						ghostEl.appendChild(spanEl);
 					}
 				}
@@ -247,6 +255,30 @@ export default class BookmarkIconManager extends IconManager {
 					this.plugin.fileIconManager?.refreshIcons();
 				})
 			);
+		}
+
+		// Edit rule
+		if (selectedBmarks.length < 2) {
+			const rule = clickedBmark.category === 'file' || clickedBmark.category === 'folder'
+				? this.plugin.ruleManager.checkRuling(clickedBmark.category, clickedBmark.id)
+				: null;
+			if (rule) {
+				this.plugin.menuManager.addItem(item => { item
+					.setTitle(STRINGS.menu.editRule)
+					.setIcon('lucide-image-play')
+					.setSection('icon')
+					.onClick(() => RuleEditor.open(this.plugin, 'file', rule, newRule => {
+						const isRulingChanged = newRule
+							? this.plugin.ruleManager.saveRule('file', newRule)
+							: this.plugin.ruleManager.deleteRule('file', rule.id);
+						if (isRulingChanged) {
+							this.refreshIcons();
+							this.plugin.tabIconManager?.refreshIcons();
+							this.plugin.fileIconManager?.refreshIcons();
+						}
+					}));
+				});
+			}
 		}
 	}
 }
