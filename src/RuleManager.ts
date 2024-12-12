@@ -4,6 +4,7 @@ import IconicPlugin, { Item, FileItem, ICONS, EMOJIS, STRINGS } from './IconicPl
 const BASE62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
 export type RulePage = 'file' | 'folder';
+export type RuleTrigger = 'icon' | 'color' | 'rename' | 'move' | 'tag' | 'property' | 'modify' | 'date' | 'time';
 
 export interface RuleItem extends Item {
 	category: 'rule';
@@ -24,11 +25,37 @@ export default class RuleManager {
 	private readonly plugin: IconicPlugin;
 	private readonly fileRulings = new Map<string, RuleItem>();
 	private readonly folderRulings = new Map<string, RuleItem>();
+	private readonly fileTriggers = new Set<RuleTrigger>();
+	private readonly folderTriggers = new Set<RuleTrigger>();
+	private triggerTimerId: number;
 
 	constructor(plugin: IconicPlugin) {
 		this.plugin = plugin;
 		this.updateRulings('file');
 		this.updateRulings('folder');
+		this.startTriggerTimer();
+	}
+
+	/**
+	 * Start a self-looping timer to manage time-based triggers. Runs once per minute.
+	 */
+	private async startTriggerTimer(): Promise<void> {
+		if (this.triggerTimerId) {
+			const isMidnight = 86400000 - (Date.now() % 86400000) < 3600000;
+			// Check time triggers every minute, and date triggers every midnight
+			if (this.fileTriggers.has('time') || this.fileTriggers.has('date') && isMidnight) {
+				const isNewRuling = this.triggerRulings('file', 'time');
+				if (isNewRuling) {
+					this.plugin.tabIconManager?.refreshIcons();
+					this.plugin.fileIconManager?.refreshIcons();
+					this.plugin.bookmarkIconManager?.refreshIcons();
+				}
+			}
+		}
+		// Recalculate delay every minute to avoid timing drift
+		const delay = 60000 - (Date.now() % 60000);
+		// Start the next timer
+		this.triggerTimerId = activeWindow.setTimeout(() => this.startTriggerTimer(), delay);
 	}
 
 	/**
@@ -216,10 +243,12 @@ export default class RuleManager {
 			switch (page) {
 				case 'file': if (this.fileRulings.size > 0) {
 					this.fileRulings.clear();
+					this.fileTriggers.clear();
 					return true;
 				}
 				case 'folder': if (this.folderRulings.size > 0) {
 					this.folderRulings.clear();
+					this.folderTriggers.clear();
 					return true;
 				}
 			}
@@ -261,6 +290,13 @@ export default class RuleManager {
 						anyRulingsChanged = anyRulingsChanged || true;
 					}
 				}
+				// Update file triggers
+				this.fileTriggers.clear();
+				for (const enabledRule of enabledRules) {
+					for (const condition of enabledRule.conditions) {
+						this.updateTriggers(page, condition);
+					}
+				}
 				break;
 			}
 			case 'folder': {
@@ -293,11 +329,75 @@ export default class RuleManager {
 						anyRulingsChanged = anyRulingsChanged || true;
 					}
 				}
+				// Update folder triggers
+				this.folderTriggers.clear();
+				for (const enabledRule of enabledRules) {
+					for (const condition of enabledRule.conditions) {
+						this.updateTriggers(page, condition);
+					}
+				}
 				break;
 			}
 		}
 
 		return anyRulingsChanged;
+	}
+
+	/**
+	 * Check a given condition and activate any triggers it will need.
+	 */
+	private updateTriggers(page: RulePage, condition: ConditionItem): void {
+		let triggers: Set<RuleTrigger>;
+		switch (page) {
+			case 'file': triggers = this.fileTriggers; break;
+			case 'folder': triggers = this.folderTriggers; break;
+		}
+		switch (condition.source) {
+			case 'icon': triggers.add('icon'); break;
+			case 'color': triggers.add('color'); break;
+			case 'name': triggers.add('rename'); break;
+			case 'filename': triggers.add('rename'); break;
+			case 'extension': triggers.add('rename'); break;
+			case 'tree': triggers.add('move'); break;
+			case 'path': triggers.add('move'); break;
+			case 'headings': triggers.add('modify'); break;
+			case 'links': triggers.add('modify'); break;
+			case 'tags': triggers.add('modify'); break;
+			case 'modified': triggers.add('modify'); break;
+			case 'clock': {
+				switch (condition.operator) {
+					case 'is': triggers.add('time'); break;
+					case '!is': triggers.add('time'); break;
+					case 'isBefore': triggers.add('time'); break;
+					case 'timeIs': triggers.add('time'); break;
+					case '!timeIs': triggers.add('time'); break;
+					case 'timeIsBefore': triggers.add('time'); break;
+					case 'timeIsAfter': triggers.add('time'); break;
+					default: triggers.add('date'); break;
+				}
+				break;
+			}
+			default: {
+				if (condition.source.startsWith('property:')) {
+					triggers.add('modify');
+				}
+				break;
+			}
+		}
+		switch (condition.operator) {
+			case 'isNow': triggers.add('time'); break;
+			case '!isNow': triggers.add('time'); break;
+			case 'isBeforeNow': triggers.add('time'); break;
+			case 'isAfterNow': triggers.add('time'); break;
+			case 'isToday': triggers.add('date'); break;
+			case '!isToday': triggers.add('date'); break;
+			case 'isBeforeToday': triggers.add('date'); break;
+			case 'isAfterToday': triggers.add('date'); break;
+			case 'isLessDaysAgo': triggers.add('date'); break;
+			case 'isLessDaysAway': triggers.add('date'); break;
+			case 'isMoreDaysAgo': triggers.add('date'); break;
+			case 'isMoreDaysAway': triggers.add('date'); break;
+		}
 	}
 
 	/**
@@ -317,6 +417,26 @@ export default class RuleManager {
 					|| condition.operator !== rule2?.conditions[i].operator
 					|| condition.value !== rule2?.conditions[i].value;
 			}) === true;
+	}
+
+	/**
+	 * Update rulings for a given page, and return true if this changes any rulings.
+	 * @param triggers If none of the specified triggers are active, skip the update.
+	 */
+	triggerRulings(page: RulePage, ...triggers: RuleTrigger[]): boolean {
+		switch (page) {
+			case 'file': for (const trigger of triggers) {
+				if (this.fileTriggers.has(trigger)) {
+					return this.updateRulings(page);
+				}
+			}
+			case 'folder': for (const trigger of triggers) {
+				if (this.folderTriggers.has(trigger)) {
+					return this.updateRulings(page);
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -773,5 +893,12 @@ export default class RuleManager {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Stop the trigger timer.
+	 */
+	unload(): void {
+		activeWindow.clearTimeout(this.triggerTimerId);
 	}
 }

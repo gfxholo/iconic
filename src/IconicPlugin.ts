@@ -1,7 +1,7 @@
 import { Command, FileView, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceLeaf, getIconIds } from 'obsidian';
 import IconicSettingTab from './IconicSettingTab';
 import MenuManager from './MenuManager';
-import RuleManager, { RulePage } from './RuleManager';
+import RuleManager, { RulePage, RuleTrigger } from './RuleManager';
 import AppIconManager from './AppIconManager';
 import TabIconManager from './TabIconManager';
 import FileIconManager from './FileIconManager';
@@ -212,23 +212,50 @@ export default class IconicPlugin extends Plugin {
 			this.refreshBodyClasses();
 		}));
 
-		this.registerEvent(this.app.vault.on('rename', ({ path }, oldPath) => {
+		this.registerEvent(this.app.vault.on('rename', (tAbstractFile, oldPath) => {
+			const { path } = tAbstractFile;
 			const fileIcon = this.settings.fileIcons[oldPath];
 			if (fileIcon) {
 				this.settings.fileIcons[path] = fileIcon;
 				delete this.settings.fileIcons[oldPath];
 				this.saveSettings();
+			}
+			const { filename, tree } = this.splitFilePath(path);
+			const { filename: oldFilename, tree: oldTree } = this.splitFilePath(oldPath);
+			const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+			// If this rename triggers a new ruling, refresh icons
+			if (filename !== oldFilename && this.ruleManager.triggerRulings(page, 'rename')) {
+				if (page === 'file') this.tabIconManager?.refreshIcons();
+				this.fileIconManager?.refreshIcons();
+				this.bookmarkIconManager?.refreshIcons();
+			// If this move triggers a new ruling, refresh icons
+			} else if (tree !== oldTree && this.ruleManager.triggerRulings(page, 'move')) {
+				if (page === 'file') this.tabIconManager?.refreshIcons();
 				this.fileIconManager?.refreshIcons();
 				this.bookmarkIconManager?.refreshIcons();
 			}
 		}));
 
-		this.registerEvent(this.app.vault.on('delete', ({ path }) => {
+		this.registerEvent(this.app.vault.on('modify', tAbstractFile => {
+			const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+			// If this modification triggers a new ruling, refresh icons
+			if (this.ruleManager.triggerRulings(page, 'modify')) {
+				if (page === 'file') this.tabIconManager?.refreshIcons();
+				this.fileIconManager?.refreshIcons();
+				this.bookmarkIconManager?.refreshIcons();
+			}
+		}));
+
+		this.registerEvent(this.app.vault.on('delete', (tAbstractFile) => {
+			const { path } = tAbstractFile;
 			if (this.settings.rememberDeletedItems === false) {
 				delete this.settings.fileIcons[path];
 				this.saveSettings();
-				this.fileIconManager?.refreshIcons();
-				this.bookmarkIconManager?.refreshIcons();
+			}
+			// If this deleted file/folder was associated with a ruling, update rulings
+			const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+			if (this.ruleManager.checkRuling(page, path)) {
+				this.ruleManager.updateRulings(page);
 			}
 		}));
 
@@ -966,8 +993,13 @@ export default class IconicPlugin extends Plugin {
 	 * Save file icon changes to settings.
 	 */
 	saveFileIcon(file: FileItem, icon: string | null, color: string | null): void {
+		const triggers: Set<RuleTrigger> = new Set();
+		const fileBase = this.settings.fileIcons[file.id];
+		if (icon !== fileBase?.icon) triggers.add('icon');
+		if (color !== fileBase?.color) triggers.add('color');
 		this.updateIconSetting(this.settings.fileIcons, file.id, icon, color);
 		this.saveSettings();
+		this.ruleManager.triggerRulings('file', ...triggers);
 	}
 
 	/**
@@ -976,24 +1008,34 @@ export default class IconicPlugin extends Plugin {
 	 * @param color If undefined, leave colors unchanged
 	 */
 	saveFileIcons(files: FileItem[], icon: string | null | undefined, color: string | null | undefined): void {
+		const triggers: Set<RuleTrigger> = new Set();
 		for (const file of files) {
 			if (icon !== undefined) file.icon = icon;
 			if (color !== undefined) file.color = color;
+			const bmarkBase = this.settings.fileIcons[file.id];
+			if (icon !== bmarkBase?.icon) triggers.add('icon');
+			if (color !== bmarkBase?.color) triggers.add('color');
 			this.updateIconSetting(this.settings.fileIcons, file.id, file.icon, file.color);
 		}
 		this.saveSettings();
+		this.ruleManager.triggerRulings('file', ...triggers);
 	}
 
 	/**
 	 * Save bookmark icon changes to settings.
 	 */
 	saveBookmarkIcon(bmark: BookmarkItem, icon: string | null, color: string | null): void {
+		const triggers: Set<RuleTrigger> = new Set();
 		if (bmark.category === 'file' || bmark.category === 'folder') {
+			const bmarkBase = this.settings.fileIcons[bmark.id];
+			if (icon !== bmarkBase?.icon) triggers.add('icon');
+			if (color !== bmarkBase?.color) triggers.add('color');
 			this.updateIconSetting(this.settings.fileIcons, bmark.id, icon, color);
 		} else {
 			this.updateIconSetting(this.settings.bookmarkIcons, bmark.id, icon, color);
 		}
 		this.saveSettings();
+		this.ruleManager.triggerRulings('file', ...triggers);
 	}
 
 	/**
@@ -1002,16 +1044,21 @@ export default class IconicPlugin extends Plugin {
 	 * @param color If undefined, leave colors unchanged
 	 */
 	saveBookmarkIcons(bmarks: BookmarkItem[], icon: string | null | undefined, color: string | null | undefined): void {
+		const triggers: Set<RuleTrigger> = new Set();
 		for (const bmark of bmarks) {
 			if (icon !== undefined) bmark.icon = icon;
 			if (color !== undefined) bmark.color = color;
 			if (bmark.category === 'file' || bmark.category === 'folder') {
+				const bmarkBase = this.settings.fileIcons[bmark.id];
+				if (icon !== bmarkBase?.icon) triggers.add('icon');
+				if (color !== bmarkBase?.color) triggers.add('color');
 				this.updateIconSetting(this.settings.fileIcons, bmark.id, bmark.icon, bmark.color);
 			} else {
 				this.updateIconSetting(this.settings.bookmarkIcons, bmark.id, bmark.icon, bmark.color);
 			}
 		}
 		this.saveSettings();
+		this.ruleManager.triggerRulings('file', ...triggers);
 	}
 
 	/**
@@ -1199,6 +1246,7 @@ export default class IconicPlugin extends Plugin {
 	 * @override
 	 */
 	onunload(): void {
+		this.ruleManager.unload();
 		this.appIconManager?.unload();
 		this.tabIconManager?.unload();
 		this.fileIconManager?.unload();
