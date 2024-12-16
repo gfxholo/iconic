@@ -1,4 +1,4 @@
-import { Command, FileView, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceLeaf, getIconIds } from 'obsidian';
+import { Command, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceLeaf, getIconIds } from 'obsidian';
 import IconicSettingTab from './IconicSettingTab';
 import MenuManager from './MenuManager';
 import RuleManager, { RulePage, RuleTrigger } from './RuleManager';
@@ -53,7 +53,7 @@ export interface FileItem extends Item {
 	items: FileItem[] | null;
 }
 export interface BookmarkItem extends Item {
-	isFile: boolean;
+	isFileOrFolder: boolean;
 	items: BookmarkItem[] | null;
 }
 export interface TagItem extends Item {
@@ -718,11 +718,11 @@ export default class IconicPlugin extends Plugin {
 	/**
 	 * Get bookmark definition.
 	 */
-	getBookmarkItem(bmarkId: string, isFile: boolean, unloading?: boolean): BookmarkItem {
+	getBookmarkItem(bmarkId: string, isFileOrFolder: boolean, unloading?: boolean): BookmarkItem {
 		// @ts-expect-error (Private API)
 		const bmarkBases = this.flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
 		const bmarkBase = bmarkBases.find(bmarkBase => {
-			return isFile && bmarkBase.path + (bmarkBase.subpath ?? '') === bmarkId || bmarkBase.ctime === bmarkId
+			return isFileOrFolder && bmarkBase.path + (bmarkBase.subpath ?? '') === bmarkId || bmarkBase.ctime === bmarkId
 		}) ?? {};
 		return this.defineBookmarkItem(bmarkBase, unloading);
 	}
@@ -805,7 +805,7 @@ export default class IconicPlugin extends Plugin {
 			iconDefault: iconDefault,
 			icon: unloading ? null : bmarkIcon?.icon ?? null,
 			color: unloading ? null : bmarkIcon?.color ?? null,
-			isFile: bmarkBase.type === 'file' || bmarkBase.type === 'folder',
+			isFileOrFolder: bmarkBase.type === 'file' || bmarkBase.type === 'folder',
 			items: bmarkBase.items?.map((bmark: any) => this.defineBookmarkItem(bmark, unloading)) ?? null,
 		}
 	}
