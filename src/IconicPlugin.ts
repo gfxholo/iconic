@@ -185,18 +185,113 @@ export default class IconicPlugin extends Plugin {
 		this.app.workspace.onLayoutReady(() => {
 			// Generate icon names from available icon IDs
 			getIconIds().map(id => {
-				let name = id;
-				name = name.replace(/^lucide-/, '').replaceAll('-', ' ');
-				name = (name[0]?.toUpperCase() + name.slice(1))
-				.replace(/^Tv/, 'TV')
-				.replace(/ 2x 2$/, ' 2x2')
-				.replace(/ 3x 3$/, ' 3x3')
-				.replace(/ 3d$/, ' 3D')
-				.replace(/ az$/, ' AZ')
-				.replace(/ za$/, ' ZA')
-				.replace(/ x$/, ' X')
-				.replace(/ x2$/, ' X2')
-				return [id, name];
+				switch (id) {
+					default: {
+						const tidyName = id.replace(/^lucide-/, '').replaceAll('-', ' ');
+						const capitalizedName = (tidyName[0]?.toUpperCase() + tidyName.slice(1));
+						return [id, capitalizedName];
+					}
+					case 'lucide-app-window-mac': return [id, 'App window Mac'];
+					case 'lucide-archive-x': return [id, 'Archive X'];
+					case 'lucide-arrow-down-az': return [id, 'Arrow down AZ'];
+					case 'lucide-arrow-down-za': return [id, 'Arrow down ZA'];
+					case 'lucide-arrow-up-az': return [id, 'Arrow up AZ'];
+					case 'lucide-arrow-up-za': return [id, 'Arrow up ZA'];
+					case 'lucide-axis-3d': return [id, 'Axis 3D'];
+					case 'lucide-badge-indian-rupee': return [id, 'Badge Indian rupee'];
+					case 'lucide-badge-japanese-yen': return [id, 'Badge Japanese yen'];
+					case 'lucide-badge-russian-ruble': return [id, 'Badge Russian ruble'];
+					case 'lucide-badge-swiss-franc': return [id, 'Badge Swiss franc'];
+					case 'lucide-badge-x': return [id, 'Badge X'];
+					case 'lucide-book-a': return [id, 'Book A'];
+					case 'lucide-book-x': return [id, 'Book X'];
+					case 'lucide-calendar-x': return [id, 'Calendar X'];
+					case 'lucide-calendar-x2': return [id, 'Calendar X 2'];
+					case 'lucide-cctv': return [id, 'CCTV'];
+					case 'lucide-chart-gantt': return [id, 'Chart Gantt'];
+					case 'lucide-chart-no-axes-gantt': return [id, 'Chart no axes Gantt'];
+					case 'lucide-circle-x': return [id, 'Circle X'];
+					case 'lucide-clipboard-x': return [id, 'Clipboard X'];
+					case 'lucide-code-xml': return [id, 'Code XML'];
+					case 'lucide-copy-x': return [id, 'Copy X'];
+					case 'lucide-cpu': return [id, 'CPU'];
+					case 'lucide-creative-commons': return [id, 'Creative Commons'];
+					case 'lucide-dna': return [id, 'DNA'];
+					case 'lucide-dna-off': return [id, 'DNA off'];
+					case 'lucide-file-axis-3d': return [id, 'File axis 3D'];
+					case 'lucide-file-json': return [id, 'File JSON'];
+					case 'lucide-file-json-2': return [id, 'File JSON 2'];
+					case 'lucide-file-x': return [id, 'File X'];
+					case 'lucide-file-x2': return [id, 'File X 2'];
+					case 'lucide-filter-x': return [id, 'Filter X'];
+					case 'lucide-folder-git': return [id, 'Folder Git'];
+					case 'lucide-folder-git-2': return [id, 'Folder Git 2'];
+					case 'lucide-folder-x': return [id, 'Folder X'];
+					case 'lucide-github': return [id, 'GitHub'];
+					case 'lucide-gitlab': return [id, 'GitLab'];
+					case 'lucide-grid-2x-2': return [id, 'Grid 2x2'];
+					case 'lucide-grid-2x-2check': return [id, 'Grid 2x2 check'];
+					case 'lucide-grid-2x-2plus': return [id, 'Grid 2x2 plus'];
+					case 'lucide-grid-2x-2x': return [id, 'Grid 2x2 X'];
+					case 'lucide-grid-3x-3': return [id, 'Grid 3x3'];
+					case 'lucide-hdmi-port': return [id, 'HDMI port'];
+					case 'lucide-id-card': return [id, 'ID card'];
+					case 'lucide-iteration-ccw': return [id, 'Iteration CCW'];
+					case 'lucide-iteration-cw': return [id, 'Iteration CW'];
+					case 'lucide-linkedin': return [id, 'LinkedIn'];
+					case 'lucide-list-x': return [id, 'List X'];
+					case 'lucide-mail-x': return [id, 'Mail X'];
+					case 'lucide-map-pin-x': return [id, 'Map pin X'];
+					case 'lucide-map-pin-xinside': return [id, 'Map pin X inside'];
+					case 'lucide-message-circle-x': return [id, 'Message circle X'];
+					case 'lucide-message-square-x': return [id, 'Message square X'];
+					case 'lucide-monitor-x': return [id, 'Monitor X'];
+					case 'lucide-move-3d': return [id, 'Move 3D'];
+					case 'lucide-navigation-2off': return [id, 'Navigation 2 off'];
+					case 'lucide-nfc': return [id, 'NFC'];
+					case 'lucide-octagon-x': return [id, 'Octagon X'];
+					case 'lucide-package-x': return [id, 'Package X'];
+					case 'lucide-pc-case': return [id, 'PC case'];
+					case 'lucide-qr-code': return [id, 'QR code'];
+					case 'lucide-receipt-indian-rupee': return [id, 'Receipt Indian rupee'];
+					case 'lucide-receipt-japanese-yen': return [id, 'Receipt Japanese yen'];
+					case 'lucide-receipt-russian-ruble': return [id, 'Receipt Russian ruble'];
+					case 'lucide-receipt-swiss-franc': return [id, 'Receipt Swiss franc'];
+					case 'lucide-refresh-ccw': return [id, 'Refresh CCW'];
+					case 'lucide-refresh-ccw-dot': return [id, 'Refresh CCW dot'];
+					case 'lucide-refresh-cw': return [id, 'Refresh CW'];
+					case 'lucide-refresh-cw-off': return [id, 'Refresh CW off'];
+					case 'lucide-square-chart-gantt': return [id, 'Square chart Gantt'];
+					case 'lucide-square-gantt-chart': return [id, 'Square Gantt chart'];
+					case 'lucide-square-m': return [id, 'Square M'];
+					case 'lucide-square-x': return [id, 'Square X'];
+					case 'lucide-ticket-x': return [id, 'Ticket X'];
+					case 'lucide-rotate-3d': return [id, 'Rotate 3D'];
+					case 'lucide-rotate-ccw': return [id, 'Rotate CCW'];
+					case 'lucide-rotate-ccw-square': return [id, 'Rotate CCW square'];
+					case 'lucide-rotate-cw': return [id, 'Rotate CW'];
+					case 'lucide-rotate-cw-square': return [id, 'Rotate CW square'];
+					case 'lucide-tv': return [id, 'TV'];
+					case 'lucide-tv-2': return [id, 'TV 2'];
+					case 'lucide-tv-minimal': return [id, 'TV minimal'];
+					case 'lucide-tv-minimal-play': return [id, 'TV minimal play'];
+					case 'lucide-rss': return [id, 'RSS'];
+					case 'lucide-scale-3d': return [id, 'Scale 3D'];
+					case 'lucide-scan-qr-code': return [id, 'Scan QR code'];
+					case 'lucide-search-x': return [id, 'Search X'];
+					case 'lucide-shield-x': return [id, 'Shield X'];
+					case 'lucide-smartphone-nfc': return [id, 'Smartphone NFC'];
+					case 'lucide-user-x': return [id, 'User X'];
+					case 'lucide-user-x2': return [id, 'User X 2'];
+					case 'lucide-user-round-x': return [id, 'User round X'];
+					case 'lucide-wifi': return [id, 'WiFi'];
+					case 'lucide-wifi-high': return [id, 'WiFi high'];
+					case 'lucide-wifi-low': return [id, 'WiFi low'];
+					case 'lucide-wifi-off': return [id, 'WiFi off'];
+					case 'lucide-wifi-zero': return [id, 'WiFi zero'];
+					case 'refresh-cw-off': return [id, 'Refresh CW off'];
+					case 'uppercase-lowercase-a': return [id, 'Uppercase lowercase A'];
+				}
 			})
 			// Sort icon names alphabetically
 			.sort(([, aName], [, bName]) => aName.localeCompare(bName))
