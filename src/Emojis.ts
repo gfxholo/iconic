@@ -1,6 +1,6 @@
 /**
- * 1,907 emojis, with alternate encodings / skin tone variants excluded.
- * @see {@link https://unicode.org/Public/emoji/15.1/emoji-test.txt}
+ * 1,915 emojis, with alternate encodings / skin tone variants excluded.
+ * @see {@link https://unicode.org/Public/emoji/16.0/emoji-test.txt}
  * @see {@link https://www.unicode.org/emoji/charts/full-emoji-list.html}
  */
 export default new Map<string, string>([
@@ -61,6 +61,7 @@ export default new Map<string, string>([
 	['😪', 'Sleepy face'],
 	['🤤', 'Drooling face'],
 	['😴', 'Sleeping face'],
+	['🫩', 'Face with bags under eyes'],
 	['😷', 'Face with medical mask'],
 	['🤒', 'Face with thermometer'],
 	['🤕', 'Face with head-bandage'],
@@ -557,15 +558,16 @@ export default new Map<string, string>([
 	['🧑‍🧒', 'Family: adult, child'],
 	['🧑‍🧒‍🧒', 'Family: adult, child, child'],
 	['👣', 'Footprints'],
-	['🏻', 'Light skin tone'], // component
-	['🏼', 'Medium-light skin tone'], // component
-	['🏽', 'Medium skin tone'], // component
-	['🏾', 'Medium-dark skin tone'], // component
-	['🏿', 'Dark skin tone'], // component
-	['🦰', 'Red hair'], // component
-	['🦱', 'Curly hair'], // component
-	['🦳', 'White hair'], // component
-	['🦲', 'Bald'], // component
+	['🫆', 'Fingerprint'],
+	['🏻', 'Light skin tone'], // Emoji component
+	['🏼', 'Medium-light skin tone'], // Emoji component
+	['🏽', 'Medium skin tone'], // Emoji component
+	['🏾', 'Medium-dark skin tone'], // Emoji component
+	['🏿', 'Dark skin tone'], // Emoji component
+	['🦰', 'Red hair'], // Emoji component
+	['🦱', 'Curly hair'], // Emoji component
+	['🦳', 'White hair'], // Emoji component
+	['🦲', 'Bald'], // Emoji component
 	['🐵', 'Monkey face'],
 	['🐒', 'Monkey'],
 	['🦍', 'Gorilla'],
@@ -719,6 +721,7 @@ export default new Map<string, string>([
 	['🪹', 'Empty nest'],
 	['🪺', 'Nest with eggs'],
 	['🍄', 'Mushroom'],
+	['🪾', 'Leafless tree'],
 	['🍇', 'Grapes'],
 	['🍈', 'Melon'],
 	['🍉', 'Watermelon'],
@@ -757,6 +760,7 @@ export default new Map<string, string>([
 	['🫚', 'Ginger root'],
 	['🫛', 'Pea pod'],
 	['🍄‍🟫', 'Brown mushroom'],
+	['🫜', 'Root vegetable'],
 	['🍞', 'Bread'],
 	['🥐', 'Croissant'],
 	['🥖', 'Baguette bread'],
@@ -1233,6 +1237,7 @@ export default new Map<string, string>([
 	['🪘', 'Long drum'],
 	['🪇', 'Maracas'],
 	['🪈', 'Flute'],
+	['🪉', 'Harp'],
 	['📱', 'Mobile phone'],
 	['📲', 'Mobile phone with arrow'],
 	['☎️', 'Telephone'],
@@ -1371,6 +1376,7 @@ export default new Map<string, string>([
 	['🧰', 'Toolbox'],
 	['🧲', 'Magnet'],
 	['🪜', 'Ladder'],
+	['🪏', 'Shovel'],
 	['⚗️', 'Alembic'],
 	['🧪', 'Test tube'],
 	['🧫', 'Petri dish'],
@@ -1556,6 +1562,7 @@ export default new Map<string, string>([
 	['©️', 'Copyright'],
 	['®️', 'Registered'],
 	['™️', 'Trade mark'],
+	['🫟', 'Splatter'],
 	['#️⃣', 'Keycap: #'],
 	['*️⃣', 'Keycap: *'],
 	['0️⃣', 'Keycap: 0'],
@@ -1701,6 +1708,7 @@ export default new Map<string, string>([
 	['🇨🇳', 'Flag: China'],
 	['🇨🇴', 'Flag: Colombia'],
 	['🇨🇵', 'Flag: Clipperton Island'],
+	['🇨🇶', 'Flag: Sark'],
 	['🇨🇷', 'Flag: Costa Rica'],
 	['🇨🇺', 'Flag: Cuba'],
 	['🇨🇻', 'Flag: Cape Verde'],
