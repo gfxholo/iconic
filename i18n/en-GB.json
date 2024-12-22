@@ -10,6 +10,11 @@
 			"gray": "Grey"
 		}
 	},
+	"ruleEditor": {
+		"source": {
+			"color": "Colour"
+		}
+	},
 	"settings": {
 		"values": {
 			"list": "List of colours"
