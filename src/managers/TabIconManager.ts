@@ -1,8 +1,8 @@
 import { Platform } from 'obsidian';
-import IconicPlugin, { FileItem, TabItem, STRINGS } from './IconicPlugin';
-import RuleEditor from './RuleEditor';
+import IconicPlugin, { FileItem, TabItem, STRINGS } from 'src/IconicPlugin';
 import IconManager from './IconManager';
-import IconPicker from './IconPicker';
+import RuleEditor from 'src/dialogs/RuleEditor';
+import IconPicker from 'src/dialogs/IconPicker';
 
 /**
  * Handles icons in workspace tab headers.

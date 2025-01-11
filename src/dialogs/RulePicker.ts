@@ -1,10 +1,10 @@
 import { ExtraButtonComponent, Modal, Setting, ToggleComponent } from 'obsidian';
-import IconicPlugin, { Icon, Item, STRINGS } from './IconicPlugin';
-import { RulePage, RuleItem } from './RuleManager';
-import RuleEditor from './RuleEditor';
-import IconManager from './IconManager';
-import IconPicker from './IconPicker';
-import ColorUtils from './ColorUtils';
+import IconicPlugin, { Icon, Item, STRINGS } from 'src/IconicPlugin';
+import ColorUtils from 'src/ColorUtils';
+import { RulePage, RuleItem } from 'src/managers/RuleManager';
+import IconManager from 'src/managers/IconManager';
+import RuleEditor from 'src/dialogs/RuleEditor';
+import IconPicker from 'src/dialogs/IconPicker';
 
 /**
  * Exposes private methods as public for use by {@link RulePicker}.

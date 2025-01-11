@@ -1,8 +1,8 @@
 import { MarkdownPreviewView, MarkdownView, Platform } from 'obsidian';
-import IconicPlugin, { TagItem, PropertyItem, STRINGS } from './IconicPlugin';
-import IconManager from './IconManager';
-import IconPicker from './IconPicker';
-import ColorUtils from './ColorUtils';
+import IconicPlugin, { TagItem, PropertyItem, STRINGS } from 'src/IconicPlugin';
+import ColorUtils from 'src/ColorUtils';
+import IconManager from 'src/managers/IconManager';
+import IconPicker from 'src/dialogs/IconPicker';
 
 /**
  * Handles icons in the editor window of Markdown tabs.

@@ -1,6 +1,6 @@
 import { ButtonComponent, Modal, Setting } from 'obsidian';
-import IconicPlugin, { FileItem, STRINGS } from './IconicPlugin';
-import { RulePage } from './RuleManager';
+import IconicPlugin, { FileItem, STRINGS } from 'src/IconicPlugin';
+import { RulePage } from 'src/managers/RuleManager';
 
 /**
  * Dialog for previewing the items matched by a rule.

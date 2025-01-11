@@ -376,15 +376,15 @@ export default class Strings {
 	private static async localize(): Promise<void> {
 		let localizedStrings: any;
 		switch (window.localStorage.language) {
-			case 'ar': localizedStrings = await import('../i18n/ar.json'); break;
-			case 'de': localizedStrings = await import('../i18n/de.json'); break;
-			case 'en-GB': localizedStrings = await import('../i18n/en-GB.json'); break;
-			case 'es': localizedStrings = await import('../i18n/es.json'); break;
-			case 'fr': localizedStrings = await import('../i18n/fr.json'); break;
-			case 'id': localizedStrings = await import('../i18n/id.json'); break;
-			case 'ja': localizedStrings = await import('../i18n/ja.json'); break;
-			case 'ru': localizedStrings = await import('../i18n/ru.json'); break;
-			case 'zh': localizedStrings = await import('../i18n/zh.json'); break;
+			case 'ar': localizedStrings = await import('i18n/ar.json'); break;
+			case 'de': localizedStrings = await import('i18n/de.json'); break;
+			case 'en-GB': localizedStrings = await import('i18n/en-GB.json'); break;
+			case 'es': localizedStrings = await import('i18n/es.json'); break;
+			case 'fr': localizedStrings = await import('i18n/fr.json'); break;
+			case 'id': localizedStrings = await import('i18n/id.json'); break;
+			case 'ja': localizedStrings = await import('i18n/ja.json'); break;
+			case 'ru': localizedStrings = await import('i18n/ru.json'); break;
+			case 'zh': localizedStrings = await import('i18n/zh.json'); break;
 			default: return;
 		}
 		this.localizeDefaultStrings(this, localizedStrings);

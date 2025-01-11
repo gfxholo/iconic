@@ -1,9 +1,9 @@
 import { WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { BookmarkItem, STRINGS } from './IconicPlugin';
-import { RuleItem } from './RuleManager';
-import RuleEditor from './RuleEditor';
-import IconManager from './IconManager';
-import IconPicker from './IconPicker';
+import IconicPlugin, { BookmarkItem, STRINGS } from 'src/IconicPlugin';
+import { RuleItem } from 'src/managers/RuleManager';
+import IconManager from 'src/managers/IconManager';
+import RuleEditor from 'src/dialogs/RuleEditor';
+import IconPicker from 'src/dialogs/IconPicker';
 
 /**
  * Handles icons in the Bookmarks pane.

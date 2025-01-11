@@ -1,7 +1,7 @@
 import { Menu, Platform } from 'obsidian';
-import IconicPlugin, { RibbonItem, STRINGS } from './IconicPlugin';
-import IconManager from './IconManager';
-import IconPicker from './IconPicker';
+import IconicPlugin, { RibbonItem, STRINGS } from 'src/IconicPlugin';
+import IconManager from 'src/managers/IconManager';
+import IconPicker from 'src/dialogs/IconPicker';
 
 /**
  * Handles icons in the app ribbon.

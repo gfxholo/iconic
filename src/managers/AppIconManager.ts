@@ -1,8 +1,8 @@
 import { Menu, Platform } from 'obsidian';
-import IconicPlugin, { STRINGS, AppItemId } from './IconicPlugin';
-import IconManager from './IconManager';
-import IconPicker from './IconPicker';
-import ColorUtils from './ColorUtils';
+import IconicPlugin, { STRINGS, AppItemId } from 'src/IconicPlugin';
+import ColorUtils from 'src/ColorUtils';
+import IconManager from 'src/managers/IconManager';
+import IconPicker from 'src/dialogs/IconPicker';
 
 const SVG_INFO = { attr: { 'aria-hidden': false, width: 12, height: 12, viewBox: '0 0 12 12' } };
 const MINIMIZE_RECT = { attr: { fill: 'currentColor', width: 10, height: 1, x: 1, y: 6 } };

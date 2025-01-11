@@ -1,6 +1,6 @@
 import { App, setIcon } from 'obsidian';
-import IconicPlugin, { Item, Icon, ICONS, EMOJIS } from './IconicPlugin';
-import ColorUtils from './ColorUtils';
+import IconicPlugin, { Item, Icon, ICONS, EMOJIS } from 'src/IconicPlugin';
+import ColorUtils from 'src/ColorUtils';
 
 /**
  * Base class for all icon managers.

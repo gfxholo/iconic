@@ -1,7 +1,7 @@
 import { Menu, WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { TagItem, STRINGS } from './IconicPlugin';
-import IconManager from './IconManager';
-import IconPicker from './IconPicker';
+import IconicPlugin, { TagItem, STRINGS } from 'src/IconicPlugin';
+import IconManager from 'src/managers/IconManager';
+import IconPicker from 'src/dialogs/IconPicker';
 
 /**
  * Handles icons in the Tags pane.

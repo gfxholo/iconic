@@ -1,10 +1,10 @@
 import { ButtonComponent, DropdownComponent, ExtraButtonComponent, Modal, Platform, Setting, TextComponent } from 'obsidian';
-import IconicPlugin, { Icon, Item, FileItem, STRINGS } from './IconicPlugin';
-import { RulePage, RuleItem, ConditionItem } from './RuleManager';
-import RuleChecker from './RuleChecker';
-import IconManager from './IconManager';
-import IconPicker from './IconPicker';
-import ColorUtils from './ColorUtils';
+import IconicPlugin, { Icon, Item, FileItem, STRINGS } from 'src/IconicPlugin';
+import ColorUtils from 'src/ColorUtils';
+import { RulePage, RuleItem, ConditionItem } from 'src/managers/RuleManager';
+import IconManager from 'src/managers/IconManager';
+import RuleChecker from 'src/dialogs/RuleChecker';
+import IconPicker from 'src/dialogs/IconPicker';
 
 /**
  * Options for a DropdownComponent.

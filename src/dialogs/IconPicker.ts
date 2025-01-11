@@ -1,9 +1,9 @@
 import { ButtonComponent, ColorComponent, ExtraButtonComponent, Hotkey, Menu, Modal, Platform, Setting, TextComponent, prepareFuzzySearch } from 'obsidian';
-import IconicPlugin, { Item, Icon, ICONS, EMOJIS, STRINGS } from './IconicPlugin';
-import { RuleItem, RulePage } from './RuleManager';
-import RuleEditor from './RuleEditor';
-import IconManager from './IconManager';
-import ColorUtils, { COLORS } from './ColorUtils';
+import IconicPlugin, { Item, Icon, ICONS, EMOJIS, STRINGS } from 'src/IconicPlugin';
+import ColorUtils, { COLORS } from 'src/ColorUtils';
+import { RuleItem, RulePage } from 'src/managers/RuleManager';
+import IconManager from 'src/managers/IconManager';
+import RuleEditor from 'src/dialogs/RuleEditor';
 
 const COLOR_KEYS = [...COLORS.keys()];
 

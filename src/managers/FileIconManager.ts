@@ -1,8 +1,8 @@
 import { WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { FileItem, STRINGS } from './IconicPlugin';
-import RuleEditor from './RuleEditor';
-import IconManager from './IconManager';
-import IconPicker from './IconPicker';
+import IconicPlugin, { FileItem, STRINGS } from 'src/IconicPlugin';
+import IconManager from 'src/managers/IconManager';
+import RuleEditor from 'src/dialogs/RuleEditor';
+import IconPicker from 'src/dialogs/IconPicker';
 
 /**
  * Handles icons in the Files pane.

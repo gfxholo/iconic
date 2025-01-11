@@ -1,7 +1,7 @@
 import { WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { PropertyItem, STRINGS } from './IconicPlugin';
-import IconManager from './IconManager';
-import IconPicker from './IconPicker';
+import IconicPlugin, { PropertyItem, STRINGS } from 'src/IconicPlugin';
+import IconManager from 'src/managers/IconManager';
+import IconPicker from 'src/dialogs/IconPicker';
 
 /**
  * Handles icons in the Properties pane.
