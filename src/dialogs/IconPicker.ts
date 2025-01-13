@@ -698,7 +698,8 @@ export default class IconPicker extends Modal {
 				const linkEl = innerEl.createEl('a', { text: rule.name });
 				innerEl.appendText(STRINGS.iconPicker.overruleSuffix);
 				this.iconManager.setEventListener(linkEl, 'click', () => {
-					if (page) RuleEditor.open(this.plugin, page, rule, newRule => {
+					if (page && rule) RuleEditor.open(this.plugin, page, rule, newRule => {
+						if (!rule) return;
 						const isRulingChanged = newRule
 							? this.plugin.ruleManager.saveRule(page, newRule)
 							: this.plugin.ruleManager.deleteRule(page, rule.id);
