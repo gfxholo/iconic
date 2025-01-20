@@ -368,7 +368,7 @@ export default class IconicPlugin extends Plugin {
 		this.addRibbonIcon(
 			'lucide-book-image',
 			STRINGS.commands.openRulebook,
-			() => RulePicker.open(this)
+			() => RulePicker.open(this),
 		);
 
 		// COMMAND: Open rulebook

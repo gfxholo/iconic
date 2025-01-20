@@ -79,7 +79,8 @@ export default class RulePicker extends Modal {
 	}
 
 	static open(plugin: IconicPlugin): void {
-		new RulePicker(plugin).open();
+		// Silently no-op if rulebook hasn't finished loading
+		if (plugin.ruleManager) new RulePicker(plugin).open();
 	}
 
 	/**

@@ -34,6 +34,8 @@ export default class IconicSettingTab extends PluginSettingTab {
 			.addButton(button => { button
 				.setButtonText(STRINGS.settings.rulebook.manage)
 				.onClick(() => {
+					// Silently no-op if rulebook hasn't finished loading
+					if (!this.plugin.ruleManager) return;
 					// @ts-expect-error (Private API)
 					this.app.setting.close();
 					RulePicker.open(this.plugin);
