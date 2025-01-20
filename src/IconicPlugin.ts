@@ -300,6 +300,16 @@ export default class IconicPlugin extends Plugin {
 			
 			this.startManagers();
 			this.refreshBodyClasses();
+
+			this.registerEvent(this.app.vault.on('create', tAbstractFile => {
+				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+				// If a created file/folder triggers a new ruling, refresh icons
+				if (this.ruleManager.triggerRulings(page, 'rename', 'move', 'modify')) {
+					if (page === 'file') this.tabIconManager?.refreshIcons();
+					this.fileIconManager?.refreshIcons();
+					this.bookmarkIconManager?.refreshIcons();
+				}
+			}));
 		});
 
 		this.registerEvent(this.app.workspace.on('css-change', () => {
