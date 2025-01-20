@@ -41,8 +41,6 @@ export default abstract class IconManager {
 				iconEl.removeClass('iconic-icon');
 			}
 			iconEl.show();
-		} else if (iconEl.hasClass('ribbon-divider')) { // Compatibility for Ribbon Divider plugin
-			iconEl.removeClass('iconic-icon');
 		} else if ('iconDefault' in item && item.iconDefault) {
 			setIcon(iconEl, item.iconDefault);
 			iconEl.show();

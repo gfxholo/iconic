@@ -27,7 +27,8 @@ export default class RibbonIconManager extends IconManager {
 			const ribbonItems = this.plugin.getRibbonItems();
 			this.plugin.menuManager.forSection('order', item => {
 				const ribbonItem = ribbonItems[0];
-				if (ribbonItem) {
+				// @ts-expect-error (Private API)
+				if (ribbonItem && item.iconEl.childElementCount > 0) { // Ribbon Divider compatibility
 					item.setIcon(ribbonItem.icon);
 					// @ts-expect-error (Private API)
 					this.refreshIcon(ribbonItem, item.iconEl);
@@ -85,7 +86,9 @@ export default class RibbonIconManager extends IconManager {
 			const ribbonItems = this.plugin.getRibbonItems(unloading);
 			for (const ribbonItem of ribbonItems) {
 				const iconEl = ribbonItem.iconEl;
-				if (!iconEl) continue;
+				if (!iconEl || iconEl.hasClass('ribbon-divider')) { // Ribbon Divider compatibility
+					continue;
+				}
 				if (ribbonItem.isHidden) {
 					ribbonItem.icon = null;
 					ribbonItem.iconDefault = null;
@@ -138,6 +141,9 @@ export default class RibbonIconManager extends IconManager {
 
 		for (const [item, itemEl, buttonClass] of configItems) {
 			const iconEl = itemEl.find(':scope > .mobile-option-setting-item-option-icon');
+			if (!iconEl || iconEl.childElementCount === 0) { // Ribbon Divider compatibility
+				continue;
+			}
 			const buttonEl = itemEl.find(':scope > .' + buttonClass);
 			this.refreshIcon(item, iconEl, event => {
 				IconPicker.openSingle(this.plugin, item, (newIcon, newColor) => {
