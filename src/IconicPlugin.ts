@@ -310,58 +310,58 @@ export default class IconicPlugin extends Plugin {
 					this.bookmarkIconManager?.refreshIcons();
 				}
 			}));
+
+			this.registerEvent(this.app.vault.on('rename', (tAbstractFile, oldPath) => {
+				const { path } = tAbstractFile;
+				const fileIcon = this.settings.fileIcons[oldPath];
+				if (fileIcon) {
+					this.settings.fileIcons[path] = fileIcon;
+					delete this.settings.fileIcons[oldPath];
+					this.saveSettings();
+				}
+				const { filename, tree } = this.splitFilePath(path);
+				const { filename: oldFilename, tree: oldTree } = this.splitFilePath(oldPath);
+				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+				// If a renamed file/folder triggers a new ruling, refresh icons
+				if (filename !== oldFilename && this.ruleManager.triggerRulings(page, 'rename')) {
+					if (page === 'file') this.tabIconManager?.refreshIcons();
+					this.fileIconManager?.refreshIcons();
+					this.bookmarkIconManager?.refreshIcons();
+				// If a moved file/folder triggers a new ruling, refresh icons
+				} else if (tree !== oldTree && this.ruleManager.triggerRulings(page, 'move')) {
+					if (page === 'file') this.tabIconManager?.refreshIcons();
+					this.fileIconManager?.refreshIcons();
+					this.bookmarkIconManager?.refreshIcons();
+				}
+			}));
+
+			this.registerEvent(this.app.vault.on('modify', tAbstractFile => {
+				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+				// If a modified file/folder triggers a new ruling, refresh icons
+				if (this.ruleManager.triggerRulings(page, 'modify')) {
+					if (page === 'file') this.tabIconManager?.refreshIcons();
+					this.fileIconManager?.refreshIcons();
+					this.bookmarkIconManager?.refreshIcons();
+				}
+			}));
+
+			this.registerEvent(this.app.vault.on('delete', (tAbstractFile) => {
+				const { path } = tAbstractFile;
+				if (this.settings.rememberDeletedItems === false) {
+					delete this.settings.fileIcons[path];
+					this.saveSettings();
+				}
+				// If a deleted file/folder was associated with a ruling, update rulings
+				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+				if (this.ruleManager.checkRuling(page, path)) {
+					this.ruleManager.updateRulings(page);
+				}
+			}));
 		});
 
 		this.registerEvent(this.app.workspace.on('css-change', () => {
 			this.refreshManagers();
 			this.refreshBodyClasses();
-		}));
-
-		this.registerEvent(this.app.vault.on('rename', (tAbstractFile, oldPath) => {
-			const { path } = tAbstractFile;
-			const fileIcon = this.settings.fileIcons[oldPath];
-			if (fileIcon) {
-				this.settings.fileIcons[path] = fileIcon;
-				delete this.settings.fileIcons[oldPath];
-				this.saveSettings();
-			}
-			const { filename, tree } = this.splitFilePath(path);
-			const { filename: oldFilename, tree: oldTree } = this.splitFilePath(oldPath);
-			const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
-			// If this rename triggers a new ruling, refresh icons
-			if (filename !== oldFilename && this.ruleManager.triggerRulings(page, 'rename')) {
-				if (page === 'file') this.tabIconManager?.refreshIcons();
-				this.fileIconManager?.refreshIcons();
-				this.bookmarkIconManager?.refreshIcons();
-			// If this move triggers a new ruling, refresh icons
-			} else if (tree !== oldTree && this.ruleManager.triggerRulings(page, 'move')) {
-				if (page === 'file') this.tabIconManager?.refreshIcons();
-				this.fileIconManager?.refreshIcons();
-				this.bookmarkIconManager?.refreshIcons();
-			}
-		}));
-
-		this.registerEvent(this.app.vault.on('modify', tAbstractFile => {
-			const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
-			// If this modification triggers a new ruling, refresh icons
-			if (this.ruleManager.triggerRulings(page, 'modify')) {
-				if (page === 'file') this.tabIconManager?.refreshIcons();
-				this.fileIconManager?.refreshIcons();
-				this.bookmarkIconManager?.refreshIcons();
-			}
-		}));
-
-		this.registerEvent(this.app.vault.on('delete', (tAbstractFile) => {
-			const { path } = tAbstractFile;
-			if (this.settings.rememberDeletedItems === false) {
-				delete this.settings.fileIcons[path];
-				this.saveSettings();
-			}
-			// If this deleted file/folder was associated with a ruling, update rulings
-			const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
-			if (this.ruleManager.checkRuling(page, path)) {
-				this.ruleManager.updateRulings(page);
-			}
 		}));
 
 		// RIBBON: Open rulebook
