@@ -9,6 +9,11 @@ import IconPicker from 'src/dialogs/IconPicker';
  */
 export default class FileIconManager extends IconManager {
 	private containerEl: HTMLElement;
+	/**
+	 * Tracks pending refresh operations to prevent rapid repeated updates
+	 * when expanding/collapsing folders
+	 */
+	private refreshTimeout: number | null = null;
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
@@ -78,25 +83,38 @@ export default class FileIconManager extends IconManager {
 			const rule = this.plugin.ruleManager.checkRuling(page, file.id, unloading) ?? file;
 
 			if (file.items) {
+				// Refresh children immediately if folder is expanded
 				if (!itemEl.hasClass('is-collapsed')) {
 					const childItemEls = itemEl.findAll(':scope > .tree-item-children > .tree-item');
 					if (childItemEls) this.refreshChildIcons(file.items, childItemEls, unloading);
 				}
 
+				// Set up mutation observer with performance optimizations:
+				// 1. Only refresh on expand (not collapse) to reduce unnecessary updates
+				// 2. Use debouncing to prevent rapid repeated refreshes
 				this.setMutationsObserver(itemEl, {
 					subtree: true,
 					attributeFilter: ['class', 'data-path'],
 					attributeOldValue: true,
 				}, mutations => {
 					if (mutations.some(mutation => {
-						// Refresh when a child item changes data-path
-						return mutation.attributeName === 'data-path'
-						// Refresh when folder expands/collapses
-						|| mutation.target instanceof HTMLElement && mutation.target.hasClass('is-collapsed') !== mutation.oldValue?.includes('is-collapsed');
+						// Always refresh on data-path changes
+						if (mutation.attributeName === 'data-path') return true;
+				
+						// For collapse/expand, only refresh when expanding
+						// This prevents unnecessary refreshes when collapsing
+						if (mutation.target instanceof HTMLElement && 
+							mutation.attributeName === 'class') {
+							const wasCollapsed = mutation.oldValue?.includes('is-collapsed');
+							const isCollapsed = mutation.target.hasClass('is-collapsed');
+							return wasCollapsed && !isCollapsed; // Only trigger on expand
+						}
+						return false;
 					})) {
 						const childItemEls = itemEl.findAll(':scope > .tree-item-children > .tree-item');
 						if (file.items && childItemEls) {
-							this.refreshChildIcons([file, ...file.items], [itemEl, ...childItemEls]);
+							// Use debounced refresh to prevent rapid repeated updates
+							this.debouncedRefresh([file, ...file.items], [itemEl, ...childItemEls]);
 						}
 					}
 				});
@@ -154,6 +172,21 @@ export default class FileIconManager extends IconManager {
 				}
 			});
 		}
+	}
+
+	/**
+	 * Debounced version of refreshChildIcons that prevents multiple rapid refreshes.
+	 * Waits for 100ms of no new refresh requests before executing.
+	 */
+	private debouncedRefresh(files: FileItem[], itemEls: HTMLElement[]): void {
+		if (this.refreshTimeout) {
+			window.clearTimeout(this.refreshTimeout);
+		}
+
+		this.refreshTimeout = window.setTimeout(() => {
+			this.refreshChildIcons(files, itemEls);
+			this.refreshTimeout = null;
+		}, 100);
 	}
 
 	/**
@@ -244,5 +277,19 @@ export default class FileIconManager extends IconManager {
 				});
 			}
 		}
+	}
+
+	/**
+	 * Override parent unload to clean up refresh timeout 
+	 * in addition to standard cleanup
+	 */
+	unload(): void {
+		// Clear any pending refresh timeout before standard cleanup
+		if (this.refreshTimeout) {
+			window.clearTimeout(this.refreshTimeout);
+			this.refreshTimeout = null;
+		}
+		// Call parent class unload to handle the rest of cleanup
+		super.unload();
 	}
 }
