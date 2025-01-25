@@ -363,7 +363,9 @@ class RuleSetting extends Setting {
 		this.ghostRuleEl.setCssStyles({
 			width: this.settingEl.clientWidth + 'px',
 			height: this.settingEl.clientHeight + 'px',
-			left: x - this.settingEl.clientWidth + dragButtonEl.clientWidth / 2 + 'px',
+			left: activeDocument.body.hasClass('mod-rtl')
+				? x - dragButtonEl.clientWidth / 2 + 'px'
+				: x - this.settingEl.clientWidth + dragButtonEl.clientWidth / 2 + 'px',
 			top: y - this.settingEl.clientHeight / 2 + 'px',
 		});
 		this.ghostRuleEl.appendChild(this.settingEl.cloneNode(true));
@@ -379,7 +381,9 @@ class RuleSetting extends Setting {
 		if (x === 0 && y === 0) return;
 		// Update ghost position
 		this.ghostRuleEl?.setCssStyles({
-			left: x - this.settingEl.clientWidth + dragButtonEl.clientWidth / 2 + 'px',
+			left: activeDocument.body.hasClass('mod-rtl')
+				? x - dragButtonEl.clientWidth / 2 + 'px'
+				: x - this.settingEl.clientWidth + dragButtonEl.clientWidth / 2 + 'px',
 			top: y - this.settingEl.clientHeight / 2 + 'px',
 		});
 		// Get position in list

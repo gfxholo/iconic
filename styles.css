@@ -205,9 +205,13 @@ a.tag {
 .iconic-add > .setting-item-control {
 	justify-content: flex-start;
 }
-.drag-reorder-ghost > .iconic-rule,
-.drag-reorder-ghost > .iconic-condition {
+.drag-reorder-ghost .iconic-rule,
+.drag-reorder-ghost .iconic-condition {
 	padding: 0.75em 0;
+}
+.mod-rtl .drag-reorder-ghost .iconic-rule,
+.mod-rtl .drag-reorder-ghost .iconic-condition {
+	direction: rtl;
 }
 .iconic-rule-picker .drag-ghost-hidden + .setting-item,
 .iconic-rule-editor .drag-ghost-hidden + .setting-item {
