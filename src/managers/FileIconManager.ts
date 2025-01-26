@@ -10,10 +10,9 @@ import IconPicker from 'src/dialogs/IconPicker';
 export default class FileIconManager extends IconManager {
 	private containerEl: HTMLElement;
 	/**
-	 * Tracks pending refresh operations to prevent rapid repeated updates
-	 * when expanding/collapsing folders
+	 * Tracks pending refresh operations to prevent multiple rapid refreshes when expanding folders.
 	 */
-	private refreshTimeout: number | null = null;
+	private refreshTimerId: number;
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
@@ -91,7 +90,7 @@ export default class FileIconManager extends IconManager {
 
 				// Set up mutation observer with performance optimizations:
 				// 1. Only refresh on expand (not collapse) to reduce unnecessary updates
-				// 2. Use debouncing to prevent rapid repeated refreshes
+				// 2. Use debouncing to prevent multiple rapid refreshes
 				this.setMutationsObserver(itemEl, {
 					subtree: true,
 					attributeFilter: ['class', 'data-path'],
@@ -101,10 +100,8 @@ export default class FileIconManager extends IconManager {
 						// Always refresh on data-path changes
 						if (mutation.attributeName === 'data-path') return true;
 
-						// For collapse/expand, only refresh when expanding
-						// This prevents unnecessary refreshes when collapsing
-						if (mutation.target instanceof HTMLElement && 
-							mutation.attributeName === 'class') {
+						// Refresh when folder is expanded
+						if (mutation.attributeName === 'class' && mutation.target instanceof HTMLElement) {
 							const wasCollapsed = mutation.oldValue?.includes('is-collapsed');
 							const isCollapsed = mutation.target.hasClass('is-collapsed');
 							return wasCollapsed && !isCollapsed; // Only trigger on expand
@@ -113,7 +110,7 @@ export default class FileIconManager extends IconManager {
 					})) {
 						const childItemEls = itemEl.findAll(':scope > .tree-item-children > .tree-item');
 						if (file.items && childItemEls) {
-							// Use debounced refresh to prevent rapid repeated updates
+							// Use debounced refresh to prevent multiple rapid refreshes
 							this.debouncedRefresh([file, ...file.items], [itemEl, ...childItemEls]);
 						}
 					}
@@ -179,13 +176,9 @@ export default class FileIconManager extends IconManager {
 	 * Waits for 100ms of no new refresh requests before executing.
 	 */
 	private debouncedRefresh(files: FileItem[], itemEls: HTMLElement[]): void {
-		if (this.refreshTimeout) {
-			window.clearTimeout(this.refreshTimeout);
-		}
-
-		this.refreshTimeout = window.setTimeout(() => {
+		window.clearTimeout(this.refreshTimerId);
+		this.refreshTimerId = window.setTimeout(() => {
 			this.refreshChildIcons(files, itemEls);
-			this.refreshTimeout = null;
 		}, 100);
 	}
 
@@ -280,16 +273,11 @@ export default class FileIconManager extends IconManager {
 	}
 
 	/**
-	 * Override parent unload to clean up refresh timeout 
-	 * in addition to standard cleanup
+	 * @override
+	 * Clear refresh timer in addition to standard cleanup.
 	 */
 	unload(): void {
-		// Clear any pending refresh timeout before standard cleanup
-		if (this.refreshTimeout) {
-			window.clearTimeout(this.refreshTimeout);
-			this.refreshTimeout = null;
-		}
-		// Call parent class unload to handle the rest of cleanup
+		window.clearTimeout(this.refreshTimerId);
 		super.unload();
 	}
 }
