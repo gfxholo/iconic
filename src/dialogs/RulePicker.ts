@@ -58,7 +58,7 @@ class RulePickerManager extends IconManager {
 export default class RulePicker extends Modal {
 	private readonly plugin: IconicPlugin;
 	private readonly iconManager: RulePickerManager;
-	
+
 	// Components
 	private readonly ruleEls: HTMLElement[] = [];
 	private addRuleSetting: Setting;

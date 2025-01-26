@@ -36,7 +36,7 @@ export default class BookmarkIconManager extends IconManager {
 	 */
 	private manageLeaf(leaf: WorkspaceLeaf): void {
 		if (leaf.getViewState().type !== 'bookmarks') return;
-		
+
 		this.stopMutationObserver(this.containerEl);
 		this.containerEl = leaf.view.containerEl.find(':scope > .view-content > div');
 		this.setMutationObserver(this.containerEl, {

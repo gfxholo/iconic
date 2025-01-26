@@ -297,7 +297,7 @@ export default class IconicPlugin extends Plugin {
 			.sort(([, aName], [, bName]) => aName.localeCompare(bName))
 			// Populate ICONS map
 			.forEach(([id, name]) => ICONS.set(id, name));
-			
+
 			this.startManagers();
 			this.refreshBodyClasses();
 

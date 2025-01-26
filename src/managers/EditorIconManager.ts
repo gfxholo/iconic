@@ -82,7 +82,7 @@ export default class EditorIconManager extends IconManager {
 	private observeViewIcons(view: MarkdownView): void {
 		// Note container
 		this.observeContainer(view.containerEl, view);
-		
+
 		// Note editing view
 		for (const editingViewEl of view.contentEl.children) {
 			if (editingViewEl instanceof HTMLElement && editingViewEl.hasClass('markdown-source-view')) {
@@ -90,13 +90,13 @@ export default class EditorIconManager extends IconManager {
 				break;
 			}
 		}
-		
+
 		// Properties list
 		// @ts-expect-error (Private API)
 		const propsEl: HTMLElement = view.metadataEditor?.propertyListEl;
 		if (!propsEl) return;
 		this.observeProperties(propsEl, view);
-		
+
 		// "Tags" property
 		const tagsEl: HTMLElement = propsEl.find('.metadata-property[data-property-key="tags"] .multi-select-container');
 		if (!tagsEl) return;

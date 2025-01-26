@@ -52,7 +52,7 @@ export default class TagIconManager extends IconManager {
 		const itemEls = this.containerEl?.findAll('.tree-item') ?? [];
 		if (itemEls) this.refreshChildIcons(tags, itemEls);
 	}
-	
+
 	/**
 	 * Refresh an array of tag icons, including any subitems.
 	 */

@@ -100,7 +100,7 @@ export default class FileIconManager extends IconManager {
 					if (mutations.some(mutation => {
 						// Always refresh on data-path changes
 						if (mutation.attributeName === 'data-path') return true;
-				
+
 						// For collapse/expand, only refresh when expanding
 						// This prevents unnecessary refreshes when collapsing
 						if (mutation.target instanceof HTMLElement && 
