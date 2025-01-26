@@ -44,8 +44,8 @@ export default class RuleManager {
 			const isMidnight = 86400000 - (Date.now() % 86400000) < 3600000;
 			// Check time triggers every minute, and date triggers every midnight
 			if (this.fileTriggers.has('time') || this.fileTriggers.has('date') && isMidnight) {
-				const isNewRuling = this.triggerRulings('file', 'time');
-				if (isNewRuling) {
+				const isRulingChanged = this.triggerRulings('file', 'time');
+				if (isRulingChanged) {
 					this.plugin.tabIconManager?.refreshIcons();
 					this.plugin.fileIconManager?.refreshIcons();
 					this.plugin.bookmarkIconManager?.refreshIcons();
@@ -55,7 +55,9 @@ export default class RuleManager {
 		// Recalculate delay every minute to avoid timing drift
 		const delay = 60000 - (Date.now() % 60000);
 		// Start the next timer
-		this.triggerTimerId = activeWindow.setTimeout(() => this.startTriggerTimer(), delay);
+		this.triggerTimerId = activeWindow.setTimeout(() => {
+			this.startTriggerTimer();
+		}, delay);
 	}
 
 	/**
