@@ -114,8 +114,12 @@ export default class TagIconManager extends IconManager {
 		const tag = this.plugin.getTagItem(tagId);
 		if (!tag) return;
 
+		// Menu compatibility with Tag Wrangler plugin
+		const menu = this.plugin.isPluginEnabled('tag-wrangler')
+			? this.plugin.menuManager
+			: new Menu();
+
 		// Change icon
-		const menu = new Menu();
 		menu.addItem(menuItem => menuItem
 			.setTitle(STRINGS.menu.changeIcon)
 			.setIcon('lucide-image-plus')
@@ -141,6 +145,8 @@ export default class TagIconManager extends IconManager {
 			);
 		}
 
-		menu.showAtMouseEvent(event);
+		if (menu instanceof Menu) {
+			menu.showAtMouseEvent(event);
+		}
 	}
 }
