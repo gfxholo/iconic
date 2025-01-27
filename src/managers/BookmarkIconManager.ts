@@ -22,8 +22,8 @@ export default class BookmarkIconManager extends IconManager {
 				this.app.workspace.iterateAllLeaves(leaf => this.manageLeaf(leaf));
 			}
 		}));
-		// @ts-expect-error (Private API)
-		if (this.app.plugins?.plugins?.['obsidian-icon-folder']) {
+		// Compatibility with Iconize plugin
+		if (this.plugin.isPluginEnabled('obsidian-icon-folder')) {
 			this.plugin.registerEvent(this.app.workspace.on('active-leaf-change', () => {
 				this.refreshIcons();
 			}));

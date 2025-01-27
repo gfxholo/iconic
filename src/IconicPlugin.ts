@@ -580,6 +580,14 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
+	 * Check whether a community plugin is installed and enabled.
+	 */
+	isPluginEnabled(pluginId: string): boolean {
+		// @ts-expect-error (Private API)
+		return this.app.plugins?.plugins?.hasOwnProperty(pluginId) === true;
+	}
+
+	/**
 	 * Get app item definition.
 	 */
 	getAppItem(appItemId: AppItemId, unloading?: boolean): AppItem {
