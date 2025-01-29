@@ -1,5 +1,6 @@
 import { Menu, Platform } from 'obsidian';
 import IconicPlugin, { RibbonItem, STRINGS } from 'src/IconicPlugin';
+import MenuManager from './MenuManager';
 import IconManager from 'src/managers/IconManager';
 import IconPicker from 'src/dialogs/IconPicker';
 
@@ -15,7 +16,9 @@ export default class RibbonIconManager extends IconManager {
 		const containerEl: HTMLElement = this.app.workspace.leftRibbon.ribbonItemsEl;
 
 		// Prevent ribbon from eating auxclick events
-		this.setEventListener(containerEl, 'auxclick', event => event.stopPropagation(), { capture: true });
+		this.setEventListener(containerEl, 'auxclick', event => {
+			event.stopPropagation();
+		}, { capture: true });
 		this.setMutationsObserver(containerEl, { childList: true }, () => this.refreshIcons());
 
 		// Refresh ribbon context menu
@@ -94,7 +97,9 @@ export default class RibbonIconManager extends IconManager {
 					ribbonItem.iconDefault = null;
 				}
 				this.refreshIcon(ribbonItem, iconEl);
-				this.setEventListener(iconEl, 'contextmenu', event => this.onContextMenu(ribbonItem.id, event));
+				this.setEventListener(iconEl, 'contextmenu', event => {
+					this.onContextMenu(ribbonItem.id, event);
+				}, { capture: true });
 			}
 		}
 	}
@@ -165,8 +170,16 @@ export default class RibbonIconManager extends IconManager {
 		this.plugin.menuManager.closeAndFlush();
 		const ribbonItem = this.plugin.getRibbonItem(ribbonItemId);
 
+		// Menu compatibility with Periodic Notes plugin
+		let menu: Menu | MenuManager;
+		if (ribbonItemId.startsWith('periodic-notes:')) {
+			menu = this.plugin.menuManager;
+			menu.forSection('', menuItem => menuItem.setSection('open'));
+		} else {
+			menu = new Menu();
+		}
+
 		// Change icon
-		const menu = new Menu();
 		menu.addItem(menuItem => menuItem
 			.setTitle(STRINGS.menu.changeIcon)
 			.setIcon('lucide-image-plus')
@@ -190,6 +203,6 @@ export default class RibbonIconManager extends IconManager {
 			);
 		}
 
-		menu.showAtMouseEvent(event);
+		if (menu instanceof Menu) menu.showAtMouseEvent(event);
 	}
 }
