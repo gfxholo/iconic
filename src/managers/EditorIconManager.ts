@@ -28,14 +28,6 @@ export default class EditorIconManager extends IconManager {
 			}
 		});
 
-		// Watch for MarkdownViews
-		this.plugin.registerEvent(this.app.workspace.on('active-leaf-change', leaf => {
-			if (leaf?.view instanceof MarkdownView) {
-				this.observeViewIcons(leaf.view);
-				this.refreshViewIcons(leaf.view);
-			}
-		}));
-
 		// Markdown post-processor for hashtags (reading mode)
 		this.plugin.registerMarkdownPostProcessor(sectionEl => {
 			const tags = this.plugin.getTagItems();
@@ -83,14 +75,6 @@ export default class EditorIconManager extends IconManager {
 		// Note container
 		this.observeContainer(view.containerEl, view);
 
-		// Note editing view
-		for (const editingViewEl of view.contentEl.children) {
-			if (editingViewEl instanceof HTMLElement && editingViewEl.hasClass('markdown-source-view')) {
-				this.observeEditingView(editingViewEl, view);
-				break;
-			}
-		}
-
 		// Properties list
 		// @ts-expect-error (Private API)
 		const propsEl: HTMLElement = view.metadataEditor?.propertyListEl;
@@ -109,24 +93,6 @@ export default class EditorIconManager extends IconManager {
 	private observeContainer(containerEl: HTMLElement, view: MarkdownView): void {
 		this.setMutationsObserver(containerEl, { attributeFilter: ['data-mode'] }, () => {
 			this.refreshViewIcons(view);
-		});
-	}
-
-	/**
-	 * Refresh whenever a given editing view changes its active line.
-	*/
-	private observeEditingView(editingViewEl: HTMLElement, view: MarkdownView): void {
-		this.setMutationsObserver(editingViewEl, {
-			attributeFilter: ['class'],
-			attributeOldValue: true,
-			subtree: true,
-		}, mutations => {
-			for (const mutation of mutations) {
-				if (mutation.target instanceof HTMLElement && mutation.target.hasClass('cm-active') !== mutation.oldValue?.includes('cm-active')) {
-					this.refreshViewIcons(view);
-					return;
-				}
-			}
 		});
 	}
 
