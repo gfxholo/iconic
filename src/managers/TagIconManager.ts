@@ -29,15 +29,17 @@ export default class TagIconManager extends IconManager {
 
 		this.stopMutationObserver(this.containerEl);
 		this.containerEl = leaf.view.containerEl.find(':scope > .tag-container > div');
-		this.setMutationObserver(this.containerEl, {
+		this.setMutationsObserver(this.containerEl, {
 			subtree: true,
 			childList: true,
-		}, mutation => {
+		}, mutations => {
 			// Refresh when tags are added or removed
-			for (const addedNode of mutation.addedNodes) {
-				if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
-					this.refreshIcons();
-					return;
+			for (const mutation of mutations) {
+				for (const addedNode of mutation.addedNodes) {
+					if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
+						this.refreshIcons();
+						return;
+					}
 				}
 			}
 		});
