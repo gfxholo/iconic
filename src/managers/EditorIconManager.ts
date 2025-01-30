@@ -381,15 +381,16 @@ export default class EditorIconManager extends IconManager {
 		this.stopMutationObserver(suggestMenuEl);
 
 		const tagEls = suggestMenuEl.findAll(':scope > .suggestion > .suggestion-item');
+		const tags = this.plugin.getTagItems();
 		for (const tagEl of tagEls) {
 			const tagId = tagEl.getText();
-			if (tagId) {
+			const tag = tags.find(tag => tag.id === tagId);
+			if (tag) {
 				tagEl.addClass('mod-complex');
 				tagEl.empty();
 				const iconEl = tagEl.createDiv({ cls: 'suggestion-icon' }).createSpan({ cls: 'suggestion-flair' });
 				tagEl.createDiv({ cls: 'suggestion-content' }).createDiv({ cls: 'suggestion-title', text: tagId });
-				const tag = this.plugin.getTagItem(tagId);
-				if (tag && iconEl) this.refreshIcon(tag, iconEl);
+				if (iconEl) this.refreshIcon(tag, iconEl);
 			}
 		}
 

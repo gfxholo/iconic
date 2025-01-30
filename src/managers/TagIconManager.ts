@@ -70,22 +70,6 @@ export default class TagIconManager extends IconManager {
 			if (!tag) continue;
 
 			let iconEl = selfEl.find(':scope > .tree-item-icon') ?? selfEl.createDiv({ cls: 'tree-item-icon' });
-			let folderIconEl = selfEl.find(':scope > .iconic-sidekick:not(.tree-item-icon)');
-
-			if (tag.items) {
-				if (this.plugin.settings.minimalFolderIcons || !this.plugin.settings.showAllFolderIcons && !tag.icon) {
-					folderIconEl?.remove();
-				} else {
-					const arrowColor = tag.icon || tag.iconDefault ? null : tag.color;
-					this.refreshIcon({ icon: null, color: arrowColor }, iconEl);
-					folderIconEl = folderIconEl ?? selfEl.createDiv({ cls: 'iconic-sidekick' });
-					if (iconEl.nextElementSibling !== folderIconEl) {
-						iconEl.insertAdjacentElement('afterend', folderIconEl);
-					}
-					iconEl = folderIconEl;
-				}
-			}
-
 			if (iconEl.hasClass('collapse-icon') && !tag.icon && !tag.iconDefault) {
 				this.refreshIcon(tag, iconEl); // Skip click listener if icon will be a collapse arrow
 			} else if (this.plugin.isSettingEnabled('clickableIcons')) {

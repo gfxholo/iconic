@@ -56,9 +56,7 @@ export interface BookmarkItem extends Item {
 	isFileOrFolder: boolean;
 	items: BookmarkItem[] | null;
 }
-export interface TagItem extends Item {
-	items: TagItem[] | null;
-}
+export type TagItem = Item;
 export interface PropertyItem extends Item {
 	type: string | null;
 }
@@ -945,7 +943,6 @@ export default class IconicPlugin extends Plugin {
 			return {
 				id: tagHash.replace('#', ''),
 				name: tagHash,
-				items: this.getChildTagBases(tagHash, tagHashes),
 			}
 		});
 		return tagBases.map(tagBase => this.defineTagItem(tagBase, unloading));
@@ -958,12 +955,10 @@ export default class IconicPlugin extends Plugin {
 		const tagHash = '#' + tagId;
 		// @ts-expect-error (Private API)
 		const tagHashes: string[] = Object.keys(this.app.metadataCache.getTags()) ?? [];
-		const childTagBases = this.getChildTagBases(tagHash, tagHashes);
 		return tagHashes.includes(tagHash)
 			? this.defineTagItem({
 				id: tagId,
 				name: tagHash,
-				items: childTagBases.length > 0 ? childTagBases : null,
 			}, unloading) : null;
 	}
 
@@ -972,7 +967,6 @@ export default class IconicPlugin extends Plugin {
 	 */
 	private defineTagItem(tagBase: any, unloading?: boolean): TagItem {
 		const tagIcon = this.settings.tagIcons[tagBase.id] ?? {};
-		const childTagItems = tagBase.items?.map((childBase: any) => this.defineTagItem(childBase, unloading));
 
 		return {
 			id: tagBase.id,
@@ -981,26 +975,7 @@ export default class IconicPlugin extends Plugin {
 			iconDefault: null,
 			icon: unloading ? null : tagIcon.icon ?? null,
 			color: unloading ? null : tagIcon.color ?? null,
-			items: childTagItems?.length > 0 ? childTagItems : null,
 		};
-	}
-
-	/**
-	 * Get array of tag bases that share a given parent.
-	 */
-	private getChildTagBases(parentTagHash: string, tagHashes: string[]): any[] {
-		const tagBases = [];
-		const parentTagSlash = parentTagHash + '/';
-		for (const tagHash of tagHashes) {
-			if (tagHash.startsWith(parentTagSlash) && !tagHash.replace(parentTagSlash, '').includes('/')) {
-				tagBases.push({
-					id: tagHash.replace('#', ''),
-					name: tagHash,
-					items: this.getChildTagBases(tagHash, tagHashes),
-				});
-			}
-		}
-		return tagBases;
 	}
 
 	/**
