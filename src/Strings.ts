@@ -384,6 +384,7 @@ export default class Strings {
 			case 'id': localizedStrings = await import('i18n/id.json'); break;
 			case 'ja': localizedStrings = await import('i18n/ja.json'); break;
 			case 'ru': localizedStrings = await import('i18n/ru.json'); break;
+			case 'uk': localizedStrings = await import('i18n/uk.json'); break;
 			case 'zh': localizedStrings = await import('i18n/zh.json'); break;
 			default: return;
 		}
