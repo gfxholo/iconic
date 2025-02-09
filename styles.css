@@ -130,6 +130,12 @@ a.tag {
 }
 .iconic-icon-picker .setting-item-control input[type="text"] { width: 100%; }
 .iconic-icon-picker .setting-item-control .search-input-container { width: 100%; }
+.iconic-icon-picker .extra-setting-button:focus-visible {
+	box-shadow: none;
+	opacity: var(--icon-opacity-hover);
+	color: var(--icon-color-hover);
+	background-color: var(--background-modifier-hover);
+}
 .theme-dark .iconic-icon-picker .iconic-mode-selected {
 	color: var(--interactive-accent-hover);
 }
@@ -152,6 +158,9 @@ a.tag {
 .iconic-search-results { overflow-x: scroll; }
 .iconic-search-results > .setting-item-info { display: none; }
 .iconic-search-results > .setting-item-control { justify-content: center; }
+.iconic-search-results:focus-visible {
+	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+}
 .is-phone .iconic-search-results { flex-direction: row !important; }
 .is-phone .iconic-search-results > .setting-item-control { width: auto !important; }
 
