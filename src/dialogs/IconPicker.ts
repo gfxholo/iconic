@@ -406,7 +406,7 @@ export default class IconPicker extends Modal {
 				dialogState.iconMode = true;
 				this.searchField.setValue(ICONS.get(this.icon) ?? '');
 			} else if (EMOJIS.has(this.icon)) {
-				dialogState.emojiMode = false;
+				dialogState.emojiMode = true;
 				this.searchField.setValue(EMOJIS.get(this.icon) ?? '');
 			} else {
 				this.searchField.setValue(this.icon);
