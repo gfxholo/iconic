@@ -389,7 +389,10 @@ export default class IconPicker extends Modal {
 		// [Remove]
 		if (this.icon !== null || this.color !== null) {
 			new ButtonComponent(buttonRowEl ?? buttonContainerEl)
-				.setButtonText(STRINGS.menu.removeIcon)
+				.setButtonText(this.items.length === 1
+					? STRINGS.menu.removeIcon
+					: STRINGS.menu.removeIcons.replace('{#}', this.items.length.toString())
+				)
 				.onClick(() => this.closeAndSave(null, null))
 				.buttonEl.addClasses(Platform.isPhone
 					? ['mod-warning']
@@ -559,15 +562,24 @@ export default class IconPicker extends Modal {
 	private updateMobileSearchMode(): void {
 		const { dialogState } = this.plugin.settings;
 		if (dialogState.iconMode && dialogState.emojiMode) {
-			this.setTitle(STRINGS.iconPicker.changeMix);
+			this.setTitle(this.items.length === 1
+				? STRINGS.iconPicker.changeMix
+				: STRINGS.iconPicker.changeMixes.replace('{#}', this.items.length.toString())
+			);
 			this.searchField.setPlaceholder(STRINGS.iconPicker.searchMix);
 			this.mobileModeButton?.setButtonText(STRINGS.iconPicker.icons);
 		} else if (dialogState.iconMode) {
-			this.setTitle(STRINGS.iconPicker.changeIcon);
+			this.setTitle(this.items.length === 1
+				? STRINGS.iconPicker.changeIcon
+				: STRINGS.iconPicker.changeIcons.replace('{#}', this.items.length.toString())
+			);
 			this.searchField.setPlaceholder(STRINGS.iconPicker.searchIcons);
 			this.mobileModeButton?.setButtonText(STRINGS.iconPicker.emojis);
 		} else {
-			this.setTitle(STRINGS.iconPicker.changeEmoji);
+			this.setTitle(this.items.length === 1
+				? STRINGS.iconPicker.changeEmoji
+				: STRINGS.iconPicker.changeEmojis.replace('{#}', this.items.length.toString())
+			);
 			this.searchField.setPlaceholder(STRINGS.iconPicker.searchEmojis);
 			this.mobileModeButton?.setButtonText(STRINGS.iconPicker.mixed);
 		}
@@ -583,14 +595,23 @@ export default class IconPicker extends Modal {
 		this.emojiModeButton.extraSettingsEl.toggleClass('iconic-mode-selected', dialogState.emojiMode);
 
 		if (dialogState.iconMode && dialogState.emojiMode) {
-			this.setTitle(STRINGS.iconPicker.changeMix);
+			this.setTitle(this.items.length === 1
+				? STRINGS.iconPicker.changeMix
+				: STRINGS.iconPicker.changeMixes.replace('{#}', this.items.length.toString())
+			);
 			this.searchField.setPlaceholder(STRINGS.iconPicker.searchMix);
-		} else if (dialogState.emojiMode) {
-			this.setTitle(STRINGS.iconPicker.changeEmoji);
-			this.searchField.setPlaceholder(STRINGS.iconPicker.searchEmojis);
-		} else {
-			this.setTitle(STRINGS.iconPicker.changeIcon);
+		} else if (dialogState.iconMode) {
+			this.setTitle(this.items.length === 1
+				? STRINGS.iconPicker.changeIcon
+				: STRINGS.iconPicker.changeIcons.replace('{#}', this.items.length.toString())
+			);
 			this.searchField.setPlaceholder(STRINGS.iconPicker.searchIcons);
+		} else {
+			this.setTitle(this.items.length === 1
+				? STRINGS.iconPicker.changeEmoji
+				: STRINGS.iconPicker.changeEmojis.replace('{#}', this.items.length.toString())
+			);
+			this.searchField.setPlaceholder(STRINGS.iconPicker.searchEmojis);
 		}
 
 		this.updateSearchResults();
