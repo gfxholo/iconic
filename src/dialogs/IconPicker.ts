@@ -389,7 +389,7 @@ export default class IconPicker extends Modal {
 		// [Remove]
 		if (this.icon !== null || this.color !== null) {
 			new ButtonComponent(buttonRowEl ?? buttonContainerEl)
-				.setButtonText(STRINGS.iconPicker.removeIcon)
+				.setButtonText(STRINGS.menu.removeIcon)
 				.onClick(() => this.closeAndSave(null, null))
 				.buttonEl.addClasses(Platform.isPhone
 					? ['mod-warning']
@@ -422,14 +422,14 @@ export default class IconPicker extends Modal {
 			this.updateMobileSearchMode();
 		} else {
 			this.iconModeButton = new ExtraButtonComponent(buttonContainerEl)
-				.setTooltip('Toggle icons', { placement: 'top' })
+				.setTooltip(STRINGS.iconPicker.toggleIcons, { placement: 'top' })
 				.onClick(() => {
 					dialogState.iconMode = !dialogState.iconMode;
 					this.updateDesktopSearchMode();
 				});
 			this.iconModeButton.extraSettingsEl.tabIndex = 0;
 			this.emojiModeButton = new ExtraButtonComponent(buttonContainerEl)
-				.setTooltip('Toggle emojis', { placement: 'top' })
+				.setTooltip(STRINGS.iconPicker.toggleEmojis, { placement: 'top' })
 				.onClick(() => {
 					dialogState.emojiMode = !dialogState.emojiMode;
 					this.updateDesktopSearchMode();
