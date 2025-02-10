@@ -318,10 +318,7 @@ export default class IconPicker extends Modal {
 			.addColorPicker(colorPicker => { colorPicker
 				.setValueRgb(ColorUtils.toRgbObject(this.color))
 				.onChange(value => {
-					if (this.colorPickerPaused) {
-						this.colorPickerPaused = false;
-						return;
-					}
+					if (this.colorPickerPaused) return;
 					this.color = value;
 					this.colorPickerEl.ariaLabel = this.color;
 					this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
@@ -600,11 +597,12 @@ export default class IconPicker extends Modal {
 	}
 
 	/**
-	 * Update color of color picker without triggering its onChange() callback.
+	 * Update color of color picker without triggering its onChange() logic.
 	 */
 	private updateColorPicker(): void {
 		this.colorPickerPaused = true;
 		this.colorPicker.setValueRgb(ColorUtils.toRgbObject(this.color));
+		this.colorPickerPaused = false;
 
 		if (!this.color) {
 			this.colorPickerEl.ariaLabel = STRINGS.iconPicker.changeColor;
