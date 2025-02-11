@@ -442,6 +442,11 @@ a.tag {
 	display: flex;
 }
 
+/* Theme: Minimal Edge */
+.iconic-theme-medge .tree-item-self .tree-item-icon {
+	display: unset;
+}
+
 /* Theme: Sanctum */
 .iconic-theme-sanctum .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:has(.iconic-sidekick) > .nav-folder-title-content::before {
 	display: none;

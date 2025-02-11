@@ -561,6 +561,7 @@ export default class IconicPlugin extends Plugin {
 		body.toggleClass('iconic-theme-its', unloading ? false : theme === 'ITS Theme');
 		body.toggleClass('iconic-theme-lyt', unloading ? false : theme === 'LYT Mode');
 		body.toggleClass('iconic-theme-mflow', unloading ? false : theme === 'Mado Miniflow');
+		body.toggleClass('iconic-theme-medge', unloading ? false : theme === 'Minimal Edge');
 		body.toggleClass('iconic-theme-sanctum', unloading ? false : theme === 'Sanctum');
 		body.toggleClass('iconic-theme-shiba', unloading ? false : theme === 'Shiba Inu');
 		body.toggleClass('iconic-theme-shimmer', unloading ? false : theme === 'Shimmering Focus');
