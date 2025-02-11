@@ -41,15 +41,38 @@ You can automate your file & folder icons based on a variety of conditions, like
 
 Open the rulebook from the ribbon, from the plugin settings, or by using the **Open rulebook** command. There are currently two pages in the rulebook: **File rules** and **Folder rules**, which affect files and folders respectively.
 
-After creating your first rule, you can edit it using the rule editor. Every rule has an icon, which will overrule the icon of anything which meets the rule's conditions. A condition is a true or false test; it either matches, or it doesn't, and this decides whether the rule gets triggered. If you only need one condition to match, just click the **Any** button. You can check the match results of your rule by clicking the **Matches** button at the bottom.
+![Rule picker](rule-picker.webp)
 
-Once you save a rule, you'll see an **Edit rule** action in the menus of any icons which are being overruled. The icon picker also warns you if you try to change an overruled icon.
+Click the green (+) to create a new rule, then click ⚙️ to open the rule editor. Every rule has an icon, which will overrule the icon of anything which meets the conditions of that rule. A **condition** is a true or false test; it either matches, or it doesn't, and this decides whether the rule gets triggered. Rules can have multiple conditions, and you control how this is interpreted with the **All** / **Any** / **None** buttons.
+
+There are several types of data you can check using a condition:
+
+- `Icon` checks the icon set to a file/folder
+- `Color` checks the color set to a file/folder
+- `Name` checks the simple name of a `File`/`Folder`
+- `Filename` checks the full name of a `File.md`
+- `Extension` checks the file extension, like `md`, `canvas`, `jpg`, etc.
+- `Folder tree` checks the partial `Path/Leading/To/Your/` file
+- `Path in vault` checks the entire `Path/Leading/To/Your/File.md`
+- `Headings` checks for `# Headings` inside a note
+- `Links` checks for `[[Links]]` inside a note
+- `Tags` checks for tags inside a note, including `#hashtags` and the `tags:` property
+- `Properties` checks a specific `property:` inside a note
+- `Date created` checks the date & time a file was created
+- `Date modified` checks the date & time a file was modified
+- `System clock` checks the date & time on your device
+
+Date & time conditions are checked once every minute, so you can use them to modify your icons in real time.
 
 ![Rule editor](rule-editor.webp)
 
+You can see what your rule is actually matching by clicking the **1 match** / **X matches** button at the bottom.
+
+When a rule is active, you'll see an **Edit rule** action in the menus of any icons which are being overruled. The icon picker will display a warning if you try to edit an overruled icon.
+
 ## What makes this plugin different from [Iconize](https://github.com/FlorianWoelki/obsidian-iconize)?
 
-Both plugins can change the icons & colors of files, folders, and bookmarks. But **Iconic** also has the ability to:
+Both plugins can change the icons & colors of files & folders, and auto-set icons based on filepath rules. But **Iconic** can also:
 
 - Change icons of plugin tabs, tags, properties, ribbon commands, and a variety of window buttons
 - Change icons by clicking them directly
