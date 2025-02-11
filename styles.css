@@ -477,18 +477,6 @@ a.tag {
 	display: none;
 }
 
-/* Theme: Shimmering Focus */
-.iconic-theme-shimmer :is(.style-settings-collapse-indicator, .collapse-icon) > .svg-icon.svg-icon.svg-icon.svg-icon {
-	width: var(--icon-xs);
-	stroke-width: var(--icon-xs-stroke-width);
-	height: unset;
-	margin-left: unset;
-}
-.iconic-theme-shimmer.iconic-bigger-icons :is(.style-settings-collapse-indicator, .collapse-icon) > .svg-icon.svg-icon.svg-icon.svg-icon {
-	width: var(--icon-s);
-	stroke-width: var(--icon-s-stroke-width);
-}
-
 /* Theme: Sodalite */
 .iconic-theme-sodalite .workspace-leaf-content[data-type="file-explorer"] .nav-files-container {
 	padding-inline-start: var(--size-4-3);
