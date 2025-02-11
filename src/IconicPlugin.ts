@@ -543,30 +543,31 @@ export default class IconicPlugin extends Plugin {
 	 * @param unloading Remove all classes if true
 	 */
 	refreshBodyClasses(unloading?: boolean): void {
-		activeDocument.body.toggleClass('iconic-bigger-icons', unloading ? false : this.isSettingEnabled('biggerIcons'));
-		activeDocument.body.toggleClass('iconic-clickable-icons', unloading ? false : this.isSettingEnabled('clickableIcons'));
-		activeDocument.body.toggleClass('iconic-bigger-search-results', unloading ? false : this.isSettingEnabled('biggerSearchResults'));
-		activeDocument.body.toggleClass('iconic-uncolor-hover', unloading ? false : this.settings.uncolorHover);
-		activeDocument.body.toggleClass('iconic-uncolor-drag', unloading ? false : this.settings.uncolorDrag);
-		activeDocument.body.toggleClass('iconic-uncolor-select', unloading ? false : this.settings.uncolorSelect);
+		const { body } = activeDocument;
+		body.toggleClass('iconic-bigger-icons', unloading ? false : this.isSettingEnabled('biggerIcons'));
+		body.toggleClass('iconic-clickable-icons', unloading ? false : this.isSettingEnabled('clickableIcons'));
+		body.toggleClass('iconic-bigger-search-results', unloading ? false : this.isSettingEnabled('biggerSearchResults'));
+		body.toggleClass('iconic-uncolor-hover', unloading ? false : this.settings.uncolorHover);
+		body.toggleClass('iconic-uncolor-drag', unloading ? false : this.settings.uncolorDrag);
+		body.toggleClass('iconic-uncolor-select', unloading ? false : this.settings.uncolorSelect);
 
 		// @ts-expect-error (Private API)
-		const themeName = this.app.customCss?.theme;
-		activeDocument.body.toggleClass('iconic-theme-btopaz', unloading ? false : themeName === 'Blue Topaz');
-		activeDocument.body.toggleClass('iconic-theme-border', unloading ? false : themeName === 'Border');
-		activeDocument.body.toggleClass('iconic-theme-cat', unloading ? false : themeName === 'Catppuccin');
-		activeDocument.body.toggleClass('iconic-theme-cglow', unloading ? false : themeName === 'Cyber Glow');
-		activeDocument.body.toggleClass('iconic-theme-discord', unloading ? false : themeName === 'Discordian');
-		activeDocument.body.toggleClass('iconic-theme-its', unloading ? false : themeName === 'ITS Theme');
-		activeDocument.body.toggleClass('iconic-theme-lyt', unloading ? false : themeName === 'LYT Mode');
-		activeDocument.body.toggleClass('iconic-theme-mflow', unloading ? false : themeName === 'Mado Miniflow');
-		activeDocument.body.toggleClass('iconic-theme-sanctum', unloading ? false : themeName === 'Sanctum');
-		activeDocument.body.toggleClass('iconic-theme-shiba', unloading ? false : themeName === 'Shiba Inu');
-		activeDocument.body.toggleClass('iconic-theme-shimmer', unloading ? false : themeName === 'Shimmering Focus');
-		activeDocument.body.toggleClass('iconic-theme-sodalite', unloading ? false : themeName === 'Sodalite');
-		activeDocument.body.toggleClass('iconic-theme-spectrum', unloading ? false : themeName === 'Spectrum');
-		activeDocument.body.toggleClass('iconic-theme-terminal', unloading ? false : themeName === 'Terminal');
-		activeDocument.body.toggleClass('iconic-theme-ukiyo', unloading ? false : themeName === 'Ukiyo');
+		const theme = this.app.customCss?.theme;
+		body.toggleClass('iconic-theme-btopaz', unloading ? false : theme === 'Blue Topaz');
+		body.toggleClass('iconic-theme-border', unloading ? false : theme === 'Border');
+		body.toggleClass('iconic-theme-cat', unloading ? false : theme === 'Catppuccin');
+		body.toggleClass('iconic-theme-cglow', unloading ? false : theme === 'Cyber Glow');
+		body.toggleClass('iconic-theme-discord', unloading ? false : theme === 'Discordian');
+		body.toggleClass('iconic-theme-its', unloading ? false : theme === 'ITS Theme');
+		body.toggleClass('iconic-theme-lyt', unloading ? false : theme === 'LYT Mode');
+		body.toggleClass('iconic-theme-mflow', unloading ? false : theme === 'Mado Miniflow');
+		body.toggleClass('iconic-theme-sanctum', unloading ? false : theme === 'Sanctum');
+		body.toggleClass('iconic-theme-shiba', unloading ? false : theme === 'Shiba Inu');
+		body.toggleClass('iconic-theme-shimmer', unloading ? false : theme === 'Shimmering Focus');
+		body.toggleClass('iconic-theme-sodalite', unloading ? false : theme === 'Sodalite');
+		body.toggleClass('iconic-theme-spectrum', unloading ? false : theme === 'Spectrum');
+		body.toggleClass('iconic-theme-terminal', unloading ? false : theme === 'Terminal');
+		body.toggleClass('iconic-theme-ukiyo', unloading ? false : theme === 'Ukiyo');
 	}
 
 	/**
