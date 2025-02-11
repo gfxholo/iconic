@@ -599,10 +599,10 @@ export default class RuleEditor extends Modal {
 			.addButton(button => { button
 				.setButtonText(STRINGS.ruleEditor.matchConditions.all)
 				.setTooltip('All conditions must match')
-				.buttonEl.toggleClass('mod-cta', this.rule.match === 'all');
+				.buttonEl.toggleClass('iconic-button-selected', this.rule.match === 'all');
 				this.iconManager.setEventListener(button.buttonEl, 'pointerdown', () => {
-					buttonEls.forEach(buttonEl => buttonEl.removeClass('mod-cta'));
-					button.buttonEl.addClass('mod-cta');
+					buttonEls.forEach(buttonEl => buttonEl.removeClass('iconic-button-selected'));
+					button.buttonEl.addClass('iconic-button-selected');
 					this.rule.match = 'all';
 					this.updateMatchesButton();
 				});
@@ -611,10 +611,10 @@ export default class RuleEditor extends Modal {
 			.addButton(button => { button
 				.setButtonText(STRINGS.ruleEditor.matchConditions.any)
 				.setTooltip('At least 1 condition must match')
-				.buttonEl.toggleClass('mod-cta', this.rule.match === 'any');
+				.buttonEl.toggleClass('iconic-button-selected', this.rule.match === 'any');
 				this.iconManager.setEventListener(button.buttonEl, 'pointerdown', () => {
-					buttonEls.forEach(buttonEl => buttonEl.removeClass('mod-cta'));
-					button.buttonEl.addClass('mod-cta');
+					buttonEls.forEach(buttonEl => buttonEl.removeClass('iconic-button-selected'));
+					button.buttonEl.addClass('iconic-button-selected');
 					this.rule.match = 'any';
 					this.updateMatchesButton();
 				});
@@ -622,11 +622,11 @@ export default class RuleEditor extends Modal {
 			})
 			.addButton(button => { button
 				.setButtonText(STRINGS.ruleEditor.matchConditions.none)
-				.setTooltip('All conditions must fail')
-				.buttonEl.toggleClass('mod-cta', this.rule.match === 'none');
+				.setTooltip('All conditions must fail');
+				button.buttonEl.toggleClass('iconic-button-selected', this.rule.match === 'none');
 				this.iconManager.setEventListener(button.buttonEl, 'pointerdown', () => {
-					buttonEls.forEach(buttonEl => buttonEl.removeClass('mod-cta'));
-					button.buttonEl.addClass('mod-cta');
+					buttonEls.forEach(buttonEl => buttonEl.removeClass('iconic-button-selected'));
+					button.buttonEl.addClass('iconic-button-selected');
 					this.rule.match = 'none';
 					this.updateMatchesButton();
 				});

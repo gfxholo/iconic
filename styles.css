@@ -252,6 +252,10 @@ a.tag {
 .iconic-rule-editor .setting-item:first-child input[type="text"] {
 	width: 100%;
 }
+.setting-item-control > .iconic-button-selected {
+	color: var(--text-on-accent);
+	background-color: var(--interactive-accent);
+}
 .iconic-condition input[type="time"] {
 	border: var(--input-border-width) solid var(--background-modifier-border);
 	border-radius: var(--input-radius);
@@ -353,7 +357,7 @@ a.tag {
 }
 
 /* Theme: Border */
-.iconic-theme-border .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .nav-file-title::before {
+/* .iconic-theme-border .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .nav-file-title::before {
 	display: none;
 }
 .iconic-theme-border .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item > .tree-item-self.mod-collapsible > .collapse-icon {
@@ -365,7 +369,7 @@ a.tag {
 }
 .iconic-theme-border .workspace-leaf-content[data-type="file-explorer"] .tree-item > .tree-item-self:is(.nav-file-title, .nav-folder.mod-root > .nav-folder-title)::before {
 	display: none;
-}
+} */
 
 /* Theme: Catppuccin */
 .iconic-theme-cat .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title-content::before {

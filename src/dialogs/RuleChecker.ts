@@ -61,19 +61,19 @@ export default class RuleChecker extends Modal {
 			.addButton(button => { button
 				.setButtonText(STRINGS.ruleEditor.source.tree)
 				.onClick(() => {
-					buttons.forEach(button => button.removeCta());
-					button.setCta();
+					buttons.forEach(button => button.buttonEl.removeClass('iconic-button-selected'));
+					button.buttonEl.addClass('iconic-button-selected');
 					this.contentEl.addClass('iconic-highlight-tree');
 					this.contentEl.removeClasses(['iconic-highlight-name', 'iconic-highlight-extension']);
 				});
-				button.setCta();
+				button.buttonEl.addClass('iconic-button-selected');
 				buttons.push(button);
 			})
 			.addButton(button => { button
 				.setButtonText(STRINGS.ruleEditor.source.name)
 				.onClick(() => {
-					buttons.forEach(button => button.removeCta());
-					button.setCta();
+					buttons.forEach(button => button.buttonEl.removeClass('iconic-button-selected'));
+					button.buttonEl.addClass('iconic-button-selected');
 					this.contentEl.removeClasses(['iconic-highlight-tree', 'iconic-highlight-extension']);
 					this.contentEl.addClass('iconic-highlight-name');
 				});
@@ -83,8 +83,8 @@ export default class RuleChecker extends Modal {
 				.setButtonText(STRINGS.ruleEditor.source.extension)
 				.setDisabled(this.page !== 'file')
 				.onClick(() => {
-					buttons.forEach(button => button.removeCta());
-					button.setCta();
+					buttons.forEach(button => button.buttonEl.removeClass('iconic-button-selected'));
+					button.buttonEl.addClass('iconic-button-selected');
 					this.contentEl.removeClasses(['iconic-highlight-tree', 'iconic-highlight-name']);
 					this.contentEl.addClass('iconic-highlight-extension');
 				});
