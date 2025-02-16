@@ -1,4 +1,4 @@
-import { ExtraButtonComponent, Modal, Setting, ToggleComponent } from 'obsidian';
+import { ExtraButtonComponent, Menu, Modal, Setting, ToggleComponent } from 'obsidian';
 import IconicPlugin, { Icon, Item, STRINGS } from 'src/IconicPlugin';
 import ColorUtils from 'src/ColorUtils';
 import { RulePage, RuleItem } from 'src/managers/RuleManager';
@@ -179,6 +179,23 @@ export default class RulePicker extends Modal {
 			isNewRule,
 		);
 		this.ruleEls.push(ruleSetting.settingEl);
+
+		// Context menu for deleting a rule
+		this.iconManager.setEventListener(ruleSetting.settingEl, 'contextmenu', event => {
+			const menu = new Menu();
+			menu.addItem(menuItem => { menuItem
+				.setIcon('lucide-trash-2')
+				.setTitle(STRINGS.rulePicker.removeRule)
+				.onClick(() => {
+					ruleSetting.settingEl.remove();
+					this.ruleEls.remove(ruleSetting.settingEl);
+					const rulePage = this.plugin.settings.dialogState.rulePage;
+					const isRulingChanged = this.plugin.ruleManager.deleteRule(rulePage, rule.id);
+					if (isRulingChanged) this.refreshPageManagers();
+				});
+			});
+			menu.showAtMouseEvent(event);
+		});
 
 		// Move the Add Rule button below this rule
 		ruleSetting.settingEl.insertAdjacentElement('afterend', this.addRuleSetting.settingEl);
