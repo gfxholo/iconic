@@ -305,6 +305,7 @@ class RuleSetting extends Setting {
 					isRulingChanged = plugin.ruleManager.saveRule(page, newRule);
 				} else {
 					this.settingEl.remove();
+					this.ruleEls.remove(this.settingEl);
 					isRulingChanged = plugin.ruleManager.deleteRule(page, rule.id);
 				}
 				if (isRulingChanged) onRulingChange();
