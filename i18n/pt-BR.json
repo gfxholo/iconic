@@ -1,0 +1,49 @@
+{
+	"menu": {
+		"resetColor": "Redefinir cor",
+		"resetColors": "Redefinir cores"
+	},
+	"iconPicker": {
+		"changeColor": "Mudar cor",
+		"resetColor": "Redefinir cor",
+		"colors": {
+			"gray": "Cinza"
+		}
+	},
+	"ruleEditor": {
+		"source": {
+			"color": "Cor"
+		}
+	},
+	"settings": {
+		"values": {
+			"list": "Lista de cores"
+		},
+		"colorPicker1": {
+			"name": "Selecionador de cor principal",
+			"descDesktop": "Aparece quando você clica na bolha de cor.",
+			"descMobile": "Aparece quando você toca na bolha de cor."
+		},
+		"colorPicker2": {
+			"name": "Segundo selecionador de cor",
+			"descDesktop": "Aparece quando você clica com o botão direito na bolha de cor.",
+			"descMobile": "Aparece quando você pressiona e segura a bolha de cor."
+		},
+		"uncolorHover": {
+			"name": "Hover sem cor",
+			"desc": "Desativar a cor do ícone enquanto passa o mouse sobre um item."
+		},
+		"uncolorDrag": {
+			"name": "Arraste sem cor",
+			"desc": "Desativar a cor do ícone enquanto arrasta um item."
+		},
+		"uncolorQuick": {
+			"name": "Botão de atalho sem cor",
+			"desc": "Desativar a cor do ícone do botão de atalho no celular."
+		},
+		"uncolorSelect": {
+			"name": "Seleção sem cor",
+			"desc": "Desativar a cor do ícone enquanto o item estiver selecionado."
+		}
+	}
+}
