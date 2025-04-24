@@ -89,53 +89,71 @@ export default class FileIconManager extends IconManager {
 				}
 
 				// Set up mutation observer with performance optimizations:
-				// 1. Only refresh on expand (not collapse) to reduce unnecessary updates
+				// 1. Only refresh children on expand (not collapse) to reduce unnecessary updates
 				// 2. Use debouncing to prevent multiple rapid refreshes
 				this.setMutationsObserver(itemEl, {
 					subtree: true,
 					attributeFilter: ['class', 'data-path'],
 					attributeOldValue: true,
 				}, mutations => {
-					if (mutations.some(mutation => {
-						// Always refresh on data-path changes
-						if (mutation.attributeName === 'data-path') return true;
-
-						// Refresh when folder is expanded
+					let shouldRefreshChildren = false;
+					let shouldRefreshSelf = false;
+	
+					for (const mutation of mutations) {
+						if (mutation.attributeName === 'data-path') {
+							shouldRefreshSelf = true;
+							break;
+						}
+	
 						if (mutation.attributeName === 'class' && mutation.target instanceof HTMLElement) {
 							const wasCollapsed = mutation.oldValue?.includes('is-collapsed');
 							const isCollapsed = mutation.target.hasClass('is-collapsed');
-							return wasCollapsed && !isCollapsed; // Only trigger on expand
+	
+							if (wasCollapsed && !isCollapsed) {
+								shouldRefreshChildren = true; // expanding
+								shouldRefreshSelf = true;     // also refresh the folder itself
+							} else if (!wasCollapsed && isCollapsed) {
+								shouldRefreshSelf = true;     // collapsing
+							}
 						}
-						return false;
-					})) {
+					}
+	
+					if (shouldRefreshSelf) {
+						this.refreshChildIcons([file], [itemEl]);
+					}
+					if (shouldRefreshChildren) {
 						const childItemEls = itemEl.findAll(':scope > .tree-item-children > .tree-item');
 						if (file.items && childItemEls) {
-							// Use debounced refresh to prevent multiple rapid refreshes
-							this.debouncedRefresh([file, ...file.items], [itemEl, ...childItemEls]);
+							this.debouncedRefresh(file.items, childItemEls);
 						}
 					}
 				});
 			}
 
 			let iconEl = selfEl.find(':scope > .tree-item-icon') ?? selfEl.createDiv({ cls: 'tree-item-icon' });
-
-			if (file.items) {
+			const innerEl = selfEl.find('.tree-item-inner');
+			if (iconEl !== innerEl?.previousElementSibling) {
+				innerEl?.insertAdjacentElement('beforebegin', iconEl);
+			}
+		
+			if(file.items) {
 				// Toggle default icon based on expand/collapse state
 				if (file.iconDefault) file.iconDefault = iconEl.hasClass('is-collapsed')
 					? 'lucide-folder-closed'
 					: 'lucide-folder-open';
-				let folderIconEl = selfEl.find(':scope > .iconic-sidekick:not(.tree-item-icon)');
-				if (this.plugin.settings.minimalFolderIcons || !this.plugin.settings.showAllFolderIcons && !rule.icon && !rule.iconDefault) {
-					folderIconEl?.remove();
-				} else {
-					const arrowColor = rule.icon || rule.iconDefault ? null : rule.color;
-					this.refreshIcon({ icon: null, color: arrowColor }, iconEl);
-					folderIconEl = folderIconEl ?? selfEl.createDiv({ cls: 'iconic-sidekick' });
-					if (iconEl.nextElementSibling !== folderIconEl) {
-						iconEl.insertAdjacentElement('afterend', folderIconEl);
-					}
-					iconEl = folderIconEl;
+			}
+
+			let folderIconEl = selfEl.find(':scope > .iconic-sidekick:not(.tree-item-icon)');
+			if (this.plugin.settings.minimalFolderIcons || !this.plugin.settings.showAllFolderIcons && !rule.icon && !rule.iconDefault) {
+				folderIconEl?.remove();
+			} else {
+				const arrowColor = rule.icon || rule.iconDefault ? null : rule.color;
+				this.refreshIcon({ icon: null, color: arrowColor }, iconEl);
+				folderIconEl = folderIconEl ?? selfEl.createDiv({ cls: 'iconic-sidekick' });
+				if (iconEl.nextElementSibling !== folderIconEl) {
+					iconEl.insertAdjacentElement('afterend', folderIconEl);
 				}
+				iconEl = folderIconEl;
 			}
 
 			if (iconEl.hasClass('collapse-icon') && !rule.icon && !rule.iconDefault) {
