@@ -522,7 +522,7 @@ export default class RuleManager {
 					const propTags = metadata?.frontmatter?.tags ?? [];
 					const inlineTags = metadata?.tags?.map(tag => tag.tag.replace('#', '')) ?? [];
 					for (const tag of [...propTags, ...inlineTags]) {
-						if (!source.includes(tag)) source.push(tag);
+						if (!source.includes(tag) && tag) source.push(tag);
 					}
 					break;
 				}
