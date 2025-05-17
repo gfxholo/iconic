@@ -119,8 +119,7 @@ export default class IconPicker extends Modal {
 
 		// Allow hotkeys in icon picker
 		for (const command of this.plugin.commands) if (command.callback) {
-			// @ts-expect-error (Private API)
-			const hotkeys: Hotkey[] = this.app.hotkeyManager?.customKeys?.[command.id] ?? [];
+			const hotkeys: Hotkey[] = this.app.hotkeyManager.customKeys[command.id] ?? [];
 			for (const hotkey of hotkeys) {
 				this.scope.register(hotkey.modifiers, hotkey.key, command.callback);
 			}
@@ -494,7 +493,6 @@ export default class IconPicker extends Modal {
 					this.updateColorPicker();
 					this.updateSearchResults();
 				});
-				// @ts-expect-error (Private API)
 				this.iconManager.refreshIcon({ icon: 'lucide-paint-bucket', color }, menuItem.iconEl);
 			});
 		}

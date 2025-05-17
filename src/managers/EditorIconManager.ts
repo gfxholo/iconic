@@ -76,8 +76,7 @@ export default class EditorIconManager extends IconManager {
 		this.observeContainer(view.containerEl, view);
 
 		// Properties list
-		// @ts-expect-error (Private API)
-		const propsEl: HTMLElement = view.metadataEditor?.propertyListEl;
+		const propsEl: HTMLElement = view.metadataEditor.propertyListEl;
 		if (!propsEl) return;
 		this.observeProperties(propsEl, view);
 
@@ -184,8 +183,7 @@ export default class EditorIconManager extends IconManager {
 	 * Refresh all property icons in a single MarkdownView.
 	 */
 	private refreshPropertyIcons(props: PropertyItem[], view: MarkdownView): void {
-		// @ts-expect-error (Private API)
-		const propListEl: HTMLElement = view.metadataEditor?.propertyListEl;
+		const propListEl: HTMLElement = view.metadataEditor.propertyListEl;
 		if (!propListEl) return;
 		const propEls = propListEl.findAll(':scope > .metadata-property');
 
@@ -203,8 +201,7 @@ export default class EditorIconManager extends IconManager {
 	 * Refresh all tag icons in a single MarkdownView.
 	*/
 	private refreshTagIcons(tags: TagItem[], view: MarkdownView): void {
-		// @ts-expect-error (Private API)
-		const propListEl: HTMLElement = view.metadataEditor?.propertyListEl;
+		const propListEl: HTMLElement = view.metadataEditor.propertyListEl;
 		if (!propListEl) return;
 		const propTagEls = view.contentEl.findAll('.metadata-property[data-property-key="tags"] .multi-select-pill');
 		if (!propTagEls) return;

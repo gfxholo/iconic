@@ -12,6 +12,7 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
 	  "strictNullChecks": true,
+    "allowSyntheticDefaultImports": true,
     "lib": [
       "DOM",
       "DOM.Iterable",

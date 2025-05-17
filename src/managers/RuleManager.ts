@@ -302,7 +302,7 @@ export default class RuleManager {
 				break;
 			}
 			case 'folder': {
-				const folders = this.plugin.getFileItems().filter(folder => folder.items);
+				const folders = this.plugin.getFileItems().filter(folder => !!folder.items);
 				// Prune folder rulings (remove folders that no longer exist)
 				const folderIds = folders.map(folder => folder.id);
 				for (const [folderId] of this.folderRulings) {
@@ -461,7 +461,7 @@ export default class RuleManager {
 	 * @param ignoreEnabled Ignore whether the rule is enabled.
 	 */
 	judgeFolders(rule: RuleItem, now: Date, ignoreEnabled?: true): FileItem[] {
-		const folders = this.plugin.getFileItems().filter(file => file.items);
+		const folders = this.plugin.getFileItems().filter(file => !!file.items);
 		const matches: FileItem[] = [];
 		for (const folder of folders) {
 			if (this.judgeFile(folder, rule, now, ignoreEnabled)) {

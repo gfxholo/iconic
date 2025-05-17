@@ -12,14 +12,15 @@ export default class RibbonIconManager extends IconManager {
 		super(plugin);
 		this.refreshIcons();
 
-		// @ts-expect-error (Private API)
-		const containerEl: HTMLElement = this.app.workspace.leftRibbon.ribbonItemsEl;
+		const containerEl = this.app.workspace.leftRibbon.ribbonItemsEl;
 
-		// Prevent ribbon from eating auxclick events
-		this.setEventListener(containerEl, 'auxclick', event => {
-			event.stopPropagation();
-		}, { capture: true });
-		this.setMutationsObserver(containerEl, { childList: true }, () => this.refreshIcons());
+		if (containerEl) {
+			// Prevent ribbon from eating auxclick events
+			this.setEventListener(containerEl, 'auxclick', event => {
+				event.stopPropagation();
+			}, { capture: true });
+			this.setMutationsObserver(containerEl, { childList: true }, () => this.refreshIcons());
+		}
 
 		// Refresh ribbon context menu
 		const ribbonEl = activeDocument.body.find(Platform.isDesktop
@@ -30,10 +31,8 @@ export default class RibbonIconManager extends IconManager {
 			const ribbonItems = this.plugin.getRibbonItems();
 			this.plugin.menuManager.forSection('order', item => {
 				const ribbonItem = ribbonItems[0];
-				// @ts-expect-error (Private API)
 				if (ribbonItem && item.iconEl.childElementCount > 0) { // Ribbon Divider compatibility
 					item.setIcon(ribbonItem.icon);
-					// @ts-expect-error (Private API)
 					this.refreshIcon(ribbonItem, item.iconEl);
 					ribbonItems.shift();
 				}
@@ -59,11 +58,9 @@ export default class RibbonIconManager extends IconManager {
 	 */
 	refreshIcons(unloading?: boolean): void {
 		if (Platform.isPhone) {
-			// @ts-expect-error (Private API)
-			const ribbonButtonEl = this.app.mobileNavbar.ribbonMenuItemEl;
+			const ribbonButtonEl = this.app.mobileNavbar?.ribbonMenuItemEl;
 			if (!ribbonButtonEl) return;
 
-			// @ts-expect-error (Private API)
 			const quickItemId = this.app.vault.getConfig('mobileQuickRibbonItem');
 			const ribbonButtonListener = () => {
 				const ribbonItems = this.plugin.getRibbonItems().filter(item => !item.isHidden);
@@ -71,7 +68,6 @@ export default class RibbonIconManager extends IconManager {
 					const ribbonItem = ribbonItems[0];
 					if (ribbonItem) {
 						item.setIcon(ribbonItem.icon);
-						// @ts-expect-error (Private API)
 						this.refreshIcon(ribbonItem, item.iconEl);
 						ribbonItems.shift();
 					}
@@ -115,7 +111,6 @@ export default class RibbonIconManager extends IconManager {
 				this.refreshConfigIcons(containerEl);
 			});
 
-			// @ts-expect-error (Private API)
 			const quickItemId = this.app.vault.getConfig('mobileQuickRibbonItem');
 			if (quickItemId) {
 				const quickItem = this.plugin.getRibbonItem(quickItemId);

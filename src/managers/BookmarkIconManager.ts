@@ -228,8 +228,8 @@ export default class BookmarkIconManager extends IconManager {
 		);
 
 		// Remove icon(s) / Reset color(s)
-		const anyRemovable = selectedBmarks.some(bmark => bmark.icon || bmark.color);
-		const anyIcons = selectedBmarks.some(bmark => bmark.icon);
+		const anyRemovable = selectedBmarks.some(bmark => !!(bmark.icon || bmark.color));
+		const anyIcons = selectedBmarks.some(bmark => !!bmark.icon);
 		const removeTitle = selectedBmarks.length < 2
 			? clickedBmark.icon
 				? STRINGS.menu.removeIcon

@@ -10,7 +10,7 @@ export default class MenuManager {
 	constructor() {
 		const manager = this;
 		Menu.prototype.showAtPosition = new Proxy(Menu.prototype.showAtPosition, {
-			apply(showAtPosition, menu, args) {
+			apply(showAtPosition, menu: Menu, args) {
 				manager.menu = menu;
 				if (manager.queuedActions.length > 0) {
 					manager.runQueuedActions.call(manager); // Menu is unhappy with your customer service
@@ -50,9 +50,7 @@ export default class MenuManager {
 
 			this.menu.addItem(item => {
 				callback(item);
-				// @ts-expect-error (Private API)
 				const section: string = item.section;
-				// @ts-expect-error (Private API)
 				const sections: string[] = this.menu?.sections ?? [];
 
 				let index = 0;
@@ -88,8 +86,7 @@ export default class MenuManager {
 	 */
 	forSection(section: string, callback: (item: MenuItem, index: number) => void): this {
 		if (this.menu) {
-			// @ts-expect-error (Private API)
-			const items = (this.menu.items as MenuItem[]).filter(item => item.section === section);
+			const items = this.menu.items.filter(item => item.section === section);
 			for (let i = 0; i < items.length; i++) {
 				callback(items[i], i);
 			}

@@ -1,4 +1,4 @@
-import { ButtonComponent, Modal, Setting } from 'obsidian';
+import { ButtonComponent, Hotkey, Modal, Setting } from 'obsidian';
 import IconicPlugin, { FileItem, STRINGS } from 'src/IconicPlugin';
 import { RulePage } from 'src/managers/RuleManager';
 
@@ -18,8 +18,7 @@ export default class RuleChecker extends Modal {
 
 		// Allow hotkeys in rule checker
 		for (const command of this.plugin.commands) if (command.callback) {
-			// @ts-expect-error (Private API)
-			const hotkeys: Hotkey[] = this.app.hotkeyManager?.customKeys?.[command.id] ?? [];
+			const hotkeys: Hotkey[] = this.app.hotkeyManager.customKeys[command.id] ?? [];
 			for (const hotkey of hotkeys) {
 				this.scope.register(hotkey.modifiers, hotkey.key, command.callback);
 			}

@@ -1,4 +1,4 @@
-import { Command, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceLeaf, getIconIds } from 'obsidian';
+import { Command, Platform, Plugin, PropertyInfo, TAbstractFile, TFile, TFolder, View, WorkspaceLeaf, WorkspaceMobileDrawer, WorkspaceTabs, getIconIds } from 'obsidian';
 import IconicSettingTab from 'src/IconicSettingTab';
 import EMOJIS from 'src/Emojis';
 import STRINGS from 'src/Strings';
@@ -551,8 +551,7 @@ export default class IconicPlugin extends Plugin {
 		body.toggleClass('iconic-uncolor-drag', unloading ? false : this.settings.uncolorDrag);
 		body.toggleClass('iconic-uncolor-select', unloading ? false : this.settings.uncolorSelect);
 
-		// @ts-expect-error (Private API)
-		const theme = this.app.customCss?.theme;
+		const theme = this.app.customCss.theme;
 		body.toggleClass('iconic-theme-btopaz', unloading ? false : theme === 'Blue Topaz');
 		body.toggleClass('iconic-theme-border', unloading ? false : theme === 'Border');
 		body.toggleClass('iconic-theme-cat', unloading ? false : theme === 'Catppuccin');
@@ -583,8 +582,7 @@ export default class IconicPlugin extends Plugin {
 	 * Check whether a community plugin is installed and enabled.
 	 */
 	isPluginEnabled(pluginId: string): boolean {
-		// @ts-expect-error (Private API)
-		return this.app.plugins?.plugins?.hasOwnProperty(pluginId) === true;
+		return this.app.plugins.plugins.hasOwnProperty(pluginId) === true;
 	}
 
 	/**
@@ -664,26 +662,25 @@ export default class IconicPlugin extends Plugin {
 	 * Create tab definition.
 	 */
 	private defineTabItem(leaf: WorkspaceLeaf, unloading?: boolean): TabItem {
-		// @ts-expect-error (Private API)
 		let iconEl: HTMLElement | null = leaf.tabHeaderInnerIconEl;
 		if (Platform.isMobile) {
-			// @ts-expect-error (Private API)
-			if (leaf.containerEl?.parentElement === this.app.workspace.leftSplit.activeTabContentEl) {
-				// @ts-expect-error (Private API)
+			if (
+				this.app.workspace.leftSplit instanceof WorkspaceMobileDrawer &&
+				leaf.containerEl?.parentElement === this.app.workspace.leftSplit.activeTabContentEl
+			) {
 				iconEl = this.app.workspace.leftSplit.activeTabIconEl;
-				// @ts-expect-error (Private API)
-			} else if (leaf.containerEl?.parentElement === this.app.workspace.rightSplit.activeTabContentEl) {
-				// @ts-expect-error (Private API)
+			} else if (
+				this.app.workspace.rightSplit instanceof WorkspaceMobileDrawer &&
+				leaf.containerEl?.parentElement === this.app.workspace.rightSplit.activeTabContentEl
+			) {
 				iconEl = this.app.workspace.rightSplit.activeTabIconEl;
 			}
 		}
 
 		const tabType = leaf.view.getViewType();
-		// @ts-expect-error (Private API)
-		const isActive = leaf.view === this.app.workspace.getActiveViewOfType(View) || leaf.tabHeaderEl?.hasClass('is-active');
+		const isActive = leaf.view === this.app.workspace.getActiveViewOfType(View) || leaf.tabHeaderEl.hasClass('is-active');
 		const isRoot = leaf.getRoot() === this.app.workspace.rootSplit;
-		// @ts-expect-error (Private API)
-		const isStacked = leaf.parent?.isStacked === true;
+		const isStacked = leaf.parent instanceof WorkspaceTabs ? leaf.parent.isStacked : false;
 
 		if (OPENABLE_TYPES.includes(tabType)) {
 			const filePath = leaf.view.getState().file; // Used because view.file is undefined on deferred views
@@ -704,7 +701,6 @@ export default class IconicPlugin extends Plugin {
 				isRoot: isRoot,
 				isStacked: isStacked,
 				iconEl: iconEl ?? null,
-				// @ts-expect-error (Private API)
 				tabEl: leaf.tabHeaderEl ?? null,
 			}
 		} else {
@@ -730,7 +726,6 @@ export default class IconicPlugin extends Plugin {
 				isRoot: isRoot,
 				isStacked: isStacked,
 				iconEl: iconEl ?? null,
-				// @ts-expect-error (Private API)
 				tabEl: leaf.tabHeaderEl ?? null,
 			}
 		}
@@ -823,8 +818,7 @@ export default class IconicPlugin extends Plugin {
 	 * Get array of bookmark definitions.
 	 */
 	getBookmarkItems(unloading?: boolean): BookmarkItem[] {
-		// @ts-expect-error (Private API)
-		const bmarkBases: any[] = this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? [];
+		const bmarkBases = this.app.internalPlugins.getEnabledPluginById('bookmarks')?.items ?? [];
 		return bmarkBases.map(bmarkBase => this.defineBookmarkItem(bmarkBase, unloading));
 	}
 
@@ -832,8 +826,7 @@ export default class IconicPlugin extends Plugin {
 	 * Get bookmark definition.
 	 */
 	getBookmarkItem(bmarkId: string, isFileOrFolder: boolean, unloading?: boolean): BookmarkItem {
-		// @ts-expect-error (Private API)
-		const bmarkBases = this.flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
+		const bmarkBases = this.flattenBookmarks(this.app.internalPlugins?.getEnabledPluginById('bookmarks')?.items ?? []);
 		const bmarkBase = bmarkBases.find(bmarkBase => {
 			return isFileOrFolder && bmarkBase.path + (bmarkBase.subpath ?? '') === bmarkId || bmarkBase.ctime === bmarkId
 		}) ?? {};
@@ -939,7 +932,6 @@ export default class IconicPlugin extends Plugin {
 	 * Get array of tag definitions.
 	 */
 	getTagItems(unloading?: boolean): TagItem[] {
-		// @ts-expect-error (Private API)
 		const tagHashes: string[] = Object.keys(this.app.metadataCache.getTags()) ?? [];
 		const tagBases = tagHashes.map(tagHash => {
 			return {
@@ -955,7 +947,6 @@ export default class IconicPlugin extends Plugin {
 	 */
 	getTagItem(tagId: string, unloading?: boolean): TagItem | null {
 		const tagHash = '#' + tagId;
-		// @ts-expect-error (Private API)
 		const tagHashes: string[] = Object.keys(this.app.metadataCache.getTags()) ?? [];
 		return tagHashes.includes(tagHash)
 			? this.defineTagItem({
@@ -984,8 +975,7 @@ export default class IconicPlugin extends Plugin {
 	 * Get array of property definitions.
 	 */
 	getPropertyItems(unloading?: boolean): PropertyItem[] {
-		// @ts-expect-error (Private API)
-		const propBases: any[] = Object.values(this.app.metadataTypeManager?.properties) ?? [];
+		const propBases = Object.values(this.app.metadataTypeManager.properties);
 		return propBases.map(propBase => this.definePropertyItem(propBase, unloading));
 	}
 
@@ -993,16 +983,19 @@ export default class IconicPlugin extends Plugin {
 	 * Get property definition.
 	 */
 	getPropertyItem(propId: string, unloading?: boolean): PropertyItem {
-		// @ts-expect-error (Private API)
-		const propBases: any[] = Object.values(this.app.metadataTypeManager?.properties) ?? [];
-		const propBase = propBases.find(propBase => propBase.name === propId) ?? {};
+		const propBases = Object.values(this.app.metadataTypeManager.properties);
+		const propBase = propBases.find(propBase => propBase.name === propId) ?? {
+			name: propId,
+			type: 'string',
+			count: 0
+		};
+
 		return this.definePropertyItem(propBase, unloading);
 	}
-
 	/**
 	 * Create property definition.
 	 */
-	private definePropertyItem(propBase: any, unloading?: boolean): PropertyItem {
+	private definePropertyItem(propBase: PropertyInfo, unloading?: boolean): PropertyItem {
 		const propIcon = this.settings.propertyIcons[propBase.name] ?? {};
 		let iconDefault;
 		switch (propBase.type) {
@@ -1031,7 +1024,6 @@ export default class IconicPlugin extends Plugin {
 	 * Get array of ribbon command definitions.
 	 */
 	getRibbonItems(unloading?: boolean): RibbonItem[] {
-		// @ts-expect-error (Private API)
 		const itemBases: any[] = this.app.workspace.leftRibbon.items ?? [];
 		return itemBases.map(item => this.defineRibbonItem(item, unloading));
 	}
@@ -1040,7 +1032,6 @@ export default class IconicPlugin extends Plugin {
 	 * Get ribbon command definition.
 	 */
 	getRibbonItem(itemId: string, unloading?: boolean): RibbonItem {
-		// @ts-expect-error (Private API)
 		const itemBase: any = this.app.workspace.leftRibbon.items
 			?.find((itemBase: any) => itemBase?.id === itemId) ?? {};
 		return this.defineRibbonItem(itemBase, unloading);
@@ -1245,22 +1236,17 @@ export default class IconicPlugin extends Plugin {
 	private pruneSettings(): void {
 		this.updateUnsyncedFiles();
 
-		// @ts-expect-error (Private API)
-		const isSyncing = this.app.internalPlugins?.plugins?.sync?.instance?.syncing === true;
-		// @ts-expect-error (Private API)
-		const isPaused = this.app.internalPlugins?.plugins?.sync?.instance?.pause === true;
+		const isSyncing = this.app.internalPlugins.getEnabledPluginById('sync')?.syncing === true;
+		const isPaused = this.app.internalPlugins.getEnabledPluginById('sync')?.pause === true;
 
 		// Disable pruning under these conditions
 		if (isSyncing || isPaused || this.settings.rememberDeletedItems) {
 			return;
 		}
 
-		// @ts-expect-error (Private API)
 		const thisAppId = this.app.appId;
-		// @ts-expect-error (Private API)
-		const bmarkBases = this.flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
-		// @ts-expect-error (Private API)
-		const propBases = this.app.metadataTypeManager?.properties ?? [];
+		const bmarkBases = this.flattenBookmarks(this.app.internalPlugins.getEnabledPluginById('bookmarks')?.items ?? []);
+		const propIds = Object.keys(this.app.metadataTypeManager.properties) ?? [];
 
 		const fileIcons = Object.entries(this.settings.fileIcons).filter(([fileId, fileIcon]) =>
 			// Never prune files that are unsynced on another device
@@ -1288,8 +1274,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}
 
-		if (propBases.length > 0) {
-			const propIds = Object.keys(propBases);
+		if (propIds.length > 0) {
 			for (const propId in this.settings.propertyIcons) {
 				if (!propIds.includes(propId)) {
 					delete this.settings.propertyIcons[propId];
@@ -1302,12 +1287,9 @@ export default class IconicPlugin extends Plugin {
 	 * Flag any files excluded from Sync on this device.
 	 */
 	private updateUnsyncedFiles(): void {
-		// @ts-expect-error (Private API)
 		const appId = this.app.appId;
-		// @ts-expect-error (Private API)
-		const unsyncedFolders: string[] = this.app.internalPlugins?.plugins?.sync?.instance?.ignoreFolders ?? [];
-		// @ts-expect-error (Private API)
-		const unsyncedTypes: string[] = SYNCABLE_TYPES.filter(type => !this.app.internalPlugins?.plugins?.sync?.instance?.allowTypes.has(type));
+		const unsyncedFolders: string[] = this.app.internalPlugins.getEnabledPluginById('sync')?.ignoreFolders ?? [];
+		const unsyncedTypes: string[] = SYNCABLE_TYPES.filter(type => !this.app.internalPlugins.getEnabledPluginById('sync')?.allowTypes.has(type));
 
 		for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
 			if (!Array.isArray(fileIcon.unsynced)) {
