@@ -25,9 +25,12 @@ export default abstract class IconManager {
 		iconEl.addClass('iconic-icon');
 
 		// Handle icon in frontmatter
-		const frontmatterIcon = (await this.plugin.getIconFromFrontmatter(item));
-		if (frontmatterIcon) {
-			item.icon = frontmatterIcon;
+		const frontmatterIcon = (await this.plugin.getIconAndColorFromFrontmatter(item));
+		if (frontmatterIcon?.icon) {
+			item.icon = frontmatterIcon.icon;
+		}
+		if (frontmatterIcon?.iconColor) {
+			item.color = frontmatterIcon.iconColor;
 		}
 
 		if (item.icon) {

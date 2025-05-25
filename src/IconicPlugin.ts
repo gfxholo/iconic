@@ -357,7 +357,7 @@ export default class IconicPlugin extends Plugin {
 			}));
 
 			this.registerEvent(this.app.metadataCache.on('changed', (_file, _data, cache) => {
-				if (cache.frontmatter?.icon) {
+				if (cache.frontmatter?.icon || cache.frontmatter?.iconColor) {
 					this.fileIconManager?.refreshIcons();
 				}
 			}))
@@ -973,9 +973,9 @@ export default class IconicPlugin extends Plugin {
 	/**
 	 * Get icon from frontmatter
 	 */
-	 getIconFromFrontmatter = (
+	getIconAndColorFromFrontmatter = (
 		item: Item | Icon
-	): Promise<string | undefined> => {
+	): Promise<{icon:string;iconColor:string} | undefined> => {
 		return new Promise((resolve) => {
 			if (!("id" in item) || !item.id || !item.id.endsWith(".md")) {
 				return resolve(undefined);
@@ -987,10 +987,13 @@ export default class IconicPlugin extends Plugin {
 			this.app.fileManager.processFrontMatter(
 				file,
 				(frontmatter) => {
-					if (!("icon" in frontmatter)){
+					if (!("icon" in frontmatter) && !("iconColor" in frontmatter)) {
 						return resolve(undefined);
 					}
-					return resolve(frontmatter.icon);
+					return resolve({
+						icon: frontmatter.icon,
+						iconColor: frontmatter.iconColor
+					});
 				}
 			);
 		});
@@ -999,7 +1002,7 @@ export default class IconicPlugin extends Plugin {
 	/**
 	 * Set icon in frontmatter
 	 */
-	 setIconInFrontmatter = (
+	 setIconAndColorInFrontmatter = (
 		item: Item | Icon,
 		icon: string | null,
 		color: string | null
@@ -1019,8 +1022,11 @@ export default class IconicPlugin extends Plugin {
 						delete frontmatter.icon;
 					} else {
 						frontmatter.icon = icon;
-						if (color !== null) frontmatter.iconColor = color;
-						else delete frontmatter.iconColor;
+					}
+					if (color === null) {
+						delete frontmatter.iconColor
+					} else {
+						frontmatter.iconColor = color;
 					}
 					return resolve();
 				}
@@ -1151,7 +1157,7 @@ export default class IconicPlugin extends Plugin {
 		const fileBase = this.settings.fileIcons[file.id];
 		if (icon !== fileBase?.icon) triggers.add('icon');
 		if (color !== fileBase?.color) triggers.add('color');
-		this.setIconInFrontmatter(file, icon, color)
+		this.setIconAndColorInFrontmatter(file, icon, color)
 		this.updateIconSetting(this.settings.fileIcons, file.id, icon, color);
 		this.saveSettings();
 		this.ruleManager.triggerRulings('file', ...triggers);
