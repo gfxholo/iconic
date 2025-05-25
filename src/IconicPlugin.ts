@@ -84,6 +84,9 @@ interface IconicSettings {
 	uncolorSelect: boolean;
 	uncolorQuick: boolean;
 	rememberDeletedItems: boolean;
+	useFrontmatterIcon: boolean;
+	frontmatterIconProperty: string;
+	frontmatterIconColorProperty: string;
 	dialogState: {
 		iconMode: boolean;
 		emojiMode: boolean;
@@ -139,6 +142,9 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	uncolorDrag: false,
 	uncolorSelect: false,
 	uncolorQuick: false,
+	useFrontmatterIcon: false,
+	frontmatterIconProperty: 'icon',
+	frontmatterIconColorProperty: 'iconColor',
 	rememberDeletedItems: false,
 	dialogState: {
 		iconMode: true,
@@ -357,7 +363,7 @@ export default class IconicPlugin extends Plugin {
 			}));
 
 			this.registerEvent(this.app.metadataCache.on('changed', (_file, _data, cache) => {
-				if (cache.frontmatter?.icon || cache.frontmatter?.iconColor) {
+					if (this.settings.useFrontmatterIcon && (cache.frontmatter?.[this.settings.frontmatterIconProperty] || cache.frontmatter?.[this.settings.frontmatterIconColorProperty])) {
 					this.fileIconManager?.refreshIcons();
 				}
 			}))
@@ -975,27 +981,33 @@ export default class IconicPlugin extends Plugin {
 	 */
 	getIconAndColorFromFrontmatter = (
 		item: Item | Icon
-	): Promise<{icon:string;iconColor:string} | undefined> => {
+	): Promise<{
+		icon?: string;
+		iconColor?: string;
+	} | undefined> => {
 		return new Promise((resolve) => {
-			if (!("id" in item) || !item.id || !item.id.endsWith(".md")) {
+			if (!("category" in item) || item.category !== "file") {
 				return resolve(undefined);
 			}
 			const file = this.app.vault.getFileByPath(item.id);
 			if (!file){
 				return resolve(undefined);
 			} 
-			this.app.fileManager.processFrontMatter(
+			try{
+				this.app.fileManager.processFrontMatter(
 				file,
 				(frontmatter) => {
-					if (!("icon" in frontmatter) && !("iconColor" in frontmatter)) {
+					if (!(this.settings.frontmatterIconProperty in frontmatter) && !(this.settings.frontmatterIconColorProperty in frontmatter)) {
 						return resolve(undefined);
 					}
 					return resolve({
-						icon: frontmatter.icon,
-						iconColor: frontmatter.iconColor
+						icon: frontmatter[this.settings.frontmatterIconProperty],
+						iconColor: frontmatter[this.settings.frontmatterIconColorProperty],
 					});
 				}
-			);
+			)} catch (e) {
+				return resolve(undefined);
+			}
 		});
 	};
 
@@ -1008,29 +1020,32 @@ export default class IconicPlugin extends Plugin {
 		color: string | null
 	): Promise<void> => {
 		return new Promise((resolve) => {
-			if (!("id" in item) || !item.id || !item.id.endsWith(".md")) {
+			if (!("category" in item) || item.category !== "file") {
 				return resolve();
 			}
 			const file = this.app.vault.getFileByPath(item.id);
 			if (!file) {
 				return resolve();
 			}
-			this.app.fileManager.processFrontMatter(
+			try {
+				this.app.fileManager.processFrontMatter(
 				file,
 				(frontmatter) => {
 					if (icon === null) {
-						delete frontmatter.icon;
+						delete frontmatter[this.settings.frontmatterIconProperty];
 					} else {
-						frontmatter.icon = icon;
+						frontmatter[this.settings.frontmatterIconProperty] = icon;
 					}
 					if (color === null) {
-						delete frontmatter.iconColor
+						delete frontmatter[this.settings.frontmatterIconColorProperty]
 					} else {
-						frontmatter.iconColor = color;
+						frontmatter[this.settings.frontmatterIconColorProperty] = color;
 					}
 					return resolve();
 				}
-			);
+			)} catch (e) {
+				return resolve();
+			}
 		});
 	}
 
@@ -1157,7 +1172,9 @@ export default class IconicPlugin extends Plugin {
 		const fileBase = this.settings.fileIcons[file.id];
 		if (icon !== fileBase?.icon) triggers.add('icon');
 		if (color !== fileBase?.color) triggers.add('color');
-		this.setIconAndColorInFrontmatter(file, icon, color)
+		if(this.settings.useFrontmatterIcon) {
+			this.setIconAndColorInFrontmatter(file, icon, color)
+		}
 		this.updateIconSetting(this.settings.fileIcons, file.id, icon, color);
 		this.saveSettings();
 		this.ruleManager.triggerRulings('file', ...triggers);
