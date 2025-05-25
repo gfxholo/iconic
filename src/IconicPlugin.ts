@@ -355,6 +355,12 @@ export default class IconicPlugin extends Plugin {
 					this.ruleManager.updateRulings(page);
 				}
 			}));
+
+			this.registerEvent(this.app.metadataCache.on('changed', (_file, _data, cache) => {
+				if (cache.frontmatter?.icon) {
+					this.fileIconManager?.refreshIcons();
+				}
+			}))
 		});
 
 		this.registerEvent(this.app.workspace.on('css-change', () => {
@@ -965,6 +971,64 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
+	 * Get icon from frontmatter
+	 */
+	 getIconFromFrontmatter = (
+		item: Item | Icon
+	): Promise<string | undefined> => {
+		return new Promise((resolve) => {
+			if (!("id" in item) || !item.id || !item.id.endsWith(".md")) {
+				return resolve(undefined);
+			}
+			const file = this.app.vault.getFileByPath(item.id);
+			if (!file){
+				return resolve(undefined);
+			} 
+			this.app.fileManager.processFrontMatter(
+				file,
+				(frontmatter) => {
+					if (!("icon" in frontmatter)){
+						return resolve(undefined);
+					}
+					return resolve(frontmatter.icon);
+				}
+			);
+		});
+	};
+
+	/**
+	 * Set icon in frontmatter
+	 */
+	 setIconInFrontmatter = (
+		item: Item | Icon,
+		icon: string | null,
+		color: string | null
+	): Promise<void> => {
+		return new Promise((resolve) => {
+			if (!("id" in item) || !item.id || !item.id.endsWith(".md")) {
+				return resolve();
+			}
+			const file = this.app.vault.getFileByPath(item.id);
+			if (!file) {
+				return resolve();
+			}
+			this.app.fileManager.processFrontMatter(
+				file,
+				(frontmatter) => {
+					if (icon === null) {
+						delete frontmatter.icon;
+					} else {
+						frontmatter.icon = icon;
+						if (color !== null) frontmatter.iconColor = color;
+						else delete frontmatter.iconColor;
+					}
+					return resolve();
+				}
+			);
+		});
+	}
+
+	/**
 	 * Create tag definition.
 	 */
 	private defineTagItem(tagBase: any, unloading?: boolean): TagItem {
@@ -1087,6 +1151,7 @@ export default class IconicPlugin extends Plugin {
 		const fileBase = this.settings.fileIcons[file.id];
 		if (icon !== fileBase?.icon) triggers.add('icon');
 		if (color !== fileBase?.color) triggers.add('color');
+		this.setIconInFrontmatter(file, icon, color)
 		this.updateIconSetting(this.settings.fileIcons, file.id, icon, color);
 		this.saveSettings();
 		this.ruleManager.triggerRulings('file', ...triggers);

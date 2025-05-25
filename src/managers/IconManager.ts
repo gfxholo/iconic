@@ -21,8 +21,14 @@ export default abstract class IconManager {
 	/**
 	 * Refresh icon inside a given element.
 	 */
-	protected refreshIcon(item: Item | Icon, iconEl: HTMLElement, onClick?: (event: MouseEvent) => void): void {
+	protected async refreshIcon(item: Item | Icon, iconEl: HTMLElement, onClick?: (event: MouseEvent) => void): Promise<void> {
 		iconEl.addClass('iconic-icon');
+
+		// Handle icon in frontmatter
+		const frontmatterIcon = (await this.plugin.getIconFromFrontmatter(item));
+		if (frontmatterIcon) {
+			item.icon = frontmatterIcon;
+		}
 
 		if (item.icon) {
 			if (ICONS.has(item.icon)) {
