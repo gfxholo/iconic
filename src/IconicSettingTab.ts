@@ -314,6 +314,24 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 				})
 			);
+
+			// HEADING: Custom Icons
+		new Setting(this.containerEl)
+  			.setHeading()
+  			.setName('Custom Icons');
+			
+			// Create, Update, Delete Custom Icons
+		new Setting(this.containerEl)
+  			.setDesc('Import, rename, or delete your own SVG icons.')
+  			.addButton(b => b
+    			.setButtonText('Add…')
+    			.onClick(() => new AddCustomIconModal(this.plugin.app, this.plugin.customIconManager, () => this.plugin.buildCustomIconCSS()).open()))
+  			.addButton(b => b
+    			.setButtonText('Rename…')
+    			.onClick(() => new RenameCustomIconModal(this.plugin.app, this.plugin.customIconManager, () => this.plugin.buildCustomIconCSS()).open()))
+  			.addButton(b => b
+    			.setButtonText('Delete…')
+    			.onClick(() => new DeleteCustomIconModal(this.plugin.app, this.plugin.customIconManager, () => this.plugin.buildCustomIconCSS()).open()));
 	}
 
 	/**
