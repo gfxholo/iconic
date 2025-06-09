@@ -16,10 +16,9 @@ export class AddCustomIconModal extends Modal {
       .setName('SVG File')
       .setDesc('Choose an .svg file (max 100 KB)')
       .then(setting => {
-        this.fileInputEl = setting.controlEl.createEl('input', {
-          type: 'file',
-          accept: '.svg'
-        }) as HTMLInputElement;
+        this.fileInputEl = setting.controlEl.createEl('input') as HTMLInputElement;
+            this.fileInputEl.type = 'file';
+            this.fileInputEl.accept = '.svg';
       });
     // Name input
     new Setting(this.contentEl)

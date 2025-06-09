@@ -189,7 +189,7 @@ export default class IconicPlugin extends Plugin {
 		await this.loadSettings();
 
 		// ─── init custom icons ───────────────────────────────────────────────
-     	const dataPath = `${this.app.vault.adapter.getBasePath()}/.obsidian/plugins/${this.manifest.id}`;
+     	const dataPath = path.join(this.app.vault.configDir, 'plugins', this.manifest.id)
      	this.customIconManager = new CustomIconManager(dataPath);
      	await this.customIconManager.init();
      	await this.buildCustomIconCSS();
@@ -558,9 +558,11 @@ export default class IconicPlugin extends Plugin {
     	const cssLines: string[] = ['/* Custom SVG icons injected by Iconic */'];
 
 	    const baseDir = path.join(
-    		this.app.vault.adapter.getBasePath(),
-      		`.obsidian/plugins/${this.manifest.id}/custom-icons`
-    	);
+  			this.app.vault.configDir,
+ 			 	'plugins',
+  			this.manifest.id,
+  				'custom-icons'
+		);
 
     for (const entry of entries) {
       	const svgPath = path.join(baseDir, entry.file);
