@@ -681,13 +681,28 @@ export default class IconPicker extends Modal {
 		const query = this.searchField.getValue();
 		const fuzzySearch = prepareFuzzySearch(query);
 		const matches: [score: number, iconEntry: [string, string]][] = [];
-		const iconEntries = [
+		// Built-in icon & emoji entries
+		const iconEntries: [string, string][] = [
 			...(this.plugin.settings.dialogState.iconMode ? ICONS : []),
 			...(this.plugin.settings.dialogState.emojiMode ? EMOJIS : []),
 		];
 
-		// Search all icon names
-		if (query) for (const [icon, iconName] of iconEntries) {
+		// Custom SVG icons
+   		const customIcons = this.plugin.customIconManager.listIcons()
+		// Represent each as [iconKey, displayName]
+		.map(entry => [entry.name, entry.name] as [string, string]);
+
+   		// Combine all pools
+		const allIconPools: [string, string][][] = [
+			iconEntries,
+			customIcons,
+		];
+
+   		// Flatten but keep sections separate for grouping if you’d like
+		const flattenedEntries: [string, string][] = allIconPools.flat();
+
+		// Search all icon names (Lucide, Emojis, then custom SVGs)
+   		if (query) for (const [icon, iconName] of flattenedEntries) {
 			if (query === icon) { // Recognize emoji input
 				matches.push([0, [icon, iconName]]);
 			} else {

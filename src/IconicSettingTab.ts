@@ -1,6 +1,9 @@
 import { ExtraButtonComponent, Platform, PluginSettingTab, Setting } from 'obsidian';
 import IconicPlugin, { STRINGS } from 'src/IconicPlugin';
 import RulePicker from 'src/dialogs/RulePicker';
+import { AddCustomIconModal } from 'src/dialogs/AddCustomIconModal';
+import { RenameCustomIconModal } from 'src/dialogs/RenameCustomIconModal';
+import { DeleteCustomIconModal } from 'src/dialogs/DeleteCustomIconModal';
 
 /**
  * Exposes UI settings for the plugin.

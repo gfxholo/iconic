@@ -24,6 +24,24 @@ export default abstract class IconManager {
 	protected refreshIcon(item: Item | Icon, iconEl: HTMLElement, onClick?: (event: MouseEvent) => void): void {
 		iconEl.addClass('iconic-icon');
 
+		// ─── Custom SVG icons ─────────────────────────────────────────────
+		const customMgr = this.plugin.customIconManager;
+		if (item.icon && customMgr.hasIcon(item.icon)) {
+			// Use the CSS we generated in buildCustomIconCSS()
+	     		iconEl.removeClass('iconic-icon');      // remove default svg-icon class
+	     		iconEl.addClass('iconic-custom');       // our custom style
+	     		iconEl.dataset.icon = item.icon;        // matches [data-icon="…"]
+	     		iconEl.show();
+	     		// attach click handler if needed
+	     		if (onClick) {
+	       		this.setEventListener(iconEl, 'click', onClick, { capture: true });
+	     		} else {
+	       		this.stopEventListener(iconEl, 'click');
+	     		}
+	     		return;
+	   	}
+	   	// ───────────────────────────────────────────────────────────────────
+
 		if (item.icon) {
 			if (ICONS.has(item.icon)) {
 				setIcon(iconEl, item.icon);
