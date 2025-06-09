@@ -188,9 +188,10 @@ export default class IconicPlugin extends Plugin {
 	async onload(): Promise<void> {
 		await this.loadSettings();
 
-		// ─── init custom icons ───────────────────────────────────────────────
-     	const dataPath = path.join(this.app.vault.configDir, 'plugins', this.manifest.id)
-     	this.customIconManager = new CustomIconManager(dataPath);
+		// Initialize custom‐icon manager (use vault root from adapter.getBasePath())
+	    const vaultPath = (this.app.vault.adapter as any).getBasePath() as string;
+	    const dataPath = path.join(vaultPath, '.obsidian', 'plugins', this.manifest.id);
+	    this.customIconManager = new CustomIconManager(dataPath);
      	await this.customIconManager.init();
      	await this.buildCustomIconCSS();
      	// ─────────────────────────────────────────────────────────────────────
@@ -557,12 +558,14 @@ export default class IconicPlugin extends Plugin {
     	const entries = this.customIconManager.listIcons();
     	const cssLines: string[] = ['/* Custom SVG icons injected by Iconic */'];
 
+	    const vaultPath = (this.app.vault.adapter as any).getBasePath() as string;
 	    const baseDir = path.join(
-  			this.app.vault.configDir,
- 			 	'plugins',
-  			this.manifest.id,
-  				'custom-icons'
-		);
+	    	vaultPath,
+      		'.obsidian',
+      		'plugins',
+      		this.manifest.id,
+      		'custom-icons'
+    	);
 
     for (const entry of entries) {
       	const svgPath = path.join(baseDir, entry.file);
