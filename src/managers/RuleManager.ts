@@ -360,8 +360,16 @@ export default class RuleManager {
 			case 'name': triggers.add('rename'); break;
 			case 'filename': triggers.add('rename'); break;
 			case 'extension': triggers.add('rename'); break;
-			case 'tree': triggers.add('move'); break;
-			case 'path': triggers.add('move'); break;
+			case 'tree': {
+				triggers.add('rename');
+				triggers.add('move');
+				break;
+			}
+			case 'path': {
+				triggers.add('rename');
+				triggers.add('move');
+				break;
+			}
 			case 'headings': triggers.add('modify'); break;
 			case 'links': triggers.add('modify'); break;
 			case 'tags': triggers.add('modify'); break;
