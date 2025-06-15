@@ -304,6 +304,7 @@ a.tag {
 }
 .iconic-match {
 	padding: var(--size-4-1);
+	white-space: nowrap;
 }
 .iconic-highlight-tree .iconic-match-tree,
 .iconic-highlight-name .iconic-match-name,
