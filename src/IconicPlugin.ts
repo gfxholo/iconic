@@ -1023,7 +1023,7 @@ export default class IconicPlugin extends Plugin {
 			iconDefault: iconDefault,
 			icon: unloading ? null : propIcon.icon ?? null,
 			color: unloading ? null : propIcon.color ?? null,
-			type: propBase.type ?? null,
+			type: propBase.widget ?? propBase.type ?? null, // Pre-1.9.0 compatible
 		}
 	}
 
