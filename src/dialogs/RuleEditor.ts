@@ -1,4 +1,4 @@
-import { ButtonComponent, DropdownComponent, ExtraButtonComponent, Modal, Platform, Setting, TextComponent } from 'obsidian';
+import { ButtonComponent, DropdownComponent, ExtraButtonComponent, Hotkey, Modal, Platform, Setting, TextComponent } from 'obsidian';
 import IconicPlugin, { Icon, Item, FileItem, STRINGS } from 'src/IconicPlugin';
 import ColorUtils from 'src/ColorUtils';
 import { RulePage, RuleItem, ConditionItem } from 'src/managers/RuleManager';
@@ -527,8 +527,7 @@ export default class RuleEditor extends Modal {
 
 		// Allow hotkeys in rule editor
 		for (const command of this.plugin.commands) if (command.callback) {
-			// @ts-expect-error (Private API)
-			const hotkeys: Hotkey[] = this.app.hotkeyManager?.customKeys?.[command.id] ?? [];
+			const hotkeys: Hotkey[] = this.app.hotkeyManager.customKeys[command.id] ?? [];
 			for (const hotkey of hotkeys) {
 				this.scope.register(hotkey.modifiers, hotkey.key, command.callback);
 			}
@@ -759,7 +758,6 @@ export default class RuleEditor extends Modal {
 
 		// Show a loading spinner if check takes longer than 100ms
 		const timeoutId = setTimeout(() => {
-			// @ts-expect-error (Private API)
 			this.matchesButton.setLoading(true);
 			this.matchesButton.setDisabled(true);
 		}, 100);
@@ -782,7 +780,6 @@ export default class RuleEditor extends Modal {
 				break;
 			}
 		}
-		// @ts-expect-error (Private API)
 		this.matchesButton.setLoading(false);
 		this.matchesButton.setDisabled(this.matches.length === 0);
 	}

@@ -157,8 +157,9 @@ export default class AppIconManager extends IconManager {
 	 * Refresh maximize icon only. This button can have two states: maximized or unmaximized.
 	 */
 	private refreshMaximizeIcon(unloading?: boolean): void {
-		// @ts-expect-error (Electron API)
-		const isMaximized = activeWindow.electron.remote.getCurrentWindow().isMaximized() ?? true;
+		const isMaximized = Platform.isDesktop
+			? activeWindow.electronWindow.isMaximized()
+			: false;
 
 		if (this.maximizeEl) this.stopMutationObserver(this.maximizeEl);
 		if (!activeDocument.contains(this.maximizeEl)) {

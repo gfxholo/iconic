@@ -1,4 +1,4 @@
-import { Platform } from 'obsidian';
+import { Platform, WorkspaceMobileDrawer } from 'obsidian';
 import IconicPlugin, { FileItem, TabItem, STRINGS } from 'src/IconicPlugin';
 import IconManager from './IconManager';
 import RuleEditor from 'src/dialogs/RuleEditor';
@@ -21,7 +21,6 @@ export default class TabIconManager extends IconManager {
 				const tab = tabs[i];
 				if (tab) {
 					tab.iconDefault = tab.iconDefault ?? 'lucide-file';
-					// @ts-expect-error (Private API)
 					this.refreshIcon(tab, item.iconEl);
 				}
 			});
@@ -107,19 +106,18 @@ export default class TabIconManager extends IconManager {
 
 			// Update mobile sidebars
 			if (Platform.isMobile) {
-				// @ts-expect-error (Private API)
-				this.setEventListener(this.app.workspace.leftSplit.activeTabSelectEl, 'change', () => this.refreshIcons());
-				// @ts-expect-error (Private API)
-				this.setEventListener(this.app.workspace.rightSplit.activeTabSelectEl, 'change', () => this.refreshIcons());
-
-				// @ts-expect-error (Private API)
-				if (this.app.workspace.leftSplit.activeTabIconEl === iconEl) {
-					// @ts-expect-error (Private API)
-					this.setEventListener(this.app.workspace.leftSplit.activeTabHeaderEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
-					// @ts-expect-error (Private API)
-				} else if (this.app.workspace.rightSplit.activeTabIconEl === iconEl) {
-					// @ts-expect-error (Private API)
-					this.setEventListener(this.app.workspace.rightSplit.activeTabHeaderEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
+				const { leftSplit, rightSplit } = this.app.workspace;
+				if (leftSplit instanceof WorkspaceMobileDrawer) {
+					this.setEventListener(leftSplit.activeTabSelectEl, 'change', () => this.refreshIcons());
+					if (leftSplit.activeTabIconEl === iconEl) {
+						this.setEventListener(leftSplit.activeTabHeaderEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
+					}
+				}
+				if (rightSplit instanceof WorkspaceMobileDrawer) {
+					this.setEventListener(rightSplit.activeTabSelectEl, 'change', () => this.refreshIcons());
+					if (rightSplit.activeTabIconEl === iconEl) {
+						this.setEventListener(rightSplit.activeTabHeaderEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
+					}
 				}
 			}
 		}

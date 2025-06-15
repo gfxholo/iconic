@@ -1,4 +1,4 @@
-import { ExtraButtonComponent, Menu, Modal, Setting, ToggleComponent } from 'obsidian';
+import { ExtraButtonComponent, Hotkey, Menu, Modal, Setting, ToggleComponent } from 'obsidian';
 import IconicPlugin, { Icon, Item, STRINGS } from 'src/IconicPlugin';
 import ColorUtils from 'src/ColorUtils';
 import { RulePage, RuleItem } from 'src/managers/RuleManager';
@@ -70,8 +70,7 @@ export default class RulePicker extends Modal {
 
 		// Allow hotkeys in rule picker
 		for (const command of this.plugin.commands) if (command.callback) {
-			// @ts-expect-error (Private API)
-			const hotkeys: Hotkey[] = this.app.hotkeyManager?.customKeys?.[command.id] ?? [];
+			const hotkeys: Hotkey[] = this.app.hotkeyManager.customKeys[command.id] ?? [];
 			for (const hotkey of hotkeys) {
 				this.scope.register(hotkey.modifiers, hotkey.key, command.callback);
 			}

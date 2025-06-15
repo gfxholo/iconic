@@ -130,8 +130,8 @@ export default class PropertyIconManager extends IconManager {
 		);
 
 		// Remove icon(s) / Reset color(s)
-		const anySelectedIcons = selectedProps.some(file => file.icon);
-		const anySelectedColors = selectedProps.some(file => file.color);
+		const anySelectedIcons = selectedProps.some(file => !!file.icon);
+		const anySelectedColors = selectedProps.some(file => !!file.color);
 		const removeTitle = selectedProps.length < 2
 			? clickedProp.icon
 				? STRINGS.menu.removeIcon

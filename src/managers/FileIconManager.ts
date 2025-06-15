@@ -107,7 +107,7 @@ export default class FileIconManager extends IconManager {
 	
 						// Refresh on folder collapse/expand
 						if (mutation.attributeName === 'class' && mutation.target instanceof HTMLElement) {
-							const wasCollapsed = mutation.oldValue?.includes('is-collapsed');
+							const wasCollapsed = mutation.oldValue?.includes('is-collapsed') ?? false;
 							const isCollapsed = mutation.target.hasClass('is-collapsed');
 	
 							// Only refresh children if expanding, not collapsing
@@ -241,8 +241,8 @@ export default class FileIconManager extends IconManager {
 		);
 
 		// Remove icon(s) / Reset color(s)
-		const anyIcons = files.some(file => file.icon);
-		const anyColors = files.some(file => file.color);
+		const anyIcons = files.some(file => !!file.icon);
+		const anyColors = files.some(file => !!file.color);
 		const removalTitle = files.length === 1
 			? files[0].icon
 				? STRINGS.menu.removeIcon
