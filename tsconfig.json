@@ -16,7 +16,9 @@
       "DOM",
       "DOM.Iterable",
       "ES2021"
-    ]
+    ],
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
   "include": [
     "**/*.ts"

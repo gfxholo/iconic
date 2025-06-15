@@ -1,6 +1,9 @@
 import { ExtraButtonComponent, Platform, PluginSettingTab, Setting } from 'obsidian';
 import IconicPlugin, { STRINGS } from 'src/IconicPlugin';
 import RulePicker from 'src/dialogs/RulePicker';
+import { AddCustomIconModal } from 'src/dialogs/AddCustomIconModal';
+import { RenameCustomIconModal } from 'src/dialogs/RenameCustomIconModal';
+import { DeleteCustomIconModal } from 'src/dialogs/DeleteCustomIconModal';
 
 /**
  * Exposes UI settings for the plugin.
@@ -314,6 +317,24 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 				})
 			);
+
+			// HEADING: Custom Icons
+		new Setting(this.containerEl)
+  			.setHeading()
+  			.setName('Custom Icons');
+			
+			// Create, Update, Delete Custom Icons
+		new Setting(this.containerEl)
+  			.setDesc('Import, rename, or delete your own SVG icons.')
+  			.addButton(b => b
+    			.setButtonText('Add…')
+    			.onClick(() => new AddCustomIconModal(this.plugin.app, this.plugin.customIconManager, () => this.plugin.buildCustomIconCSS()).open()))
+  			.addButton(b => b
+    			.setButtonText('Rename…')
+    			.onClick(() => new RenameCustomIconModal(this.plugin.app, this.plugin.customIconManager, () => this.plugin.buildCustomIconCSS()).open()))
+  			.addButton(b => b
+    			.setButtonText('Delete…')
+    			.onClick(() => new DeleteCustomIconModal(this.plugin.app, this.plugin.customIconManager, () => this.plugin.buildCustomIconCSS()).open()));
 	}
 
 	/**

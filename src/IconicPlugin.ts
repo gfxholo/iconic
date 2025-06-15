@@ -15,6 +15,14 @@ import RibbonIconManager from 'src/managers/RibbonIconManager';
 import IconPicker from 'src/dialogs/IconPicker';
 import RulePicker from 'src/dialogs/RulePicker';
 
+// Custom Icon imports
+import CustomIconManager from 'src/managers/CustomIconManager';
+import { AddCustomIconModal } from 'src/dialogs/AddCustomIconModal';
+import { RenameCustomIconModal } from 'src/dialogs/RenameCustomIconModal';
+import { DeleteCustomIconModal } from 'src/dialogs/DeleteCustomIconModal';
+import { promises as fs } from 'fs';
+import * as path from 'path';
+
 export const ICONS = new Map<string, string>();
 export { EMOJIS };
 export { STRINGS };
@@ -172,12 +180,22 @@ export default class IconicPlugin extends Plugin {
 	editorIconManager?: EditorIconManager;
 	ribbonIconManager?: RibbonIconManager;
 	commands: Command[] = [];
+	public customIconManager!: CustomIconManager;
 
 	/**
 	 * @override
 	 */
 	async onload(): Promise<void> {
 		await this.loadSettings();
+
+		// Initialize custom‐icon manager (use vault root from adapter.getBasePath())
+	    const vaultPath = (this.app.vault.adapter as any).getBasePath() as string;
+	    const dataPath = path.join(vaultPath, '.obsidian', 'plugins', this.manifest.id);
+	    this.customIconManager = new CustomIconManager(dataPath);
+     	await this.customIconManager.init();
+     	await this.buildCustomIconCSS();
+     	// ─────────────────────────────────────────────────────────────────────
+
 		this.addSettingTab(new IconicSettingTab(this));
 
 		this.app.workspace.onLayoutReady(() => {
@@ -369,6 +387,40 @@ export default class IconicPlugin extends Plugin {
 			() => RulePicker.open(this),
 		);
 
+		//COMMAND: Add Custom Icon
+		this.commands.push(this.addCommand({
+  			id: 'add-custom-icon',
+  			name: 'Iconic: Add custom SVG icon…',
+  			callback: async () => {
+    		// TODO: open a modal or file-picker + name‐prompt, then:
+    		// const { userName, svgText } = await promptForNameAndSVG();
+    		// await this.customIconManager.addIcon(userName, svgText);
+    		// upon success, refresh picker UI & rebuild CSS bundle
+  			}
+		}));
+
+		//COMMAND: Remove Custom Icon
+		this.commands.push(this.addCommand({
+  			id: 'remove-custom-icon',
+  			name: 'Iconic: Remove custom SVG icon…',
+  			callback: async () => {
+    		// TODO: prompt user to select existing name or alias
+    		// await this.customIconManager.removeIcon(selectedName);
+    		// refresh UI + rebuild bundle
+  			}
+		}));
+
+		//COMMAND: Rename Custom Icon
+		this.commands.push(this.addCommand({
+  			id: 'rename-custom-icon',
+  			name: 'Iconic: Rename custom SVG icon…',
+  			callback: async () => {
+    		// TODO: prompt for oldName & newName
+    		// await this.customIconManager.renameIcon(oldName, newName);
+    		// refresh UI + rebuild bundle
+  			}
+		}));
+
 		// COMMAND: Open rulebook
 		this.addCommand({
 			id: 'open-rulebook',
@@ -497,6 +549,61 @@ export default class IconicPlugin extends Plugin {
 				});
 			},
 		});
+	}
+
+	/**
+  	 * Bundles all custom SVGs into one <style> tag
+  	 */
+  	public async buildCustomIconCSS(): Promise<void> {
+    	const entries = this.customIconManager.listIcons();
+    	const cssLines: string[] = ['/* Custom SVG icons injected by Iconic */'];
+
+	    const vaultPath = (this.app.vault.adapter as any).getBasePath() as string;
+	    const baseDir = path.join(
+	    	vaultPath,
+      		'.obsidian',
+      		'plugins',
+      		this.manifest.id,
+      		'custom-icons'
+    	);
+
+    for (const entry of entries) {
+      	const svgPath = path.join(baseDir, entry.file);
+      	try {
+        	const svg = await fs.readFile(svgPath, 'utf8');
+        	const dataUri = 'data:image/svg+xml;base64,' + Buffer.from(svg).toString('base64');
+        	cssLines.push(`
+				.iconic-custom[data-icon="${entry.name}"] {
+  				mask-image: url("${dataUri}");
+  				-webkit-mask-image: url("${dataUri}");
+  				mask-repeat: no-repeat;
+  				mask-position: center;
+  				mask-size: contain;
+  				background-color: currentColor;
+			}`);
+        for (const alias of entry.aliases) {
+          	cssLines.push(`
+				.iconic-custom[data-icon="${alias}"] {
+	 	 		mask-image: url("${dataUri}");
+  				-webkit-mask-image: url("${dataUri}");
+  				mask-repeat: no-repeat;
+  				mask-position: center;
+  				mask-size: contain;
+  				background-color: currentColor;
+			}`);
+        }
+    	} catch (e) {
+        	console.error(`Iconic: failed reading ${entry.file}`, e);
+      	}
+    }
+
+    let style = document.getElementById('iconic-custom-icons') as HTMLStyleElement;
+    	if (!style) {
+      		style = document.createElement('style');
+      		style.id = 'iconic-custom-icons';
+      		document.head.appendChild(style);
+    	}
+    	style.textContent = cssLines.join('\n');
 	}
 
 	/**
@@ -1336,6 +1443,7 @@ export default class IconicPlugin extends Plugin {
 	 * @override
 	 */
 	onunload(): void {
+		document.getElementById('iconic-custom-icons')?.remove();
 		this.ruleManager.unload();
 		this.appIconManager?.unload();
 		this.tabIconManager?.unload();

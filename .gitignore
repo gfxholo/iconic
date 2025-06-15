@@ -17,6 +17,7 @@ main.js
 
 # obsidian
 data.json
+package-lock.json
 
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store
