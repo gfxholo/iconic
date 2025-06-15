@@ -26,8 +26,8 @@
 		"changeEmojis": "更换 {#} 个表情符号",
 		"changeMix": "更改图标/表情符号",
 		"changeMixes": "更改 {#} 个图标/表情符号",
-		"overrulePrefix": "您的规则 ",
-		"overruleSuffix": " 正在覆盖这个图标。",
+		"overrulePrefix": "覆盖",
+		"overruleSuffix": " 覆盖",
 		"overrules": "您的规则书正在覆盖这些图标中的一些。",
 		"search": "搜索",
 		"searchIcons": "搜索图标……",
@@ -50,7 +50,7 @@
 			"cyan": "青色",
 			"blue": "蓝色",
 			"purple": "紫色",
-			"pink": "粉色",
+			"pink": "粉红色",
 			"gray": "灰色"
 		}
 	},
@@ -107,7 +107,7 @@
 		"enterName": "为该规则命名",
 		"enterValue": "输入一个值",
 		"enterRegex": "输入一个正则表达式",
-		"enterHexCode": "输入一个 #hexcode",
+		"enterHexCode": "输入一个十六进制代码",
 		"enterNumber": "输入一个数字",
 		"matchConditions": {
 			"name": "匹配条件",
@@ -216,8 +216,8 @@
 			"!yearIs": "年份不在",
 			"yearIsBefore": "年份在之前",
 			"yearIsAfter": "年份在之后",
-			"iconIs": "ID是",
-			"!iconIs": "ID不是",
+			"iconIs": "图标是",
+			"!iconIs": "图标不是",
 			"nameIs": "名称是",
 			"!nameIs": "名称不是",
 			"nameContains": "名称包含",
@@ -278,7 +278,7 @@
 		},
 		"toggleAllFileIcons": "切换所有文件图标",
 		"toggleAllFolderIcons": "切换所有文件夹图标",
-		"toggleMinimalFolderIcons": "切换最小文件夹图标",
+		"toggleMinimalFolderIcons": "切换极简文件夹图标",
 		"toggleBiggerSearchResults": "切换更大的搜索结果",
 		"changeIconCurrentFile": "更改当前文件的图标"
 	},
