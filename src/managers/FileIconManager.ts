@@ -105,15 +105,17 @@ export default class FileIconManager extends IconManager {
 							break;
 						}
 	
+						// Refresh on folder collapse/expand
 						if (mutation.attributeName === 'class' && mutation.target instanceof HTMLElement) {
 							const wasCollapsed = mutation.oldValue?.includes('is-collapsed');
 							const isCollapsed = mutation.target.hasClass('is-collapsed');
 	
+							// Only refresh children if expanding, not collapsing
 							if (wasCollapsed && !isCollapsed) {
-								shouldRefreshChildren = true; // expanding
-								shouldRefreshSelf = true;     // also refresh the folder itself
+								shouldRefreshChildren = true; 
+								shouldRefreshSelf = true;     
 							} else if (!wasCollapsed && isCollapsed) {
-								shouldRefreshSelf = true;     // collapsing
+								shouldRefreshSelf = true;    
 							}
 						}
 					}
@@ -130,13 +132,14 @@ export default class FileIconManager extends IconManager {
 				});
 			}
 
+			// Ensure icon element positioned before filename
 			let iconEl = selfEl.find(':scope > .tree-item-icon') ?? selfEl.createDiv({ cls: 'tree-item-icon' });
 			const innerEl = selfEl.find('.tree-item-inner');
 			if (iconEl !== innerEl?.previousElementSibling) {
 				innerEl?.insertAdjacentElement('beforebegin', iconEl);
 			}
 		
-			if(file.items) {
+			if (file.items) {
 				// Toggle default icon based on expand/collapse state
 				if (file.iconDefault) file.iconDefault = iconEl.hasClass('is-collapsed')
 					? 'lucide-folder-closed'
