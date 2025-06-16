@@ -1,16 +1,15 @@
 import { ButtonComponent, Modal, Setting } from 'obsidian';
-import IconicPlugin, { FileItem, STRINGS } from 'src/IconicPlugin';
-import { RulePage } from 'src/managers/RuleManager';
+import IconicPlugin, { Category, FileItem, STRINGS } from 'src/IconicPlugin';
 
 /**
  * Dialog for previewing the items matched by a rule.
  */
 export default class RuleChecker extends Modal {
 	private readonly plugin: IconicPlugin;
-	private readonly page: RulePage;
+	private readonly page: Category;
 	private readonly matches: FileItem[];
 
-	private constructor(plugin: IconicPlugin, page: RulePage, matches: FileItem[]) {
+	private constructor(plugin: IconicPlugin, page: Category, matches: FileItem[]) {
 		super(plugin.app);
 		this.plugin = plugin;
 		this.page = page;
@@ -29,7 +28,7 @@ export default class RuleChecker extends Modal {
 	/**
 	 * Open a dialog to preview a list of matches.
 	 */
-	static open(plugin: IconicPlugin, page: RulePage, matches: FileItem[]): void {
+	static open(plugin: IconicPlugin, page: Category, matches: FileItem[]): void {
 		new RuleChecker(plugin, page, matches).open();
 	}
 

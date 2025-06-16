@@ -1,7 +1,7 @@
 import { ButtonComponent, ColorComponent, ExtraButtonComponent, Hotkey, Menu, Modal, Platform, Setting, TextComponent, prepareFuzzySearch } from 'obsidian';
-import IconicPlugin, { Item, Icon, ICONS, EMOJIS, STRINGS } from 'src/IconicPlugin';
+import IconicPlugin, { Category, Item, Icon, ICONS, EMOJIS, STRINGS } from 'src/IconicPlugin';
 import ColorUtils, { COLORS } from 'src/ColorUtils';
-import { RuleItem, RulePage } from 'src/managers/RuleManager';
+import { RuleItem } from 'src/managers/RuleManager';
 import IconManager from 'src/managers/IconManager';
 import RuleEditor from 'src/dialogs/RuleEditor';
 
@@ -753,22 +753,20 @@ export default class IconPicker extends Modal {
 	 */
 	private updateOverruleReminder(): void {
 		this.overruleEl?.remove();
-		let page: RulePage;
+		let page: Category;
 		let rule: RuleItem | null = null;
 
 		// Determine which rule to display
-		if (this.items.length > 1) for (const item of this.items) {
-			if (item.category === 'file' || item.category === 'folder') {
+		if (this.items.length > 1) {
+			for (const item of this.items) {
 				rule = this.plugin.ruleManager.checkRuling(item.category, item.id);
 				page = item.category;
 				if (rule) break;
 			}
 		} else {
 			const item = this.items[0];
-			if (item.category === 'file' || item.category === 'folder') {
-				rule = this.plugin.ruleManager.checkRuling(item.category, item.id);
-				page = item.category;
-			}
+			rule = this.plugin.ruleManager.checkRuling(item.category, item.id);
+			page = item.category;
 		}
 
 		if (rule) {

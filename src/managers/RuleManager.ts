@@ -1,9 +1,8 @@
 import { TFile } from 'obsidian';
-import IconicPlugin, { Item, FileItem, ICONS, EMOJIS, STRINGS } from 'src/IconicPlugin';
+import IconicPlugin, { Category, Item, FileItem, ICONS, EMOJIS, STRINGS } from 'src/IconicPlugin';
 
 const BASE62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
-export type RulePage = 'file' | 'folder';
 export type RuleTrigger = 'icon' | 'color' | 'rename' | 'move' | 'tag' | 'property' | 'modify' | 'date' | 'time';
 
 export interface RuleItem extends Item {
@@ -63,21 +62,23 @@ export default class RuleManager {
 	/**
 	 * Get array of rule definitions from a given page.
 	 */
-	getRules(page: RulePage): RuleItem[] {
+	getRules(page: Category): RuleItem[] {
 		switch (page) {
 			case 'file': return this.plugin.settings.fileRules.map(ruleBase => this.defineRule(ruleBase));
 			case 'folder': return this.plugin.settings.folderRules.map(ruleBase => this.defineRule(ruleBase));
+			default: return [];
 		}
 	}
 
 	/**
 	 * Get rule definition from a given page.
 	 */
-	getRule(page: RulePage, ruleId: string): RuleItem | null {
+	getRule(page: Category, ruleId: string): RuleItem | null {
 		let ruleBases: typeof this.plugin.settings.fileRules;
 		switch (page) {
 			case 'file': ruleBases = this.plugin.settings.fileRules; break;
 			case 'folder': ruleBases = this.plugin.settings.folderRules; break;
+			default: ruleBases = [];
 		}
 		const ruleBase = ruleBases.find(rule => rule.id === ruleId);
 		return ruleBase ? this.defineRule(ruleBase) : null;
@@ -86,7 +87,7 @@ export default class RuleManager {
 	/**
 	 * Get array of rule bases from a given page.
 	 */
-	private getRuleBases(page: RulePage): typeof this.plugin.settings.fileRules {
+	private getRuleBases(page: Category): typeof this.plugin.settings.fileRules {
 		switch (page) {
 			default: return this.plugin.settings.fileRules;
 			case 'file': return this.plugin.settings.fileRules;
@@ -97,8 +98,9 @@ export default class RuleManager {
 	/**
 	 * Get default rule icon for a given page.
 	 */
-	getPageIcon(page: RulePage): string {
+	getPageIcon(page: Category): string {
 		switch (page) {
+			default: return 'lucide-file';
 			case 'file': return 'lucide-file';
 			case 'folder': return 'lucide-folder';
 		}
@@ -124,7 +126,7 @@ export default class RuleManager {
 	/**
 	 * Generate a 5-character rule ID. 916,132,832 possible values.
 	 */
-	private newRuleId(page: RulePage): string {
+	private newRuleId(page: Category): string {
 		const ids = this.getRuleBases(page).map(ruleBase => ruleBase.id);
 		let id: string;
 		let collisions = 0;
@@ -141,7 +143,7 @@ export default class RuleManager {
 	/**
 	 * Create new rule on a given page.
 	 */
-	newRule(page: RulePage): RuleItem {
+	newRule(page: Category): RuleItem {
 		const newRule: RuleItem = {
 			id: this.newRuleId(page),
 			name: STRINGS.rulePicker.untitledRule,
@@ -160,7 +162,7 @@ export default class RuleManager {
 	/**
 	 * Move rule within a given page, and return true if this changes any rulings.
 	 */
-	moveRule(page: RulePage, rule: RuleItem, toIndex: number): boolean {
+	moveRule(page: Category, rule: RuleItem, toIndex: number): boolean {
 		const ruleBases = this.getRuleBases(page);
 		const ruleBase = ruleBases.find(ruleBase => ruleBase.id === rule.id);
 		if (!ruleBase) return false;
@@ -176,7 +178,7 @@ export default class RuleManager {
 	/**
 	 * Save rule to a given page, and return true if this changes any rulings.
 	 */
-	saveRule(page: RulePage, newRule: RuleItem): boolean {
+	saveRule(page: Category, newRule: RuleItem): boolean {
 		const ruleBases = this.getRuleBases(page);
 		let ruleBase = ruleBases.find(rule => rule.id === newRule.id);
 		if (!ruleBase) {
@@ -212,7 +214,7 @@ export default class RuleManager {
 	/**
 	 * Delete rule from a given page, and return true if this changes any rulings.
 	 */
-	deleteRule(page: RulePage, ruleId: string): boolean {
+	deleteRule(page: Category, ruleId: string): boolean {
 		const ruleBases = this.getRuleBases(page);
 		const index = ruleBases.findIndex(ruleBase => ruleBase.id === ruleId);
 		if (index === -1) return false;
@@ -225,18 +227,19 @@ export default class RuleManager {
 	/**
 	 * Check the ruling for a given item.
 	 */
-	checkRuling(page: RulePage, itemId: string, unloading?: boolean): RuleItem | null {
+	checkRuling(page: Category, itemId: string, unloading?: boolean): RuleItem | null {
 		if (unloading) return null;
 		switch (page) {
 			case 'file': return this.fileRulings.get(itemId) ?? null;
 			case 'folder': return this.folderRulings.get(itemId) ?? null;
+			default: return null;
 		}
 	}
 
 	/**
 	 * Update rulings for a given page, and return true if this changes any rulings.
 	 */
-	updateRulings(page: RulePage): boolean {
+	updateRulings(page: Category): boolean {
 		const now = new Date(); // Use this timestamp to check any chronological conditions
 		const enabledRules = this.getRules(page).filter(rule => rule.enabled);
 
@@ -348,11 +351,12 @@ export default class RuleManager {
 	/**
 	 * Check a given condition and activate any triggers it will need.
 	 */
-	private updateTriggers(page: RulePage, condition: ConditionItem): void {
+	private updateTriggers(page: Category, condition: ConditionItem): void {
 		let triggers: Set<RuleTrigger>;
 		switch (page) {
 			case 'file': triggers = this.fileTriggers; break;
 			case 'folder': triggers = this.folderTriggers; break;
+			default: return;
 		}
 		switch (condition.source) {
 			case 'icon': triggers.add('icon'); break;
@@ -433,7 +437,7 @@ export default class RuleManager {
 	 * Update rulings for a given page, and return true if this changes any rulings.
 	 * @param triggers If none of the specified triggers are active, skip the update.
 	 */
-	triggerRulings(page: RulePage, ...triggers: RuleTrigger[]): boolean {
+	triggerRulings(page: Category, ...triggers: RuleTrigger[]): boolean {
 		switch (page) {
 			case 'file': for (const trigger of triggers) {
 				if (this.fileTriggers.has(trigger)) {
@@ -445,8 +449,8 @@ export default class RuleManager {
 					return this.updateRulings(page);
 				}
 			}
+			default: return false;
 		}
-		return false;
 	}
 
 	/**

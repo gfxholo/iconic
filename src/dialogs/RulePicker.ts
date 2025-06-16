@@ -1,7 +1,7 @@
 import { ExtraButtonComponent, Menu, Modal, Setting, ToggleComponent } from 'obsidian';
-import IconicPlugin, { Icon, Item, STRINGS } from 'src/IconicPlugin';
+import IconicPlugin, { Category, Icon, Item, STRINGS } from 'src/IconicPlugin';
 import ColorUtils from 'src/ColorUtils';
-import { RulePage, RuleItem } from 'src/managers/RuleManager';
+import { RuleItem } from 'src/managers/RuleManager';
 import IconManager from 'src/managers/IconManager';
 import RuleEditor from 'src/dialogs/RuleEditor';
 import IconPicker from 'src/dialogs/IconPicker';
@@ -100,11 +100,8 @@ export default class RulePicker extends Modal {
 					file: STRINGS.rulePicker.fileRules,
 					folder: STRINGS.rulePicker.folderRules,
 				})
-				.onChange(value => {
-					switch (value) {
-						case 'file': dialogState.rulePage = value; break;
-						case 'folder': dialogState.rulePage = value; break;
-					}
+				.onChange((value: Category) => {
+					dialogState.rulePage = value;
 					this.refreshRules();
 				})
 				.setValue(dialogState.rulePage);
@@ -231,7 +228,7 @@ export default class RulePicker extends Modal {
  */
 class RuleSetting extends Setting {
 	private readonly plugin: IconicPlugin;
-	private readonly page: RulePage;
+	private readonly page: Category;
 	private readonly rule: RuleItem;
 
 	// Components
@@ -245,7 +242,7 @@ class RuleSetting extends Setting {
 		containerEl: HTMLElement,
 		plugin: IconicPlugin,
 		iconManager: RulePickerManager,
-		page: RulePage,
+		page: Category,
 		rule: RuleItem,
 		ruleEls: HTMLElement[],
 		onRulingChange: () => void,

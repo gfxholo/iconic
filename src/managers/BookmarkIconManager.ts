@@ -1,5 +1,5 @@
 import { WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { BookmarkItem, STRINGS } from 'src/IconicPlugin';
+import IconicPlugin, { Category, BookmarkItem, STRINGS } from 'src/IconicPlugin';
 import { RuleItem } from 'src/managers/RuleManager';
 import IconManager from 'src/managers/IconManager';
 import RuleEditor from 'src/dialogs/RuleEditor';
@@ -184,7 +184,7 @@ export default class BookmarkIconManager extends IconManager {
 	/**
 	 * When user context-clicks a bookmark, add custom items to the menu.
 	 */
-	private onContextMenu(clickedId: string, clickedCategory: string): void {
+	private onContextMenu(clickedId: string, clickedCategory: Category): void {
 		this.plugin.menuManager.closeAndFlush();
 		const clickedBmark: BookmarkItem = this.plugin.getBookmarkItem(clickedId, clickedCategory);
 		const selectedBmarks: BookmarkItem[] = [];

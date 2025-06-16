@@ -1,5 +1,5 @@
 import { Platform } from 'obsidian';
-import IconicPlugin, { FileItem, TabItem, STRINGS } from 'src/IconicPlugin';
+import IconicPlugin, { Category, FileItem, TabItem, STRINGS } from 'src/IconicPlugin';
 import IconManager from './IconManager';
 import RuleEditor from 'src/dialogs/RuleEditor';
 import IconPicker from 'src/dialogs/IconPicker';
@@ -132,7 +132,7 @@ export default class TabIconManager extends IconManager {
 	/**
 	 * When user context-clicks a tab, add custom items to the menu.
 	 */
-	private onContextMenu(tabId: string, tabCategory: string) {
+	private onContextMenu(tabId: string, tabCategory: Category) {
 		this.plugin.menuManager.closeAndFlush();
 
 		if (tabCategory === 'file') {

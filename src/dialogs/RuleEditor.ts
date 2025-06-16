@@ -1,7 +1,7 @@
 import { ButtonComponent, DropdownComponent, ExtraButtonComponent, Modal, Platform, Setting, TextComponent } from 'obsidian';
-import IconicPlugin, { Icon, Item, FileItem, STRINGS } from 'src/IconicPlugin';
+import IconicPlugin, { Category, Icon, Item, FileItem, STRINGS } from 'src/IconicPlugin';
 import ColorUtils from 'src/ColorUtils';
-import { RulePage, RuleItem, ConditionItem } from 'src/managers/RuleManager';
+import { RuleItem, ConditionItem } from 'src/managers/RuleManager';
 import IconManager from 'src/managers/IconManager';
 import RuleChecker from 'src/dialogs/RuleChecker';
 import IconPicker from 'src/dialogs/IconPicker';
@@ -506,7 +506,7 @@ export default class RuleEditor extends Modal {
 	private readonly iconManager: RuleEditorManager;
 
 	// Rule
-	private readonly page: RulePage;
+	private readonly page: Category;
 	private readonly rule: RuleItem;
 	private readonly callback: RuleEditorCallback | null;
 	private matches: FileItem[] = [];
@@ -517,7 +517,7 @@ export default class RuleEditor extends Modal {
 	private addCondSetting: Setting;
 	private matchesButton: ButtonComponent;
 
-	private constructor(plugin: IconicPlugin, page: RulePage, rule: RuleItem, callback: RuleEditorCallback | null) {
+	private constructor(plugin: IconicPlugin, page: Category, rule: RuleItem, callback: RuleEditorCallback | null) {
 		super(plugin.app);
 		this.plugin = plugin;
 		this.iconManager = new RuleEditorManager(plugin);
@@ -538,7 +538,7 @@ export default class RuleEditor extends Modal {
 	/**
 	 * Open a dialog to edit a single rule.
 	 */
-	static open(plugin: IconicPlugin, page: RulePage, rule: RuleItem, callback: RuleEditorCallback): void {
+	static open(plugin: IconicPlugin, page: Category, rule: RuleItem, callback: RuleEditorCallback): void {
 		new RuleEditor(plugin, page, rule, callback).open();
 	}
 
@@ -551,6 +551,7 @@ export default class RuleEditor extends Modal {
 		switch (this.page) {
 			case 'file': this.setTitle(STRINGS.ruleEditor.fileRule); break;
 			case 'folder': this.setTitle(STRINGS.ruleEditor.folderRule); break;
+			default: this.setTitle(STRINGS.categories.rule); break;
 		}
 
 		const ruleSetting = new Setting(this.contentEl);
@@ -816,7 +817,7 @@ export default class RuleEditor extends Modal {
  */
 class ConditionSetting extends Setting {
 	private readonly plugin: IconicPlugin;
-	private readonly page: RulePage;
+	private readonly page: Category;
 	private readonly condition: ConditionItem;
 
 	// Components
@@ -838,7 +839,7 @@ class ConditionSetting extends Setting {
 		containerEl: HTMLElement,
 		plugin: IconicPlugin,
 		iconManager: RuleEditorManager,
-		page: RulePage,
+		page: Category,
 		condition: ConditionItem,
 		condEls: HTMLElement[],
 		onChange: () => void,
@@ -1020,6 +1021,7 @@ class ConditionSetting extends Setting {
 		// Update sources
 		let srcOptions: DropdownOptions;
 		switch (this.page) {
+			default: srcOptions = FILE_SOURCES; break;
 			case 'file': srcOptions = FILE_SOURCES; break;
 			case 'folder': srcOptions = FOLDER_SOURCES; break;
 		}

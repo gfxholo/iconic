@@ -3,7 +3,7 @@ import IconicSettingTab from 'src/IconicSettingTab';
 import EMOJIS from 'src/Emojis';
 import STRINGS from 'src/Strings';
 import MenuManager from 'src/managers/MenuManager';
-import RuleManager, { RulePage, RuleTrigger } from 'src/managers/RuleManager';
+import RuleManager, { RuleTrigger } from 'src/managers/RuleManager';
 import AppIconManager from 'src/managers/AppIconManager';
 import TabIconManager from 'src/managers/TabIconManager';
 import FileIconManager from 'src/managers/FileIconManager';
@@ -18,6 +18,7 @@ import RulePicker from 'src/dialogs/RulePicker';
 export const ICONS = new Map<string, string>();
 export { EMOJIS };
 export { STRINGS };
+export type Category = 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'tag' | 'property' | 'ribbon' | 'rule';
 export type AppItemId = 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight' | 'minimize' | 'maximize' | 'unmaximize' | 'close';
 
 const OPENABLE_TYPES = ['markdown', 'canvas', 'audio', 'video', 'pdf'];
@@ -37,7 +38,7 @@ export interface Icon {
 export interface Item extends Icon {
 	id: string;
 	name: string;
-	category: 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'tag' | 'property' | 'ribbon' | 'rule';
+	category: Category;
 	iconDefault: string | null;
 }
 export type AppItem = Item;
@@ -85,7 +86,7 @@ interface IconicSettings {
 	dialogState: {
 		iconMode: boolean;
 		emojiMode: boolean;
-		rulePage: RulePage;
+		rulePage: Category;
 	},
 	appIcons: Record<string, { icon?: string, color?: string }>;
 	tabIcons: Record<string, { icon?: string, color?: string }>;
@@ -827,7 +828,7 @@ export default class IconicPlugin extends Plugin {
 	/**
 	 * Get bookmark definition.
 	 */
-	getBookmarkItem(bmarkId: string, bmarkCategory: string, unloading?: boolean): BookmarkItem {
+	getBookmarkItem(bmarkId: string, bmarkCategory: Category, unloading?: boolean): BookmarkItem {
 		// @ts-expect-error (Private API)
 		const bmarkBases = this.flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
 		const bmarkBase = bmarkBases.find(bmarkBase => {
@@ -1115,13 +1116,17 @@ export default class IconicPlugin extends Plugin {
 	 */
 	saveBookmarkIcon(bmark: BookmarkItem, icon: string | null, color: string | null): void {
 		const triggers: Set<RuleTrigger> = new Set();
-		if (bmark.category === 'file' || bmark.category === 'folder') {
-			const bmarkBase = this.settings.fileIcons[bmark.id];
-			if (icon !== bmarkBase?.icon) triggers.add('icon');
-			if (color !== bmarkBase?.color) triggers.add('color');
-			this.updateIconSetting(this.settings.fileIcons, bmark.id, icon, color);
-		} else {
-			this.updateIconSetting(this.settings.bookmarkIcons, bmark.id, icon, color);
+		switch (bmark.category) {
+			case 'file': // Fallthrough
+			case 'folder': {
+				const bmarkBase = this.settings.fileIcons[bmark.id];
+				if (icon !== bmarkBase?.icon) triggers.add('icon');
+				if (color !== bmarkBase?.color) triggers.add('color');
+				this.updateIconSetting(this.settings.fileIcons, bmark.id, icon, color);
+			}
+			default: {
+				this.updateIconSetting(this.settings.bookmarkIcons, bmark.id, icon, color);
+			}
 		}
 		this.saveSettings();
 		this.ruleManager.triggerRulings('file', ...triggers);
@@ -1137,13 +1142,17 @@ export default class IconicPlugin extends Plugin {
 		for (const bmark of bmarks) {
 			if (icon !== undefined) bmark.icon = icon;
 			if (color !== undefined) bmark.color = color;
-			if (bmark.category === 'file' || bmark.category === 'folder') {
-				const bmarkBase = this.settings.fileIcons[bmark.id];
-				if (icon !== bmarkBase?.icon) triggers.add('icon');
-				if (color !== bmarkBase?.color) triggers.add('color');
-				this.updateIconSetting(this.settings.fileIcons, bmark.id, bmark.icon, bmark.color);
-			} else {
-				this.updateIconSetting(this.settings.bookmarkIcons, bmark.id, bmark.icon, bmark.color);
+			switch (bmark.category) {
+				case 'file': // Fallthrough
+				case 'folder': {
+					const bmarkBase = this.settings.fileIcons[bmark.id];
+					if (icon !== bmarkBase?.icon) triggers.add('icon');
+					if (color !== bmarkBase?.color) triggers.add('color');
+					this.updateIconSetting(this.settings.fileIcons, bmark.id, bmark.icon, bmark.color);
+				}
+				default: {
+					this.updateIconSetting(this.settings.bookmarkIcons, bmark.id, bmark.icon, bmark.color);
+				}
 			}
 		}
 		this.saveSettings();
