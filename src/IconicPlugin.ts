@@ -42,7 +42,6 @@ export interface Item extends Icon {
 }
 export type AppItem = Item;
 export interface TabItem extends Item {
-	isFile: boolean;
 	isActive: boolean;
 	isRoot: boolean;
 	isStacked: boolean;
@@ -53,7 +52,6 @@ export interface FileItem extends Item {
 	items: FileItem[] | null;
 }
 export interface BookmarkItem extends Item {
-	isFileOrFolder: boolean;
 	items: BookmarkItem[] | null;
 }
 export type TagItem = Item;
@@ -699,7 +697,6 @@ export default class IconicPlugin extends Plugin {
 					: leaf.view.getIcon(),
 				icon: unloading ? null : fileIcon.icon ?? null,
 				color: unloading ? null : fileIcon.color ?? null,
-				isFile: true,
 				isActive: isActive,
 				isRoot: isRoot,
 				isStacked: isStacked,
@@ -725,7 +722,6 @@ export default class IconicPlugin extends Plugin {
 				iconDefault: iconDefault,
 				icon: unloading ? null : tabIcon.icon ?? null,
 				color: unloading ? null : tabIcon.color ?? null,
-				isFile: false,
 				isActive: isActive,
 				isRoot: isRoot,
 				isStacked: isStacked,
@@ -831,11 +827,15 @@ export default class IconicPlugin extends Plugin {
 	/**
 	 * Get bookmark definition.
 	 */
-	getBookmarkItem(bmarkId: string, isFileOrFolder: boolean, unloading?: boolean): BookmarkItem {
+	getBookmarkItem(bmarkId: string, bmarkCategory: string, unloading?: boolean): BookmarkItem {
 		// @ts-expect-error (Private API)
 		const bmarkBases = this.flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
 		const bmarkBase = bmarkBases.find(bmarkBase => {
-			return isFileOrFolder && bmarkBase.path + (bmarkBase.subpath ?? '') === bmarkId || bmarkBase.ctime === bmarkId
+			switch (bmarkCategory) {
+				case 'file': // Fallthrough
+				case 'folder': return bmarkBase.path + (bmarkBase.subpath ?? '') === bmarkId;
+				default: return bmarkBase.ctime === bmarkId;
+			}
 		}) ?? {};
 		return this.defineBookmarkItem(bmarkBase, unloading);
 	}
@@ -918,7 +918,6 @@ export default class IconicPlugin extends Plugin {
 			iconDefault: iconDefault,
 			icon: unloading ? null : bmarkIcon?.icon ?? null,
 			color: unloading ? null : bmarkIcon?.color ?? null,
-			isFileOrFolder: bmarkBase.type === 'file' || bmarkBase.type === 'folder',
 			items: bmarkBase.items?.map((bmark: any) => this.defineBookmarkItem(bmark, unloading)) ?? null,
 		}
 	}

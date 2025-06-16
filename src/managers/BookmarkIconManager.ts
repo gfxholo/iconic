@@ -159,7 +159,7 @@ export default class BookmarkIconManager extends IconManager {
 					if (this.isTouchActive) {
 						this.isTouchActive = false;
 					} else {
-						this.onContextMenu(bmark.id, bmark.isFileOrFolder);
+						this.onContextMenu(bmark.id, bmark.category);
 					}
 				}, { capture: true });
 			}
@@ -184,14 +184,14 @@ export default class BookmarkIconManager extends IconManager {
 	/**
 	 * When user context-clicks a bookmark, add custom items to the menu.
 	 */
-	private onContextMenu(clickedBmarkId: string, isFileOrFolder: boolean): void {
+	private onContextMenu(clickedId: string, clickedCategory: string): void {
 		this.plugin.menuManager.closeAndFlush();
-		const clickedBmark: BookmarkItem = this.plugin.getBookmarkItem(clickedBmarkId, isFileOrFolder);
+		const clickedBmark: BookmarkItem = this.plugin.getBookmarkItem(clickedId, clickedCategory);
 		const selectedBmarks: BookmarkItem[] = [];
 
 		for (const [selectableEl, bmark] of this.selectionLookup) {
 			if (selectableEl.hasClass('is-selected')) {
-				selectedBmarks.push(this.plugin.getBookmarkItem(bmark.id, bmark.isFileOrFolder));
+				selectedBmarks.push(this.plugin.getBookmarkItem(bmark.id, bmark.category));
 			}
 		}
 

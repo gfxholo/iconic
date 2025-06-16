@@ -42,12 +42,12 @@ export default class TabIconManager extends IconManager {
 			if (!tabEl || !iconEl) continue;
 
 			// Check for an icon ruling
-			const rule = tab.isFile
+			const rule = tab.category === 'file'
 				? this.plugin.ruleManager.checkRuling('file', tab.id, unloading) ?? tab
 				: tab;
 
 			if (tab.isRoot && this.plugin.isSettingEnabled('clickableIcons')) {
-				if (tab.isFile) {
+				if (tab.category === 'file') {
 					const file = this.plugin.getFileItem(tab.id);
 					this.refreshIcon(rule, iconEl, event => {
 						IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
@@ -82,10 +82,10 @@ export default class TabIconManager extends IconManager {
 			});
 
 			// Skip menu listener if tab is handled by workspace.on('file-menu')
-			if (tab.isFile && (tab.isActive || tab.isStacked)) {
+			if (tab.category === 'file' && (tab.isActive || tab.isStacked)) {
 				this.stopEventListener(tabEl, 'contextmenu');
 			} else {
-				this.setEventListener(tabEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
+				this.setEventListener(tabEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.category));
 			}
 
 			// Refresh when tab is pinned/unpinned
@@ -115,11 +115,15 @@ export default class TabIconManager extends IconManager {
 				// @ts-expect-error (Private API)
 				if (this.app.workspace.leftSplit.activeTabIconEl === iconEl) {
 					// @ts-expect-error (Private API)
-					this.setEventListener(this.app.workspace.leftSplit.activeTabHeaderEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
+					this.setEventListener(this.app.workspace.leftSplit.activeTabHeaderEl, 'contextmenu', () => {
+						this.onContextMenu(tab.id, tab.category);
+					});
 					// @ts-expect-error (Private API)
 				} else if (this.app.workspace.rightSplit.activeTabIconEl === iconEl) {
 					// @ts-expect-error (Private API)
-					this.setEventListener(this.app.workspace.rightSplit.activeTabHeaderEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.isFile));
+					this.setEventListener(this.app.workspace.rightSplit.activeTabHeaderEl, 'contextmenu', () => {
+						this.onContextMenu(tab.id, tab.category);
+					});
 				}
 			}
 		}
@@ -128,10 +132,10 @@ export default class TabIconManager extends IconManager {
 	/**
 	 * When user context-clicks a tab, add custom items to the menu.
 	 */
-	private onContextMenu(tabId: string, isFile: boolean) {
+	private onContextMenu(tabId: string, tabCategory: string) {
 		this.plugin.menuManager.closeAndFlush();
 
-		if (isFile) {
+		if (tabCategory === 'file') {
 			this.onFileContextMenu(this.plugin.getFileItem(tabId));
 		} else {
 			const tab = this.plugin.getTabItem(tabId);
