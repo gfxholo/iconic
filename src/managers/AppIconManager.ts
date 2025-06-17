@@ -47,7 +47,13 @@ export default class AppIconManager extends IconManager {
 			if (this.helpEl) {
 				const helpItem = this.plugin.getAppItem('help', unloading);
 				this.refreshIcon(helpItem, this.helpEl);
-				this.setEventListener(this.helpEl, 'contextmenu', event => this.onContextMenu('help', event));
+				if (this.plugin.settings.showMenuActions) {
+					this.setEventListener(this.helpEl, 'contextmenu', event => {
+						this.onContextMenu('help', event);
+					});
+				} else {
+					this.stopEventListener(this.helpEl, 'contextmenu');
+				}
 			}
 		}
 
@@ -61,7 +67,13 @@ export default class AppIconManager extends IconManager {
 		if (this.settingsEl) {
 			const settingsItem = this.plugin.getAppItem('settings', unloading);
 			this.refreshIcon(settingsItem, this.settingsEl);
-			this.setEventListener(this.settingsEl, 'contextmenu', event => this.onContextMenu('settings', event));
+			if (this.plugin.settings.showMenuActions) {
+				this.setEventListener(this.settingsEl, 'contextmenu', event => {
+					this.onContextMenu('settings', event);
+				});
+			} else {
+				this.stopEventListener(this.settingsEl, 'contextmenu');
+			}
 		}
 
 		// Sidebar pins
@@ -73,7 +85,13 @@ export default class AppIconManager extends IconManager {
 			for (const pinEl of this.pinEls) {
 				const pinItem = this.plugin.getAppItem('pin', unloading);
 				this.refreshIcon(pinItem, pinEl);
-				this.setEventListener(pinEl, 'contextmenu', event => this.onContextMenu('pin', event));
+				if (this.plugin.settings.showMenuActions) {
+					this.setEventListener(pinEl, 'contextmenu', event => {
+						this.onContextMenu('pin', event);
+					});
+				} else {
+					this.stopEventListener(pinEl, 'contextmenu');
+				}
 			}
 		}
 
@@ -87,7 +105,13 @@ export default class AppIconManager extends IconManager {
 			if (iconEl) {
 				const item = this.plugin.getAppItem('sidebarLeft', unloading);
 				this.refreshIcon(item, iconEl);
-				this.setEventListener(sidebarLeftEl, 'contextmenu', event => this.onContextMenu('sidebarLeft', event));
+				if (this.plugin.settings.showMenuActions) {
+					this.setEventListener(sidebarLeftEl, 'contextmenu', event => {
+						this.onContextMenu('sidebarLeft', event);
+					});
+				} else {
+					this.stopEventListener(sidebarLeftEl, 'contextmenu');
+				}
 			}
 		}
 
@@ -101,7 +125,13 @@ export default class AppIconManager extends IconManager {
 			if (iconEl) {
 				const item = this.plugin.getAppItem('sidebarRight', unloading);
 				this.refreshIcon(item, iconEl);
-				this.setEventListener(this.sidebarRightEl, 'contextmenu', event => this.onContextMenu('sidebarRight', event));
+				if (this.plugin.settings.showMenuActions) {
+					this.setEventListener(this.sidebarRightEl, 'contextmenu', event => {
+						this.onContextMenu('sidebarRight', event);
+					});
+				} else {
+					this.stopEventListener(this.sidebarRightEl, 'contextmenu');
+				}
 			}
 		}
 
@@ -123,7 +153,13 @@ export default class AppIconManager extends IconManager {
 				const rectEl = this.minimizeEl.createSvg('svg', SVG_INFO).createSvg('rect', MINIMIZE_RECT);
 				if (item.color) rectEl.style.fill = ColorUtils.toRgb(item.color);
 			}
-			this.setEventListener(this.minimizeEl, 'contextmenu', event => this.onContextMenu('minimize', event));
+			if (this.plugin.settings.showMenuActions) {
+				this.setEventListener(this.minimizeEl, 'contextmenu', event => {
+					this.onContextMenu('minimize', event);
+				});
+			} else {
+				this.stopEventListener(this.minimizeEl, 'contextmenu');
+			}
 		}
 
 		// Maximize / Restore down
@@ -149,7 +185,13 @@ export default class AppIconManager extends IconManager {
 					pathEl2.style.fill = ColorUtils.toRgb(item.color);
 				}
 			}
-			this.setEventListener(this.closeEl, 'contextmenu', event => this.onContextMenu('close', event));
+			if (this.plugin.settings.showMenuActions) {
+				this.setEventListener(this.closeEl, 'contextmenu', event => {
+					this.onContextMenu('close', event);
+				});
+			} else {
+				this.stopEventListener(this.closeEl, 'contextmenu');
+			}
 		}
 	}
 
@@ -186,9 +228,13 @@ export default class AppIconManager extends IconManager {
 					if (item.color) rectEl.style.stroke = ColorUtils.toRgb(item.color);
 				}
 			}
-			this.setEventListener(this.maximizeEl, 'contextmenu', event => {
-				this.onContextMenu(isMaximized ? 'unmaximize' : 'maximize', event);
-			});
+			if (this.plugin.settings.showMenuActions) {
+				this.setEventListener(this.maximizeEl, 'contextmenu', event => {
+					this.onContextMenu(isMaximized ? 'unmaximize' : 'maximize', event);
+				});
+			} else {
+				this.stopEventListener(this.maximizeEl, 'contextmenu');
+			}
 			this.setMutationsObserver(this.maximizeEl, { childList: true }, () => {
 				this.refreshMaximizeIcon();
 			});

@@ -74,7 +74,11 @@ export default class PropertyIconManager extends IconManager {
 				this.refreshIcon(prop, iconEl);
 			}
 
-			this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(prop.id), { capture: true });
+			if (this.plugin.settings.showMenuActions) {
+				this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(prop.id), { capture: true });
+			} else {
+				this.stopEventListener(itemEl, 'contextmenu');
+			}
 		}
 
 		this.setMutationsObserver(this.containerEl, {

@@ -17,10 +17,14 @@ export default class FileIconManager extends IconManager {
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
 		this.plugin.registerEvent(this.app.workspace.on('file-menu', (menu, tFile) => {
-			this.onContextMenu(tFile.path);
+			if (this.plugin.settings.showMenuActions) {
+				this.onContextMenu(tFile.path);
+			}
 		}));
 		this.plugin.registerEvent(this.app.workspace.on('files-menu', (menu, tFiles) => {
-			this.onContextMenu(...tFiles.map(tFile => tFile.path));
+			if (this.plugin.settings.showMenuActions) {
+				this.onContextMenu(...tFiles.map(tFile => tFile.path));
+			}
 		}));
 		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => {
 			if (activeDocument.contains(this.containerEl)) return;

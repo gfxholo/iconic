@@ -140,6 +140,22 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			);
 
+		// HEADING: Menus
+		new Setting(this.containerEl).setHeading().setName(STRINGS.settings.headingMenus);
+
+		// Show menu actions
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.showMenuActions.name)
+			.setDesc(STRINGS.settings.showMenuActions.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showMenuActions)
+				.onChange(value => {
+					this.plugin.settings.showMenuActions = value;
+					this.plugin.saveSettings();
+					this.plugin.refreshManagers();
+				})
+			);
+
 		// HEADING: Icon picker
 		new Setting(this.containerEl).setName(STRINGS.settings.headingIconPicker).setHeading();
 
@@ -290,7 +306,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			);
 
-		// Colorless ribbon buttonn
+		// Colorless ribbon button
 		new Setting(this.containerEl)
 			.setName(STRINGS.settings.uncolorQuick.name)
 			.setDesc(STRINGS.settings.uncolorQuick.desc)

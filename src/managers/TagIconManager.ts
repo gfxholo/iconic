@@ -85,8 +85,12 @@ export default class TagIconManager extends IconManager {
 				this.refreshIcon(tag, iconEl);
 			}
 
-			if (selfEl) {
-				this.setEventListener(selfEl, 'contextmenu', event => this.onContextMenu(tag.id, event));
+			if (this.plugin.settings.showMenuActions && selfEl) {
+				this.setEventListener(selfEl, 'contextmenu', event => {
+					this.onContextMenu(tag.id, event);
+				});
+			} else {
+				this.stopEventListener(selfEl, 'contextmenu');
 			}
 		}
 	}

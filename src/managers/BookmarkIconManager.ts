@@ -154,14 +154,19 @@ export default class BookmarkIconManager extends IconManager {
 			if (selfEl) {
 				this.selectionLookup.set(selfEl, bmark);
 				this.setEventListener(selfEl, 'touchstart', () => this.isTouchActive = true);
-				this.setEventListener(selfEl, 'contextmenu', () => {
-					// Mobile fires this event twice on bookmarks, so skip the mid-touch event
-					if (this.isTouchActive) {
-						this.isTouchActive = false;
-					} else {
-						this.onContextMenu(bmark.id, bmark.category);
-					}
-				}, { capture: true });
+
+				if (this.plugin.settings.showMenuActions) {
+					this.setEventListener(selfEl, 'contextmenu', () => {
+						// Mobile fires this event twice on bookmarks, so skip the mid-touch event
+						if (this.isTouchActive) {
+							this.isTouchActive = false;
+						} else {
+							this.onContextMenu(bmark.id, bmark.category);
+						}
+					}, { capture: true });
+				} else {
+					this.stopEventListener(selfEl, 'contextmenu');
+				}
 			}
 
 			// Update ghost icon when dragging

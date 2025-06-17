@@ -53,9 +53,13 @@ export default class EditorIconManager extends IconManager {
 				} else {
 					this.refreshIcon(tag, iconEl);
 				}
-				this.setEventListener(tagEl, 'contextmenu', event => {
-					this.onTagNewContextMenu(tag.id, event);
-				});
+				if (this.plugin.settings.showMenuActions) {
+					this.setEventListener(tagEl, 'contextmenu', event => {
+						this.onTagNewContextMenu(tag.id, event);
+					});
+				} else {
+					this.stopEventListener(tagEl, 'contextmenu');
+				}
 			}
 		});
 
@@ -115,6 +119,7 @@ export default class EditorIconManager extends IconManager {
 				}
 			}
 		});
+
 		this.setEventListener(propsEl, 'click', event => {
 			const pointEls = activeDocument.elementsFromPoint(event.x, event.y);
 			const iconEl = pointEls.find(el => el.hasClass('metadata-property-icon'));
@@ -135,17 +140,22 @@ export default class EditorIconManager extends IconManager {
 				}
 			}
 		}, { capture: true });
-		this.setEventListener(propsEl, 'contextmenu', event => {
-			const pointEls = activeDocument.elementsFromPoint(event.x, event.y);
-			const iconEl = pointEls.find(el => el.hasClass('metadata-property-icon'));
-			const propEl = pointEls.find(el => el.hasClass('metadata-property'));
-			if (iconEl && propEl instanceof HTMLElement) {
-				const prop = propEl.dataset.propertyKey
-					? this.plugin.getPropertyItem(propEl.dataset.propertyKey)
-					: null;
-				if (prop) this.onPropertyContextMenu(prop.id);
-			}
-		}, { capture: true });
+
+		if (this.plugin.settings.showMenuActions) {
+			this.setEventListener(propsEl, 'contextmenu', event => {
+				const pointEls = activeDocument.elementsFromPoint(event.x, event.y);
+				const iconEl = pointEls.find(el => el.hasClass('metadata-property-icon'));
+				const propEl = pointEls.find(el => el.hasClass('metadata-property'));
+				if (iconEl && propEl instanceof HTMLElement) {
+					const prop = propEl.dataset.propertyKey
+						? this.plugin.getPropertyItem(propEl.dataset.propertyKey)
+						: null;
+					if (prop) this.onPropertyContextMenu(prop.id);
+				}
+			}, { capture: true });
+		} else {
+			this.stopEventListener(propsEl, 'contextmenu');
+		}
 	}
 
 	/**
@@ -237,7 +247,11 @@ export default class EditorIconManager extends IconManager {
 				iconEl?.remove();
 			}
 			EditorIconManager.setTagColor(tag, propTagEl);
-			this.setEventListener(propTagEl, 'contextmenu', () => this.onTagContextMenu(tag.id));
+			if (this.plugin.settings.showMenuActions) {
+				this.setEventListener(propTagEl, 'contextmenu', () => this.onTagContextMenu(tag.id));
+			} else {
+				this.stopEventListener(propTagEl, 'contextmenu');
+			}
 		}
 
 		// Hashtags (editing mode)
@@ -259,17 +273,25 @@ export default class EditorIconManager extends IconManager {
 				const tagBeginEl = tagEndEl.previousElementSibling;
 				if (tagBeginEl instanceof HTMLElement && tagBeginEl.hasClass('cm-hashtag-begin')) {
 					EditorIconManager.setTagColor(tag, tagBeginEl);
-					this.setEventListener(tagBeginEl, 'contextmenu', event => {
-						if (Platform.isDesktop) this.onTagContextMenu(tag.id, true);
-						if (Platform.isMobile) this.onTagNewContextMenu(tag.id, event);
-					});
+					if (this.plugin.settings.showMenuActions) {
+						this.setEventListener(tagBeginEl, 'contextmenu', event => {
+							if (Platform.isDesktop) this.onTagContextMenu(tag.id, true);
+							if (Platform.isMobile) this.onTagNewContextMenu(tag.id, event);
+						});
+					} else {
+						this.stopEventListener(tagBeginEl, 'contextmenu');
+					}
 				}
 				// Decorate 2nd half of tag
 				EditorIconManager.setTagColor(tag, tagEndEl);
-				this.setEventListener(tagEndEl, 'contextmenu', event => {
-					if (Platform.isDesktop) this.onTagContextMenu(tag.id, true);
-					if (Platform.isMobile) this.onTagNewContextMenu(tag.id, event);
-				});
+				if (this.plugin.settings.showMenuActions) {
+					this.setEventListener(tagEndEl, 'contextmenu', event => {
+						if (Platform.isDesktop) this.onTagContextMenu(tag.id, true);
+						if (Platform.isMobile) this.onTagNewContextMenu(tag.id, event);
+					});
+				} else {
+					this.stopEventListener(tagEndEl, 'contextmenu');
+				}
 			}
 		}
 	}

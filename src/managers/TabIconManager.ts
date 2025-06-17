@@ -82,7 +82,7 @@ export default class TabIconManager extends IconManager {
 			});
 
 			// Skip menu listener if tab is handled by workspace.on('file-menu')
-			if (tab.category === 'file' && (tab.isActive || tab.isStacked)) {
+			if (!this.plugin.settings.showMenuActions || tab.category === 'file' && (tab.isActive || tab.isStacked)) {
 				this.stopEventListener(tabEl, 'contextmenu');
 			} else {
 				this.setEventListener(tabEl, 'contextmenu', () => this.onContextMenu(tab.id, tab.category));
@@ -115,15 +115,25 @@ export default class TabIconManager extends IconManager {
 				// @ts-expect-error (Private API)
 				if (this.app.workspace.leftSplit.activeTabIconEl === iconEl) {
 					// @ts-expect-error (Private API)
-					this.setEventListener(this.app.workspace.leftSplit.activeTabHeaderEl, 'contextmenu', () => {
-						this.onContextMenu(tab.id, tab.category);
-					});
+					const leftActiveTabEl = this.app.workspace.leftSplit.activeTabHeaderEl;
+					if (this.plugin.settings.showMenuActions) {
+						this.setEventListener(leftActiveTabEl, 'contextmenu', () => {
+							this.onContextMenu(tab.id, tab.category);
+						});
+					} else {
+						this.stopEventListener(leftActiveTabEl, 'contextmenu');
+					}
 					// @ts-expect-error (Private API)
 				} else if (this.app.workspace.rightSplit.activeTabIconEl === iconEl) {
 					// @ts-expect-error (Private API)
-					this.setEventListener(this.app.workspace.rightSplit.activeTabHeaderEl, 'contextmenu', () => {
-						this.onContextMenu(tab.id, tab.category);
-					});
+					const rightActiveTabEl = this.app.workspace.rightSplit.activeTabHeaderEl;
+					if (this.plugin.settings.showMenuActions) {
+						this.setEventListener(rightActiveTabEl, 'contextmenu', () => {
+							this.onContextMenu(tab.id, tab.category);
+						});
+					} else {
+						this.stopEventListener(rightActiveTabEl, 'contextmenu');
+					}
 				}
 			}
 		}

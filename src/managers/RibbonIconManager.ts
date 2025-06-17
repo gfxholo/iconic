@@ -97,9 +97,15 @@ export default class RibbonIconManager extends IconManager {
 					ribbonItem.iconDefault = null;
 				}
 				this.refreshIcon(ribbonItem, iconEl);
-				this.setEventListener(iconEl, 'contextmenu', event => {
-					this.onContextMenu(ribbonItem.id, event);
-				}, { capture: true });
+
+				// Add context menu
+				if (this.plugin.settings.showMenuActions) {
+					this.setEventListener(iconEl, 'contextmenu', event => {
+						this.onContextMenu(ribbonItem.id, event);
+					}, { capture: true });
+				} else {
+					this.stopEventListener(iconEl, 'contextmenu');
+				}
 			}
 		}
 	}

@@ -73,6 +73,7 @@ interface IconicSettings {
 	showAllFileIcons: boolean,
 	showAllFolderIcons: boolean,
 	minimalFolderIcons: boolean;
+	showMenuActions: boolean;
 	showItemName: string;
 	biggerSearchResults: string;
 	maxSearchResults: number;
@@ -129,6 +130,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	showAllFileIcons: false,
 	showAllFolderIcons: false,
 	minimalFolderIcons: false,
+	showMenuActions: true,
 	showItemName: 'desktop',
 	biggerSearchResults: 'mobile',
 	maxSearchResults: 50,
@@ -455,6 +457,18 @@ export default class IconicPlugin extends Plugin {
 				this.tagIconManager?.refreshIcons();
 			}
 		}));
+
+		// COMMAND: Toggle menu actions
+		this.addCommand({
+			id: 'toggle-menu-actions',
+			name: STRINGS.commands.toggleMenuActions,
+			callback: () => {
+				this.settings.showMenuActions = !this.settings.showMenuActions;
+				this.saveSettings();
+				this.refreshManagers();
+				this.menuManager.closeAndFlush();
+			}
+		});
 
 		// COMMAND: Toggle bigger search results
 		this.commands.push(this.addCommand({

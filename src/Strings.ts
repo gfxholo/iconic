@@ -279,6 +279,7 @@ export default class Strings {
 		toggleAllFileIcons: 'Toggle all file icons',
 		toggleAllFolderIcons: 'Toggle all folder icons',
 		toggleMinimalFolderIcons: 'Toggle minimal folder icons',
+		toggleMenuActions: 'Toggle menu actions',
 		toggleBiggerSearchResults: 'Toggle bigger search results',
 		changeIconCurrentFile: 'Change icon of the current file',
 	};
@@ -318,6 +319,11 @@ export default class Strings {
 		minimalFolderIcons: {
 			name: 'Minimal folder icons',
 			desc: 'Replace folder arrows with your folder icons.',
+		},
+		headingMenus: 'Menus',
+		showMenuActions: {
+			name: 'Show menu actions',
+			desc: 'Show icon-related actions in context menus.',
 		},
 		headingIconPicker: 'Icon picker',
 		showItemName: {
