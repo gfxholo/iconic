@@ -25,7 +25,7 @@ body {
 }
 
 /* Tabs */
-.workspace .mod-root .workspace-tab-header[data-type="markdown"] .workspace-tab-header-inner-icon,
+.iconic-markdown-tab-icons .workspace .mod-root .workspace-tab-header[data-type="markdown"] .workspace-tab-header-inner-icon,
 .workspace .mod-root .workspace-tab-header[data-type="empty"] .workspace-tab-header-inner-icon {
 	display: flex;
 }

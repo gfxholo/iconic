@@ -140,6 +140,19 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			);
 
+		// Show Markdown tab icons
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.showMarkdownTabIcons.name)
+			.setDesc(STRINGS.settings.showMarkdownTabIcons.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showMarkdownTabIcons)
+				.onChange(value => {
+					this.plugin.settings.showMarkdownTabIcons = value;
+					this.plugin.saveSettings();
+					this.plugin.refreshBodyClasses();
+				})
+			);
+
 		// HEADING: Menus
 		new Setting(this.containerEl).setHeading().setName(STRINGS.settings.headingMenus);
 

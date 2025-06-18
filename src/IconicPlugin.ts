@@ -73,6 +73,7 @@ interface IconicSettings {
 	showAllFileIcons: boolean,
 	showAllFolderIcons: boolean,
 	minimalFolderIcons: boolean;
+	showMarkdownTabIcons: boolean;
 	showMenuActions: boolean;
 	showItemName: string;
 	biggerSearchResults: string;
@@ -130,6 +131,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	showAllFileIcons: false,
 	showAllFolderIcons: false,
 	minimalFolderIcons: false,
+	showMarkdownTabIcons: true,
 	showMenuActions: true,
 	showItemName: 'desktop',
 	biggerSearchResults: 'mobile',
@@ -458,6 +460,17 @@ export default class IconicPlugin extends Plugin {
 			}
 		}));
 
+		// COMMAND: Toggle Markdown tab icons
+		this.addCommand({
+			id: 'toggle-markdown-tab-icons',
+			name: STRINGS.commands.toggleMarkdownTabIcons,
+			callback: () => {
+				this.settings.showMarkdownTabIcons = !this.settings.showMarkdownTabIcons;
+				this.saveSettings();
+				this.refreshBodyClasses();
+			}
+		});
+
 		// COMMAND: Toggle menu actions
 		this.addCommand({
 			id: 'toggle-menu-actions',
@@ -559,6 +572,7 @@ export default class IconicPlugin extends Plugin {
 		const { body } = activeDocument;
 		body.toggleClass('iconic-bigger-icons', unloading ? false : this.isSettingEnabled('biggerIcons'));
 		body.toggleClass('iconic-clickable-icons', unloading ? false : this.isSettingEnabled('clickableIcons'));
+		body.toggleClass('iconic-markdown-tab-icons', unloading ? false : this.settings.showMarkdownTabIcons);
 		body.toggleClass('iconic-bigger-search-results', unloading ? false : this.isSettingEnabled('biggerSearchResults'));
 		body.toggleClass('iconic-uncolor-hover', unloading ? false : this.settings.uncolorHover);
 		body.toggleClass('iconic-uncolor-drag', unloading ? false : this.settings.uncolorDrag);
