@@ -130,7 +130,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	clickableIcons: 'desktop',
 	showAllFileIcons: false,
 	showAllFolderIcons: false,
-	minimalFolderIcons: false,
+	minimalFolderIcons: true,
 	showMarkdownTabIcons: true,
 	showMenuActions: true,
 	showItemName: 'desktop',
