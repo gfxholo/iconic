@@ -153,8 +153,8 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			);
 
-		// HEADING: Menus
-		new Setting(this.containerEl).setHeading().setName(STRINGS.settings.headingMenus);
+		// HEADING: Menus & dialogs
+		new Setting(this.containerEl).setHeading().setName(STRINGS.settings.headingMenusAndDialogs);
 
 		// Show menu actions
 		new Setting(this.containerEl)
@@ -166,6 +166,19 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.settings.showMenuActions = value;
 					this.plugin.saveSettings();
 					this.plugin.refreshManagers();
+				})
+			);
+
+		// Show quick switcher icons
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.showQuickSwitcherIcons.name)
+			.setDesc(STRINGS.settings.showQuickSwitcherIcons.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showQuickSwitcherIcons)
+				.onChange(value => {
+					this.plugin.settings.showQuickSwitcherIcons = value;
+					this.plugin.saveSettings();
+					// this.plugin.promptManager?.refreshIcons();
 				})
 			);
 

@@ -12,6 +12,7 @@ import TagIconManager from 'src/managers/TagIconManager';
 import PropertyIconManager from 'src/managers/PropertyIconManager';
 import EditorIconManager from 'src/managers/EditorIconManager';
 import RibbonIconManager from 'src/managers/RibbonIconManager';
+import QuickSwitcherIconManager from 'src/managers/QuickSwitcherIconManager';
 import IconPicker from 'src/dialogs/IconPicker';
 import RulePicker from 'src/dialogs/RulePicker';
 
@@ -21,7 +22,7 @@ export { STRINGS };
 export type Category = 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'tag' | 'property' | 'ribbon' | 'rule';
 export type AppItemId = 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight' | 'minimize' | 'maximize' | 'unmaximize' | 'close';
 
-const OPENABLE_TYPES = ['markdown', 'canvas', 'audio', 'video', 'pdf'];
+export const FILE_TAB_TYPES = ['markdown', 'canvas', 'audio', 'video', 'pdf'];
 const SYNCABLE_TYPES = ['image', 'audio', 'video', 'pdf', 'unsupported'];
 const IMAGE_EXTENSIONS = ['bmp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif'];
 const AUDIO_EXTENSIONS = ['mp3', 'wav', 'm4a', '3gp', 'flac', 'ogg', 'oga', 'opus'];
@@ -75,6 +76,7 @@ interface IconicSettings {
 	minimalFolderIcons: boolean;
 	showMarkdownTabIcons: boolean;
 	showMenuActions: boolean;
+	showQuickSwitcherIcons: boolean;
 	showItemName: string;
 	biggerSearchResults: string;
 	maxSearchResults: number;
@@ -133,6 +135,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	minimalFolderIcons: true,
 	showMarkdownTabIcons: true,
 	showMenuActions: true,
+	showQuickSwitcherIcons: true,
 	showItemName: 'desktop',
 	biggerSearchResults: 'mobile',
 	maxSearchResults: 50,
@@ -174,6 +177,7 @@ export default class IconicPlugin extends Plugin {
 	propertyIconManager?: PropertyIconManager;
 	editorIconManager?: EditorIconManager;
 	ribbonIconManager?: RibbonIconManager;
+	quickSwitcherIconManager?: QuickSwitcherIconManager;
 	commands: Command[] = [];
 
 	/**
@@ -548,6 +552,7 @@ export default class IconicPlugin extends Plugin {
 		try { this.propertyIconManager = new PropertyIconManager(this) } catch (e) { console.error(e) }
 		try { this.editorIconManager = new EditorIconManager(this) } catch (e) { console.error(e) }
 		try { this.ribbonIconManager = new RibbonIconManager(this) } catch (e) { console.error(e) }
+		try { this.quickSwitcherIconManager = new QuickSwitcherIconManager(this) } catch (e) { console.error(e) }
 	}
 
 	/**
@@ -680,7 +685,7 @@ export default class IconicPlugin extends Plugin {
 		this.app.workspace.iterateAllLeaves(leaf => {
 			if (tab) return;
 			const tabType = leaf.view.getViewType();
-			if (tabType === tabId || OPENABLE_TYPES.includes(tabType) && leaf.view.getState().file === tabId) {
+			if (tabType === tabId || FILE_TAB_TYPES.includes(tabType) && leaf.view.getState().file === tabId) {
 				tab = this.defineTabItem(leaf, unloading);
 			}
 		});
@@ -712,7 +717,7 @@ export default class IconicPlugin extends Plugin {
 		// @ts-expect-error (Private API)
 		const isStacked = leaf.parent?.isStacked === true;
 
-		if (OPENABLE_TYPES.includes(tabType)) {
+		if (FILE_TAB_TYPES.includes(tabType)) {
 			const filePath = leaf.view.getState().file; // Used because view.file is undefined on deferred views
 			const fileId = typeof filePath === 'string' ? filePath : '';
 			const fileIcon = this.settings.fileIcons[fileId] ?? {};
@@ -1381,6 +1386,7 @@ export default class IconicPlugin extends Plugin {
 		this.propertyIconManager?.unload();
 		this.editorIconManager?.unload();
 		this.ribbonIconManager?.unload();
+		this.quickSwitcherIconManager?.unload();
 		this.refreshBodyClasses(true);
 	}
 }

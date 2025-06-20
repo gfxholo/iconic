@@ -281,6 +281,7 @@ export default class Strings {
 		toggleMinimalFolderIcons: 'Toggle minimal folder icons',
 		toggleMarkdownTabIcons: 'Toggle Markdown tab icons',
 		toggleMenuActions: 'Toggle menu actions',
+		toggleQuickSwitcherIcons: 'Toggle quick switcher icons',
 		toggleBiggerSearchResults: 'Toggle bigger search results',
 		changeIconCurrentFile: 'Change icon of the current file',
 	};
@@ -325,10 +326,14 @@ export default class Strings {
 			name: 'Show Markdown tab icons',
 			desc: 'Show tab icons for Markdown files.',
 		},
-		headingMenus: 'Menus',
+		headingMenusAndDialogs: 'Menus & dialogs',
 		showMenuActions: {
 			name: 'Show menu actions',
 			desc: 'Show icon-related actions in context menus.',
+		},
+		showQuickSwitcherIcons: {
+			name: 'Show quick switcher icons',
+			desc: 'Show icons in search results of quick switchers.',
 		},
 		headingIconPicker: 'Icon picker',
 		showItemName: {
