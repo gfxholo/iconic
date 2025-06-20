@@ -22,7 +22,7 @@ export { STRINGS };
 export type Category = 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'tag' | 'property' | 'ribbon' | 'rule';
 export type AppItemId = 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight' | 'minimize' | 'maximize' | 'unmaximize' | 'close';
 
-export const FILE_TAB_TYPES = ['markdown', 'canvas', 'audio', 'video', 'pdf'];
+export const FILE_TAB_TYPES = ['markdown', 'canvas', 'bases', 'image', 'audio', 'video', 'pdf'];
 const SYNCABLE_TYPES = ['image', 'audio', 'video', 'pdf', 'unsupported'];
 const IMAGE_EXTENSIONS = ['bmp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif'];
 const AUDIO_EXTENSIONS = ['mp3', 'wav', 'm4a', '3gp', 'flac', 'ogg', 'oga', 'opus'];
