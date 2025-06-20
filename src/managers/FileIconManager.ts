@@ -303,6 +303,7 @@ export default class FileIconManager extends IconManager {
 	 */
 	unload(): void {
 		window.clearTimeout(this.refreshTimerId);
+		this.refreshIcons(true);
 		super.unload();
 	}
 }

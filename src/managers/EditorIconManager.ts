@@ -439,4 +439,12 @@ export default class EditorIconManager extends IconManager {
 			if (tagEl.hasClass('multi-select-pill')) tagEl.style.removeProperty(`--pill-color-remove`);
 		}
 	}
+
+	/**
+	 * @override
+	 */
+	unload(): void {
+		this.refreshIcons(true);
+		super.unload();
+	}
 }

@@ -161,4 +161,12 @@ export default class PropertyIconManager extends IconManager {
 			);
 		}
 	}
+
+	/**
+	 * @override
+	 */
+	unload(): void {
+		this.refreshIcons(true);
+		super.unload();
+	}
 }

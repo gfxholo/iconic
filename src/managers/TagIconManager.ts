@@ -139,4 +139,12 @@ export default class TagIconManager extends IconManager {
 			menu.showAtMouseEvent(event);
 		}
 	}
+
+	/**
+	 * @override
+	 */
+	unload(): void {
+		this.refreshIcons(true);
+		super.unload();
+	}
 }

@@ -66,12 +66,6 @@ export default abstract class IconManager {
 	}
 
 	/**
-	 * Refresh all icon elements controlled by this {@link IconManager}.
-	 * @param unloading Revert to default icons if true
-	 */
-	abstract refreshIcons(unloading?: boolean): void;
-
-	/**
 	 * Set an inline color filter on an element.
 	 */
 	private static colorFilter(element: HTMLElement, color: string): void {
@@ -171,7 +165,6 @@ export default abstract class IconManager {
 	 * Revert all DOM changes when plugin unloads.
 	 */
 	unload(): void {
-		this.refreshIcons(true);
 		this.stopEventListeners();
 		this.stopMutationObservers();
 	}

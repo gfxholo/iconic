@@ -211,4 +211,12 @@ export default class RibbonIconManager extends IconManager {
 
 		if (menu instanceof Menu) menu.showAtMouseEvent(event);
 	}
+
+	/**
+	 * @override
+	 */
+	unload(): void {
+		this.refreshIcons(true);
+		super.unload();
+	}
 }

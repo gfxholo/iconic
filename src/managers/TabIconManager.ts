@@ -238,4 +238,12 @@ export default class TabIconManager extends IconManager {
 			});
 		}
 	}
+
+	/**
+	 * @override
+	 */
+	unload(): void {
+		this.refreshIcons(true);
+		super.unload();
+	}
 }

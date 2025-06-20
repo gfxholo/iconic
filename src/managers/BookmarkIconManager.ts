@@ -286,4 +286,12 @@ export default class BookmarkIconManager extends IconManager {
 			}
 		}
 	}
+
+	/**
+	 * @override
+	 */
+	unload(): void {
+		this.refreshIcons(true);
+		super.unload();
+	}
 }

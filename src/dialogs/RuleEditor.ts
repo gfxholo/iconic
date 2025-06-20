@@ -465,11 +465,6 @@ class RuleEditorManager extends IconManager {
 	}
 
 	/**
-	 * Not used by {@link RuleEditor}.
-	 */
-	refreshIcons(): void { }
-
-	/**
 	 * @override
 	 */
 	setEventListener<K extends keyof HTMLElementEventMap>(element: HTMLElement, type: K, listener: (this: HTMLElement, event: HTMLElementEventMap[K]) => void, options?: boolean | AddEventListenerOptions): void {
