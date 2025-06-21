@@ -6,10 +6,15 @@ import { Menu, MenuItem } from 'obsidian';
 export default class MenuManager {
 	private menu: Menu | null;
 	private queuedActions: (() => void)[] = [];
+	private showAtPositionOriginal: typeof Menu.prototype.showAtPosition;
+	private showAtPositionProxy: typeof Menu.prototype.showAtPosition;
 
 	constructor() {
 		const manager = this;
-		Menu.prototype.showAtPosition = new Proxy(Menu.prototype.showAtPosition, {
+		this.showAtPositionOriginal = Menu.prototype.showAtPosition;
+
+		// Catch menus as they open
+		this.showAtPositionProxy = new Proxy(Menu.prototype.showAtPosition, {
 			apply(showAtPosition, menu, args) {
 				manager.menu = menu;
 				if (manager.queuedActions.length > 0) {
@@ -18,6 +23,9 @@ export default class MenuManager {
 				return showAtPosition.call(menu, ...args);
 			}
 		});
+
+		// Replace original method
+		Menu.prototype.showAtPosition = this.showAtPositionProxy;
 	}
 
 	/**
@@ -113,5 +121,14 @@ export default class MenuManager {
 		this.menu?.close();
 		this.menu = null;
 		this.flush();
+	}
+
+	/**
+	 * Revert proxy to original method if possible.
+	 */
+	unload(): void {
+		if (Menu.prototype.showAtPosition === this.showAtPositionProxy) {
+			Menu.prototype.showAtPosition = this.showAtPositionOriginal;
+		}
 	}
 }

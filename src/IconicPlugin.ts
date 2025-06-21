@@ -1377,6 +1377,7 @@ export default class IconicPlugin extends Plugin {
 	 * @override
 	 */
 	onunload(): void {
+		this.menuManager.unload();
 		this.ruleManager.unload();
 		this.appIconManager?.unload();
 		this.tabIconManager?.unload();
