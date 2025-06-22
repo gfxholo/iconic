@@ -70,6 +70,16 @@ export default class EditorIconManager extends IconManager {
 				this.refreshViewIcons(leaf.view);
 			}
 		}
+
+		// Refresh icons in the active leaf
+		this.plugin.registerEvent(this.app.workspace.on('active-leaf-change', () => {
+			this.refreshIcons();
+		}));
+
+		// If we add a new property to a file, refresh property icons
+		this.plugin.registerEvent(this.app.vault.on('modify', () => {
+			this.refreshIcons();
+		}));
 	}
 
 	/**
