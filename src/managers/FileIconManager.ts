@@ -102,28 +102,28 @@ export default class FileIconManager extends IconManager {
 				}, mutations => {
 					let shouldRefreshChildren = false;
 					let shouldRefreshSelf = false;
-	
+
 					for (const mutation of mutations) {
 						if (mutation.attributeName === 'data-path') {
 							shouldRefreshSelf = true;
 							break;
 						}
-	
+
 						// Refresh on folder collapse/expand
 						if (mutation.attributeName === 'class' && mutation.target instanceof HTMLElement) {
 							const wasCollapsed = mutation.oldValue?.includes('is-collapsed');
 							const isCollapsed = mutation.target.hasClass('is-collapsed');
-	
+
 							// Only refresh children if expanding, not collapsing
 							if (wasCollapsed && !isCollapsed) {
-								shouldRefreshChildren = true; 
-								shouldRefreshSelf = true;     
+								shouldRefreshChildren = true;
+								shouldRefreshSelf = true;
 							} else if (!wasCollapsed && isCollapsed) {
-								shouldRefreshSelf = true;    
+								shouldRefreshSelf = true;
 							}
 						}
 					}
-	
+
 					if (shouldRefreshSelf) {
 						this.refreshChildIcons([file], [itemEl]);
 					}
@@ -142,7 +142,7 @@ export default class FileIconManager extends IconManager {
 			if (iconEl !== innerEl?.previousElementSibling) {
 				innerEl?.insertAdjacentElement('beforebegin', iconEl);
 			}
-		
+
 			if (file.items) {
 				// Toggle default icon based on expand/collapse state
 				if (file.iconDefault) file.iconDefault = iconEl.hasClass('is-collapsed')
