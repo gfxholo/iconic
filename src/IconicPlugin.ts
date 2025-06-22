@@ -586,7 +586,6 @@ export default class IconicPlugin extends Plugin {
 		// @ts-expect-error (Private API)
 		const theme = this.app.customCss?.theme;
 		body.toggleClass('iconic-theme-btopaz', unloading ? false : theme === 'Blue Topaz');
-		body.toggleClass('iconic-theme-border', unloading ? false : theme === 'Border');
 		body.toggleClass('iconic-theme-cat', unloading ? false : theme === 'Catppuccin');
 		body.toggleClass('iconic-theme-cglow', unloading ? false : theme === 'Cyber Glow');
 		body.toggleClass('iconic-theme-discord', unloading ? false : theme === 'Discordian');
