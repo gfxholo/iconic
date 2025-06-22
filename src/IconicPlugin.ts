@@ -333,10 +333,12 @@ export default class IconicPlugin extends Plugin {
 				}
 			}));
 
-			this.registerEvent(this.app.vault.on('modify', af => this.onModify(af)));
-			// @ts-expect-error Dataview types not always present
-			this.registerEvent(this.app.metadataCache.on('dataview:metadata-change', (_, af) => this.onModify(af)));
-			this.registerEvent(this.app.metadataCache.on('changed', af => this.onModify(af)));
+			this.registerEvent(this.app.vault.on('modify', tAbstractFile => {
+				this.onFileModify(tAbstractFile);
+			}));
+			this.registerEvent(this.app.metadataCache.on('changed', tAbstractFile => {
+				this.onFileModify(tAbstractFile);
+			}));
 
 			this.registerEvent(this.app.vault.on('delete', (tAbstractFile) => {
 				const { path } = tAbstractFile;
@@ -501,6 +503,19 @@ export default class IconicPlugin extends Plugin {
 		await this.loadSettings();
 		this.refreshManagers();
 		this.refreshBodyClasses();
+	}
+
+	/**
+	 * Refresh icon managers after a file/folder is modified.
+	 */
+	private onFileModify(tAbstractFile: TAbstractFile): void {
+		const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+		// If a modified file/folder triggers a new ruling, refresh icons
+		if (this.ruleManager.triggerRulings(page, 'modify')) {
+			if (page === 'file') this.tabIconManager?.refreshIcons();
+			this.fileIconManager?.refreshIcons();
+			this.bookmarkIconManager?.refreshIcons();
+		}
 	}
 
 	/**
@@ -1324,16 +1339,6 @@ export default class IconicPlugin extends Plugin {
 				if (fileIcon.unsynced?.includes(appId)) fileIcon.unsynced?.remove(appId);
 				if (fileIcon.unsynced?.length === 0) delete fileIcon.unsynced;
 			}
-		}
-	}
-
-	private onModify(abstractFile: TAbstractFile) {
-		const page = abstractFile instanceof TFile ? 'file' : 'folder';
-		// If a modified file/folder triggers a new ruling, refresh icons
-		if (this.ruleManager.triggerRulings(page, 'modify')) {
-			if (page === 'file') this.tabIconManager?.refreshIcons();
-			this.fileIconManager?.refreshIcons();
-			this.bookmarkIconManager?.refreshIcons();
 		}
 	}
 
