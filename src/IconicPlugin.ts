@@ -178,7 +178,7 @@ export default class IconicPlugin extends Plugin {
 	editorIconManager?: EditorIconManager;
 	ribbonIconManager?: RibbonIconManager;
 	quickSwitcherIconManager?: QuickSwitcherIconManager;
-	commands: Command[] = [];
+	dialogCommands: Command[] = [];
 
 	/**
 	 * @override
@@ -384,7 +384,7 @@ export default class IconicPlugin extends Plugin {
 		});
 
 		// COMMAND: Toggle bigger icons
-		this.commands.push(this.addCommand({
+		this.dialogCommands.push(this.addCommand({
 			id: 'toggle-bigger-icons',
 			name: STRINGS.commands.toggleBiggerIcons,
 			callback: () => {
@@ -405,7 +405,7 @@ export default class IconicPlugin extends Plugin {
 		}));
 
 		// COMMAND: Toggle clickable icons
-		this.commands.push(this.addCommand({
+		this.dialogCommands.push(this.addCommand({
 			id: 'toggle-clickable-icons',
 			name: Platform.isDesktop ? STRINGS.commands.toggleClickableIcons.desktop : STRINGS.commands.toggleClickableIcons.mobile,
 			callback: () => {
@@ -427,7 +427,7 @@ export default class IconicPlugin extends Plugin {
 		}));
 
 		// COMMAND: Toggle all file icons
-		this.commands.push(this.addCommand({
+		this.dialogCommands.push(this.addCommand({
 			id: 'toggle-all-file-icons',
 			name: STRINGS.commands.toggleAllFileIcons,
 			callback: () => {
@@ -439,7 +439,7 @@ export default class IconicPlugin extends Plugin {
 		}));
 
 		// COMMAND: Toggle all folder icons
-		this.commands.push(this.addCommand({
+		this.dialogCommands.push(this.addCommand({
 			id: 'toggle-all-folder-icons',
 			name: STRINGS.commands.toggleAllFolderIcons,
 			callback: () => {
@@ -452,7 +452,7 @@ export default class IconicPlugin extends Plugin {
 		}));
 
 		// COMMAND: Toggle minimal folder icons
-		this.commands.push(this.addCommand({
+		this.dialogCommands.push(this.addCommand({
 			id: 'toggle-minimal.folder-icons',
 			name: STRINGS.commands.toggleMinimalFolderIcons,
 			callback: () => {
@@ -488,7 +488,7 @@ export default class IconicPlugin extends Plugin {
 		});
 
 		// COMMAND: Toggle bigger search results
-		this.commands.push(this.addCommand({
+		this.dialogCommands.push(this.addCommand({
 			id: 'toggle-bigger-search-results',
 			name: STRINGS.commands.toggleBiggerSearchResults,
 			callback: () => {

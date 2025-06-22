@@ -63,8 +63,8 @@ export default class RulePicker extends Modal {
 		this.plugin = plugin;
 		this.iconManager = new RulePickerManager(plugin);
 
-		// Allow hotkeys in rule picker
-		for (const command of this.plugin.commands) if (command.callback) {
+		// Allow hotkeys in dialog
+		for (const command of this.plugin.dialogCommands) if (command.callback) {
 			// @ts-expect-error (Private API)
 			const hotkeys: Hotkey[] = this.app.hotkeyManager?.customKeys?.[command.id] ?? [];
 			for (const hotkey of hotkeys) {

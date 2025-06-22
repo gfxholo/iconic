@@ -15,8 +15,8 @@ export default class RuleChecker extends Modal {
 		this.page = page;
 		this.matches = matches;
 
-		// Allow hotkeys in rule checker
-		for (const command of this.plugin.commands) if (command.callback) {
+		// Allow hotkeys in dialog
+		for (const command of this.plugin.dialogCommands) if (command.callback) {
 			// @ts-expect-error (Private API)
 			const hotkeys: Hotkey[] = this.app.hotkeyManager?.customKeys?.[command.id] ?? [];
 			for (const hotkey of hotkeys) {

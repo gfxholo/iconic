@@ -112,8 +112,8 @@ export default class IconPicker extends Modal {
 		this.callback = callback;
 		this.multiCallback = multiCallback;
 
-		// Allow hotkeys in icon picker
-		for (const command of this.plugin.commands) if (command.callback) {
+		// Allow hotkeys in dialog
+		for (const command of this.plugin.dialogCommands) if (command.callback) {
 			// @ts-expect-error (Private API)
 			const hotkeys: Hotkey[] = this.app.hotkeyManager?.customKeys?.[command.id] ?? [];
 			for (const hotkey of hotkeys) {

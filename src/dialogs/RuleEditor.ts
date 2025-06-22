@@ -520,8 +520,8 @@ export default class RuleEditor extends Modal {
 		this.rule = window.structuredClone(rule);
 		this.callback = callback;
 
-		// Allow hotkeys in rule editor
-		for (const command of this.plugin.commands) if (command.callback) {
+		// Allow hotkeys in dialog
+		for (const command of this.plugin.dialogCommands) if (command.callback) {
 			// @ts-expect-error (Private API)
 			const hotkeys: Hotkey[] = this.app.hotkeyManager?.customKeys?.[command.id] ?? [];
 			for (const hotkey of hotkeys) {
