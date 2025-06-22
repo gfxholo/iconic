@@ -2,7 +2,7 @@
 
 A plugin for iconophiles, designed to blend seamlessly with vanilla Obsidian.
 
-Click almost any icon on a tab, sidebar, ribbon, or title bar to swap in one of the 1,700+ icons included in the app, or one of the 1,900+ emojis that your device supports.
+Click almost any icon on a tab, sidebar, ribbon, or the title bar to swap in one of the 1,700+ [Lucide icons](https://lucide.dev/) included in the app, or one of the 1,900+ [emojis](https://www.unicode.org/emoji/charts/full-emoji-list.html) that your device supports.
 
 ![Banner](banner.webp)
 
