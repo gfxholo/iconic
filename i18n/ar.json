@@ -279,6 +279,9 @@
 		"toggleAllFileIcons": "تبديل جميع أيقونات الملفات",
 		"toggleAllFolderIcons": "تبديل جميع أيقونات المجلد",
 		"toggleMinimalFolderIcons": "تبديل أيقونات المجلد البسيطة",
+		"toggleMarkdownTabIcons": "تبديل أيقونات علامات تبويب Markdown",
+		"toggleMenuActions": "تبديل إجراءات القائمة",
+		"toggleQuickSwitcherIcons": "تبديل أيقونات الانتقال السريع",
 		"toggleBiggerSearchResults": "تبديل نتائج البحث الأكبر",
 		"changeIconCurrentFile": "تغيير أيقونة الملف الحالي"
 	},
@@ -318,6 +321,19 @@
 		"minimalFolderIcons": {
 			"name": "أيقونات المجلد البسيطة",
 			"desc": "استبدل أسهم المجلد بأيقونات المجلد الخاصة بك."
+		},
+		"showMarkdownTabIcons": {
+			"name": "إظهار أيقونات علامات تبويب Markdown",
+			"desc": "إظهار أيقونات علامات تبويب ملفات Markdown."
+		},
+		"headingMenusAndDialogs": "القوائم ومربعات الحوار",
+		"showMenuActions": {
+			"name": "إظهار إجراءات القائمة",
+			"desc": "إظهار الإجراءات المتعلقة بالأيقونات في قوائم السياق."
+		},
+		"showQuickSwitcherIcons": {
+			"name": "الانتقال السريع إظهار أيقونات",
+			"desc": "الانتقال السريع إظهار الأيقونات في نتائج بحث."
 		},
 		"headingIconPicker": "أداة اختيار الأيقونات",
 		"showItemName": {

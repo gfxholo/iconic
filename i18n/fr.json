@@ -279,6 +279,9 @@
 		"toggleAllFileIcons": "Basculer toutes les icônes de fichier",
 		"toggleAllFolderIcons": "Basculer toutes les icônes de dossier",
 		"toggleMinimalFolderIcons": "Basculer les icônes de dossier minimales",
+		"toggleMarkdownTabIcons": "Basculer les icônes d'onglets Markdown",
+		"toggleMenuActions": "Bascular les actions du menu",
+		"toggleQuickSwitcherIcons": "Bascular les icônes de sélecteur rapide",
 		"toggleBiggerSearchResults": "Basculer les résultats de recherche plus grands",
 		"changeIconCurrentFile": "Changer l'icône du fichier actuel"
 	},
@@ -318,6 +321,19 @@
 		"minimalFolderIcons": {
 			"name": "Icônes de dossier minimales",
 			"desc": "Remplacez les flèches de dossier par vos icônes de dossier."
+		},
+		"showMarkdownTabIcons": {
+			"name": "Afficher les icônes des onglets Markdown",
+			"desc": "Afficher les icônes des onglets pour les fichiers Markdown."
+		},
+		"headingMenusAndDialogs": "Menus et boîtes de dialogue",
+		"showMenuActions": {
+			"name": "Afficher les actions des menus",
+			"desc": "Afficher les actions liées aux icônes dans les menus contextuels."
+		},
+		"showQuickSwitcherIcons": {
+			"name": "Afficher les icônes des sélecteurs rapides",
+			"desc": "Afficher les icônes dans les résultats de recherche des sélecteurs rapides."
 		},
 		"headingIconPicker": "Sélecteur d'icônes",
 		"showItemName": {

@@ -279,6 +279,9 @@
 		"toggleAllFileIcons": "Alle Dateisymbole umschalten",
 		"toggleAllFolderIcons": "Alle Ordnersymbole umschalten",
 		"toggleMinimalFolderIcons": "Minimale Ordnersymbole umschalten",
+		"toggleMarkdownTabIcons": "Markdown-Tabsymbole umschalten",
+		"toggleMenuActions": "Menüaktionen umschalten",
+		"toggleQuickSwitcherIcons": "Schnellauswahlsymbole umschalten",
 		"toggleBiggerSearchResults": "Größere Suchergebnisse umschalten",
 		"changeIconCurrentFile": "Symbol der aktuellen Datei ändern"
 	},
@@ -318,6 +321,19 @@
 		"minimalFolderIcons": {
 			"name": "Minimale Ordnersymbole",
 			"desc": "Ordnerpfeile durch Ihre Ordnersymbole ersetzen."
+		},
+		"showMarkdownTabIcons": {
+			"name": "Markdown-Tabsymbole anzeigen",
+			"desc": "Tabsymbole für Markdown-Dateien anzeigen."
+		},
+		"headingMenusAndDialogs": "Menüs & Dialoge",
+		"showMenuActions": {
+			"name": "Menüaktionen anzeigen",
+			"desc": "Symbolbezogene Aktionen in Kontextmenüs anzeigen."
+		},
+		"showQuickSwitcherIcons": {
+			"name": "Schnellauswahlsymbole anzeigen",
+			"desc": "Symbole in den Suchergebnissen von Schnellauswahl anzeigen."
 		},
 		"headingIconPicker": "Symbolauswahl",
 		"showItemName": {

@@ -279,6 +279,9 @@
 		"toggleAllFileIcons": "Beralih semua ikon berkas",
 		"toggleAllFolderIcons": "Beralih semua ikon folder",
 		"toggleMinimalFolderIcons": "Beralih ikon folder minimal",
+		"toggleMarkdownTabIcons": "Beralih ikon tab Markdown",
+		"toggleMenuActions": "Beralih tindakan menu",
+		"toggleQuickSwitcherIcons": "Beralih ikon peralih cepat",
 		"toggleBiggerSearchResults": "Beralih hasil pencarian yang lebih besar",
 		"changeIconCurrentFile": "Ubah ikon file saat ini"
 	},
@@ -318,6 +321,19 @@
 		"minimalFolderIcons": {
 			"name": "Ikon folder minimal",
 			"desc": "Ganti tanda panah folder dengan ikon folder Anda."
+		},
+		"showMarkdownTabIcons": {
+			"name": "Tampilkan ikon tab Markdown",
+			"desc": "Tampilkan ikon tab untuk file Markdown."
+		},
+		"headingMenusAndDialogs": "Menu & dialog",
+		"showMenuActions": {
+			"name": "Tampilkan tindakan menu",
+			"desc": "Tampilkan tindakan terkait ikon dalam menu konteks."
+		},
+		"showQuickSwitcherIcons": {
+			"name": "Tampilkan ikon peralih cepat",
+			"desc": "Tampilkan ikon dalam hasil pencarian peralih cepat."
 		},
 		"headingIconPicker": "Pemilih ikon",
 		"showItemName": {

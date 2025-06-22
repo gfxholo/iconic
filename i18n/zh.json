@@ -279,6 +279,9 @@
 		"toggleAllFileIcons": "切换所有文件图标",
 		"toggleAllFolderIcons": "切换所有文件夹图标",
 		"toggleMinimalFolderIcons": "切换极简文件夹图标",
+		"toggleMarkdownTabIcons": "切换 Markdown 标签图标",
+		"toggleMenuActions": "切换菜单操作",
+		"toggleQuickSwitcherIcons": "切换快速切换图标",
 		"toggleBiggerSearchResults": "切换更大的搜索结果",
 		"changeIconCurrentFile": "更改当前文件的图标"
 	},
@@ -318,6 +321,19 @@
 		"minimalFolderIcons": {
 			"name": "最小文件夹图标",
 			"desc": "用您的文件夹图标替换文件夹箭头。"
+		},
+		"showMarkdownTabIcons": {
+			"name": "显示 Markdown 标签图标",
+			"desc": "显示 Markdown 文件的标签图标。"
+		},
+		"headingMenusAndDialogs": "菜单和对话框",
+		"showMenuActions": {
+			"name": "显示菜单操作",
+			"desc": "在上下文菜单中显示与图标相关的操作。"
+		},
+		"showQuickSwitcherIcons": {
+			"name": "显示快速切换器图标",
+			"desc": "在快速切换器的搜索结果中显示图标。"
 		},
 		"headingIconPicker": "图标选择器",
 		"showItemName": {

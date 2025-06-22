@@ -279,6 +279,9 @@
 		"toggleAllFileIcons": "Переключить все значки файлов",
 		"toggleAllFolderIcons": "Переключить все значки папок",
 		"toggleMinimalFolderIcons": "Переключить минимальные значки папок",
+		"toggleMarkdownTabIcons": "Переключить значки вкладок Markdown",
+		"toggleMenuActions": "Переключить действия меню",
+		"toggleQuickSwitcherIcons": "Переключить значки Быстрый переход",
 		"toggleBiggerSearchResults": "Переключить большие результаты поиска",
 		"changeIconCurrentFile": "Изменить значок текущего файла"
 	},
@@ -318,6 +321,19 @@
 		"minimalFolderIcons": {
 			"name": "Минимальные значки папок",
 			"desc": "Заменить стрелки папок на ваши значки папок."
+		},
+		"showMarkdownTabIcons": {
+			"name": "Показать значки вкладок Markdown",
+			"desc": "Показать значки вкладок для файлов Markdown."
+		},
+		"headingMenusAndDialogs": "Меню и диалоги",
+		"showMenuActions": {
+			"name": "Показать действия меню",
+			"desc": "Показать действия, связанные со значками, в контекстных меню."
+		},
+		"showQuickSwitcherIcons": {
+			"name": "Показать значки быстрого переключения",
+			"desc": "Показать значки в результатах поиска быстрых переключателей."
 		},
 		"headingIconPicker": "Выбор значков",
 		"showItemName": {

@@ -279,6 +279,9 @@
 		"toggleAllFileIcons": "すべてのファイルアイコンを切り替える",
 		"toggleAllFolderIcons": "すべてのフォルダアイコンを切り替える",
 		"toggleMinimalFolderIcons": "最小限のフォルダアイコンを切り替える",
+		"toggleMarkdownTabIcons": "マークダウンタブアイコンを切り替える",
+		"toggleMenuActions": "メニューアクションの切り替え",
+		"toggleQuickSwitcherIcons": "クイックスイッチャーアイコンの切り替え",
 		"toggleBiggerSearchResults": "検索結果を大きく切り替えます",
 		"changeIconCurrentFile": "現在のファイルのアイコンを変更する"
 	},
@@ -318,6 +321,19 @@
 		"minimalFolderIcons": {
 			"name": "最小限のフォルダアイコン",
 			"desc": "フォルダの矢印をフォルダアイコンに置き換えます。"
+		},
+		"showMarkdownTabIcons": {
+			"name": "マークダウンタブアイコンを表示",
+			"desc": "マークダウンファイルのタブアイコンを表示します。"
+		},
+		"headingMenusAndDialogs": "メニューとダイアログ",
+		"showMenuActions": {
+			"name": "メニューアクションを表示",
+			"desc": "コンテキストメニューにアイコン関連のアクションを表示します。"
+		},
+		"showQuickSwitcherIcons": {
+			"name": "クイックスイッチャーアイコンを表示",
+			"desc": "クイックスイッチャーの検索結果にアイコンを表示します。"
 		},
 		"headingIconPicker": "アイコン ピッカー",
 		"showItemName": {

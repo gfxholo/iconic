@@ -279,6 +279,9 @@
 		"toggleAllFileIcons": "Перемкнути усі значки файлів",
 		"toggleAllFolderIcons": "Перемкнути усі значки тек",
 		"toggleMinimalFolderIcons": "Перемкнути найменші значки тек",
+		"toggleMarkdownTabIcons": "Перемкнути значків вкладок Markdown",
+		"toggleMenuActions": "Перемкнути дій меню",
+		"toggleQuickSwitcherIcons": "Перемкнути значки швидкий перехід",
 		"toggleBiggerSearchResults": "Перемкнути більші результати пошуку",
 		"changeIconCurrentFile": "Змінити значок поточного файлу"
 	},
@@ -318,6 +321,19 @@
 		"minimalFolderIcons": {
 			"name": "Найменші значки тек",
 			"desc": "Замінити стрілки тек вашими значками."
+		},
+		"showMarkdownTabIcons": {
+			"name": "Показувати значки вкладок Markdown",
+			"desc": "Показувати значки вкладок для файлів Markdown."
+		},
+		"headingMenusAndDialogs": "Меню та діалогові вікна",
+		"showMenuActions": {
+			"name": "Показувати дії меню",
+			"desc": "Показувати дії, пов’язані зі значками, у контекстних меню."
+		},
+		"showQuickSwitcherIcons": {
+			"name": "Показувати значки швидкий перехід",
+			"desc": "Показувати значки в результатах пошуку швидкий перехід."
 		},
 		"headingIconPicker": "Вибір значків",
 		"showItemName": {

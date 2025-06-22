@@ -279,6 +279,9 @@
 		"toggleAllFileIcons": "Alternar todos los íconos de archivos",
 		"toggleAllFolderIcons": "Alternar todos los íconos de carpetas",
 		"toggleMinimalFolderIcons": "Alternar íconos de carpeta mínimos",
+		"toggleMarkdownTabIcons": "Alternar íconos de pestañas de Markdown",
+		"toggleMenuActions": "Alternar acciones del menú",
+		"toggleQuickSwitcherIcons": "Alternar íconos del selector rápido",
 		"toggleBiggerSearchResults": "Alternar resultados de búsqueda más grandes",
 		"changeIconCurrentFile": "Cambiar el ícono del archivo actual"
 	},
@@ -318,6 +321,19 @@
 		"minimalFolderIcons": {
 			"name": "Íconos de carpeta mínimos",
 			"desc": "Reemplazar las flechas de carpeta con los íconos de carpeta."
+		},
+		"showMarkdownTabIcons": {
+			"name": "Mostrar íconos de pestañas de Markdown",
+			"desc": "Mostrar íconos de pestañas para archivos Markdown."
+		},
+		"headingMenusAndDialogs": "Menús y diálogos",
+		"showMenuActions": {
+			"name": "Mostrar acciones de menú",
+			"desc": "Mostrar acciones relacionadas con íconos en los menús contextuales."
+		},
+		"showQuickSwitcherIcons": {
+			"name": "Mostrar íconos del selector rápido",
+			"desc": "Mostrar íconos en los resultados de búsqueda de los selectores rápidos."
 		},
 		"headingIconPicker": "Selector de íconos",
 		"showItemName": {
