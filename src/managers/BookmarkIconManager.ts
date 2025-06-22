@@ -85,7 +85,7 @@ export default class BookmarkIconManager extends IconManager {
 			itemEl.addClass('iconic-item');
 
 			const bmark = bmarks[itemEls.indexOf(itemEl)];
-			if (!bmark) continue;
+			if (!bmark || bmark.category === 'url') continue;
 
 			// Check for an icon ruling
 			let rule: RuleItem | BookmarkItem = bmark;

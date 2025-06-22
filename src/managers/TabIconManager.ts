@@ -39,7 +39,7 @@ export default class TabIconManager extends IconManager {
 		for (const tab of tabs) {
 			const tabEl = tab.tabEl;
 			const iconEl = tab.iconEl;
-			if (!tabEl || !iconEl) continue;
+			if (!tabEl || !iconEl || tab.id === 'webviewer') continue;
 
 			// Check for an icon ruling
 			const rule = tab.category === 'file'
