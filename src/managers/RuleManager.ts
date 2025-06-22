@@ -499,7 +499,7 @@ export default class RuleManager {
 
 		for (const condition of rule.conditions) {
 			let isConditionMatched = false;
-			let source: boolean | number | string | string[] | null | undefined = undefined;
+			let source: boolean | number | string | (string | null)[] | null | undefined = undefined;
 			const isNegated = condition.operator.startsWith('!');
 			const operator = condition.operator.replace('!', '');
 			const value = condition.value;
@@ -545,7 +545,7 @@ export default class RuleManager {
 
 			// Prepare case-insensitive strings
 			const sourceLower = String.isString(source) ? source.toLowerCase() : '';
-			const sourceLowers = Array.isArray(source) ? source.map(item => item.toLowerCase()) : [];
+			const sourceLowers = Array.isArray(source) ? source.map(item => String(item).toLowerCase()) : [];
 			const valueLower = String.isString(value) ? value.toLowerCase() : '';
 
 			// Check if condition is true
@@ -659,9 +659,9 @@ export default class RuleManager {
 				case 'anyStartWith': isConditionMatched = RuleManager.any(sourceLowers, 'startWith', valueLower); break;
 				case 'anyEndWith': isConditionMatched = RuleManager.any(sourceLowers, 'endWith', valueLower); break;
 				case 'anyMatch': isConditionMatched = RuleManager.any(source, 'match', value); break;
-				case 'noneContain': isConditionMatched = RuleManager.none(source, 'contain', value); break;
-				case 'noneStartWith': isConditionMatched = RuleManager.none(source, 'startWith', value); break;
-				case 'noneEndWith': isConditionMatched = RuleManager.none(source, 'endWith', value); break;
+				case 'noneContain': isConditionMatched = RuleManager.none(sourceLowers, 'contain', value); break;
+				case 'noneStartWith': isConditionMatched = RuleManager.none(sourceLowers, 'startWith', value); break;
+				case 'noneEndWith': isConditionMatched = RuleManager.none(sourceLowers, 'endWith', value); break;
 				case 'noneMatch': isConditionMatched = RuleManager.none(source, 'match', value); break;
 				case 'countIs': isConditionMatched = value !== '' && source.length === Number(value); break;
 				case 'countIsLess': isConditionMatched = value !== '' && source.length < Number(value); break;
@@ -840,19 +840,19 @@ export default class RuleManager {
 	/**
 	 * Check whether all items match a given operator & value.
 	 */
-	private static all(items: string[], operator: 'are' | 'contain' | 'startWith' | 'endWith' | 'match', value: string): boolean {
+	private static all(items: (string | null)[], operator: 'are' | 'contain' | 'startWith' | 'endWith' | 'match', value: string): boolean {
 		if (items.length === 0 || value === '') return false;
 
 		switch (operator) {
 			case 'are': for (const item of items) if (item !== value) return false; break;
-			case 'contain': for (const item of items) if (!item.includes(value)) return false; break;
-			case 'startWith': for (const item of items) if (!item.startsWith(value)) return false; break;
-			case 'endWith': for (const item of items) if (!item.endsWith(value)) return false; break;
+			case 'contain': for (const item of items) if (!String(item).includes(value)) return false; break;
+			case 'startWith': for (const item of items) if (!String(item).startsWith(value)) return false; break;
+			case 'endWith': for (const item of items) if (!String(item).endsWith(value)) return false; break;
 			case 'match': {
 				try {
 					const regex = RuleManager.unwrapRegex(value);
 					for (const item of items) {
-						if (!regex.test(item)) return false;
+						if (!regex.test(String(item))) return false;
 					}
 				} catch { /* Catch invalid regex */ };
 				break;
@@ -864,19 +864,19 @@ export default class RuleManager {
 	/**
 	 * Check whether any items match a given operator & value.
 	 */
-	private static any(items: string[], operator: 'are' | 'contain' | 'startWith' | 'endWith' | 'match', value: string): boolean {
+	private static any(items: (string | null)[], operator: 'are' | 'contain' | 'startWith' | 'endWith' | 'match', value: string): boolean {
 		if (value === '') return false;
 
 		switch (operator) {
 			case 'are': for (const item of items) if (item === value) return true; break;
-			case 'contain': for (const item of items) if (item.includes(value)) return true; break;
-			case 'startWith': for (const item of items) if (item.startsWith(value)) return true; break;
-			case 'endWith': for (const item of items) if (item.endsWith(value)) return true; break;
+			case 'contain': for (const item of items) if (String(item).includes(value)) return true; break;
+			case 'startWith': for (const item of items) if (String(item).startsWith(value)) return true; break;
+			case 'endWith': for (const item of items) if (String(item).endsWith(value)) return true; break;
 			case 'match': {
 				try {
 					const regex = RuleManager.unwrapRegex(value);
 					for (const item of items) {
-						if (regex.test(item)) return true;
+						if (regex.test(String(item))) return true;
 					}
 				} catch { /* Catch invalid regex */ };
 				break;
@@ -888,19 +888,19 @@ export default class RuleManager {
 	/**
 	 * Check whether no items match a given operator & value.
 	 */
-	private static none(items: string[], operator: 'are' | 'contain' | 'startWith' | 'endWith' | 'match', value: string): boolean {
+	private static none(items: (string | null)[], operator: 'are' | 'contain' | 'startWith' | 'endWith' | 'match', value: string): boolean {
 		if (value === '') return false;
 
 		switch (operator) {
 			case 'are': for (const item of items) if (item === value) return false; break;
-			case 'contain': for (const item of items) if (item.includes(value)) return false; break;
-			case 'startWith': for (const item of items) if (item.startsWith(value)) return false; break;
-			case 'endWith': for (const item of items) if (item.endsWith(value)) return false; break;
+			case 'contain': for (const item of items) if (String(item).includes(value)) return false; break;
+			case 'startWith': for (const item of items) if (String(item).startsWith(value)) return false; break;
+			case 'endWith': for (const item of items) if (String(item).endsWith(value)) return false; break;
 			case 'match': {
 				try {
 					const regex = RuleManager.unwrapRegex(value);
 					for (const item of items) {
-						if (regex.test(item)) return false;
+						if (regex.test(String(item))) return false;
 					}
 				} catch { /* Catch invalid regex */ };
 				break;
