@@ -341,13 +341,10 @@ export default class IconicPlugin extends Plugin {
 			}));
 
 			this.registerEvent(this.app.vault.on('modify', tAbstractFile => {
-				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
-				// If a modified file/folder triggers a new ruling, refresh icons
-				if (this.ruleManager.triggerRulings(page, 'modify')) {
-					if (page === 'file') this.tabIconManager?.refreshIcons();
-					this.fileIconManager?.refreshIcons();
-					this.bookmarkIconManager?.refreshIcons();
-				}
+				this.onFileModify(tAbstractFile);
+			}));
+			this.registerEvent(this.app.metadataCache.on('changed', tAbstractFile => {
+				this.onFileModify(tAbstractFile);
 			}));
 
 			this.registerEvent(this.app.vault.on('delete', (tAbstractFile) => {
@@ -536,6 +533,19 @@ export default class IconicPlugin extends Plugin {
 		await this.loadSettings();
 		this.refreshManagers();
 		this.refreshBodyClasses();
+	}
+
+	/**
+	 * Refresh icon managers after a file/folder is modified.
+	 */
+	private onFileModify(tAbstractFile: TAbstractFile): void {
+		const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+		// If a modified file/folder triggers a new ruling, refresh icons
+		if (this.ruleManager.triggerRulings(page, 'modify')) {
+			if (page === 'file') this.tabIconManager?.refreshIcons();
+			this.fileIconManager?.refreshIcons();
+			this.bookmarkIconManager?.refreshIcons();
+		}
 	}
 
 	/**
