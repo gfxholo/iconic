@@ -361,9 +361,21 @@ export default class RuleManager {
 		switch (condition.source) {
 			case 'icon': triggers.add('icon'); break;
 			case 'color': triggers.add('color'); break;
-			case 'name': triggers.add('rename'); break;
-			case 'filename': triggers.add('rename'); break;
-			case 'extension': triggers.add('rename'); break;
+			case 'name': {
+				triggers.add('rename');
+				triggers.add('move');
+				break;
+			}
+			case 'filename': {
+				triggers.add('rename');
+				triggers.add('move');
+				break;
+			}
+			case 'extension': {
+				triggers.add('rename');
+				triggers.add('move');
+				break;
+			}
 			case 'tree': {
 				triggers.add('rename');
 				triggers.add('move');
