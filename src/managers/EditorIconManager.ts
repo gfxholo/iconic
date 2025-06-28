@@ -11,23 +11,6 @@ export default class EditorIconManager extends IconManager {
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
 
-		// Watch for suggestion menus
-		this.setMutationObserver(activeDocument.body, { childList: true }, mutation => {
-			const activeEl = activeDocument.activeElement;
-			if (!activeEl) return;
-			for (const addedNode of mutation.addedNodes) {
-				if (addedNode instanceof HTMLElement && addedNode.hasClass('suggestion-container')) {
-					// Check where the text cursor is
-					if (activeEl.hasClass('metadata-property-key-input')) {
-						this.onPropertySuggestionMenu(addedNode);
-					} else if (activeEl.hasClass('multi-select-input') && activeEl.closest('.metadata-property[data-property-key="tags"]')) {
-						this.onTagSuggestionMenu(addedNode);
-					}
-					break;
-				}
-			}
-		});
-
 		// Markdown post-processor for hashtags (reading mode)
 		this.plugin.registerMarkdownPostProcessor(sectionEl => {
 			const tags = this.plugin.getTagItems();
@@ -382,54 +365,6 @@ export default class EditorIconManager extends IconManager {
 	 */
 	private onTagNewContextMenu(tagId: string, event: MouseEvent): void {
 		this.plugin.tagIconManager?.onContextMenu(tagId, event);
-	}
-
-	/**
-	 * Refresh all icons in a property suggestions menu.
-	 */
-	private onPropertySuggestionMenu(suggestMenuEl: HTMLElement): void {
-		this.stopMutationObserver(suggestMenuEl);
-
-		const propEls = suggestMenuEl.findAll(':scope > .suggestion > .suggestion-item');
-		for (const propEl of propEls) {
-			const propId = propEl.find(':scope > .suggestion-content > .suggestion-title')?.getText();
-			if (propId) {
-				const prop = this.plugin.getPropertyItem(propId);
-				const iconEl = propEl.find(':scope > .suggestion-icon > .suggestion-flair');
-				if (iconEl) this.refreshIcon(prop, iconEl);
-			}
-		}
-
-		this.setMutationsObserver(suggestMenuEl, {
-			subtree: true,
-			childList: true,
-		}, () => this.onPropertySuggestionMenu(suggestMenuEl));
-	}
-
-	/**
-	 * Refresh all icons in a tag suggestions menu.
-	 */
-	private onTagSuggestionMenu(suggestMenuEl: HTMLElement): void {
-		this.stopMutationObserver(suggestMenuEl);
-
-		const tagEls = suggestMenuEl.findAll(':scope > .suggestion > .suggestion-item');
-		const tags = this.plugin.getTagItems();
-		for (const tagEl of tagEls) {
-			const tagId = tagEl.getText();
-			const tag = tags.find(tag => tag.id === tagId);
-			if (tag) {
-				tagEl.addClass('mod-complex');
-				tagEl.empty();
-				const iconEl = tagEl.createDiv({ cls: 'suggestion-icon' }).createSpan({ cls: 'suggestion-flair' });
-				tagEl.createDiv({ cls: 'suggestion-content' }).createDiv({ cls: 'suggestion-title', text: tagId });
-				if (iconEl) this.refreshIcon(tag, iconEl);
-			}
-		}
-
-		this.setMutationsObserver(suggestMenuEl, {
-			subtree: true,
-			childList: true,
-		}, () => this.onTagSuggestionMenu(suggestMenuEl));
 	}
 
 	private static setTagColor(tag: TagItem, tagEl: HTMLElement): void {

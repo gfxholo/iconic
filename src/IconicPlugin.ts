@@ -12,6 +12,7 @@ import TagIconManager from 'src/managers/TagIconManager';
 import PropertyIconManager from 'src/managers/PropertyIconManager';
 import EditorIconManager from 'src/managers/EditorIconManager';
 import RibbonIconManager from 'src/managers/RibbonIconManager';
+import SuggestionIconManager from 'src/managers/SuggestionIconManager';
 import QuickSwitcherIconManager from 'src/managers/QuickSwitcherIconManager';
 import IconPicker from 'src/dialogs/IconPicker';
 import RulePicker from 'src/dialogs/RulePicker';
@@ -177,6 +178,7 @@ export default class IconicPlugin extends Plugin {
 	propertyIconManager?: PropertyIconManager;
 	editorIconManager?: EditorIconManager;
 	ribbonIconManager?: RibbonIconManager;
+	suggestionIconManager?: SuggestionIconManager;
 	quickSwitcherIconManager?: QuickSwitcherIconManager;
 	dialogCommands: Command[] = [];
 
@@ -562,6 +564,7 @@ export default class IconicPlugin extends Plugin {
 		try { this.propertyIconManager = new PropertyIconManager(this) } catch (e) { console.error(e) }
 		try { this.editorIconManager = new EditorIconManager(this) } catch (e) { console.error(e) }
 		try { this.ribbonIconManager = new RibbonIconManager(this) } catch (e) { console.error(e) }
+		try { this.suggestionIconManager = new SuggestionIconManager(this) } catch (e) { console.error(e) }
 		try { this.quickSwitcherIconManager = new QuickSwitcherIconManager(this) } catch (e) { console.error(e) }
 	}
 
@@ -1400,6 +1403,7 @@ export default class IconicPlugin extends Plugin {
 		this.propertyIconManager?.unload();
 		this.editorIconManager?.unload();
 		this.ribbonIconManager?.unload();
+		this.suggestionIconManager?.unload();
 		this.quickSwitcherIconManager?.unload();
 		this.refreshBodyClasses(true);
 	}

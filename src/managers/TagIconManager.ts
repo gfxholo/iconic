@@ -69,6 +69,8 @@ export default class TagIconManager extends IconManager {
 			const tag = tags.find(tag => tag.id === tagId);
 			if (!tag) continue;
 
+			if (tag.color) tag.iconDefault = 'lucide-tag';
+
 			let iconEl = selfEl.find(':scope > .tree-item-icon') ?? selfEl.createDiv({ cls: 'tree-item-icon' });
 			if (iconEl.hasClass('collapse-icon') && !tag.icon && !tag.iconDefault) {
 				this.refreshIcon(tag, iconEl); // Skip click listener if icon will be a collapse arrow

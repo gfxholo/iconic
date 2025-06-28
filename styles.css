@@ -126,6 +126,12 @@ a.tag {
 	cursor: var(--cursor-link);
 }
 
+/* Suggestions */
+.suggestion-item.mod-complex.iconic-item {
+	padding: var(--size-2-3) var(--size-4-2) var(--size-2-3) var(--size-4-1);
+	justify-content: normal;
+}
+
 /* Quick Switcher */
 .iconic-quick-switcher .iconic-icon {
 	height: var(--icon-size);

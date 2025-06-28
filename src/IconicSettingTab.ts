@@ -178,7 +178,6 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.onChange(value => {
 					this.plugin.settings.showQuickSwitcherIcons = value;
 					this.plugin.saveSettings();
-					// this.plugin.promptManager?.refreshIcons();
 				})
 			);
 
