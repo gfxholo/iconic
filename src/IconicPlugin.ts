@@ -1,4 +1,4 @@
-import { Command, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceLeaf, getIconIds } from 'obsidian';
+import { Command, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceLeaf, apiVersion, getIconIds } from 'obsidian';
 import IconicSettingTab from 'src/IconicSettingTab';
 import EMOJIS from 'src/Emojis';
 import STRINGS from 'src/Strings';
@@ -652,12 +652,16 @@ export default class IconicPlugin extends Plugin {
 			}
 			case 'sidebarLeft': {
 				name = STRINGS.appItems.sidebarLeft;
-				iconDefault = 'sidebar-left';
+				iconDefault = apiVersion >= '1.9' // Pre-1.9.0 compatible
+					? 'sidebar-toggle-button-icon'
+					: 'sidebar-left';
 				break;
 			}
 			case 'sidebarRight': {
 				name = STRINGS.appItems.sidebarRight;
-				iconDefault = 'sidebar-right';
+				iconDefault = apiVersion >= '1.9' // Pre-1.9.0 compatible
+					? 'sidebar-toggle-button-icon'
+					: 'sidebar-right';
 				break;
 			}
 			case 'minimize': name = STRINGS.appItems.minimize; break;

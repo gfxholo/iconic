@@ -24,6 +24,11 @@ body {
 	padding: 0 13px;
 }
 
+/* Right sidebar toggle */
+.sidebar-toggle-button.mod-right .clickable-icon.iconic-icon:not(:has(.sidebar-toggle-button-icon)) {
+	transform: unset;
+}
+
 /* Tabs */
 .iconic-markdown-tab-icons .workspace .mod-root .workspace-tab-header[data-type="markdown"] .workspace-tab-header-inner-icon,
 .workspace .mod-root .workspace-tab-header[data-type="empty"] .workspace-tab-header-inner-icon {
