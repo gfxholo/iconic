@@ -169,6 +169,18 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			);
 
+		// Show suggestion icons
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.showSuggestionIcons.name)
+			.setDesc(STRINGS.settings.showSuggestionIcons.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showSuggestionIcons)
+				.onChange(value => {
+					this.plugin.settings.showSuggestionIcons = value;
+					this.plugin.saveSettings();
+				})
+			);
+
 		// Show quick switcher icons
 		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showQuickSwitcherIcons.name)

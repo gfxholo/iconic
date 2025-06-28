@@ -331,6 +331,10 @@ export default class Strings {
 			name: 'Show menu actions',
 			desc: 'Show icon-related actions in context menus.',
 		},
+		showSuggestionIcons: {
+			name: 'Show suggestion icons',
+			desc: 'Show icons in suggestion pop-ups.',
+		},
 		showQuickSwitcherIcons: {
 			name: 'Show quick switcher icons',
 			desc: 'Show icons in search results of quick switchers.',

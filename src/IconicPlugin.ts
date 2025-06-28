@@ -77,6 +77,7 @@ interface IconicSettings {
 	minimalFolderIcons: boolean;
 	showMarkdownTabIcons: boolean;
 	showMenuActions: boolean;
+	showSuggestionIcons: boolean;
 	showQuickSwitcherIcons: boolean;
 	showItemName: string;
 	biggerSearchResults: string;
@@ -136,6 +137,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	minimalFolderIcons: true,
 	showMarkdownTabIcons: true,
 	showMenuActions: true,
+	showSuggestionIcons: true,
 	showQuickSwitcherIcons: true,
 	showItemName: 'desktop',
 	biggerSearchResults: 'mobile',

@@ -26,18 +26,26 @@ export default class SuggestionIconManager extends IconManager {
 		// @ts-expect-error (Private API)
 		this.showSuggestionsProxy = new Proxy(AbstractInputSuggest.prototype.showSuggestions, {
 			apply(showSuggestions, popover: AbstractInputSuggest<any>, args) {
+				if (manager.isDisabled()) {
+					return showSuggestions.call(popover, ...args);
+				}
+
 				// Proxy renderSuggestion() for each instance
 				popover.renderSuggestion = new Proxy(popover.renderSuggestion, {
 					apply(renderSuggestion, popover: AbstractInputSuggest<any>, args: [any, HTMLElement]) {
 						// Call base method first to pre-populate elements
 						const returnValue = renderSuggestion.call(popover, ...args);
+						if (manager.isDisabled()) return returnValue;
+
 						switch (manager.getPopoverType(popover)) {
 							case PROPERTY_SUGGESTIONS: manager.refreshPropertyIcon(...args); break;
 							case TAG_SUGGESTIONS: manager.refreshTagIcon(...args); break;
 						}
+
 						return returnValue;
 					}
 				});
+
 				return showSuggestions.call(popover, ...args);
 			}
 		});
@@ -118,6 +126,13 @@ export default class SuggestionIconManager extends IconManager {
 				this.refreshIcon(tag, iconEl);
 			}
 		}
+	}
+
+	/**
+	 * Check whether user has disabled suggestion icons.
+	 */
+	private isDisabled(): boolean {
+		return !this.plugin.settings.showSuggestionIcons;
 	}
 
 	/**
