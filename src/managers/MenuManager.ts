@@ -1,4 +1,4 @@
-import { Menu, MenuItem } from 'obsidian';
+import { Menu, MenuItem, MenuPositionDef } from 'obsidian';
 
 /**
  * Intercepts context menus to add custom items.
@@ -11,11 +11,13 @@ export default class MenuManager {
 
 	constructor() {
 		const manager = this;
+
+		// Store original method
 		this.showAtPositionOriginal = Menu.prototype.showAtPosition;
 
 		// Catch menus as they open
 		this.showAtPositionProxy = new Proxy(Menu.prototype.showAtPosition, {
-			apply(showAtPosition, menu, args) {
+			apply(showAtPosition, menu: Menu, args: [position: MenuPositionDef, doc?: Document]) {
 				manager.menu = menu;
 				if (manager.queuedActions.length > 0) {
 					manager.runQueuedActions.call(manager); // Menu is unhappy with your customer service
