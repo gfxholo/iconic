@@ -1,6 +1,6 @@
 import { Platform } from 'obsidian';
 import IconicPlugin, { Category, FileItem, TabItem, STRINGS } from 'src/IconicPlugin';
-import IconManager from './IconManager';
+import IconManager from 'src/managers/IconManager';
 import RuleEditor from 'src/dialogs/RuleEditor';
 import IconPicker from 'src/dialogs/IconPicker';
 

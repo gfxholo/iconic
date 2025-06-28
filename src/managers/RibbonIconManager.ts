@@ -1,6 +1,6 @@
 import { Menu, Platform } from 'obsidian';
 import IconicPlugin, { RibbonItem, STRINGS } from 'src/IconicPlugin';
-import MenuManager from './MenuManager';
+import MenuManager from 'src/managers/MenuManager';
 import IconManager from 'src/managers/IconManager';
 import IconPicker from 'src/dialogs/IconPicker';
 
