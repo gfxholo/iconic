@@ -161,6 +161,7 @@ export default class QuickSwitcherIconManager extends IconManager {
 	 */
 	private refreshSuggestionIconQSPP(value: any, el: HTMLElement): void {
 		switch (value?.type) {
+			case 'relatedItemsList': // Fallthrough
 			case 'file': {
 				if (value.file instanceof TFile) {
 					const file = this.plugin.getFileItem(value.file.path);
