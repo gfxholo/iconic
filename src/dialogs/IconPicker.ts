@@ -793,9 +793,7 @@ export default class IconPicker extends Modal {
 							? this.plugin.ruleManager.saveRule(page, newRule)
 							: this.plugin.ruleManager.deleteRule(page, rule.id);
 						if (isRulingChanged) {
-							if (page === 'file') this.plugin.tabIconManager?.refreshIcons();
-							this.plugin.fileIconManager?.refreshIcons();
-							this.plugin.bookmarkIconManager?.refreshIcons();
+							this.plugin.refreshManagers(page);
 						}
 						this.updateOverruleReminder();
 					});

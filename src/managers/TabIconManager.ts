@@ -31,6 +31,7 @@ export default class TabIconManager extends IconManager {
 	}
 
 	/**
+	 * @override
 	 * Refresh all tab icons.
 	 */
 	refreshIcons(unloading?: boolean): void {
@@ -52,9 +53,7 @@ export default class TabIconManager extends IconManager {
 					this.refreshIcon(rule, iconEl, event => {
 						IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
 							this.plugin.saveFileIcon(file, newIcon, newColor);
-							this.refreshIcons();
-							this.plugin.fileIconManager?.refreshIcons();
-							this.plugin.bookmarkIconManager?.refreshIcons();
+							this.plugin.refreshManagers('file');
 						});
 						event.stopPropagation();
 					});
@@ -62,7 +61,7 @@ export default class TabIconManager extends IconManager {
 					this.refreshIcon(rule, iconEl, event => {
 						IconPicker.openSingle(this.plugin, tab, (newIcon, newColor) => {
 							this.plugin.saveTabIcon(tab, newIcon, newColor);
-							this.refreshIcons();
+							this.plugin.refreshManagers('tab');
 						});
 						event.stopPropagation();
 					});
@@ -166,7 +165,7 @@ export default class TabIconManager extends IconManager {
 			.setSection('icon')
 			.onClick(() => IconPicker.openSingle(this.plugin, tab, (newIcon, newColor) => {
 				this.plugin.saveTabIcon(tab, newIcon, newColor);
-				this.refreshIcons();
+				this.plugin.refreshManagers('tab');
 			}))
 		);
 
@@ -178,7 +177,7 @@ export default class TabIconManager extends IconManager {
 				.setSection('icon')
 				.onClick(() => {
 					this.plugin.saveTabIcon(tab, null, null);
-					this.refreshIcons();
+					this.plugin.refreshManagers('tab');
 				})
 			);
 		}
@@ -197,9 +196,7 @@ export default class TabIconManager extends IconManager {
 			.setSection('icon')
 			.onClick(() => IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
 				this.plugin.saveFileIcon(file, newIcon, newColor);
-				this.refreshIcons();
-				this.plugin.fileIconManager?.refreshIcons();
-				this.plugin.bookmarkIconManager?.refreshIcons();
+				this.plugin.refreshManagers('file');
 			}))
 		);
 
@@ -211,9 +208,7 @@ export default class TabIconManager extends IconManager {
 				.setSection('icon')
 				.onClick(() => {
 					this.plugin.saveFileIcon(file, null, null);
-					this.refreshIcons();
-					this.plugin.fileIconManager?.refreshIcons();
-					this.plugin.bookmarkIconManager?.refreshIcons();
+					this.plugin.refreshManagers('file');
 				})
 			);
 		}
@@ -230,9 +225,7 @@ export default class TabIconManager extends IconManager {
 						? this.plugin.ruleManager.saveRule('file', newRule)
 						: this.plugin.ruleManager.deleteRule('file', rule.id);
 					if (isRulingChanged) {
-						this.refreshIcons();
-						this.plugin.fileIconManager?.refreshIcons();
-						this.plugin.bookmarkIconManager?.refreshIcons();
+						this.plugin.refreshManagers('file');
 					}
 				}));
 			});

@@ -47,6 +47,7 @@ export default class TagIconManager extends IconManager {
 	}
 
 	/**
+	 * @override
 	 * Refresh all tag icons.
 	 */
 	refreshIcons(unloading?: boolean): void {
@@ -78,8 +79,7 @@ export default class TagIconManager extends IconManager {
 				this.refreshIcon(tag, iconEl, event => {
 					IconPicker.openSingle(this.plugin, tag, (newIcon, newColor) => {
 						this.plugin.saveTagIcon(tag, newIcon, newColor);
-						this.refreshIcons();
-						this.plugin.editorIconManager?.refreshIcons();
+						this.plugin.refreshManagers('tag');
 					});
 					event.stopPropagation();
 				});
@@ -118,8 +118,7 @@ export default class TagIconManager extends IconManager {
 			.setSection('icon')
 			.onClick(() => IconPicker.openSingle(this.plugin, tag, (newIcon, newColor) => {
 				this.plugin.saveTagIcon(tag, newIcon, newColor);
-				this.refreshIcons();
-				this.plugin.editorIconManager?.refreshIcons();
+				this.plugin.refreshManagers('tag');
 			}))
 		);
 
@@ -131,8 +130,7 @@ export default class TagIconManager extends IconManager {
 				.setSection('icon')
 				.onClick(() => {
 					this.plugin.saveTagIcon(tag, null, null);
-					this.refreshIcons();
-					this.plugin.editorIconManager?.refreshIcons();
+					this.plugin.refreshManagers('tag');
 				})
 			);
 		}

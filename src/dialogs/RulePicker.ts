@@ -140,34 +140,18 @@ export default class RulePicker extends Modal {
 	}
 
 	/**
-	 * Refresh any icon managers influenced by the current page.
-	 */
-	private refreshPageManagers(): void {
-		switch (this.plugin.settings.dialogState.rulePage) {
-			case 'file': {
-				this.plugin.tabIconManager?.refreshIcons();
-				this.plugin.fileIconManager?.refreshIcons();
-				this.plugin.bookmarkIconManager?.refreshIcons();
-			}
-			case 'folder': {
-				this.plugin.fileIconManager?.refreshIcons();
-				this.plugin.bookmarkIconManager?.refreshIcons();
-			}
-		}
-	}
-
-	/**
 	 * Append a given rule to the page.
 	 */
 	private appendRule(rule: RuleItem, isNewRule?: boolean): void {
+		const page = this.plugin.settings.dialogState.rulePage;
 		const ruleSetting = new RuleSetting(
 			this.contentEl,
 			this.plugin,
 			this.iconManager,
-			this.plugin.settings.dialogState.rulePage,
+			page,
 			rule,
 			this.ruleEls,
-			() => this.refreshPageManagers(),
+			() => this.plugin.refreshManagers(page),
 			isNewRule,
 		);
 		this.ruleEls.push(ruleSetting.settingEl);
@@ -181,9 +165,11 @@ export default class RulePicker extends Modal {
 				.onClick(() => {
 					ruleSetting.settingEl.remove();
 					this.ruleEls.remove(ruleSetting.settingEl);
-					const rulePage = this.plugin.settings.dialogState.rulePage;
-					const isRulingChanged = this.plugin.ruleManager.deleteRule(rulePage, rule.id);
-					if (isRulingChanged) this.refreshPageManagers();
+					const page = this.plugin.settings.dialogState.rulePage;
+					const isRulingChanged = this.plugin.ruleManager.deleteRule(page, rule.id);
+					if (isRulingChanged) {
+						this.plugin.refreshManagers(page);
+					}
 				});
 			});
 			menu.showAtMouseEvent(event);

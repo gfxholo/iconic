@@ -55,6 +55,7 @@ export default class RibbonIconManager extends IconManager {
 	}
 
 	/**
+	 * @override
 	 * Refresh all ribbon icons.
 	 */
 	refreshIcons(unloading?: boolean): void {
@@ -117,7 +118,7 @@ export default class RibbonIconManager extends IconManager {
 		if (Platform.isPhone) {
 			const quickDropdownEl = containerEl.find('.setting-item-control > .dropdown');
 			if (quickDropdownEl) this.setEventListener(quickDropdownEl, 'change', () => {
-				this.refreshIcons();
+				this.plugin.refreshManagers('ribbon');
 				this.refreshConfigIcons(containerEl);
 			});
 
@@ -129,8 +130,8 @@ export default class RibbonIconManager extends IconManager {
 				this.refreshIcon(quickItem, quickIconEl, () => {
 					IconPicker.openSingle(this.plugin, quickItem, (newIcon, newColor) => {
 						this.plugin.saveRibbonIcon(quickItem, newIcon, newColor);
+						this.plugin.refreshManagers('ribbon');
 						this.refreshConfigIcons(containerEl);
-						this.refreshIcons();
 					});
 				});
 			}
@@ -159,7 +160,7 @@ export default class RibbonIconManager extends IconManager {
 			this.refreshIcon(item, iconEl, event => {
 				IconPicker.openSingle(this.plugin, item, (newIcon, newColor) => {
 					this.plugin.saveRibbonIcon(item, newIcon, newColor);
-					this.refreshIcons();
+					this.plugin.refreshManagers('ribbon');
 					this.refreshConfigIcons(containerEl);
 				});
 				event.stopPropagation();
@@ -192,7 +193,7 @@ export default class RibbonIconManager extends IconManager {
 			.setSection('icon')
 			.onClick(() => IconPicker.openSingle(this.plugin, ribbonItem, (newIcon, newColor) => {
 				this.plugin.saveRibbonIcon(ribbonItem, newIcon, newColor);
-				this.refreshIcons();
+				this.plugin.refreshManagers('ribbon');
 			}))
 		);
 
@@ -204,7 +205,7 @@ export default class RibbonIconManager extends IconManager {
 				.setSection('icon')
 				.onClick(() => {
 					this.plugin.saveRibbonIcon(ribbonItem, null, null);
-					this.refreshIcons();
+					this.plugin.refreshManagers('ribbon');
 				})
 			);
 		}

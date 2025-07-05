@@ -45,9 +45,7 @@ export default class RuleManager {
 			if (this.fileTriggers.has('time') || this.fileTriggers.has('date') && isMidnight) {
 				const isRulingChanged = this.triggerRulings('file', 'time');
 				if (isRulingChanged) {
-					this.plugin.tabIconManager?.refreshIcons();
-					this.plugin.fileIconManager?.refreshIcons();
-					this.plugin.bookmarkIconManager?.refreshIcons();
+					this.plugin.refreshManagers('file');
 				}
 			}
 		}

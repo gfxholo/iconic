@@ -62,6 +62,7 @@ export default class FileIconManager extends IconManager {
 	}
 
 	/**
+	 * @override
 	 * Refresh all file icons.
 	 */
 	refreshIcons(unloading?: boolean): void {
@@ -169,9 +170,7 @@ export default class FileIconManager extends IconManager {
 				this.refreshIcon(rule, iconEl, event => {
 					IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
 						this.plugin.saveFileIcon(file, newIcon, newColor);
-						this.refreshIcons();
-						this.plugin.tabIconManager?.refreshIcons();
-						this.plugin.bookmarkIconManager?.refreshIcons();
+						this.plugin.refreshManagers('file', 'folder');
 					});
 					event.stopPropagation();
 				});
@@ -229,16 +228,12 @@ export default class FileIconManager extends IconManager {
 				if (files.length === 1) {
 					IconPicker.openSingle(this.plugin, files[0], (newIcon, newColor) => {
 						this.plugin.saveFileIcon(files[0], newIcon, newColor);
-						this.refreshIcons();
-						this.plugin.tabIconManager?.refreshIcons();
-						this.plugin.bookmarkIconManager?.refreshIcons();
+						this.plugin.refreshManagers('file', 'folder');
 					});
 				} else {
 					IconPicker.openMulti(this.plugin, files, (newIcon, newColor) => {
 						this.plugin.saveFileIcons(files, newIcon, newColor);
-						this.refreshIcons();
-						this.plugin.tabIconManager?.refreshIcons();
-						this.plugin.bookmarkIconManager?.refreshIcons();
+						this.plugin.refreshManagers('file', 'folder');
 					});
 				}
 			})
@@ -266,9 +261,7 @@ export default class FileIconManager extends IconManager {
 					} else {
 						this.plugin.saveFileIcons(files, null, null);
 					}
-					this.refreshIcons();
-					this.plugin.tabIconManager?.refreshIcons();
-					this.plugin.bookmarkIconManager?.refreshIcons();
+					this.plugin.refreshManagers('file', 'folder');
 				})
 			);
 		}
@@ -288,8 +281,7 @@ export default class FileIconManager extends IconManager {
 							: this.plugin.ruleManager.deleteRule(page, rule.id);
 						if (isRulingChanged) {
 							this.refreshIcons();
-							if (page === 'file') this.plugin.tabIconManager?.refreshIcons();
-							this.plugin.bookmarkIconManager?.refreshIcons();
+							this.plugin.refreshManagers(page);
 						}
 					}));
 				});

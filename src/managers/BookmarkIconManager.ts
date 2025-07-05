@@ -66,6 +66,7 @@ export default class BookmarkIconManager extends IconManager {
 	}
 
 	/**
+	 * @override
 	 * Refresh all bookmark icons.
 	 */
 	refreshIcons(unloading?: boolean): void {
@@ -141,9 +142,7 @@ export default class BookmarkIconManager extends IconManager {
 				this.refreshIcon(rule, iconEl, event => {
 					IconPicker.openSingle(this.plugin, bmark, (newIcon, newColor) => {
 						this.plugin.saveBookmarkIcon(bmark, newIcon, newColor);
-						this.refreshIcons();
-						this.plugin.tabIconManager?.refreshIcons();
-						this.plugin.fileIconManager?.refreshIcons();
+						this.plugin.refreshManagers('file', 'folder');
 					});
 					event.stopPropagation();
 				});
@@ -217,16 +216,12 @@ export default class BookmarkIconManager extends IconManager {
 				if (selectedBmarks.length < 2) {
 					IconPicker.openSingle(this.plugin, clickedBmark, (newIcon, newColor) => {
 						this.plugin.saveBookmarkIcon(clickedBmark, newIcon, newColor);
-						this.refreshIcons();
-						this.plugin.tabIconManager?.refreshIcons();
-						this.plugin.fileIconManager?.refreshIcons();
+						this.plugin.refreshManagers('file', 'folder');
 					});
 				} else {
 					IconPicker.openMulti(this.plugin, selectedBmarks, (newIcon, newColor) => {
 						this.plugin.saveBookmarkIcons(selectedBmarks, newIcon, newColor);
-						this.refreshIcons();
-						this.plugin.tabIconManager?.refreshIcons();
-						this.plugin.fileIconManager?.refreshIcons();
+						this.plugin.refreshManagers('file', 'folder');
 					});
 				}
 			})
@@ -255,9 +250,7 @@ export default class BookmarkIconManager extends IconManager {
 					} else {
 						this.plugin.saveBookmarkIcons(selectedBmarks, null, null);
 					}
-					this.refreshIcons();
-					this.plugin.tabIconManager?.refreshIcons();
-					this.plugin.fileIconManager?.refreshIcons();
+					this.plugin.refreshManagers('file', 'folder');
 				})
 			);
 		}
@@ -277,9 +270,7 @@ export default class BookmarkIconManager extends IconManager {
 							? this.plugin.ruleManager.saveRule('file', newRule)
 							: this.plugin.ruleManager.deleteRule('file', rule.id);
 						if (isRulingChanged) {
-							this.refreshIcons();
-							this.plugin.tabIconManager?.refreshIcons();
-							this.plugin.fileIconManager?.refreshIcons();
+							this.plugin.refreshManagers('file');
 						}
 					}));
 				});

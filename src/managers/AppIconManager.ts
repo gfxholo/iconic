@@ -28,10 +28,11 @@ export default class AppIconManager extends IconManager {
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
 		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => this.refreshIcons()));
-		this.refreshIcons();
+		this.plugin.refreshManagers('app');
 	}
 
 	/**
+	 * @override
 	 * Refresh all app icons.
 	 * 
 	 * Some button elements get replaced by the app when switching workspaces,
@@ -260,7 +261,7 @@ export default class AppIconManager extends IconManager {
 			.setIcon('lucide-image-plus')
 			.onClick(() => IconPicker.openSingle(this.plugin, appItem, (newIcon, newColor) => {
 				this.plugin.saveAppIcon(appItem, newIcon, newColor);
-				this.refreshIcons();
+				this.plugin.refreshManagers('app');
 			}))
 		);
 
@@ -271,7 +272,7 @@ export default class AppIconManager extends IconManager {
 				.setIcon(appItem.icon ? 'lucide-image-minus' : 'lucide-rotate-ccw')
 				.onClick(() => {
 					this.plugin.saveAppIcon(appItem, null, null);
-					this.refreshIcons();
+					this.plugin.refreshManagers('app');
 				})
 			);
 		}

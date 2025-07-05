@@ -28,8 +28,7 @@ export default class EditorIconManager extends IconManager {
 					this.refreshIcon(tag, iconEl, event => {
 						IconPicker.openSingle(this.plugin, tag, (newIcon, newColor) => {
 							this.plugin.saveTagIcon(tag, newIcon, newColor);
-							this.refreshIcons();
-							this.plugin.tagIconManager?.refreshIcons();
+							this.plugin.refreshManagers('tag');
 						});
 						event.stopPropagation();
 					});
@@ -124,8 +123,7 @@ export default class EditorIconManager extends IconManager {
 				if (this.plugin.isSettingEnabled('clickableIcons')) {
 					IconPicker.openSingle(this.plugin, prop, (newIcon, newColor) => {
 						this.plugin.savePropertyIcon(prop, newIcon, newColor);
-						this.refreshIcons();
-						this.plugin.propertyIconManager?.refreshIcons();
+						this.plugin.refreshManagers('property');
 					});
 					event.stopPropagation();
 				} else {
@@ -159,6 +157,7 @@ export default class EditorIconManager extends IconManager {
 	}
 
 	/**
+	 * @override
 	 * Refresh all icons in all MarkdownViews.
 	 */
 	refreshIcons(unloading?: boolean): void {
@@ -227,8 +226,7 @@ export default class EditorIconManager extends IconManager {
 					this.refreshIcon(tag, iconEl, event => {
 						IconPicker.openSingle(this.plugin, tag, (newIcon, newColor) => {
 							this.plugin.saveTagIcon(tag, newIcon, newColor);
-							this.refreshIcons();
-							this.plugin.tagIconManager?.refreshIcons();
+							this.plugin.refreshManagers('tag');
 						});
 						event.stopPropagation();
 					});
@@ -304,8 +302,7 @@ export default class EditorIconManager extends IconManager {
 			.setSection('icon')
 			.onClick(() => IconPicker.openSingle(this.plugin, prop, (newIcon, newColor) => {
 				this.plugin.savePropertyIcon(prop, newIcon, newColor);
-				this.refreshIcons();
-				this.plugin.propertyIconManager?.refreshIcons();
+				this.plugin.refreshManagers('property');
 			}))
 		);
 
@@ -317,8 +314,7 @@ export default class EditorIconManager extends IconManager {
 				.setSection('icon')
 				.onClick(() => {
 					this.plugin.savePropertyIcon(prop, null, null);
-					this.refreshIcons();
-					this.plugin.propertyIconManager?.refreshIcons();
+					this.plugin.refreshManagers('property');
 				})
 			);
 		}
@@ -340,8 +336,7 @@ export default class EditorIconManager extends IconManager {
 			.setSection('icon')
 			.onClick(() => IconPicker.openSingle(this.plugin, tag, (newIcon, newColor) => {
 				this.plugin.saveTagIcon(tag, newIcon, newColor);
-				this.refreshIcons();
-				this.plugin.tagIconManager?.refreshIcons();
+				this.plugin.refreshManagers('tag');
 			}))
 		);
 
@@ -353,8 +348,7 @@ export default class EditorIconManager extends IconManager {
 				.setSection('icon')
 				.onClick(() => {
 					this.plugin.saveTagIcon(tag, null, null);
-					this.refreshIcons();
-					this.plugin.tagIconManager?.refreshIcons();
+					this.plugin.refreshManagers('tag');
 				})
 			);
 		}

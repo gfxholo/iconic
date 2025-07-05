@@ -44,6 +44,7 @@ export default class PropertyIconManager extends IconManager {
 	}
 
 	/**
+	 * @override
 	 * Refresh all property icons.
 	 */
 	refreshIcons(unloading?: boolean): void {
@@ -65,8 +66,7 @@ export default class PropertyIconManager extends IconManager {
 				this.refreshIcon(prop, iconEl, event => {
 					IconPicker.openSingle(this.plugin, prop, (newIcon, newColor) => {
 						this.plugin.savePropertyIcon(prop, newIcon, newColor);
-						this.refreshIcons();
-						this.plugin.editorIconManager?.refreshIcons();
+						this.plugin.refreshManagers('property');
 					});
 					event.stopPropagation();
 				});
@@ -120,14 +120,12 @@ export default class PropertyIconManager extends IconManager {
 				if (selectedProps.length < 2) {
 					IconPicker.openSingle(this.plugin, clickedProp, (newIcon, newColor) => {
 						this.plugin.savePropertyIcon(clickedProp, newIcon, newColor);
-						this.refreshIcons();
-						this.plugin.editorIconManager?.refreshIcons();
+						this.plugin.refreshManagers('property');
 					});
 				} else {
 					IconPicker.openMulti(this.plugin, selectedProps, (newIcon, newColor) => {
 						this.plugin.savePropertyIcons(selectedProps, newIcon, newColor);
-						this.refreshIcons();
-						this.plugin.editorIconManager?.refreshIcons();
+						this.plugin.refreshManagers('property');
 					});
 				}
 			})
@@ -155,8 +153,7 @@ export default class PropertyIconManager extends IconManager {
 					} else {
 						this.plugin.savePropertyIcons(selectedProps, null, null);
 					}
-					this.refreshIcons();
-					this.plugin.editorIconManager?.refreshIcons();
+					this.plugin.refreshManagers('property');
 				})
 			);
 		}

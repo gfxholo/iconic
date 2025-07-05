@@ -19,6 +19,13 @@ export default abstract class IconManager {
 	}
 
 	/**
+	 * Refresh all icons controlled by this icon manager. Should be overridden.
+	 */
+	refreshIcons(unloading?: boolean): void {
+		return;
+	}
+
+	/**
 	 * Refresh icon inside a given element.
 	 */
 	protected refreshIcon(item: Item | Icon, iconEl: HTMLElement, onClick?: (event: MouseEvent) => void): void {

@@ -4,6 +4,7 @@ import EMOJIS from 'src/Emojis';
 import STRINGS from 'src/Strings';
 import MenuManager from 'src/managers/MenuManager';
 import RuleManager, { RuleTrigger } from 'src/managers/RuleManager';
+import IconManager from 'src/managers/IconManager';
 import AppIconManager from 'src/managers/AppIconManager';
 import TabIconManager from 'src/managers/TabIconManager';
 import FileIconManager from 'src/managers/FileIconManager';
@@ -314,9 +315,7 @@ export default class IconicPlugin extends Plugin {
 				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
 				// If a created file/folder triggers a new ruling, refresh icons
 				if (this.ruleManager.triggerRulings(page, 'rename', 'move', 'modify')) {
-					if (page === 'file') this.tabIconManager?.refreshIcons();
-					this.fileIconManager?.refreshIcons();
-					this.bookmarkIconManager?.refreshIcons();
+					this.refreshManagers(page);
 				}
 			}));
 
@@ -333,14 +332,10 @@ export default class IconicPlugin extends Plugin {
 				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
 				// If a renamed file/folder triggers a new ruling, refresh icons
 				if (filename !== oldFilename && this.ruleManager.triggerRulings(page, 'rename')) {
-					if (page === 'file') this.tabIconManager?.refreshIcons();
-					this.fileIconManager?.refreshIcons();
-					this.bookmarkIconManager?.refreshIcons();
+					this.refreshManagers(page);
 				// If a moved file/folder triggers a new ruling, refresh icons
 				} else if (tree !== oldTree && this.ruleManager.triggerRulings(page, 'move')) {
-					if (page === 'file') this.tabIconManager?.refreshIcons();
-					this.fileIconManager?.refreshIcons();
-					this.bookmarkIconManager?.refreshIcons();
+					this.refreshManagers(page);
 				}
 			}));
 
@@ -434,8 +429,7 @@ export default class IconicPlugin extends Plugin {
 			callback: () => {
 				this.settings.showAllFileIcons = !this.settings.showAllFileIcons;
 				this.saveSettings();
-				this.tabIconManager?.refreshIcons();
-				this.fileIconManager?.refreshIcons();
+				this.refreshManagers('file');
 			}
 		}));
 
@@ -446,9 +440,7 @@ export default class IconicPlugin extends Plugin {
 			callback: () => {
 				this.settings.showAllFolderIcons = !this.settings.showAllFolderIcons;
 				this.saveSettings();
-				this.fileIconManager?.refreshIcons();
-				this.bookmarkIconManager?.refreshIcons();
-				this.tagIconManager?.refreshIcons();
+				this.refreshManagers('file', 'tag');
 			}
 		}));
 
@@ -459,9 +451,7 @@ export default class IconicPlugin extends Plugin {
 			callback: () => {
 				this.settings.minimalFolderIcons = !this.settings.minimalFolderIcons;
 				this.saveSettings();
-				this.fileIconManager?.refreshIcons();
-				this.bookmarkIconManager?.refreshIcons();
-				this.tagIconManager?.refreshIcons();
+				this.refreshManagers('file', 'tag');
 			}
 		}));
 
@@ -522,9 +512,7 @@ export default class IconicPlugin extends Plugin {
 
 				IconPicker.openSingle(this, file, (newIcon, newColor) => {
 					this.saveFileIcon(file, newIcon, newColor);
-					this.fileIconManager?.refreshIcons();
-					this.tabIconManager?.refreshIcons();
-					this.bookmarkIconManager?.refreshIcons();
+					this.refreshManagers('file');
 				});
 			},
 		});
@@ -546,9 +534,7 @@ export default class IconicPlugin extends Plugin {
 		const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
 		// If a modified file/folder triggers a new ruling, refresh icons
 		if (this.ruleManager.triggerRulings(page, 'modify')) {
-			if (page === 'file') this.tabIconManager?.refreshIcons();
-			this.fileIconManager?.refreshIcons();
-			this.bookmarkIconManager?.refreshIcons();
+			this.refreshManagers(page);
 		}
 	}
 
@@ -571,17 +557,43 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
-	 * Refresh all manager instances.
+	 * Refresh all icon managers, or a specific group of them.
 	 */
-	refreshManagers(): void {
-		this.appIconManager?.refreshIcons();
-		this.tabIconManager?.refreshIcons();
-		this.fileIconManager?.refreshIcons();
-		this.bookmarkIconManager?.refreshIcons();
-		this.tagIconManager?.refreshIcons();
-		this.propertyIconManager?.refreshIcons();
-		this.editorIconManager?.refreshIcons();
-		this.ribbonIconManager?.refreshIcons();
+	refreshManagers(...categories: Category[]): void {
+		if (categories) {
+			categories = ['app', 'tab', 'file', 'folder', 'tag', 'property', 'ribbon'];
+		}
+		const managers = new Set<IconManager | undefined>();
+
+		if (categories?.includes('app')) {
+			managers.add(this.appIconManager);
+		}
+		if (categories?.includes('tab')) {
+			managers.add(this.tabIconManager);
+		}
+		if (categories?.includes('file')) {
+			managers.add(this.tabIconManager);
+			managers.add(this.fileIconManager);
+			managers.add(this.bookmarkIconManager);
+		}
+		if (categories?.includes('folder')) {
+			managers.add(this.fileIconManager);
+			managers.add(this.bookmarkIconManager);
+		}
+		if (categories?.includes('tag')) {
+			managers.add(this.tagIconManager);
+			managers.add(this.editorIconManager);
+		}
+		if (categories?.includes('property')) {
+			managers.add(this.propertyIconManager);
+			managers.add(this.editorIconManager);
+		}
+		if (categories?.includes('ribbon')) {
+			managers.add(this.ribbonIconManager);
+		}
+
+		managers.delete(undefined);
+		for (const manager of managers) manager?.refreshIcons();
 	}
 
 	/**

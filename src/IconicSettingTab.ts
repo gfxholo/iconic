@@ -107,8 +107,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.onChange(value => {
 					this.plugin.settings.showAllFileIcons = value;
 					this.plugin.saveSettings();
-					this.plugin.tabIconManager?.refreshIcons();
-					this.plugin.fileIconManager?.refreshIcons();
+					this.plugin.refreshManagers('file');
 				})
 			);
 
@@ -121,8 +120,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.onChange(value => {
 					this.plugin.settings.showAllFolderIcons = value;
 					this.plugin.saveSettings();
-					this.plugin.fileIconManager?.refreshIcons();
-					this.plugin.bookmarkIconManager?.refreshIcons();
+					this.plugin.refreshManagers('folder');
 				})
 			);
 
@@ -135,8 +133,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.onChange(value => {
 					this.plugin.settings.minimalFolderIcons = value;
 					this.plugin.saveSettings();
-					this.plugin.fileIconManager?.refreshIcons();
-					this.plugin.bookmarkIconManager?.refreshIcons();
+					this.plugin.refreshManagers('folder');
 				})
 			);
 
@@ -352,7 +349,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.onChange(value => {
 					this.plugin.settings.uncolorQuick = value;
 					this.plugin.saveSettings();
-					this.plugin.ribbonIconManager?.refreshIcons();
+					this.plugin.refreshManagers('ribbon');
 				})
 			);
 
