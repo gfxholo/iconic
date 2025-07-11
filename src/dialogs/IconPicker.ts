@@ -1,4 +1,4 @@
-import { ButtonComponent, ColorComponent, ExtraButtonComponent, Hotkey, Menu, Modal, Platform, Setting, TextComponent, prepareFuzzySearch } from 'obsidian';
+import { ButtonComponent, ColorComponent, ExtraButtonComponent, Hotkey, Menu, Modal, Platform, Setting, TextComponent, displayTooltip, prepareFuzzySearch, setTooltip } from 'obsidian';
 import IconicPlugin, { Category, Item, Icon, ICONS, EMOJIS, STRINGS } from 'src/IconicPlugin';
 import ColorUtils, { COLORS } from 'src/ColorUtils';
 import { RuleItem } from 'src/managers/RuleManager';
@@ -90,7 +90,6 @@ export default class IconPicker extends Modal {
 	private emojiModeButton: ExtraButtonComponent;
 	private mobileModeButton: ButtonComponent;
 	private colorPickerEl: HTMLElement;
-	private mobileTooltipEl: HTMLElement | null;
 
 	// State
 	private colorPickerPaused = false;
@@ -130,21 +129,6 @@ export default class IconPicker extends Modal {
 		this.scope.register(null, ' ', event => this.confirmFocus(event));
 		this.scope.register(null, 'Delete', event => this.deleteFocus(event));
 		this.scope.register(null, 'Backspace', event => this.deleteFocus(event));
-
-		// Clear mobile tooltip when dialog is touched
-		this.iconManager.setEventListener(this.modalEl, 'pointerdown', () => {
-			this.mobileTooltipEl?.remove();
-			this.mobileTooltipEl = null;
-		});
-
-		// Update color picker tooltip when it appears, in case the ariaLabel has changed
-		this.iconManager.setMutationObserver(activeDocument.body, { childList: true }, mutation => {
-			for (const addedNode of mutation.addedNodes) {
-				if (addedNode instanceof HTMLElement && addedNode.hasClass('tooltip')) {
-					if (this.colorPickerHovered) this.updateColorTooltip();
-				}
-			}
-		});
 	}
 
 	/**
@@ -300,7 +284,7 @@ export default class IconPicker extends Modal {
 		this.searchSetting = new Setting(this.contentEl)
 			.addExtraButton(colorResetButton => { colorResetButton
 				.setIcon('lucide-rotate-ccw')
-				.setTooltip(STRINGS.iconPicker.resetColor)
+				.setTooltip(STRINGS.iconPicker.resetColor, { delay: 300 })
 				.onClick(() => this.resetColor());
 				colorResetButton.extraSettingsEl.addClass('iconic-reset-color');
 				colorResetButton.extraSettingsEl.toggleClass('iconic-invisible', this.color === null);
@@ -315,9 +299,9 @@ export default class IconPicker extends Modal {
 				.onChange(value => {
 					if (this.colorPickerPaused) return;
 					this.color = value;
-					this.colorPickerEl.ariaLabel = this.color;
 					this.colorResetButton.extraSettingsEl.removeClass('iconic-invisible');
 					this.colorResetButton.extraSettingsEl.tabIndex = 0;
+					this.updateColorTooltip();
 					this.updateSearchResults();
 				});
 				this.colorPicker = colorPicker;
@@ -333,9 +317,16 @@ export default class IconPicker extends Modal {
 		// Color picker
 		let openRgbPicker = false;
 		this.colorPickerEl = this.searchSetting.controlEl.find('input[type="color"]');
-		this.colorPickerEl.dataset.tooltipDelay = '300';
-		this.iconManager.setEventListener(this.colorPickerEl, 'pointerenter', () => this.colorPickerHovered = true);
-		this.iconManager.setEventListener(this.colorPickerEl, 'pointerleave', () => this.colorPickerHovered = false);
+		// Reset tooltip delay when cursor starts hovering
+		this.iconManager.setEventListener(this.colorPickerEl, 'pointerenter', () => {
+			this.updateColorTooltip();
+			this.colorPickerHovered = true;
+		});
+		this.iconManager.setEventListener(this.colorPickerEl, 'pointerleave', () => {
+			this.colorPickerHovered = false;
+			this.updateColorTooltip();
+		});
+		// Primary color picker
 		this.iconManager.setEventListener(this.colorPickerEl, 'click', event => {
 			if (openRgbPicker === true) {
 				openRgbPicker = false;
@@ -344,6 +335,7 @@ export default class IconPicker extends Modal {
 				event.preventDefault();
 			}
 		});
+		// Secondary color picker
 		this.iconManager.setEventListener(this.colorPickerEl, 'contextmenu', event => {
 			navigator?.vibrate(100); // Not supported on iOS
 			if (this.plugin.settings.colorPicker2 === 'rgb') {
@@ -370,11 +362,6 @@ export default class IconPicker extends Modal {
 			} else {
 				this.searchResultsSetting.settingEl.scrollLeft += event.deltaY;
 			}
-		}, { passive: true });
-		// Clear mobile tooltip when scrolling
-		this.iconManager.setEventListener(this.searchResultsSetting.settingEl, 'scroll', () => {
-			this.mobileTooltipEl?.remove();
-			this.mobileTooltipEl = null;
 		}, { passive: true });
 
 		// Match styling of bookmark edit dialog
@@ -420,14 +407,14 @@ export default class IconPicker extends Modal {
 			this.updateMobileSearchMode();
 		} else {
 			this.iconModeButton = new ExtraButtonComponent(buttonContainerEl)
-				.setTooltip(STRINGS.iconPicker.toggleIcons, { placement: 'top' })
+				.setTooltip(STRINGS.iconPicker.toggleIcons, { placement: 'top', delay: 300 })
 				.onClick(() => {
 					dialogState.iconMode = !dialogState.iconMode;
 					this.updateDesktopSearchMode();
 				});
 			this.iconModeButton.extraSettingsEl.tabIndex = 0;
 			this.emojiModeButton = new ExtraButtonComponent(buttonContainerEl)
-				.setTooltip(STRINGS.iconPicker.toggleEmojis, { placement: 'top' })
+				.setTooltip(STRINGS.iconPicker.toggleEmojis, { placement: 'top', delay: 300 })
 				.onClick(() => {
 					dialogState.emojiMode = !dialogState.emojiMode;
 					this.updateDesktopSearchMode();
@@ -534,7 +521,6 @@ export default class IconPicker extends Modal {
 		this.colorResetButton.extraSettingsEl.addClass('iconic-invisible');
 		this.colorResetButton.extraSettingsEl.tabIndex = -1;
 		this.updateColorPicker();
-		this.updateColorTooltip();
 		this.updateSearchResults();
 	}
 
@@ -619,53 +605,28 @@ export default class IconPicker extends Modal {
 		this.colorPickerPaused = true;
 		this.colorPicker.setValueRgb(ColorUtils.toRgbObject(this.color));
 		this.colorPickerPaused = false;
-
-		if (!this.color) {
-			this.colorPickerEl.ariaLabel = STRINGS.iconPicker.changeColor;
-		} else if (COLOR_KEYS.includes(this.color)) {
-			this.colorPickerEl.ariaLabel = STRINGS.iconPicker.colors[this.color as keyof typeof STRINGS.iconPicker.colors];
-		} else {
-			this.colorPickerEl.ariaLabel = this.color;
-		}
-
-		if (this.colorPickerHovered) {
-			this.updateColorTooltip();
-		}
+		this.updateColorTooltip();
 	}
 
 	/**
-	 * Update tooltip currently displayed for the color picker.
+	 * Update just the color picker tooltip.
 	 */
 	private updateColorTooltip(): void {
-		const tooltipEl = activeDocument.body.find(':scope > .tooltip');
-		if (tooltipEl && tooltipEl.firstChild) {
-			tooltipEl.style.removeProperty('width');
-			tooltipEl.firstChild.nodeValue = this.colorPickerEl.ariaLabel;
+		// Set tooltip message
+		let tooltip = STRINGS.iconPicker.changeColor;
+		if (this.color) {
+			if (COLOR_KEYS.includes(this.color)) {
+				tooltip = STRINGS.iconPicker.colors[this.color as keyof typeof STRINGS.iconPicker.colors];
+			} else {
+				tooltip = this.color;
+			}
 		}
-	}
 
-	/**
-	 * Display a long-press tooltip for mobile users.
-	 */
-	private setMobileTooltip(iconEl: HTMLElement, label: string): void {
-		this.mobileTooltipEl?.remove();
-		this.mobileTooltipEl = null;
-		const iconRect = iconEl.getBoundingClientRect();
-		const left = Math.max(0, iconRect.left + iconRect.width / 2);
-		const top = iconRect.top - 48;
-		this.mobileTooltipEl = activeDocument.body.createDiv({
-			cls: ['tooltip', 'mod-top'],
-			text: label,
-		});
-		this.mobileTooltipEl.createDiv('tooltip-arrow');
-		this.mobileTooltipEl.style.fontSize = 'var(--font-ui-medium)';
-		this.mobileTooltipEl.style.left = left + 'px';
-		this.mobileTooltipEl.style.top = top + 'px';
-		this.mobileTooltipEl.style.width = 'auto';
-		this.mobileTooltipEl.style.whiteSpace = 'nowrap';
-		const rect = this.mobileTooltipEl.getBoundingClientRect();
-		if (rect.left < 0) {
-			this.mobileTooltipEl.style.left = left + rect.left + 'px';
+		// Update tooltip instantly if cursor is hovering over color picker
+		if (this.colorPickerHovered) {
+			displayTooltip(this.colorPickerEl, tooltip, { delay: 1 });
+		} else {
+			setTooltip(this.colorPickerEl, tooltip, { delay: 300 });
 		}
 	}
 
@@ -712,7 +673,10 @@ export default class IconPicker extends Modal {
 		for (const iconEntry of this.searchResults) {
 			const [icon, iconName] = iconEntry;
 			this.searchResultsSetting.addExtraButton(iconButton => {
-				iconButton.setTooltip(iconName, { delay: 300 });
+				iconButton.setTooltip(iconName, {
+					delay: 300,
+					placement: Platform.isPhone ? 'top' : 'bottom',
+				});
 				const iconEl = iconButton.extraSettingsEl;
 				iconEl.addClass('iconic-search-result');
 				iconEl.tabIndex = -1;
@@ -721,9 +685,9 @@ export default class IconPicker extends Modal {
 					this.closeAndSave(icon, this.color);
 				});
 
-				if (Platform.isMobile) this.iconManager.setEventListener(iconEl, 'contextmenu', () => {
+				if (Platform.isPhone) this.iconManager.setEventListener(iconEl, 'contextmenu', () => {
 					navigator?.vibrate(100); // Not supported on iOS
-					this.setMobileTooltip(iconEl, iconName);
+					displayTooltip(iconEl, iconName, { placement: 'top' });
 				});
 			});
 		}
@@ -820,7 +784,6 @@ export default class IconPicker extends Modal {
 	 */
 	onClose(): void {
 		this.contentEl.empty();
-		this.mobileTooltipEl?.remove();
 		this.iconManager.stopEventListeners();
 		this.iconManager.stopMutationObservers();
 		this.plugin.saveSettings(); // Save any changes to dialogState
