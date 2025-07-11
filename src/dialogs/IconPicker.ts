@@ -581,18 +581,18 @@ export default class IconPicker extends Modal {
 				: STRINGS.iconPicker.changeMixes.replace('{#}', this.items.length.toString())
 			);
 			this.searchField.setPlaceholder(STRINGS.iconPicker.searchMix);
-		} else if (dialogState.iconMode) {
-			this.setTitle(this.items.length === 1
-				? STRINGS.iconPicker.changeIcon
-				: STRINGS.iconPicker.changeIcons.replace('{#}', this.items.length.toString())
-			);
-			this.searchField.setPlaceholder(STRINGS.iconPicker.searchIcons);
-		} else {
+		} else if (dialogState.emojiMode) {
 			this.setTitle(this.items.length === 1
 				? STRINGS.iconPicker.changeEmoji
 				: STRINGS.iconPicker.changeEmojis.replace('{#}', this.items.length.toString())
 			);
 			this.searchField.setPlaceholder(STRINGS.iconPicker.searchEmojis);
+		} else {
+			this.setTitle(this.items.length === 1
+				? STRINGS.iconPicker.changeIcon
+				: STRINGS.iconPicker.changeIcons.replace('{#}', this.items.length.toString())
+			);
+			this.searchField.setPlaceholder(STRINGS.iconPicker.searchIcons);
 		}
 
 		this.updateSearchResults();
