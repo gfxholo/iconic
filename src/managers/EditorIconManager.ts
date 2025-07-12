@@ -212,8 +212,8 @@ export default class EditorIconManager extends IconManager {
 		if (!(headerEl instanceof HTMLElement)) return;
 
 		// Remove wrapper if necessary
-		if (unloading) {
-			const wrapperEl = headerEl.find(':scope > .iconic-title-wrapper');
+		if (!this.plugin.settings.showTitleIcons || unloading) {
+			const wrapperEl = titleEl.closest('.iconic-title-wrapper');
 			if (wrapperEl) {
 				headerEl.prepend(titleEl);
 				wrapperEl.remove();

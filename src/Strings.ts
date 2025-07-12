@@ -328,6 +328,10 @@ export default class Strings {
 			desc: 'Show tab icons for Markdown files.',
 		},
 		headingEditor: 'Editor',
+		showTitleIcons: {
+			name: 'Show title icons',
+			desc: 'Show icons in note titles, if inline titles are enabled.',
+		},
 		showTagPillIcons: {
 			name: 'Show tag pill icons',
 			desc: 'Show icons in #hashtags and the tags property.',

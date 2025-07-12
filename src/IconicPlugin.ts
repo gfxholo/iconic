@@ -81,6 +81,7 @@ interface IconicSettings {
 	showAllFolderIcons: boolean,
 	minimalFolderIcons: boolean;
 	showMarkdownTabIcons: boolean;
+	showTitleIcons: boolean;
 	showTagPillIcons: boolean;
 	showMenuActions: boolean;
 	showSuggestionIcons: boolean;
@@ -142,6 +143,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	showAllFolderIcons: false,
 	minimalFolderIcons: true,
 	showMarkdownTabIcons: true,
+	showTitleIcons: true,
 	showTagPillIcons: true,
 	showMenuActions: true,
 	showSuggestionIcons: true,

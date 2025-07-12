@@ -153,6 +153,19 @@ export default class IconicSettingTab extends PluginSettingTab {
 		// HEADING: Editor
 		new Setting(this.containerEl).setHeading().setName(STRINGS.settings.headingEditor);
 
+		// Show title icons
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.showTitleIcons.name)
+			.setDesc(STRINGS.settings.showTitleIcons.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showTitleIcons)
+				.onChange(value => {
+					this.plugin.settings.showTitleIcons = value;
+					this.plugin.saveSettings();
+					this.plugin.refreshManagers('file');
+				})
+			);
+
 		// Show tag pill icons
 		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showTagPillIcons.name)
