@@ -592,6 +592,7 @@ export default class IconicPlugin extends Plugin {
 			managers.add(this.tabIconManager);
 			managers.add(this.fileIconManager);
 			managers.add(this.bookmarkIconManager);
+			managers.add(this.editorIconManager);
 		}
 		if (categories?.includes('folder')) {
 			managers.add(this.fileIconManager);

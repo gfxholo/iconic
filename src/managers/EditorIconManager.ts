@@ -4,6 +4,7 @@ import { syntaxTree } from '@codemirror/language';
 import IconicPlugin, { TagItem, PropertyItem, STRINGS } from 'src/IconicPlugin';
 import ColorUtils from 'src/ColorUtils';
 import IconManager from 'src/managers/IconManager';
+import RuleEditor from 'src/dialogs/RuleEditor';
 import IconPicker from 'src/dialogs/IconPicker';
 
 /**
@@ -73,9 +74,23 @@ export default class EditorIconManager extends IconManager {
 	}
 
 	/**
+	 * Refresh title icon whenever editing mode changes.
+	 */
+	private observeEditingMode(view: MarkdownView): void {
+		this.setMutationObserver(view.containerEl, { attributes: true }, mutation => {
+			if (mutation.attributeName === 'data-mode') {
+				this.refreshTitleIcon(view);
+			}
+		});
+	}
+
+	/**
 	 * Refresh whenever a given MarkdownView needs to redraw its icons.
 	 */
 	private observeViewIcons(view: MarkdownView): void {
+		// Editing mode
+		this.observeEditingMode(view);
+
 		// Properties list
 		// @ts-expect-error (Private API)
 		const propsEl: HTMLElement = view.metadataEditor?.propertyListEl;
@@ -168,6 +183,9 @@ export default class EditorIconManager extends IconManager {
 	 * Refresh all icons in a single MarkdownView.
 	 */
 	refreshViewIcons(view: MarkdownView, unloading?: boolean): void {
+		// Refresh title icon
+		this.refreshTitleIcon(view, unloading);
+
 		// Refresh property icons
 		const props = this.plugin.getPropertyItems(unloading);
 		this.refreshPropertyIcons(props, view);
@@ -180,6 +198,100 @@ export default class EditorIconManager extends IconManager {
 		const tagEls = view.containerEl.findAll('a.tag');
 		this.refreshReadingHashtags(tags, tagEls, unloading);
 		this.refreshLivePreviewHashtags(view.editor);
+	}
+
+	/**
+	 * Refresh inline title icon.
+	 */
+	private refreshTitleIcon(view: MarkdownView, unloading?: boolean): void {
+		if (!view.file) return;
+		// @ts-expect-error (Private API)
+		const titleEl = view.inlineTitleEl;
+		if (!(titleEl instanceof HTMLElement)) return;
+		const headerEl = titleEl.closest('.mod-header, .cm-sizer');
+		if (!(headerEl instanceof HTMLElement)) return;
+
+		// Remove wrapper if necessary
+		if (unloading) {
+			const wrapperEl = headerEl.find(':scope > .iconic-title-wrapper');
+			if (wrapperEl) {
+				headerEl.prepend(titleEl);
+				wrapperEl.remove();
+			}
+			return;
+		}
+
+		// Set up title wrapper
+		const wrapperEl = headerEl.find(':scope > .iconic-title-wrapper')
+			?? createDiv({ cls: 'iconic-title-wrapper' });
+		const iconEl = wrapperEl.find(':scope > .iconic-icon')
+			?? createDiv({ cls: 'iconic-icon' });;
+		wrapperEl.append(iconEl, titleEl);
+		headerEl.prepend(wrapperEl);
+
+		// Get file and/or rule icon
+		const file = this.plugin.getFileItem(view.file.path);
+		const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
+		if (!rule.icon && !rule.color) file.iconDefault = null;
+
+		// Refresh icon
+		if (this.plugin.isSettingEnabled('clickableIcons')) {
+			this.refreshIcon(rule, iconEl, () => {
+				IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
+					this.plugin.saveFileIcon(file, newIcon, newColor);
+					this.plugin.refreshManagers('file');
+				});
+			});
+		} else {
+			this.refreshIcon(rule, iconEl);
+		}
+		iconEl.addClass('iconic-icon');
+		
+		// Add menu actions
+		if (this.plugin.settings.showMenuActions) {
+			this.setEventListener(iconEl, 'contextmenu', event => {
+				navigator?.vibrate(100); // Not supported on iOS
+				const menu = new Menu();
+				menu.addItem(item => item
+					.setTitle(STRINGS.menu.changeIcon)
+					.setIcon('lucide-image-plus')
+					.setSection('icon')
+					.onClick(() => {
+						IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
+							this.plugin.saveFileIcon(file, newIcon, newColor);
+							this.plugin.refreshManagers('file', 'folder');
+						});
+					})
+				);
+				if (file.icon || file.color) menu.addItem(item => item
+					.setTitle(STRINGS.menu.removeIcon)
+					.setIcon('lucide-image-minus')
+					.setSection('icon')
+					.onClick(() => {
+						this.plugin.saveFileIcon(file, null, null);
+						this.plugin.refreshManagers('file');
+					})
+				);
+				const rule = this.plugin.ruleManager.checkRuling('file', file.id);
+				if (rule) menu.addItem(item => { item
+					.setTitle('Edit rule...')
+					.setIcon('lucide-image-play')
+					.setSection('icon')
+					.onClick(() => RuleEditor.open(this.plugin, 'file', rule, newRule => {
+						const isRulingChanged = newRule
+							? this.plugin.ruleManager.saveRule('file', newRule)
+							: this.plugin.ruleManager.deleteRule('file', rule.id);
+						if (isRulingChanged) {
+							this.refreshIcons();
+							this.plugin.refreshManagers('file');
+						}
+					}));
+				});
+				menu.showAtPosition(event);
+			});
+		} else {
+			this.stopEventListener(iconEl, 'contextmenu');
+		}
 	}
 
 	/**

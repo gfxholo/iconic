@@ -116,7 +116,34 @@ a.tag {
 	filter: contrast(200%);
 }
 
-/* Properties editor */
+/* Editor title */
+.iconic-title-wrapper {
+	display: none;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.3em;
+	font-size: var(--inline-title-size); /* Allow gap size to scale naturally */
+}
+.show-inline-title .iconic-title-wrapper {
+	display: flex;
+}
+.iconic-title-wrapper > .iconic-icon {
+	--icon-size: 1.25em;
+	margin-block-end: var(--inline-title-margin-bottom);
+	line-height: 0;
+}
+.iconic-clickable-icons .iconic-title-wrapper > .iconic-icon:hover {
+	cursor: var(--cursor-link);
+	filter: contrast(200%);
+}
+.is-mobile .iconic-title-wrapper > .iconic-icon {
+	padding-top: 0.25em;
+}
+.iconic-title-wrapper > .inline-title {
+	font-size: inherit;
+}
+
+/* Editor properties */
 .iconic-clickable-icons .metadata-property-icon.iconic-icon:hover {
 	cursor: var(--cursor-link);
 	filter: contrast(200%);
