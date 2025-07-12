@@ -103,11 +103,15 @@ a.tag {
 .multi-select-pill > .iconic-icon + .multi-select-pill-content {
 	margin-inline-start: 0;
 }
-.multi-select-pill > .iconic-icon + .multi-select-pill-content + .multi-select-pill-remove-button {
-	color: inherit;
+.cm-hashtag-begin > .iconic-icon {
+	--icon-size: var(--icon-xs);
+	display: inline-block;
+	margin-inline-end: var(--size-4-1);
+	transform: translateY(1.5px);
 }
 .iconic-clickable-icons .tag > .iconic-icon:hover,
-.iconic-clickable-icons .multi-select-pill > .iconic-icon:hover {
+.iconic-clickable-icons .multi-select-pill > .iconic-icon:hover,
+.iconic-clickable-icons .cm-hashtag-begin > .iconic-icon:hover {
 	cursor: var(--cursor-link);
 	filter: contrast(200%);
 }
@@ -136,7 +140,7 @@ a.tag {
 .iconic-quick-switcher .iconic-icon {
 	height: var(--icon-size);
 }
-.iconic-quick-switcher .prompt-input {
+.iconic-quick-switcher > .prompt-input-container > .prompt-input {
 	padding-inline-start: calc(var(--icon-size) + var(--size-4-8));
 }
 .iconic-quick-switcher .suggestion-item {

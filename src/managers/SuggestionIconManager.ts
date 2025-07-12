@@ -1,50 +1,73 @@
-import { AbstractInputSuggest } from 'obsidian';
+import { AbstractInputSuggest, EditorSuggest } from 'obsidian';
 import IconicPlugin from 'src/IconicPlugin';
 import IconManager from 'src/managers/IconManager';
 
-const PROPERTY_SUGGESTIONS = 'properties';
-const TAG_SUGGESTIONS = 'tags';
+const PROPERTY_SUGGESTION = 'property';
+const TAG_SUGGESTION = 'tag';
 
 /**
  * Intercepts suggestion popovers to add custom icons.
  */
 export default class SuggestionIconManager extends IconManager {
 	// @ts-expect-error (Private API)
-	private showSuggestionsOriginal: typeof AbstractInputSuggest.prototype.showSuggestions;
+	private showAbstractSuggestionsOriginal: typeof AbstractInputSuggest.prototype.showSuggestions;
 	// @ts-expect-error (Private API)
-	private showSuggestionsProxy: typeof AbstractInputSuggest.prototype.showSuggestions;
+	private showAbstractSuggestionsProxy: typeof AbstractInputSuggest.prototype.showSuggestions;
+	private renderAbstractSuggestionProxy: typeof AbstractInputSuggest.prototype.renderSuggestion;
+
+	// @ts-expect-error (Private API)
+	private showEditorSuggestionsOriginal: typeof AbstractInputSuggest.prototype.showSuggestions;
+	// @ts-expect-error (Private API)
+	private showEditorSuggestionsProxy: typeof AbstractInputSuggest.prototype.showSuggestions;
+	private renderEditorSuggestionProxy: typeof AbstractInputSuggest.prototype.renderSuggestion;
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
+		this.setupAbstractSuggestionProxies();
+		this.setupEditorSuggestionProxies();
+	}
+
+	/**
+	 * Intercept property key/value suggestion popovers.
+	 */
+	private setupAbstractSuggestionProxies(): void {
 		const manager = this;
 
 		// Store original method
 		// @ts-expect-error (Private API)
-		this.showSuggestionsOriginal = AbstractInputSuggest.prototype.showSuggestions;
+		this.showAbstractSuggestionsOriginal = AbstractInputSuggest.prototype.showSuggestions;
 
 		// Catch popovers before they open
 		// @ts-expect-error (Private API)
-		this.showSuggestionsProxy = new Proxy(AbstractInputSuggest.prototype.showSuggestions, {
+		this.showAbstractSuggestionsProxy = new Proxy(AbstractInputSuggest.prototype.showSuggestions, {
 			apply(showSuggestions, popover: AbstractInputSuggest<any>, args) {
 				if (manager.isDisabled()) {
 					return showSuggestions.call(popover, ...args);
 				}
 
 				// Proxy renderSuggestion() for each instance
-				popover.renderSuggestion = new Proxy(popover.renderSuggestion, {
-					apply(renderSuggestion, popover: AbstractInputSuggest<any>, args: [any, HTMLElement]) {
-						// Call base method first to pre-populate elements
-						const returnValue = renderSuggestion.call(popover, ...args);
-						if (manager.isDisabled()) return returnValue;
+				if (popover.renderSuggestion !== manager.renderAbstractSuggestionProxy) {
+					manager.renderAbstractSuggestionProxy = new Proxy(popover.renderSuggestion, {
+						apply(renderSuggestion, popover: AbstractInputSuggest<any>, args: [any, HTMLElement]) {
+							// Call base method first to pre-populate elements
+							const returnValue = renderSuggestion.call(popover, ...args);
+							if (manager.isDisabled()) return returnValue;
 
-						switch (manager.getPopoverType(popover)) {
-							case PROPERTY_SUGGESTIONS: manager.refreshPropertyIcon(...args); break;
-							case TAG_SUGGESTIONS: manager.refreshTagIcon(...args); break;
+							const [value, el] = args;
+							if (!value || !(el instanceof HTMLElement)) return;
+
+							switch (manager.getSuggestionType(value)) {
+								case PROPERTY_SUGGESTION: manager.refreshPropertyIcon(value, el); break;
+								case TAG_SUGGESTION: manager.refreshTagIcon(value, el); break;
+							}
+
+							return returnValue;
 						}
+					});
 
-						return returnValue;
-					}
-				});
+					// Replace original method
+					popover.renderSuggestion = manager.renderAbstractSuggestionProxy;
+				}
 
 				return showSuggestions.call(popover, ...args);
 			}
@@ -52,26 +75,66 @@ export default class SuggestionIconManager extends IconManager {
 
 		// @ts-expect-error (Private API)
 		// Replace original method
-		AbstractInputSuggest.prototype.showSuggestions = this.showSuggestionsProxy;
+		AbstractInputSuggest.prototype.showSuggestions = this.showAbstractSuggestionsProxy;
 	}
 
 	/**
-	 * Determine which type of popover this is.
+	 * Intercept editor suggestion popovers.
 	 */
-	private getPopoverType(popover: AbstractInputSuggest<any>): string | null {
+	private setupEditorSuggestionProxies(): void {
+		const manager = this;
+
+		// Store original method
 		// @ts-expect-error (Private API)
-		const { suggestEl, textInputEl } = popover;
+		this.showEditorSuggestionsOriginal = EditorSuggest.prototype.showSuggestions;
 
-		if (!(suggestEl instanceof HTMLElement)) return null;
-		if (suggestEl.hasClass('mod-property-key')) {
-			return PROPERTY_SUGGESTIONS;
-		}
+		// Catch popovers before they open
+		// @ts-expect-error (Private API)
+		this.showEditorSuggestionsProxy = new Proxy(EditorSuggest.prototype.showSuggestions, {
+			apply(showSuggestions, popover: EditorSuggest<any>, args) {
+				if (manager.isDisabled()) {
+					return showSuggestions.call(popover, ...args);
+				}
 
-		if (!(textInputEl instanceof HTMLElement)) return null;
-		if (suggestEl.hasClass('mod-property-value') && textInputEl.closest('.metadata-property[data-property-key="tags"]')) {
-			return TAG_SUGGESTIONS;
-		}
+				// Proxy renderSuggestion() for each instance
+				if (popover.renderSuggestion !== manager.renderEditorSuggestionProxy) {
+					manager.renderEditorSuggestionProxy = new Proxy(popover.renderSuggestion, {
+						apply(renderSuggestion, popover: EditorSuggest<any>, args: [any, HTMLElement]) {
+							// Call base method first to pre-populate elements
+							const returnValue = renderSuggestion.call(popover, ...args);
+							if (manager.isDisabled()) return returnValue;
 
+							const [value, el] = args;
+							if (!value || !(el instanceof HTMLElement)) return;
+
+							switch (manager.getSuggestionType(value)) {
+								case PROPERTY_SUGGESTION: manager.refreshPropertyIcon(value, el); break;
+								case TAG_SUGGESTION: manager.refreshTagIcon(value, el); break;
+							}
+
+							return returnValue;
+						}
+					});
+
+					// Replace original method
+					popover.renderSuggestion = manager.renderEditorSuggestionProxy;
+				}
+
+				return showSuggestions.call(popover, ...args);
+			}
+		});
+
+		// @ts-expect-error (Private API)
+		// Replace original method
+		EditorSuggest.prototype.showSuggestions = this.showEditorSuggestionsProxy;
+	}
+
+	/**
+	 * Determine which type of suggestion this is.
+	 */
+	private getSuggestionType(value: any): string | null {
+		if ('tag' in value) return TAG_SUGGESTION;
+		if ('text' in value && 'type' in value) return PROPERTY_SUGGESTION;
 		return null;
 	}
 
@@ -140,10 +203,17 @@ export default class SuggestionIconManager extends IconManager {
 	 */
 	unload(): void {
 		super.unload();
+
 		// @ts-expect-error (Private API)
-		if (AbstractInputSuggest.prototype.showSuggestions === this.showSuggestionsProxy) {
+		if (AbstractInputSuggest.prototype.showSuggestions === this.showAbstractSuggestionsProxy) {
 			// @ts-expect-error (Private API)
-			AbstractInputSuggest.prototype.showSuggestions = this.showSuggestionsOriginal;
+			AbstractInputSuggest.prototype.showSuggestions = this.showAbstractSuggestionsOriginal;
+		}
+
+		// @ts-expect-error (Private API)
+		if (EditorSuggest.prototype.showSuggestions === this.showEditorSuggestionsProxy) {
+			// @ts-expect-error (Private API)
+			EditorSuggest.prototype.showSuggestions = this.showEditorSuggestionsOriginal;
 		}
 	}
 }

@@ -1,4 +1,6 @@
-import { MarkdownPreviewView, MarkdownView, Platform } from 'obsidian';
+import { Editor, MarkdownView, Menu } from 'obsidian';
+import { ViewPlugin, ViewUpdate } from '@codemirror/view';
+import { syntaxTree } from '@codemirror/language';
 import IconicPlugin, { TagItem, PropertyItem, STRINGS } from 'src/IconicPlugin';
 import ColorUtils from 'src/ColorUtils';
 import IconManager from 'src/managers/IconManager';
@@ -11,52 +13,58 @@ export default class EditorIconManager extends IconManager {
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
 
-		// Markdown post-processor for hashtags (reading mode)
+		// Style hashtags in reading mode
 		this.plugin.registerMarkdownPostProcessor(sectionEl => {
 			const tags = this.plugin.getTagItems();
-			if (tags.length === 0) return;
 			const tagEls = sectionEl.findAll('a.tag');
-			for (const tagEl of tagEls) {
-				const tagId = tagEl.getAttribute('href')?.replace('#', '');
-				if (!tagId) continue;
-				const tag = tags.find(tag => tag.id === tagId);
-				if (!tag) continue;
-				EditorIconManager.setTagColor(tag, tagEl);
-				const iconEl = tagEl.find('.iconic-icon') ?? createSpan();
-				tagEl.prepend(iconEl);
-				if (this.plugin.isSettingEnabled('clickableIcons')) {
-					this.refreshIcon(tag, iconEl, event => {
-						IconPicker.openSingle(this.plugin, tag, (newIcon, newColor) => {
-							this.plugin.saveTagIcon(tag, newIcon, newColor);
-							this.plugin.refreshManagers('tag');
-						});
-						event.stopPropagation();
-					});
-				} else {
-					this.refreshIcon(tag, iconEl);
-				}
-				if (this.plugin.settings.showMenuActions) {
-					this.setEventListener(tagEl, 'contextmenu', event => {
-						this.onTagNewContextMenu(tag.id, event);
-					});
-				} else {
-					this.stopEventListener(tagEl, 'contextmenu');
-				}
-			}
+			this.refreshReadingHashtags(tags, tagEls);
 		});
 
-		// Initialize any open MarkdownViews
+		const manager = this;
+		plugin.registerEditorExtension(ViewPlugin.fromClass(class {
+			update(update: ViewUpdate): void {
+				let viewport = update.view.viewport;
+				let tree = syntaxTree(update.view.state);
+
+				tree.iterate({ from: viewport.from, to: viewport.to, enter: (nodeRef) => {
+					if (!nodeRef.name.includes('hashtag-begin')) return;
+
+					// Get both tag elements
+					const beginEl = update.view.domAtPos(nodeRef.to).node.parentElement;
+					if (!(beginEl instanceof HTMLElement)) return;
+					const endEl = beginEl?.nextElementSibling;
+					if (!(endEl instanceof HTMLElement) || !endEl.hasClass('cm-hashtag-end')) return;
+
+					// Get tag
+					const tagId = endEl.getText();
+					const tag = manager.plugin.getTagItem(tagId);
+
+					// Refresh tag
+					const onContextMenu = () => {
+						if (tag) manager.onTagContextMenu(tag.id, true);
+					};
+					manager.refreshTag(beginEl, tag, onContextMenu);
+					if (tag) tag.icon = null;
+					manager.refreshTag(endEl, tag, onContextMenu);
+				}})
+			}
+		}));
+
+		// Initialize MarkdownViews as they open
+		this.plugin.registerEvent(this.app.workspace.on('active-leaf-change', leaf => {
+			if (leaf?.view instanceof MarkdownView) {
+				this.observeViewIcons(leaf.view);
+				this.refreshViewIcons(leaf.view);
+			}
+		}));
+
+		// Initialize any current MarkdownViews
 		for (const leaf of this.app.workspace.getLeavesOfType('markdown')) {
 			if (leaf.view instanceof MarkdownView) {
 				this.observeViewIcons(leaf.view);
 				this.refreshViewIcons(leaf.view);
 			}
 		}
-
-		// Refresh icons in the active leaf
-		this.plugin.registerEvent(this.app.workspace.on('active-leaf-change', () => {
-			this.refreshIcons();
-		}));
 
 		// If we add a new property to a file, refresh property icons
 		this.plugin.registerEvent(this.app.vault.on('modify', () => {
@@ -68,28 +76,16 @@ export default class EditorIconManager extends IconManager {
 	 * Refresh whenever a given MarkdownView needs to redraw its icons.
 	 */
 	private observeViewIcons(view: MarkdownView): void {
-		// Note container
-		this.observeContainer(view.containerEl, view);
-
 		// Properties list
 		// @ts-expect-error (Private API)
 		const propsEl: HTMLElement = view.metadataEditor?.propertyListEl;
 		if (!propsEl) return;
 		this.observeProperties(propsEl, view);
 
-		// "Tags" property
+		// `tags` property
 		const tagsEl: HTMLElement = propsEl.find('.metadata-property[data-property-key="tags"] .multi-select-container');
 		if (!tagsEl) return;
 		this.observeTagsProperty(tagsEl, view);
-	}
-
-	/**
-	 * Refresh whenever a given container switches edit modes.
-	 */
-	private observeContainer(containerEl: HTMLElement, view: MarkdownView): void {
-		this.setMutationsObserver(containerEl, { attributeFilter: ['data-mode'] }, () => {
-			this.refreshViewIcons(view);
-		});
 	}
 
 	/**
@@ -113,7 +109,7 @@ export default class EditorIconManager extends IconManager {
 		});
 
 		this.setEventListener(propsEl, 'click', event => {
-			const pointEls = activeDocument.elementsFromPoint(event.x, event.y);
+			const pointEls = event.doc.elementsFromPoint(event.x, event.y);
 			const iconEl = pointEls.find(el => el.hasClass('metadata-property-icon'));
 			const propEl = pointEls.find(el => el.hasClass('metadata-property'));
 			if (iconEl && propEl instanceof HTMLElement) {
@@ -134,7 +130,7 @@ export default class EditorIconManager extends IconManager {
 
 		if (this.plugin.settings.showMenuActions) {
 			this.setEventListener(propsEl, 'contextmenu', event => {
-				const pointEls = activeDocument.elementsFromPoint(event.x, event.y);
+				const pointEls = event.doc.elementsFromPoint(event.x, event.y);
 				const iconEl = pointEls.find(el => el.hasClass('metadata-property-icon'));
 				const propEl = pointEls.find(el => el.hasClass('metadata-property'));
 				if (iconEl && propEl instanceof HTMLElement) {
@@ -150,7 +146,7 @@ export default class EditorIconManager extends IconManager {
 	}
 
 	/**
-	 * Refresh whenever the "tags" property changes.
+	 * Refresh whenever the `tags` property changes.
 	 */
 	private observeTagsProperty(tagsEl: HTMLElement, view: MarkdownView): void {
 		this.setMutationsObserver(tagsEl, { childList: true }, () => this.refreshViewIcons(view));
@@ -172,14 +168,18 @@ export default class EditorIconManager extends IconManager {
 	 * Refresh all icons in a single MarkdownView.
 	 */
 	refreshViewIcons(view: MarkdownView, unloading?: boolean): void {
-		// Trigger markdown post-processor
-		if (view.currentMode instanceof MarkdownPreviewView) {
-			view.currentMode.rerender(true);
-		}
+		// Refresh property icons
 		const props = this.plugin.getPropertyItems(unloading);
-		const tags = this.plugin.getTagItems(unloading);
 		this.refreshPropertyIcons(props, view);
-		this.refreshTagIcons(tags, view);
+
+		// Refresh `tags` property
+		const tags = this.plugin.getTagItems(unloading);
+		this.refreshTagsPropertyIcons(tags, view, unloading);
+
+		// Refresh hashtags
+		const tagEls = view.containerEl.findAll('a.tag');
+		this.refreshReadingHashtags(tags, tagEls, unloading);
+		this.refreshLivePreviewHashtags(view.editor);
 	}
 
 	/**
@@ -202,88 +202,110 @@ export default class EditorIconManager extends IconManager {
 	}
 
 	/**
-	 * Refresh all tag icons in a single MarkdownView.
-	*/
-	private refreshTagIcons(tags: TagItem[], view: MarkdownView): void {
+	 * Refresh all tag icons in the `tags` property.
+	 */
+	private refreshTagsPropertyIcons(tags: TagItem[], view: MarkdownView, unloading?: boolean): void {
 		// @ts-expect-error (Private API)
 		const propListEl: HTMLElement = view.metadataEditor?.propertyListEl;
 		if (!propListEl) return;
 		const propTagEls = view.contentEl.findAll('.metadata-property[data-property-key="tags"] .multi-select-pill');
 		if (!propTagEls) return;
 
-		// "Tags" property
+		// Refresh each tag pill
 		for (const propTagEl of propTagEls) {
 			const tagId = propTagEl.find(':scope > .multi-select-pill-content')?.getText();
 			if (!tagId) continue;
-			const tag = tags.find(tag => tag.id === tagId);
-			if (!tag) continue;
-			if (tag.icon) {
-				const iconEl = propTagEl.find('.iconic-icon') ?? createSpan();
-				if (iconEl !== propTagEl.firstChild) {
-					propTagEl.insertBefore(iconEl, propTagEl.firstChild);
-				}
-				if (this.plugin.isSettingEnabled('clickableIcons')) {
-					this.refreshIcon(tag, iconEl, event => {
-						IconPicker.openSingle(this.plugin, tag, (newIcon, newColor) => {
-							this.plugin.saveTagIcon(tag, newIcon, newColor);
-							this.plugin.refreshManagers('tag');
-						});
-						event.stopPropagation();
-					});
-				} else {
-					this.refreshIcon(tag, iconEl);
-				}
-			} else {
-				const iconEl = propTagEl.find('.iconic-icon');
-				iconEl?.remove();
-			}
-			EditorIconManager.setTagColor(tag, propTagEl);
-			if (this.plugin.settings.showMenuActions) {
-				this.setEventListener(propTagEl, 'contextmenu', () => this.onTagContextMenu(tag.id));
-			} else {
-				this.stopEventListener(propTagEl, 'contextmenu');
-			}
+			const tag = tags.find(tag => tag.id === tagId) ?? null;
+			this.refreshTag(propTagEl, tag, () => {
+				if (tag) this.onTagContextMenu(tag.id);
+			}, unloading);
+		}
+	}
+
+	/**
+	 * Refresh all hashtag elements in reading mode.
+	 */
+	private refreshReadingHashtags(tags: TagItem[], tagEls: HTMLElement[], unloading?: boolean): void {
+		for (const tagEl of tagEls) {
+			const tagId = tagEl.getAttribute('href')?.replace('#', '');
+			if (!tagId) continue;
+			const tag = tags.find(tag => tag.id === tagId) ?? null;
+			this.refreshTag(tagEl, tag, event => {
+				if (tag) this.onCreateTagContextMenu(tag.id, event);
+			}, unloading);
+		}
+	}
+
+	/**
+	 * Refresh all hashtag elements in live preview mode.
+	 */
+	private refreshLivePreviewHashtags(editor: Editor): void {
+		editor.replaceRange('', editor.getCursor());
+	}
+
+	/**
+	 * Refresh a given tag pill element.
+	 */
+	private refreshTag(tagEl: HTMLElement, tag: TagItem | null, onContextMenu: (event: MouseEvent) => void, unloading?: boolean): void {
+		// Remove styling if necessary
+		if (!tag || unloading) {
+			tagEl.find('.iconic-icon')?.remove();
+			this.setTagColor(tagEl, null);
+			this.stopEventListener(tagEl, 'contextmenu');
+			return;
 		}
 
-		// Hashtags (editing mode)
-		if (view.getMode() === 'source') {
-			let editingViewEl: HTMLElement | undefined;
-			for (const childEl of view.contentEl.children) {
-				if (childEl instanceof HTMLElement && childEl.hasClass('markdown-source-view')) {
-					editingViewEl = childEl;
-					break;
-				}
-			}
-			const tagEndEls = editingViewEl?.findAll('.cm-hashtag-end') ?? [];
-			for (const tagEndEl of tagEndEls) {
-				const tagId = tagEndEl.getText();
-				if (!tagId) continue;
-				const tag = tags.find(tag => tag.id === tagId);
-				if (!tag) continue;
-				// Decorate 1st half of tag
-				const tagBeginEl = tagEndEl.previousElementSibling;
-				if (tagBeginEl instanceof HTMLElement && tagBeginEl.hasClass('cm-hashtag-begin')) {
-					EditorIconManager.setTagColor(tag, tagBeginEl);
-					if (this.plugin.settings.showMenuActions) {
-						this.setEventListener(tagBeginEl, 'contextmenu', event => {
-							if (Platform.isDesktop) this.onTagContextMenu(tag.id, true);
-							if (Platform.isMobile) this.onTagNewContextMenu(tag.id, event);
-						});
-					} else {
-						this.stopEventListener(tagBeginEl, 'contextmenu');
-					}
-				}
-				// Decorate 2nd half of tag
-				EditorIconManager.setTagColor(tag, tagEndEl);
-				if (this.plugin.settings.showMenuActions) {
-					this.setEventListener(tagEndEl, 'contextmenu', event => {
-						if (Platform.isDesktop) this.onTagContextMenu(tag.id, true);
-						if (Platform.isMobile) this.onTagNewContextMenu(tag.id, event);
+		// Set icon & color
+		if (tag.icon) {
+			const iconEl = tagEl.find('.iconic-icon') ?? createSpan();
+			tagEl.prepend(iconEl);
+			if (tag && this.plugin.isSettingEnabled('clickableIcons')) {
+				this.refreshIcon(tag, iconEl, event => {
+					IconPicker.openSingle(this.plugin, tag, (newIcon, newColor) => {
+						this.plugin.saveTagIcon(tag, newIcon, newColor);
+						this.plugin.refreshManagers('tag');
 					});
-				} else {
-					this.stopEventListener(tagEndEl, 'contextmenu');
-				}
+					event.stopPropagation();
+				});
+			} else {
+				this.refreshIcon(tag, iconEl);
 			}
+		} else {
+			const iconEl = tagEl.find('.iconic-icon');
+			iconEl?.remove();
+		}
+		this.setTagColor(tagEl, tag?.color ?? null);
+
+		// Set menu actions
+		if (this.plugin.settings.showMenuActions) {
+			this.setEventListener(tagEl, 'contextmenu', event => onContextMenu(event));
+		} else {
+			this.stopEventListener(tagEl, 'contextmenu');
+		}
+	}
+
+	/**
+	 * Apply a tag color to a tag pill element.
+	 */
+	private setTagColor(tagEl: HTMLElement, color: string | null): void {
+		if (color) {
+			const cssRgb = ColorUtils.toRgb(color);
+			const cssRgba = cssRgb.replace('rgb(', 'rgba(').replace(')', '');
+			tagEl.style.setProperty('--tag-color', cssRgb);
+			tagEl.style.setProperty('--tag-color-hover', cssRgb);
+			tagEl.style.setProperty('--tag-color-remove-hover', cssRgb);
+			tagEl.style.setProperty('--tag-background', cssRgba + ', 0.1)');
+			tagEl.style.setProperty('--tag-background-hover', cssRgba + ', 0.1)');
+			tagEl.style.setProperty(`--tag-border-color`, cssRgba + ', 0.25)');
+			tagEl.style.setProperty(`--tag-border-color-hover`, cssRgba + ', 0.5)');
+		} else {
+			tagEl.style.removeProperty('--tag-color');
+			tagEl.style.removeProperty('--tag-color-hover');
+			tagEl.style.removeProperty('--tag-color-remove-hover');
+			tagEl.style.removeProperty('--tag-background');
+			tagEl.style.removeProperty('--tag-background-hover');
+			tagEl.style.removeProperty(`--tag-border-color`);
+			tagEl.style.removeProperty(`--tag-border-color-hover`);
 		}
 	}
 
@@ -291,7 +313,7 @@ export default class EditorIconManager extends IconManager {
 	 * When user context-clicks a property, add custom items to the menu.
 	 */
 	private onPropertyContextMenu(propId: string): void {
-		navigator?.vibrate(100); // Might not be supported on iOS
+		navigator?.vibrate(100); // Not supported on iOS
 		this.plugin.menuManager.closeAndFlush();
 		const prop = this.plugin.getPropertyItem(propId);
 
@@ -324,7 +346,6 @@ export default class EditorIconManager extends IconManager {
 	 * When user context-clicks a tag, add custom items to the menu.
 	 */
 	private onTagContextMenu(tagId: string, isEditingMode?: boolean): void {
-		navigator?.vibrate(100); // Not supported on iOS
 		this.plugin.menuManager.closeAndFlush();
 		const tag = this.plugin.getTagItem(tagId);
 		if (!tag) return;
@@ -355,28 +376,11 @@ export default class EditorIconManager extends IconManager {
 	}
 
 	/**
-	 * When user context-clicks a tag, open a menu.
+	 * When user context-clicks a tag without a menu, create a new one.
 	 */
-	private onTagNewContextMenu(tagId: string, event: MouseEvent): void {
+	private onCreateTagContextMenu(tagId: string, event: MouseEvent): void {
+		navigator?.vibrate(100); // Not supported on iOS
 		this.plugin.tagIconManager?.onContextMenu(tagId, event);
-	}
-
-	private static setTagColor(tag: TagItem, tagEl: HTMLElement): void {
-		if (tag.color) {
-			const cssRgb = ColorUtils.toRgb(tag.color);
-			const cssRgba = cssRgb.replace('rgb(', 'rgba(').replace(')', '');
-			tagEl.style.setProperty('color', cssRgb);
-			tagEl.style.setProperty('background-color', cssRgba + ', 0.1)');
-			tagEl.style.setProperty(`--tag-border-color`, cssRgba + ', 0.25)');
-			tagEl.style.setProperty(`--tag-border-color-hover`, cssRgba + ', 0.5)');
-			if (tagEl.hasClass('multi-select-pill')) tagEl.style.setProperty(`--pill-color-remove`, cssRgb);
-		} else {
-			tagEl.style.removeProperty('color');
-			tagEl.style.removeProperty('background-color');
-			tagEl.style.removeProperty(`--tag-border-color`);
-			tagEl.style.removeProperty(`--tag-border-color-hover`);
-			if (tagEl.hasClass('multi-select-pill')) tagEl.style.removeProperty(`--pill-color-remove`);
-		}
 	}
 
 	/**
@@ -384,6 +388,7 @@ export default class EditorIconManager extends IconManager {
 	 */
 	unload(): void {
 		this.refreshIcons(true);
+		this.stopMutationObservers();
 		super.unload();
 	}
 }
