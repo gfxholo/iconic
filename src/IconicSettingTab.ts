@@ -150,6 +150,22 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			);
 
+		// HEADING: Editor
+		new Setting(this.containerEl).setHeading().setName(STRINGS.settings.headingEditor);
+
+		// Show tag pill icons
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.showTagPillIcons.name)
+			.setDesc(STRINGS.settings.showTagPillIcons.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showTagPillIcons)
+				.onChange(value => {
+					this.plugin.settings.showTagPillIcons = value;
+					this.plugin.saveSettings();
+					this.plugin.refreshManagers('tag');
+				})
+			);
+
 		// HEADING: Menus & dialogs
 		new Setting(this.containerEl).setHeading().setName(STRINGS.settings.headingMenusAndDialogs);
 

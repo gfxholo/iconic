@@ -280,6 +280,7 @@ export default class Strings {
 		toggleAllFolderIcons: 'Toggle all folder icons',
 		toggleMinimalFolderIcons: 'Toggle minimal folder icons',
 		toggleMarkdownTabIcons: 'Toggle Markdown tab icons',
+		toggleTagPillIcons: 'Toggle tag pill icons',
 		toggleMenuActions: 'Toggle menu actions',
 		toggleQuickSwitcherIcons: 'Toggle quick switcher icons',
 		toggleBiggerSearchResults: 'Toggle bigger search results',
@@ -325,6 +326,11 @@ export default class Strings {
 		showMarkdownTabIcons: {
 			name: 'Show Markdown tab icons',
 			desc: 'Show tab icons for Markdown files.',
+		},
+		headingEditor: 'Editor',
+		showTagPillIcons: {
+			name: 'Show tag pill icons',
+			desc: 'Show icons in #hashtags and the tags property.',
 		},
 		headingMenusAndDialogs: 'Menus & dialogs',
 		showMenuActions: {

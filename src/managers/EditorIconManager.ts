@@ -248,7 +248,7 @@ export default class EditorIconManager extends IconManager {
 	 */
 	private refreshTag(tagEl: HTMLElement, tag: TagItem | null, onContextMenu: (event: MouseEvent) => void, unloading?: boolean): void {
 		// Remove styling if necessary
-		if (!tag || unloading) {
+		if (!this.plugin.settings.showTagPillIcons || !tag || unloading) {
 			tagEl.find('.iconic-icon')?.remove();
 			this.setTagColor(tagEl, null);
 			this.stopEventListener(tagEl, 'contextmenu');
