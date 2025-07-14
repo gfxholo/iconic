@@ -299,7 +299,7 @@
 			"desc": "为文件和文件夹图标设置自动规则。",
 			"manage": "管理"
 		},
-		"headingSidebarAndTabIcons": "侧边栏和标签图标",
+		"headingSidebarsAndTabs": "侧边栏和标签图标",
 		"biggerIcons": {
 			"name": "更大的图标",
 			"desc": "显示比默认 UI 更大的图标。"

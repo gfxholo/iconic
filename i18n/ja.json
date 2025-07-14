@@ -299,7 +299,7 @@
 			"desc": "ファイルとフォルダのアイコンの自動ルールを設定します。",
 			"manage": "管理"
 		},
-		"headingSidebarAndTabIcons": "サイドバーとタブのアイコン",
+		"headingSidebarsAndTabs": "サイドバーとタブのアイコン",
 		"biggerIcons": {
 			"name": "大きいアイコン",
 			"desc": "デフォルトの UI よりも大きなアイコンを表示します。"

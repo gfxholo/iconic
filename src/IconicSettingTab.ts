@@ -42,8 +42,8 @@ export default class IconicSettingTab extends PluginSettingTab {
 				});
 			});
 
-		// HEADING: Lists & tabs
-		new Setting(this.containerEl).setName(STRINGS.settings.headingSidebarAndTabIcons).setHeading();
+		// HEADING: Sidebars & tabs
+		new Setting(this.containerEl).setName(STRINGS.settings.headingSidebarsAndTabs).setHeading();
 
 		// Bigger icons
 		new Setting(this.containerEl)

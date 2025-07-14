@@ -299,7 +299,7 @@
 			"desc": "Configurar reglas automatizadas para los íconos de archivos y carpetas",
 			"manage": "Administrar"
 		},
-		"headingSidebarAndTabIcons": "Íconos de la barra lateral y de las pestañas",
+		"headingSidebarsAndTabs": "Íconos de la barra lateral y de las pestañas",
 		"biggerIcons": {
 			"name": "Íconos más grandes",
 			"desc": "Mostrar íconos más grandes que la interfaz de usuario predeterminada."

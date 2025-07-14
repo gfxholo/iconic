@@ -299,7 +299,7 @@
 			"desc": "Automatisierte Regeln für Datei- und Ordnersymbole einrichten.",
 			"manage": "Verwalten"
 		},
-		"headingSidebarAndTabIcons": "Seitenleisten- und Registerkartensymbole",
+		"headingSidebarsAndTabs": "Seitenleisten- und Registerkartensymbole",
 		"biggerIcons": {
 			"name": "Größere Symbole",
 			"desc": "Größere Symbole als die Standard-Benutzeroberfläche anzeigen."

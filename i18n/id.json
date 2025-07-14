@@ -299,7 +299,7 @@
 			"desc": "Siapkan aturan otomatis untuk ikon berkas dan folder.",
 			"manage": "Kelola"
 		},
-		"headingSidebarAndTabIcons": "Ikon bilah sisi & tab",
+		"headingSidebarsAndTabs": "Ikon bilah sisi & tab",
 		"biggerIcons": {
 			"name": "Ikon yang lebih besar",
 			"desc": "Tampilkan ikon yang lebih besar daripada UI default."

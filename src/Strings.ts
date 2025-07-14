@@ -300,7 +300,7 @@ export default class Strings {
 			desc: 'Set up automated rules for file and folder icons.',
 			manage: 'Manage',
 		},
-		headingSidebarAndTabIcons: 'Sidebar & tab icons',
+		headingSidebarsAndTabs: 'Sidebars & tabs',
 		biggerIcons: {
 			name: 'Bigger icons',
 			desc: 'Show bigger icons than the default UI.',
