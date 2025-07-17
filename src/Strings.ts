@@ -300,7 +300,6 @@ export default class Strings {
 			desc: 'Set up automated rules for file and folder icons.',
 			manage: 'Manage',
 		},
-		headingSidebarsAndTabs: 'Sidebars & tabs',
 		biggerIcons: {
 			name: 'Bigger icons',
 			desc: 'Show bigger icons than the default UI.',
@@ -311,6 +310,7 @@ export default class Strings {
 			descDesktop: 'Click an icon to open the icon picker.',
 			descMobile: 'Tap an icon to open the icon picker.',
 		},
+		headingSidebarsAndTabs: 'Sidebars & tabs',
 		showAllFileIcons: {
 			name: 'Show all file icons',
 			desc: 'Show icons for files that have no custom icon.',

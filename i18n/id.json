@@ -299,7 +299,6 @@
 			"desc": "Siapkan aturan otomatis untuk ikon berkas dan folder.",
 			"manage": "Kelola"
 		},
-		"headingSidebarsAndTabs": "Ikon bilah sisi & tab",
 		"biggerIcons": {
 			"name": "Ikon yang lebih besar",
 			"desc": "Tampilkan ikon yang lebih besar daripada UI default."
@@ -310,6 +309,7 @@
 			"descDesktop": "Klik ikon untuk membuka pemilih ikon.",
 			"descMobile": "Ketuk ikon untuk membuka pemilih ikon."
 		},
+		"headingSidebarsAndTabs": "Ikon bilah sisi & tab",
 		"showAllFileIcons": {
 			"name": "Tampilkan semua ikon berkas",
 			"desc": "Tampilkan ikon untuk berkas yang tidak memiliki ikon khusus."

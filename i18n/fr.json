@@ -299,7 +299,6 @@
 			"desc": "Configurer des règles automatisées pour les icônes de fichiers et de dossiers.",
 			"manage": "Gérer"
 		},
-		"headingSidebarsAndTabs": "Icônes de la barre latérale et des onglets",
 		"biggerIcons": {
 			"name": "Icônes plus grandes",
 			"desc": "Afficher des icônes plus grandes que l'interface utilisateur par défaut."
@@ -310,6 +309,7 @@
 			"descDesktop": "Cliquez sur une icône pour ouvrir le sélecteur d'icônes.",
 			"descMobile": "Appuyez sur une icône pour ouvrir le sélecteur d'icônes."
 		},
+		"headingSidebarsAndTabs": "Icônes de la barre latérale et des onglets",
 		"showAllFileIcons": {
 			"name": "Afficher toutes les icônes de fichiers",
 			"desc": "Afficher les icônes des fichiers qui n'ont pas d'icône personnalisée."

@@ -299,7 +299,6 @@
 			"desc": "Automatisierte Regeln für Datei- und Ordnersymbole einrichten.",
 			"manage": "Verwalten"
 		},
-		"headingSidebarsAndTabs": "Seitenleisten- und Registerkartensymbole",
 		"biggerIcons": {
 			"name": "Größere Symbole",
 			"desc": "Größere Symbole als die Standard-Benutzeroberfläche anzeigen."
@@ -310,6 +309,7 @@
 			"descDesktop": "Klicken Sie auf ein Symbol, um die Symbolauswahl zu öffnen.",
 			"descMobile": "Tippen Sie auf ein Symbol, um die Symbolauswahl zu öffnen."
 		},
+		"headingSidebarsAndTabs": "Seitenleisten- und Registerkartensymbole",
 		"showAllFileIcons": {
 			"name": "Alle Dateisymbole anzeigen",
 			"desc": "Symbole für Dateien anzeigen, die kein benutzerdefiniertes Symbol haben."

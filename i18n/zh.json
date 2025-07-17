@@ -299,7 +299,6 @@
 			"desc": "为文件和文件夹图标设置自动规则。",
 			"manage": "管理"
 		},
-		"headingSidebarsAndTabs": "侧边栏和标签图标",
 		"biggerIcons": {
 			"name": "更大的图标",
 			"desc": "显示比默认 UI 更大的图标。"
@@ -310,6 +309,7 @@
 			"descDesktop": "单击图标以打开图标选择器。",
 			"descMobile": "点击图标以打开图标选择器。"
 		},
+		"headingSidebarsAndTabs": "侧边栏和标签图标",
 		"showAllFileIcons": {
 			"name": "显示所有文件图标",
 			"desc": "显示没有自定义图标的文件图标。"

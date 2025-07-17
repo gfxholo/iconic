@@ -42,9 +42,6 @@ export default class IconicSettingTab extends PluginSettingTab {
 				});
 			});
 
-		// HEADING: Sidebars & tabs
-		new Setting(this.containerEl).setName(STRINGS.settings.headingSidebarsAndTabs).setHeading();
-
 		// Bigger icons
 		new Setting(this.containerEl)
 			.setName(STRINGS.settings.biggerIcons.name)
@@ -97,6 +94,9 @@ export default class IconicSettingTab extends PluginSettingTab {
 				});
 				this.refreshIndicator(this.indicators.clickableIcons, dropdown.getValue());
 			});
+
+		// HEADING: Sidebars & tabs
+		new Setting(this.containerEl).setName(STRINGS.settings.headingSidebarsAndTabs).setHeading();
 
 		// Show all file icons
 		new Setting(this.containerEl)

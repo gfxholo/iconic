@@ -299,7 +299,6 @@
 			"desc": "Configurar reglas automatizadas para los íconos de archivos y carpetas",
 			"manage": "Administrar"
 		},
-		"headingSidebarsAndTabs": "Íconos de la barra lateral y de las pestañas",
 		"biggerIcons": {
 			"name": "Íconos más grandes",
 			"desc": "Mostrar íconos más grandes que la interfaz de usuario predeterminada."
@@ -310,6 +309,7 @@
 			"descDesktop": "Haga clic en un ícono para abrir el selector de íconos.",
 			"descMobile": "Toque un ícono para abrir el selector de íconos."
 		},
+		"headingSidebarsAndTabs": "Íconos de la barra lateral y de las pestañas",
 		"showAllFileIcons": {
 			"name": "Mostrar todos los íconos de archivos",
 			"desc": "Mostrar íconos para archivos sin un ícono personalizado."
