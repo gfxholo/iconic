@@ -280,6 +280,7 @@
 		"toggleAllFolderIcons": "Beralih semua ikon folder",
 		"toggleMinimalFolderIcons": "Beralih ikon folder minimal",
 		"toggleMarkdownTabIcons": "Beralih ikon tab Markdown",
+		"toggleTagPillIcons": "Beralih ikon pil tag",
 		"toggleMenuActions": "Beralih tindakan menu",
 		"toggleQuickSwitcherIcons": "Beralih ikon peralih cepat",
 		"toggleBiggerSearchResults": "Beralih hasil pencarian yang lebih besar",
@@ -309,7 +310,7 @@
 			"descDesktop": "Klik ikon untuk membuka pemilih ikon.",
 			"descMobile": "Ketuk ikon untuk membuka pemilih ikon."
 		},
-		"headingSidebarsAndTabs": "Ikon bilah sisi & tab",
+		"headingSidebarsAndTabs": "Bilah sisi dan tab",
 		"showAllFileIcons": {
 			"name": "Tampilkan semua ikon berkas",
 			"desc": "Tampilkan ikon untuk berkas yang tidak memiliki ikon khusus."
@@ -326,10 +327,23 @@
 			"name": "Tampilkan ikon tab Markdown",
 			"desc": "Tampilkan ikon tab untuk file Markdown."
 		},
+		"headingEditor": "Editor",
+		"showTitleIcons": {
+			"name": "Tampilkan ikon judul",
+			"desc": "Tampilkan ikon di judul catatan jika judul sebaris diaktifkan."
+		},
+		"showTagPillIcons": {
+			"name": "Tampilkan ikon pil tag",
+			"desc": "Tampilkan ikon di #hashtags dan properti tags."
+		},
 		"headingMenusAndDialogs": "Menu & dialog",
 		"showMenuActions": {
 			"name": "Tampilkan tindakan menu",
 			"desc": "Tampilkan tindakan terkait ikon dalam menu konteks."
+		},
+		"showSuggestionIcons": {
+			"name": "Tampilkan ikon saran",
+			"desc": "Tampilkan ikon di jendela pop-up saran."
 		},
 		"showQuickSwitcherIcons": {
 			"name": "Tampilkan ikon peralih cepat",

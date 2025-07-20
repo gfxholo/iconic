@@ -280,6 +280,7 @@
 		"toggleAllFolderIcons": "Alle Ordnersymbole umschalten",
 		"toggleMinimalFolderIcons": "Minimale Ordnersymbole umschalten",
 		"toggleMarkdownTabIcons": "Markdown-Tabsymbole umschalten",
+		"toggleTagPillIcons": "Tag-Pillensymbole umschalten",
 		"toggleMenuActions": "Menüaktionen umschalten",
 		"toggleQuickSwitcherIcons": "Schnellauswahlsymbole umschalten",
 		"toggleBiggerSearchResults": "Größere Suchergebnisse umschalten",
@@ -309,7 +310,7 @@
 			"descDesktop": "Klicken Sie auf ein Symbol, um die Symbolauswahl zu öffnen.",
 			"descMobile": "Tippen Sie auf ein Symbol, um die Symbolauswahl zu öffnen."
 		},
-		"headingSidebarsAndTabs": "Seitenleisten- und Registerkartensymbole",
+		"headingSidebarsAndTabs": "Seitenleisten und Registerkarten",
 		"showAllFileIcons": {
 			"name": "Alle Dateisymbole anzeigen",
 			"desc": "Symbole für Dateien anzeigen, die kein benutzerdefiniertes Symbol haben."
@@ -326,10 +327,23 @@
 			"name": "Markdown-Tabsymbole anzeigen",
 			"desc": "Tabsymbole für Markdown-Dateien anzeigen."
 		},
+		"headingEditor": "Editor",
+		"showTitleIcons": {
+			"name": "Titelsymbole anzeigen",
+			"desc": "Symbole in Notiztiteln anzeigen, wenn Titel in Notiz aktiviert sind."
+		},
+		"showTagPillIcons": {
+			"name": "Tag-Pillensymbole anzeigen",
+			"desc": "Symbole in #Hashtags und der Tags-Property anzeigen."
+		},
 		"headingMenusAndDialogs": "Menüs & Dialoge",
 		"showMenuActions": {
 			"name": "Menüaktionen anzeigen",
 			"desc": "Symbolbezogene Aktionen in Kontextmenüs anzeigen."
+		},
+		"showSuggestionIcons": {
+			"name": "Vorschlagsymbole anzeigen",
+			"desc": "Symbole in Vorschlags-Pop-ups anzeigen."
 		},
 		"showQuickSwitcherIcons": {
 			"name": "Schnellauswahlsymbole anzeigen",

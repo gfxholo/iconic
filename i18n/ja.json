@@ -280,6 +280,7 @@
 		"toggleAllFolderIcons": "すべてのフォルダアイコンを切り替える",
 		"toggleMinimalFolderIcons": "最小限のフォルダアイコンを切り替える",
 		"toggleMarkdownTabIcons": "マークダウンタブアイコンを切り替える",
+		"toggleTagPillIcons": "タグピルアイコンを切り替える",
 		"toggleMenuActions": "メニューアクションの切り替え",
 		"toggleQuickSwitcherIcons": "クイックスイッチャーアイコンの切り替え",
 		"toggleBiggerSearchResults": "検索結果を大きく切り替えます",
@@ -309,7 +310,7 @@
 			"descDesktop": "アイコンをクリックするとアイコンピッカーが開きます。",
 			"descMobile": "アイコンをタップするとアイコンピッカーが開きます。"
 		},
-		"headingSidebarsAndTabs": "サイドバーとタブのアイコン",
+		"headingSidebarsAndTabs": "サイドバーとタブ",
 		"showAllFileIcons": {
 			"name": "すべてのファイルアイコンを表示する",
 			"desc": "カスタムアイコンのないファイルのアイコンを表示します。"
@@ -326,10 +327,23 @@
 			"name": "マークダウンタブアイコンを表示",
 			"desc": "マークダウンファイルのタブアイコンを表示します。"
 		},
+		"headingEditor": "エディタ",
+		"showTitleIcons": {
+			"name": "タイトルアイコンを表示する",
+			"desc": "ノートタイトルのアイコンを表示します（インラインタイトルが有効な場合）。"
+		},
+		"showTagPillIcons": {
+			"name": "タグピルアイコンを表示する",
+			"desc": "#hashtags と tags プロパティ内のアイコンを表示します。"
+		},
 		"headingMenusAndDialogs": "メニューとダイアログ",
 		"showMenuActions": {
 			"name": "メニューアクションを表示",
 			"desc": "コンテキストメニューにアイコン関連のアクションを表示します。"
+		},
+		"showSuggestionIcons": {
+			"name": "サジェストアイコンを表示する",
+			"desc": "候補ポップアップにアイコンを表示します。"
 		},
 		"showQuickSwitcherIcons": {
 			"name": "クイックスイッチャーアイコンを表示",

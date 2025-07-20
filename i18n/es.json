@@ -280,6 +280,7 @@
 		"toggleAllFolderIcons": "Alternar todos los íconos de carpetas",
 		"toggleMinimalFolderIcons": "Alternar íconos de carpeta mínimos",
 		"toggleMarkdownTabIcons": "Alternar íconos de pestañas de Markdown",
+		"toggleTagPillIcons": "Alternar íconos de píldoras de etiquetas",
 		"toggleMenuActions": "Alternar acciones del menú",
 		"toggleQuickSwitcherIcons": "Alternar íconos del selector rápido",
 		"toggleBiggerSearchResults": "Alternar resultados de búsqueda más grandes",
@@ -309,7 +310,7 @@
 			"descDesktop": "Haga clic en un ícono para abrir el selector de íconos.",
 			"descMobile": "Toque un ícono para abrir el selector de íconos."
 		},
-		"headingSidebarsAndTabs": "Íconos de la barra lateral y de las pestañas",
+		"headingSidebarsAndTabs": "Barras laterales y pestañas",
 		"showAllFileIcons": {
 			"name": "Mostrar todos los íconos de archivos",
 			"desc": "Mostrar íconos para archivos sin un ícono personalizado."
@@ -326,10 +327,23 @@
 			"name": "Mostrar íconos de pestañas de Markdown",
 			"desc": "Mostrar íconos de pestañas para archivos Markdown."
 		},
+		"headingEditor": "Editor",
+		"showTitleIcons": {
+			"name": "Mostrar íconos de título",
+			"desc": "Mostrar íconos en títulos de notas, si los títulos en una línea están activados."
+		},
+		"showTagPillIcons": {
+			"name": "Mostrar íconos de píldoras de etiquetas",
+			"desc": "Mostrar íconos en #etiquetas y en la propiedad tags."
+		},
 		"headingMenusAndDialogs": "Menús y diálogos",
 		"showMenuActions": {
 			"name": "Mostrar acciones de menú",
 			"desc": "Mostrar acciones relacionadas con íconos en los menús contextuales."
+		},
+		"showSuggestionIcons": {
+			"name": "Mostrar íconos de sugerencias",
+			"desc": "Mostrar íconos en ventanas emergentes de sugerencias."
 		},
 		"showQuickSwitcherIcons": {
 			"name": "Mostrar íconos del selector rápido",

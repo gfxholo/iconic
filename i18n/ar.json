@@ -280,6 +280,7 @@
 		"toggleAllFolderIcons": "تبديل جميع أيقونات المجلد",
 		"toggleMinimalFolderIcons": "تبديل أيقونات المجلد البسيطة",
 		"toggleMarkdownTabIcons": "تبديل أيقونات علامات تبويب Markdown",
+		"toggleTagPillIcons": "تبديل أيقونات حبوب الوسوم",
 		"toggleMenuActions": "تبديل إجراءات القائمة",
 		"toggleQuickSwitcherIcons": "تبديل أيقونات الانتقال السريع",
 		"toggleBiggerSearchResults": "تبديل نتائج البحث الأكبر",
@@ -309,7 +310,7 @@
 			"descDesktop": "انقر فوق أيقونة لفتح أداة اختيار الأيقونات.",
 			"descMobile": "انقر فوق أيقونة لفتح أداة اختيار الأيقونات."
 		},
-		"headingSidebarsAndTabs": "أيقونات الشريط الجانبي وعلامات التبويب",
+		"headingSidebarsAndTabs": "الأشرطة الجانبية وعلامات التبويب",
 		"showAllFileIcons": {
 			"name": "إظهار جميع أيقونات الملفات",
 			"desc": "إظهار أيقونات الملفات التي لا تحتوي على أيقونة مخصصة."
@@ -326,10 +327,23 @@
 			"name": "إظهار أيقونات علامات تبويب Markdown",
 			"desc": "إظهار أيقونات علامات تبويب ملفات Markdown."
 		},
+		"headingEditor": "المحرر",
+		"showTitleIcons": {
+			"name": "إظهار أيقونات العنوان",
+			"desc": "إظهار الأيقونات في عناوين الملاحظات إذا تم تمكين العناوين."
+		},
+		"showTagPillIcons": {
+			"name": "إظهار أيقونات حبوب الوسوم",
+			"desc": "إظهار الأيقونات في #الوسوم وفي خاصية tags."
+		},
 		"headingMenusAndDialogs": "القوائم ومربعات الحوار",
 		"showMenuActions": {
 			"name": "إظهار إجراءات القائمة",
 			"desc": "إظهار الإجراءات المتعلقة بالأيقونات في قوائم السياق."
+		},
+		"showSuggestionIcons": {
+			"name": "إظهار أيقونات الاقتراحات",
+			"desc": "إظهار الأيقونات في النوافذ المنبثقة للاقتراحات."
 		},
 		"showQuickSwitcherIcons": {
 			"name": "الانتقال السريع إظهار أيقونات",

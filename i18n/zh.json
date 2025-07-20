@@ -280,6 +280,7 @@
 		"toggleAllFolderIcons": "切换所有文件夹图标",
 		"toggleMinimalFolderIcons": "切换极简文件夹图标",
 		"toggleMarkdownTabIcons": "切换 Markdown 标签图标",
+		"toggleTagPillIcons": "切换标签胶囊图标",
 		"toggleMenuActions": "切换菜单操作",
 		"toggleQuickSwitcherIcons": "切换快速切换图标",
 		"toggleBiggerSearchResults": "切换更大的搜索结果",
@@ -309,7 +310,7 @@
 			"descDesktop": "单击图标以打开图标选择器。",
 			"descMobile": "点击图标以打开图标选择器。"
 		},
-		"headingSidebarsAndTabs": "侧边栏和标签图标",
+		"headingSidebarsAndTabs": "侧边栏和标签页标题",
 		"showAllFileIcons": {
 			"name": "显示所有文件图标",
 			"desc": "显示没有自定义图标的文件图标。"
@@ -326,10 +327,23 @@
 			"name": "显示 Markdown 标签图标",
 			"desc": "显示 Markdown 文件的标签图标。"
 		},
+		"headingEditor": "编辑器",
+		"showTitleIcons": {
+			"name": "显示标题图标",
+			"desc": "如果启用了页内标题，则显示笔记标题中的图标。"
+		},
+		"showTagPillIcons": {
+			"name": "显示标签胶囊图标",
+			"desc": "显示 #标签 和 tags 属性中的图标。"
+		},
 		"headingMenusAndDialogs": "菜单和对话框",
 		"showMenuActions": {
 			"name": "显示菜单操作",
 			"desc": "在上下文菜单中显示与图标相关的操作。"
+		},
+		"showSuggestionIcons": {
+			"name": "显示建议图标",
+			"desc": "在建议弹出窗口中显示图标。"
 		},
 		"showQuickSwitcherIcons": {
 			"name": "显示快速切换器图标",
