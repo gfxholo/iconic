@@ -86,4 +86,4 @@ Sort of, just expect a few visual bugs! They currently do some fighting over con
 
 ## License
 
-This plugin is released under an [MIT No Attribution](https://choosealicense.com/licenses/mit-0/) license, which means you're free to modify and share its source code without needing to credit the author (me). It also protects the code author from liability for damages, so I recommend using a similar license if you republish this code.
+This plugin is released under an [MIT No Attribution](https://choosealicense.com/licenses/mit-0/) license, which means you're free to modify and share its source code without crediting the authors of this repository. It also protects those authors from liability for damages, so I recommend using a similar license if you republish this code.
