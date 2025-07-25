@@ -211,6 +211,11 @@ export default class EditorIconManager extends IconManager {
 		const headerEl = titleEl.closest('.mod-header, .cm-sizer');
 		if (!(headerEl instanceof HTMLElement)) return;
 
+		// Check whether title is highlighted
+		const selection = titleEl.win.getSelection();
+		const isSelected = selection?.rangeCount
+			&& titleEl.contains(selection?.getRangeAt(0).startContainer);
+
 		// Remove wrapper if necessary
 		if (!this.plugin.settings.showTitleIcons || unloading) {
 			const wrapperEl = titleEl.closest('.iconic-title-wrapper');
@@ -225,9 +230,18 @@ export default class EditorIconManager extends IconManager {
 		const wrapperEl = headerEl.find(':scope > .iconic-title-wrapper')
 			?? createDiv({ cls: 'iconic-title-wrapper' });
 		const iconEl = wrapperEl.find(':scope > .iconic-icon')
-			?? createDiv({ cls: 'iconic-icon' });;
+			?? createDiv({ cls: 'iconic-icon' });
 		wrapperEl.append(iconEl, titleEl);
 		headerEl.prepend(wrapperEl);
+
+		// Re-select title if necessary
+		if (isSelected) {
+			const range = titleEl.doc.createRange();
+			const selection = titleEl.win.getSelection();
+			range.selectNodeContents(titleEl);
+			selection?.removeAllRanges();
+			selection?.addRange(range);
+		}
 
 		// Get file and/or rule icon
 		const file = this.plugin.getFileItem(view.file.path);
