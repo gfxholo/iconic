@@ -4,6 +4,7 @@ import IconManager from 'src/managers/IconManager';
 
 const PROPERTY_SUGGESTION = 'property';
 const TAG_SUGGESTION = 'tag';
+const UNKNOWN_SUGGESTION = null;
 
 /**
  * Intercepts suggestion popovers to add custom icons.
@@ -133,9 +134,15 @@ export default class SuggestionIconManager extends IconManager {
 	 * Determine which type of suggestion this is.
 	 */
 	private getSuggestionType(value: any): string | null {
-		if ('tag' in value) return TAG_SUGGESTION;
-		if ('text' in value && 'type' in value) return PROPERTY_SUGGESTION;
-		return null;
+		if (!value || typeof value !== 'object') {
+			return UNKNOWN_SUGGESTION;
+		} else if ('tag' in value) {
+			return TAG_SUGGESTION;
+		} else if ('text' in value && 'type' in value) {
+			return PROPERTY_SUGGESTION;
+		} else {
+			return UNKNOWN_SUGGESTION;
+		}
 	}
 
 	/**
