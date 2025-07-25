@@ -1,5 +1,5 @@
 import { Editor, MarkdownView, Menu } from 'obsidian';
-import { ViewPlugin, ViewUpdate } from '@codemirror/view';
+import { EditorView, ViewPlugin, ViewUpdate } from '@codemirror/view';
 import { syntaxTree } from '@codemirror/language';
 import IconicPlugin, { TagItem, PropertyItem, STRINGS } from 'src/IconicPlugin';
 import ColorUtils from 'src/ColorUtils';
@@ -18,7 +18,7 @@ export default class EditorIconManager extends IconManager {
 		this.plugin.registerMarkdownPostProcessor(sectionEl => {
 			const tags = this.plugin.getTagItems();
 			const tagEls = sectionEl.findAll('a.tag');
-			this.refreshReadingHashtags(tags, tagEls);
+			this.refreshReadingModeHashtags(tags, tagEls);
 		});
 
 		const manager = this;
@@ -196,8 +196,8 @@ export default class EditorIconManager extends IconManager {
 
 		// Refresh hashtags
 		const tagEls = view.containerEl.findAll('a.tag');
-		this.refreshReadingHashtags(tags, tagEls, unloading);
-		this.refreshLivePreviewHashtags(view.editor);
+		this.refreshReadingModeHashtags(tags, tagEls, unloading);
+		this.refreshLivePreviewMode(view.editor);
 	}
 
 	/**
@@ -337,7 +337,7 @@ export default class EditorIconManager extends IconManager {
 	/**
 	 * Refresh all hashtag elements in reading mode.
 	 */
-	private refreshReadingHashtags(tags: TagItem[], tagEls: HTMLElement[], unloading?: boolean): void {
+	private refreshReadingModeHashtags(tags: TagItem[], tagEls: HTMLElement[], unloading?: boolean): void {
 		for (const tagEl of tagEls) {
 			const tagId = tagEl.getAttribute('href')?.replace('#', '');
 			if (!tagId) continue;
@@ -349,10 +349,12 @@ export default class EditorIconManager extends IconManager {
 	}
 
 	/**
-	 * Refresh all hashtag elements in live preview mode.
+	 * Refresh the entire live preview editor.
 	 */
-	private refreshLivePreviewHashtags(editor: Editor): void {
-		editor.replaceRange('', editor.getCursor());
+	private refreshLivePreviewMode(editor: Editor): void {
+		// @ts-expect-error (Private API)
+		const cm = editor.cm;
+		if (cm instanceof EditorView) cm.dispatch();
 	}
 
 	/**
