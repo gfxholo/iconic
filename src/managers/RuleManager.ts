@@ -386,6 +386,7 @@ export default class RuleManager {
 			}
 			case 'headings': triggers.add('modify'); break;
 			case 'links': triggers.add('modify'); break;
+			case 'embeds': triggers.add('modify'); break;
 			case 'tags': triggers.add('modify'); break;
 			case 'modified': triggers.add('modify'); break;
 			case 'clock': {
@@ -539,6 +540,7 @@ export default class RuleManager {
 				case 'path': source = path; break;
 				case 'headings': source = metadata?.headings?.map(heading => heading.heading) ?? []; break;
 				case 'links': source = metadata?.links?.map(link => link.link) ?? []; break;
+				case 'embeds': source = metadata?.embeds?.map(embed => embed.link) ?? []; break;
 				case 'tags': {
 					source = [];
 					const propTags = metadata?.frontmatter?.tags ?? [];

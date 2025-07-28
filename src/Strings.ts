@@ -63,6 +63,7 @@ export default class Strings {
 			path: 'Path in vault',
 			headings: 'Headings',
 			links: 'Links',
+			embeds: 'Embeds',
 			tags: 'Tags',
 			properties: 'Properties...',
 			created: 'Date created',
