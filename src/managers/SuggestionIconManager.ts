@@ -2,8 +2,9 @@ import { AbstractInputSuggest, EditorSuggest } from 'obsidian';
 import IconicPlugin from 'src/IconicPlugin';
 import IconManager from 'src/managers/IconManager';
 
-const PROPERTY_SUGGESTION = 'property';
+const FILE_SUGGESTION = 'file';
 const TAG_SUGGESTION = 'tag';
+const PROPERTY_SUGGESTION = 'property';
 const UNKNOWN_SUGGESTION = null;
 
 /**
@@ -58,8 +59,9 @@ export default class SuggestionIconManager extends IconManager {
 							if (!value || !(el instanceof HTMLElement)) return;
 
 							switch (manager.getSuggestionType(value)) {
-								case PROPERTY_SUGGESTION: manager.refreshPropertyIcon(value, el); break;
+								case FILE_SUGGESTION: manager.refreshFileIcon(value, el); break;
 								case TAG_SUGGESTION: manager.refreshTagIcon(value, el); break;
+								case PROPERTY_SUGGESTION: manager.refreshPropertyIcon(value, el); break;
 							}
 
 							return returnValue;
@@ -109,8 +111,9 @@ export default class SuggestionIconManager extends IconManager {
 							if (!value || !(el instanceof HTMLElement)) return;
 
 							switch (manager.getSuggestionType(value)) {
-								case PROPERTY_SUGGESTION: manager.refreshPropertyIcon(value, el); break;
+								case FILE_SUGGESTION: manager.refreshFileIcon(value, el); break;
 								case TAG_SUGGESTION: manager.refreshTagIcon(value, el); break;
+								case PROPERTY_SUGGESTION: manager.refreshPropertyIcon(value, el); break;
 							}
 
 							return returnValue;
@@ -136,12 +139,36 @@ export default class SuggestionIconManager extends IconManager {
 	private getSuggestionType(value: any): string | null {
 		if (!value || typeof value !== 'object') {
 			return UNKNOWN_SUGGESTION;
-		} else if ('tag' in value) {
+		} else if (value.type === 'file' && value.file) {
+			return FILE_SUGGESTION;
+		} else if (value.tag) {
 			return TAG_SUGGESTION;
-		} else if ('text' in value && 'type' in value) {
+		} else if (value.type && value.text) {
 			return PROPERTY_SUGGESTION;
 		} else {
 			return UNKNOWN_SUGGESTION;
+		}
+	}
+
+	/**
+	 * Refresh a file suggestion icon.
+	 */
+	private refreshFileIcon(value: any, el: HTMLElement): void {
+		const fileId: string = value?.file.path;
+		if (!fileId) return;
+		const file = this.plugin.getFileItem(fileId);
+		if (!file) return;
+		const rule = this.plugin.ruleManager.checkRuling('file', fileId) ?? file;
+
+		el.addClass('iconic-item');
+		const iconContainerEl = el.find(':scope > .suggestion-icon')
+			?? createDiv({ cls: 'suggestion-icon' });
+		const iconEl = iconContainerEl.find(':scope > .suggestion-flair')
+			?? iconContainerEl.createSpan({ cls: 'suggestion-flair' });
+		el.prepend(iconContainerEl);
+		if (rule) {
+			if (!rule.icon && !rule.color) iconEl.addClass('iconic-invisible');
+			this.refreshIcon(rule, iconEl);
 		}
 	}
 
