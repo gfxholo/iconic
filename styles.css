@@ -291,17 +291,33 @@ a.tag {
 .is-mobile .mod-confirmation > .modal.iconic-rule-picker {
 	background-color: var(--modal-background);
 }
-.setting-item > .iconic-rule-icon {
+.iconic-rule,
+.iconic-condition {
+	transition: background-color 0.25s ease, border-top-color 0.25s ease, border-radius 0.25s ease, box-shadow 0.25s ease;
+}
+.iconic-rule.has-active-menu {
+	background-color: var(--background-modifier-hover);
+	border-top-color: transparent;
+	border-radius: var(--radius-s);
+	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+	transition: none;
+}
+.iconic-rule.has-active-menu + .setting-item {
+	border-top-color: transparent;
+	border-top-left-radius: var(--radius-s);
+	border-top-right-radius: var(--radius-s);
+}
+.iconic-rule > .iconic-rule-icon {
 	padding: var(--size-2-2);
 	margin-inline-end: var(--size-4-2);
 }
-.setting-item > .setting-item-info > .iconic-rule-name {
+.iconic-rule > .setting-item-info > .iconic-rule-name {
 	width: fit-content;
 	min-width: var(--size-4-4);
 	overflow-wrap: anywhere;
 }
-.setting-item > .setting-item-info > .iconic-rule-name:hover,
-.setting-item > .setting-item-info > .iconic-rule-name[contenteditable="true"] {
+.iconic-rule > .setting-item-info > .iconic-rule-name:hover,
+.iconic-rule > .setting-item-info > .iconic-rule-name[contenteditable="true"] {
 	border: var(--input-border-width) solid var(--background-modifier-border);
 	border-radius: var(--input-radius);
 	margin: calc(-1 * var(--size-4-1) - var(--input-border-width)) calc(-1 * var(--size-4-2) - var(--input-border-width));
@@ -315,6 +331,9 @@ a.tag {
 .iconic-drag-handle:active {
 	cursor: grabbing;
 }
+.iconic-add {
+	transition: border-top-color 0.25s ease;
+}
 .iconic-add > .setting-item-control {
 	justify-content: flex-start;
 }
@@ -326,8 +345,12 @@ a.tag {
 .mod-rtl .drag-reorder-ghost .iconic-condition {
 	direction: rtl;
 }
-.iconic-rule-picker .drag-ghost-hidden + .setting-item,
-.iconic-rule-editor .drag-ghost-hidden + .setting-item {
+.iconic-rule.drag-ghost-hidden,
+.iconic-condition.drag-ghost-hidden {
+	border-top-color: transparent;
+}
+.iconic-rule.drag-ghost-hidden + .setting-item,
+.iconic-condition.drag-ghost-hidden + .setting-item {
 	border-top-color: transparent;
 }
 

@@ -122,7 +122,7 @@ export default class RulePicker extends Modal {
 			case 'folder': rules.push(...this.plugin.ruleManager.getRules(dialogState.rulePage)); break;
 		}
 		for (const rule of rules) {
-			this.appendRule(rule);
+			this.insertRule(rule, this.ruleEls.length);
 		}
 	}
 
@@ -135,14 +135,17 @@ export default class RulePicker extends Modal {
 		}
 		this.ruleEls.length = 0;
 		for (const rule of this.plugin.ruleManager.getRules(this.plugin.settings.dialogState.rulePage)) {
-			this.appendRule(rule);
+			this.insertRule(rule, this.ruleEls.length);
 		}
 	}
 
 	/**
-	 * Append a given rule to the page.
+	 * Insert a given rule onto the page at a specific index.
+	 * @param rule The rule backing this row.
+	 * @param index Index to insert the rule at.
+	 * @param isNewRule Whether to highlight the rule name after creation.
 	 */
-	private appendRule(rule: RuleItem, isNewRule?: boolean): void {
+	insertRule(rule: RuleItem, index: number, isNewRule?: boolean): void {
 		const page = this.plugin.settings.dialogState.rulePage;
 		const ruleSetting = new RuleSetting(
 			this.contentEl,
@@ -151,42 +154,95 @@ export default class RulePicker extends Modal {
 			page,
 			rule,
 			this.ruleEls,
+			(rule, index) => this.insertRule(rule, index),
 			() => this.plugin.refreshManagers(page),
-			isNewRule,
 		);
-		this.ruleEls.push(ruleSetting.settingEl);
 
-		// Context menu for deleting a rule
+		// Insert rule into DOM
+		this.ruleEls[index]?.insertAdjacentElement('beforebegin', ruleSetting.settingEl);
+		if (isNewRule) ruleSetting.toggleEditable(ruleSetting.nameEl, true);
+
+		// Insert rule into array
+		this.ruleEls.splice(index, 0, ruleSetting.settingEl);
+
+		// Register context menu
 		this.iconManager.setEventListener(ruleSetting.settingEl, 'contextmenu', event => {
 			navigator.vibrate?.(100); // Not supported on iOS
 			const menu = new Menu();
-			menu.addItem(menuItem => { menuItem
+
+			// Highlight the selected rule
+			ruleSetting.settingEl.addClass('has-active-menu');
+			menu.onHide(() => ruleSetting.settingEl.win.requestAnimationFrame(() => {
+				ruleSetting.settingEl.removeClass('has-active-menu');
+			}));
+
+			// MENU ITEM: Add rule
+			menu.addItem(item => { item
+				.setIcon('lucide-plus-circle')
+				.setTitle(STRINGS.rulePicker.addRule)
+				.setSection('action-primary')
+				.onClick(() => this.addRule(this.ruleEls.indexOf(ruleSetting.settingEl)));
+			});
+
+			// MENU ITEM: Duplicate rule
+			menu.addItem(item => { item
+				.setIcon('lucide-files')
+				.setTitle(STRINGS.rulePicker.duplicateRule)
+				.setSection('action-primary')
+				.onClick(() => ruleSetting.duplicateRule());
+			});
+
+			// MENU ITEM: Move rule to top
+			menu.addItem(item => { item
+				.setIcon('lucide-arrow-up-to-line')
+				.setTitle(STRINGS.rulePicker.moveRuleToTop)
+				.setSection('move')
+				.onClick(() => ruleSetting.moveRule(0))
+				.setDisabled(ruleSetting.settingEl === this.ruleEls.first());
+			});
+
+			// MENU ITEM: Move rule to bottom
+			menu.addItem(item => { item
+				.setIcon('lucide-arrow-down-to-line')
+				.setTitle(STRINGS.rulePicker.moveRuleToBottom)
+				.setSection('move')
+				.onClick(() => ruleSetting.moveRule(this.ruleEls.length))
+				.setDisabled(ruleSetting.settingEl === this.ruleEls.last());
+			});
+
+			// MENU ITEM: Remove rule
+			menu.addItem(item => { item
 				.setIcon('lucide-trash-2')
 				.setTitle(STRINGS.rulePicker.removeRule)
-				.onClick(() => {
-					ruleSetting.settingEl.remove();
-					this.ruleEls.remove(ruleSetting.settingEl);
-					const page = this.plugin.settings.dialogState.rulePage;
-					const isRulingChanged = this.plugin.ruleManager.deleteRule(page, rule.id);
-					if (isRulingChanged) {
-						this.plugin.refreshManagers(page);
-					}
-				});
+				.setSection('danger')
+				.onClick(() => ruleSetting.deleteRule());
+				// @ts-expect-error (Private API)
+				item.dom?.addClass?.('is-warning');
 			});
+
 			menu.showAtMouseEvent(event);
 		});
 
-		// Move the Add Rule button below this rule
-		ruleSetting.settingEl.insertAdjacentElement('afterend', this.addRuleSetting.settingEl);
+		// Move the Add Rule button to the bottom
+		this.contentEl.append(this.addRuleSetting.settingEl);
 	}
 
 	/**
-	 * Create new rule and append it to the current page.
+	 * Create new rule and insert it onto the page at a specific index.
+	 * @param index Index to create the rule at. If undefined or negative, append rule to the bottom.
 	 */
-	private addRule(): void {
-		const newRule = this.plugin.ruleManager.newRule(this.plugin.settings.dialogState.rulePage);
-		this.appendRule(newRule, true);
-		this.addRuleSetting.settingEl.scrollIntoView({ behavior: 'smooth' });
+	private addRule(index?: number): void {
+		const page = this.plugin.settings.dialogState.rulePage;
+		const newRule = this.plugin.ruleManager.newRule(page);
+
+		if (index !== undefined && index >= 0) {
+			this.plugin.ruleManager.moveRule(page, newRule, index);
+			this.insertRule(newRule, index, true);
+		} else {
+			index = this.ruleEls.length;
+			this.insertRule(newRule, index, true);
+			this.addRuleSetting.settingEl.scrollIntoView({ behavior: 'smooth' });
+		}
 	}
 
 	/**
@@ -218,6 +274,7 @@ class RuleSetting extends Setting {
 	private ghostRuleEl: HTMLElement | undefined;
 
 	// Callbacks
+	private readonly onInsertRule: (rule: RuleItem, index: number) => void;
 	private readonly onRulingChange: () => void;
 
 	constructor(
@@ -227,14 +284,15 @@ class RuleSetting extends Setting {
 		page: Category,
 		rule: RuleItem,
 		ruleEls: HTMLElement[],
+		onInsertRule: (rule: RuleItem, index: number) => void,
 		onRulingChange: () => void,
-		isNewRule = false,
 	) {
 		super(containerEl);
 		this.plugin = plugin;
 		this.page = page;
 		this.rule = rule;
 		this.ruleEls = ruleEls;
+		this.onInsertRule = onInsertRule;
 		this.onRulingChange = onRulingChange;
 		this.settingEl.addClass('iconic-rule');
 
@@ -282,7 +340,6 @@ class RuleSetting extends Setting {
 		iconManager.setEventListener(this.nameEl, 'keydown', event => {
 			if (event.key === 'Enter') this.nameEl.blur();
 		});
-		if (isNewRule) this.toggleEditable(this.nameEl, true);
 
 		// BUTTON: Edit rule
 		this.addExtraButton(button => { button
@@ -353,6 +410,43 @@ class RuleSetting extends Setting {
 		});
 	}
 
+	/**
+	 * Duplicate rule and insert the new one below.
+	 */
+	duplicateRule(): void {
+		const page = this.plugin.settings.dialogState.rulePage;
+		const duplicateRule = this.plugin.ruleManager.duplicateRule(page, this.rule);
+		const index = this.ruleEls.indexOf(this.settingEl) + 1;
+		this.onInsertRule(duplicateRule, index);
+	}
+
+	/**
+	 * Move rule (and its setting element) within the current page.
+	 * @param toIndex Index to move the rule to.
+	 */
+	moveRule(toIndex: number): void {
+		if (toIndex < this.ruleEls.length) {
+			this.ruleEls[toIndex]?.insertAdjacentElement('beforebegin', this.settingEl);
+		} else {
+			this.ruleEls.last()?.insertAdjacentElement('afterend', this.settingEl);
+		}
+		this.ruleEls[toIndex]?.insertAdjacentElement('beforebegin', this.settingEl);
+		this.ruleEls.remove(this.settingEl);
+		this.ruleEls.splice(toIndex, 0, this.settingEl);
+		const isRulingChanged = this.plugin.ruleManager.moveRule(this.page, this.rule, toIndex);
+		if (isRulingChanged) this.plugin.refreshManagers(this.page);
+	}
+
+	/**
+	 * Delete rule (and its setting element) from the current page.
+	 */
+	deleteRule(): void {
+		this.settingEl.remove();
+		this.ruleEls.remove(this.settingEl);
+		const isRulingChanged = this.plugin.ruleManager.deleteRule(this.page, this.rule.id);
+		if (isRulingChanged) this.plugin.refreshManagers(this.page);
+	}
+
 	private onDragStart(x: number, y: number, dragButtonEl: HTMLElement): void {
 		navigator.vibrate?.(100); // Not supported on iOS
 		// Create drag ghost
@@ -418,7 +512,7 @@ class RuleSetting extends Setting {
 	/**
 	 * Toggle an element to content-editing mode.
 	 */
-	private toggleEditable(el: HTMLElement, value: boolean) {
+	toggleEditable(el: HTMLElement, value: boolean): void {
 		if (value) {
 			el.contentEditable = 'true';
 		} else {

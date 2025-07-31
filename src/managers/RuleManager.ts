@@ -158,6 +158,33 @@ export default class RuleManager {
 	}
 
 	/**
+	 * Duplicate rule on a given page, and return true if this changes any rulings.
+	 */
+	duplicateRule(page: Category, rule: RuleItem): RuleItem {
+		const ruleBases = this.getRuleBases(page);
+		const ruleBase = ruleBases.find(ruleBase => ruleBase.id === rule.id);
+		if (!ruleBase) return this.newRule(page);
+
+		const duplicateRule: RuleItem = {
+			id: this.newRuleId(page),
+			name: rule.name,
+			category: rule.category,
+			iconDefault: rule.iconDefault,
+			icon: rule.icon,
+			color: rule.color,
+			match: rule.match,
+			conditions: [...rule.conditions],
+			enabled: rule.enabled,
+		}
+
+		const index = ruleBases.indexOf(ruleBase);
+		ruleBases.splice(index, 0, ruleBase);
+
+		this.plugin.saveSettings();
+		return duplicateRule;
+	}
+
+	/**
 	 * Move rule within a given page, and return true if this changes any rulings.
 	 */
 	moveRule(page: Category, rule: RuleItem, toIndex: number): boolean {
