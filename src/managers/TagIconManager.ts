@@ -101,7 +101,7 @@ export default class TagIconManager extends IconManager {
 	 * When user context-clicks a tag, add custom items to the menu.
 	 */
 	onContextMenu(tagId: string, event: MouseEvent): void {
-		navigator?.vibrate(100); // Not supported on iOS
+		navigator.vibrate?.(100); // Not supported on iOS
 		this.plugin.menuManager.closeAndFlush();
 		const tag = this.plugin.getTagItem(tagId);
 		if (!tag) return;

@@ -264,7 +264,7 @@ export default class EditorIconManager extends IconManager {
 		// Add menu actions
 		if (this.plugin.settings.showMenuActions) {
 			this.setEventListener(iconEl, 'contextmenu', event => {
-				navigator?.vibrate(100); // Not supported on iOS
+				navigator.vibrate?.(100); // Not supported on iOS
 				const menu = new Menu();
 				menu.addItem(item => item
 					.setTitle(STRINGS.menu.changeIcon)
@@ -441,7 +441,7 @@ export default class EditorIconManager extends IconManager {
 	 * When user context-clicks a property, add custom items to the menu.
 	 */
 	private onPropertyContextMenu(propId: string): void {
-		navigator?.vibrate(100); // Not supported on iOS
+		navigator.vibrate?.(100); // Not supported on iOS
 		this.plugin.menuManager.closeAndFlush();
 		const prop = this.plugin.getPropertyItem(propId);
 
@@ -507,7 +507,7 @@ export default class EditorIconManager extends IconManager {
 	 * When user context-clicks a tag without a menu, create a new one.
 	 */
 	private onCreateTagContextMenu(tagId: string, event: MouseEvent): void {
-		navigator?.vibrate(100); // Not supported on iOS
+		navigator.vibrate?.(100); // Not supported on iOS
 		this.plugin.tagIconManager?.onContextMenu(tagId, event);
 	}
 

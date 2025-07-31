@@ -353,7 +353,7 @@ class RuleSetting extends Setting {
 	}
 
 	private onDragStart(x: number, y: number, dragButtonEl: HTMLElement): void {
-		navigator?.vibrate(100); // Not supported on iOS
+		navigator.vibrate?.(100); // Not supported on iOS
 		// Create drag ghost
 		this.ghostRuleEl = activeDocument.body.createDiv({ cls: 'drag-reorder-ghost' });
 		this.ghostRuleEl.setCssStyles({
@@ -388,7 +388,7 @@ class RuleSetting extends Setting {
 		const prevRuleEl = this.ruleEls[index - 1];
 		const prevOverdrag = prevRuleEl?.clientHeight * 0.25 || 0;
 		if (prevRuleEl && y < prevRuleEl.getBoundingClientRect().bottom - prevOverdrag) {
-			navigator?.vibrate(100); // Not supported on iOS
+			navigator.vibrate?.(100); // Not supported on iOS
 			prevRuleEl.insertAdjacentElement('beforebegin', this.settingEl);
 			this.ruleEls.splice(index, 1);
 			this.ruleEls.splice(index - 1, 0, this.settingEl);
@@ -397,7 +397,7 @@ class RuleSetting extends Setting {
 		const nextRuleEl = this.ruleEls[index + 1];
 		const nextOverdrag = nextRuleEl?.clientHeight * 0.25 || 0;
 		if (nextRuleEl && y > nextRuleEl.getBoundingClientRect().top + nextOverdrag) {
-			navigator?.vibrate(100); // Not supported on iOS
+			navigator.vibrate?.(100); // Not supported on iOS
 			nextRuleEl.insertAdjacentElement('afterend', this.settingEl);
 			this.ruleEls.splice(index, 1);
 			this.ruleEls.splice(index + 1, 0, this.settingEl);

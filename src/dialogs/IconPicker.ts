@@ -337,7 +337,7 @@ export default class IconPicker extends Modal {
 		});
 		// Secondary color picker
 		this.iconManager.setEventListener(this.colorPickerEl, 'contextmenu', event => {
-			navigator?.vibrate(100); // Not supported on iOS
+			navigator.vibrate?.(100); // Not supported on iOS
 			if (this.plugin.settings.colorPicker2 === 'rgb') {
 				openRgbPicker = true;
 				this.colorPickerEl.click();
@@ -686,7 +686,7 @@ export default class IconPicker extends Modal {
 				});
 
 				if (Platform.isPhone) this.iconManager.setEventListener(iconEl, 'contextmenu', () => {
-					navigator?.vibrate(100); // Not supported on iOS
+					navigator.vibrate?.(100); // Not supported on iOS
 					displayTooltip(iconEl, iconName, { placement: 'top' });
 				});
 			});

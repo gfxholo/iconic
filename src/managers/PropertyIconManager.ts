@@ -91,7 +91,7 @@ export default class PropertyIconManager extends IconManager {
 	 * When user context-clicks a property, add custom items to the menu.
 	 */
 	private onContextMenu(clickedPropId: string): void {
-		navigator?.vibrate(100); // Not supported on iOS
+		navigator.vibrate?.(100); // Not supported on iOS
 		this.plugin.menuManager.closeAndFlush();
 		const clickedProp: PropertyItem = this.plugin.getPropertyItem(clickedPropId);
 		const selectedProps: PropertyItem[] = [];

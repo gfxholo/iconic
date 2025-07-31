@@ -946,7 +946,7 @@ class ConditionSetting extends Setting {
 	}
 
 	private onDragStart(x: number, y: number, dragButtonEl: HTMLElement): void {
-		navigator?.vibrate(100); // Not supported on iOS
+		navigator.vibrate?.(100); // Not supported on iOS
 		// Create drag ghost
 		this.ghostCondEl = activeDocument.body.createDiv({ cls: 'drag-reorder-ghost' });
 		this.ghostCondEl.setCssStyles({
@@ -985,7 +985,7 @@ class ConditionSetting extends Setting {
 		const prevCondEl = this.condEls[index - 1];
 		const prevOverdrag = prevCondEl?.clientHeight * 0.25 || 0;
 		if (prevCondEl && y < prevCondEl.getBoundingClientRect().bottom - prevOverdrag) {
-			navigator?.vibrate(100); // Not supported on iOS
+			navigator.vibrate?.(100); // Not supported on iOS
 			prevCondEl.insertAdjacentElement('beforebegin', this.settingEl);
 			this.condEls.splice(index, 1);
 			this.condEls.splice(index - 1, 0, this.settingEl);
@@ -994,7 +994,7 @@ class ConditionSetting extends Setting {
 		const nextCondEl = this.condEls[index + 1];
 		const nextOverdrag = nextCondEl?.clientHeight * 0.25 || 0;
 		if (nextCondEl && y > nextCondEl.getBoundingClientRect().top + nextOverdrag) {
-			navigator?.vibrate(100); // Not supported on iOS
+			navigator.vibrate?.(100); // Not supported on iOS
 			nextCondEl.insertAdjacentElement('afterend', this.settingEl);
 			this.condEls.splice(index, 1);
 			this.condEls.splice(index + 1, 0, this.settingEl);
