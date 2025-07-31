@@ -311,7 +311,7 @@ class RuleSetting extends Setting {
 				rule.icon = newIcon;
 				rule.color = newColor;
 				const isRulingChanged = plugin.ruleManager.saveRule(page, rule);
-				if (isRulingChanged) onRulingChange();
+				if (isRulingChanged) this.onRulingChange();
 			}));
 			iconManager.refreshIcon({
 				icon: rule.icon ?? plugin.ruleManager.getPageIcon(page),
@@ -361,7 +361,7 @@ class RuleSetting extends Setting {
 					this.ruleEls.remove(this.settingEl);
 					isRulingChanged = plugin.ruleManager.deleteRule(page, rule.id);
 				}
-				if (isRulingChanged) onRulingChange();
+				if (isRulingChanged) this.onRulingChange();
 			}));
 		});
 
@@ -371,7 +371,7 @@ class RuleSetting extends Setting {
 			.onChange(value => {
 				rule.enabled = value;
 				const isRulingChanged = plugin.ruleManager.saveRule(page, rule);
-				if (isRulingChanged) onRulingChange();
+				if (isRulingChanged) this.onRulingChange();
 			});
 			ruleToggle = toggle;
 		});
