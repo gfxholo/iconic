@@ -158,6 +158,7 @@ export default class RulePicker extends Modal {
 
 		// Context menu for deleting a rule
 		this.iconManager.setEventListener(ruleSetting.settingEl, 'contextmenu', event => {
+			navigator.vibrate?.(100); // Not supported on iOS
 			const menu = new Menu();
 			menu.addItem(menuItem => { menuItem
 				.setIcon('lucide-trash-2')
