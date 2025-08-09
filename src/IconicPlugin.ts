@@ -86,6 +86,7 @@ interface IconicSettings {
 	showMenuActions: boolean;
 	showSuggestionIcons: boolean;
 	showQuickSwitcherIcons: boolean;
+	showMoveFileIcons: boolean;
 	showItemName: string;
 	biggerSearchResults: string;
 	maxSearchResults: number;
@@ -148,6 +149,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	showMenuActions: true,
 	showSuggestionIcons: true,
 	showQuickSwitcherIcons: true,
+	showMoveFileIcons: true,
 	showItemName: 'desktop',
 	biggerSearchResults: 'mobile',
 	maxSearchResults: 50,

@@ -1,4 +1,4 @@
-import { Instruction, Plugin, SuggestModal, TFile, WorkspaceLeaf } from 'obsidian';
+import { Instruction, Plugin, SuggestModal, TFile, TFolder, WorkspaceLeaf } from 'obsidian';
 import IconicPlugin, { FILE_TAB_TYPES } from 'src/IconicPlugin';
 import IconManager from 'src/managers/IconManager';
 
@@ -14,9 +14,10 @@ function isPluginModal(modal: SuggestModal<any>): modal is PluginModal {
 const QUICK_SWITCHER = 'qs';
 const QUICK_SWITCHER_PP = 'qs++';
 const ANOTHER_QUICK_SWITCHER = 'aqs';
+const MOVE_FILE_DIALOG = 'mfd';
 
 /**
- * Intercepts quick switchers to add custom icons.
+ * Intercepts suggestion dialogs like quick switchers and "Move file" dialogs to add custom icons.
  */
 export default class QuickSwitcherIconManager extends IconManager {
 	private onOpenOriginal: typeof SuggestModal.prototype.onOpen;
@@ -32,7 +33,7 @@ export default class QuickSwitcherIconManager extends IconManager {
 		this.onOpenOriginal = SuggestModal.prototype.onOpen;
 		this.setInstructionsOriginal = SuggestModal.prototype.setInstructions;
 
-		// Catch Quick Switcher and Quick Switcher++ modals
+		// Catch Quick Switcher, Quick Switcher++, and "Move file" dialogs
 		this.onOpenProxy = new Proxy(SuggestModal.prototype.onOpen, {
 			apply(onOpen, modal, args) {
 				if (manager.isDisabled()) {
@@ -47,19 +48,28 @@ export default class QuickSwitcherIconManager extends IconManager {
 				// Proxy renderSuggestion() for each instance
 				modal.renderSuggestion = new Proxy(modal.renderSuggestion, {
 					apply(renderSuggestion, modal: SuggestModal<any>, args: [any, HTMLElement]) {
+						// Call base method first to pre-populate elements
+						const returnValue = renderSuggestion.call(modal, ...args);
+
 						switch (modalType) {
 							case QUICK_SWITCHER: {
-								modal.modalEl.addClass('iconic-quick-switcher');
-								manager.refreshSuggestionIcon(...args);
+								modal.modalEl.addClass('iconic-prompt');
+								manager.refreshSuggestionIconQS(...args);
 								break;
 							}
 							case QUICK_SWITCHER_PP: {
-								modal.modalEl.addClass('iconic-quick-switcher');
+								modal.modalEl.addClass('iconic-prompt');
 								manager.refreshSuggestionIconQSPP(...args);
 								break;
 							}
+							case MOVE_FILE_DIALOG: {
+								modal.modalEl.addClass('iconic-prompt');
+								manager.refreshSuggestionIconMFD(...args);
+								break;
+							}
 						}
-						return renderSuggestion.call(modal, ...args);;
+
+						return returnValue;
 					}
 				});
 
@@ -67,7 +77,7 @@ export default class QuickSwitcherIconManager extends IconManager {
 			}
 		});
 
-		// Catch Another Quick Switcher modals, which never call super.onOpen()
+		// Catch Another Quick Switcher, which never call super.onOpen()
 		this.setInstructionsProxy = new Proxy(SuggestModal.prototype.setInstructions, {
 			apply(setInstructions, modal: SuggestModal<any>, args: [Instruction[]]) {
 				if (manager.isDisabled()) {
@@ -122,13 +132,18 @@ export default class QuickSwitcherIconManager extends IconManager {
 			return QUICK_SWITCHER;
 		}
 
+		// Check for "Move file" dialog
+		if ('files' in modal && 'emptyMatch' in modal) {
+			return MOVE_FILE_DIALOG;
+		}
+
 		return null;
 	}
 
 	/**
 	 * Refresh icon of a Quick Switcher suggestion.
 	 */
-	private refreshSuggestionIcon(value: any, el: HTMLElement): void {
+	private refreshSuggestionIconQS(value: any, el: HTMLElement): void {
 		switch (value?.type) {
 			case 'file': {
 				if (value.file instanceof TFile) {
@@ -136,6 +151,7 @@ export default class QuickSwitcherIconManager extends IconManager {
 					const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
 					if (rule.icon || rule.color) {
 						const iconEl = el.find('.iconic-icon') ?? el.createDiv();
+						el.prepend(iconEl);
 						this.refreshIcon(rule, iconEl);
 					}
 				}
@@ -168,6 +184,7 @@ export default class QuickSwitcherIconManager extends IconManager {
 					const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
 					if (rule.icon || rule.color) {
 						const iconEl = el.find('.iconic-icon') ?? el.createDiv();
+						el.prepend(iconEl);
 						this.refreshIcon(rule, iconEl);
 					}
 				}
@@ -180,6 +197,7 @@ export default class QuickSwitcherIconManager extends IconManager {
 					const rule = this.plugin.ruleManager.checkRuling(bmarkBase.type, file.id) ?? file;
 					if (rule.icon || rule.color) {
 						const iconEl = el.find('.iconic-icon') ?? el.createDiv();
+						el.prepend(iconEl);
 						this.refreshIcon(rule, iconEl);
 					}
 				}
@@ -196,6 +214,7 @@ export default class QuickSwitcherIconManager extends IconManager {
 					const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
 					if (rule.icon || rule.color) {
 						const iconEl = el.find('.iconic-icon') ?? el.createDiv();
+						el.prepend(iconEl);
 						this.refreshIcon(rule, iconEl);
 					}
 				} else {
@@ -203,6 +222,7 @@ export default class QuickSwitcherIconManager extends IconManager {
 					if (tab) {
 						tab.iconDefault = iconDefault;
 						const iconEl = el.find('.iconic-icon') ?? el.createDiv();
+						el.prepend(iconEl);
 						this.refreshIcon(tab, iconEl);
 					}
 				}
@@ -228,10 +248,36 @@ export default class QuickSwitcherIconManager extends IconManager {
 	}
 
 	/**
-	 * Check whether user has disabled quick switcher icons.
+	 * Refresh icon of a "Move file" dialog suggestion.
+	 */
+	private refreshSuggestionIconMFD(value: any, el: HTMLElement): void {
+		const tFolder = value?.item;
+		if (!(tFolder instanceof TFolder)) return;
+
+		el.addClass('mod-complex');
+		const contentEl = el.createDiv({ cls: 'suggestion-content' });
+		const titleEl = contentEl.createDiv({ cls: 'suggestion-title '});
+
+		// Move text nodes and .suggestion-highlights into .suggestion-title
+		for (const node of [...el.childNodes]) {
+			if (node !== contentEl) titleEl.append(node);
+		}
+
+		const folder = this.plugin.getFileItem(tFolder.path);
+		const rule = this.plugin.ruleManager.checkRuling('folder', folder.id) ?? folder;
+
+		if (rule.icon || rule.color) {
+			const iconEl = el.find('.iconic-icon') ?? el.createDiv();
+			el.prepend(iconEl);
+			this.refreshIcon(rule, iconEl);
+		}
+	}
+
+	/**
+	 * Check whether user has disabled all suggestion dialog icons.
 	 */
 	private isDisabled(): boolean {
-		return !this.plugin.settings.showQuickSwitcherIcons;
+		return !this.plugin.settings.showQuickSwitcherIcons && !this.plugin.settings.showMoveFileIcons;
 	}
 
 	/**

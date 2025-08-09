@@ -163,20 +163,20 @@ a.tag {
 	justify-content: normal;
 }
 
-/* Quick Switcher */
-.iconic-quick-switcher .iconic-icon {
+/* Suggestion dialogs */
+.iconic-prompt .iconic-icon {
 	height: var(--icon-size);
 }
-.iconic-quick-switcher > .prompt-input-container > .prompt-input {
+.iconic-prompt > .prompt-input-container > .prompt-input {
 	padding-inline-start: calc(var(--icon-size) + var(--size-4-8));
 }
-.iconic-quick-switcher .suggestion-item {
+.iconic-prompt .suggestion-item {
 	align-items: center;
 }
-.iconic-quick-switcher .suggestion-content {
+.iconic-prompt .suggestion-content {
 	padding-inline-start: calc(var(--icon-size) + var(--size-4-2));
 }
-.iconic-quick-switcher .iconic-icon + .suggestion-content {
+.iconic-prompt .iconic-icon + .suggestion-content {
 	padding-inline-start: var(--size-4-2);
 }
 

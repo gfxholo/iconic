@@ -219,6 +219,18 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			);
 
+		// Show "Move file" dialog icons
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.showMoveFileIcons.name)
+			.setDesc(STRINGS.settings.showMoveFileIcons.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showMoveFileIcons)
+				.onChange(value => {
+					this.plugin.settings.showMoveFileIcons = value;
+					this.plugin.saveSettings();
+				})
+			);
+
 		// HEADING: Icon picker
 		new Setting(this.containerEl).setName(STRINGS.settings.headingIconPicker).setHeading();
 

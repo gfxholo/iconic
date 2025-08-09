@@ -353,6 +353,10 @@ export default class Strings {
 			name: 'Show quick switcher icons',
 			desc: 'Show icons in search results of quick switchers.',
 		},
+		showMoveFileIcons: {
+			name: 'Show "Move file" icons',
+			desc: 'Show folder icons in "Move file" dialogs.',
+		},
 		headingIconPicker: 'Icon picker',
 		showItemName: {
 			name: 'Show item name',
