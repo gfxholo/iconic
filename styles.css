@@ -541,6 +541,14 @@ a.tag {
 	display: flex;
 }
 
+/* Theme: Minimal */
+.iconic-theme-minimal .markdown-source-view.is-readable-line-width .iconic-title-wrapper {
+	margin-inline-start: var(--content-margin-start);
+}
+.iconic-theme-minimal:not(.is-mobile) .iconic-title-wrapper > .iconic-icon {
+	padding-top: 16px;
+}
+
 /* Theme: Minimal Edge */
 .iconic-theme-medge .tree-item-self .tree-item-icon {
 	display: unset;
