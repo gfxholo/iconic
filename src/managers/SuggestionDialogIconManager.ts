@@ -19,7 +19,7 @@ const MOVE_FILE_DIALOG = 'mfd';
 /**
  * Intercepts suggestion dialogs like quick switchers and "Move file" dialogs to add custom icons.
  */
-export default class QuickSwitcherIconManager extends IconManager {
+export default class SuggestionDialogIconManager extends IconManager {
 	private onOpenOriginal: typeof SuggestModal.prototype.onOpen;
 	private onOpenProxy: typeof SuggestModal.prototype.onOpen;
 	private setInstructionsOriginal: typeof SuggestModal.prototype.setInstructions;
