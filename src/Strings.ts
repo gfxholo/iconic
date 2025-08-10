@@ -284,9 +284,12 @@ export default class Strings {
 		toggleAllFolderIcons: 'Toggle all folder icons',
 		toggleMinimalFolderIcons: 'Toggle minimal folder icons',
 		toggleMarkdownTabIcons: 'Toggle Markdown tab icons',
+		toggleTitleIcons: 'Toggle title icons',
 		toggleTagPillIcons: 'Toggle tag pill icons',
 		toggleMenuActions: 'Toggle menu actions',
+		toggleSuggestionIcons: 'Toggle suggestion icons',
 		toggleQuickSwitcherIcons: 'Toggle quick switcher icons',
+		toggleMoveFileIcons: 'Toggle "Move file" dialog icons',
 		toggleBiggerSearchResults: 'Toggle bigger search results',
 		changeIconCurrentFile: 'Change icon of the current file',
 	};

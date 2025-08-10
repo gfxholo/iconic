@@ -466,7 +466,7 @@ export default class IconicPlugin extends Plugin {
 		}));
 
 		// COMMAND: Toggle Markdown tab icons
-		this.addCommand({
+		this.dialogCommands.push(this.addCommand({
 			id: 'toggle-markdown-tab-icons',
 			name: STRINGS.commands.toggleMarkdownTabIcons,
 			callback: () => {
@@ -474,7 +474,18 @@ export default class IconicPlugin extends Plugin {
 				this.saveSettings();
 				this.refreshBodyClasses();
 			}
-		});
+		}));
+
+		// COMMAND: Toggle title icons
+		this.dialogCommands.push(this.addCommand({
+			id: 'toggle-title-icons',
+			name: STRINGS.commands.toggleTitleIcons,
+			callback: () => {
+				this.settings.showTitleIcons = !this.settings.showTitleIcons;
+				this.saveSettings();
+				this.refreshManagers('file');
+			}
+		}));
 
 		// COMMAND: Toggle tag pill icons
 		this.addCommand({
@@ -496,6 +507,36 @@ export default class IconicPlugin extends Plugin {
 				this.saveSettings();
 				this.refreshManagers();
 				this.menuManager.closeAndFlush();
+			}
+		});
+
+		// COMMAND: Toggle suggestion icons
+		this.addCommand({
+			id: 'toggle-suggestion-icons',
+			name: STRINGS.commands.toggleSuggestionIcons,
+			callback: () => {
+				this.settings.showSuggestionIcons = !this.settings.showSuggestionIcons;
+				this.saveSettings();
+			}
+		});
+
+		// COMMAND: Toggle quick switcher icons
+		this.addCommand({
+			id: 'toggle-quick-switcher-icons',
+			name: STRINGS.commands.toggleQuickSwitcherIcons,
+			callback: () => {
+				this.settings.showQuickSwitcherIcons = !this.settings.showQuickSwitcherIcons;
+				this.saveSettings();
+			}
+		});
+
+		// COMMAND: Toggle "Move file" icons
+		this.addCommand({
+			id: 'toggle-move-file-icons',
+			name: STRINGS.commands.toggleMoveFileIcons,
+			callback: () => {
+				this.settings.showMoveFileIcons = !this.settings.showMoveFileIcons;
+				this.saveSettings();
 			}
 		});
 
