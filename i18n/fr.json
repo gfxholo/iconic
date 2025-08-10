@@ -126,7 +126,7 @@
 			"path": "Chemin dans le coffre",
 			"headings": "Sous-titres",
 			"links": "Liens",
-			"tags": "Tags",
+			"tags": "Mots-clés",
 			"properties": "Propriétés...",
 			"created": "Date de création",
 			"modified": "Date de modification",
@@ -280,8 +280,9 @@
 		"toggleAllFolderIcons": "Basculer toutes les icônes de dossier",
 		"toggleMinimalFolderIcons": "Basculer les icônes de dossier minimales",
 		"toggleMarkdownTabIcons": "Basculer les icônes d'onglets Markdown",
-		"toggleMenuActions": "Bascular les actions du menu",
-		"toggleQuickSwitcherIcons": "Bascular les icônes de sélecteur rapide",
+		"toggleTagPillIcons": "Basculer les icônes des pastilles de mots-clé",
+		"toggleMenuActions": "Basculer les actions du menu",
+		"toggleQuickSwitcherIcons": "Basculer les icônes de sélecteur rapide",
 		"toggleBiggerSearchResults": "Basculer les résultats de recherche plus grands",
 		"changeIconCurrentFile": "Changer l'icône du fichier actuel"
 	},
@@ -309,7 +310,7 @@
 			"descDesktop": "Cliquez sur une icône pour ouvrir le sélecteur d'icônes.",
 			"descMobile": "Appuyez sur une icône pour ouvrir le sélecteur d'icônes."
 		},
-		"headingSidebarsAndTabs": "Icônes de la barre latérale et des onglets",
+		"headingSidebarsAndTabs": "Barres latérales et onglets",
 		"showAllFileIcons": {
 			"name": "Afficher toutes les icônes de fichiers",
 			"desc": "Afficher les icônes des fichiers qui n'ont pas d'icône personnalisée."
@@ -326,10 +327,23 @@
 			"name": "Afficher les icônes des onglets Markdown",
 			"desc": "Afficher les icônes des onglets pour les fichiers Markdown."
 		},
+		"headingEditor": "Éditeur",
+		"showTitleIcons": {
+			"name": "Afficher les icônes de titre",
+			"desc": "Afficher les icônes dans les titres de note, si l'option titre comme entête est activée."
+		},
+		"showTagPillIcons": {
+			"name": "Afficher les icônes des pastilles de mots-clé",
+			"desc": "Afficher les icônes dans les #mots-clés et la propriété \"tags\"."
+		},
 		"headingMenusAndDialogs": "Menus et boîtes de dialogue",
 		"showMenuActions": {
 			"name": "Afficher les actions des menus",
 			"desc": "Afficher les actions liées aux icônes dans les menus contextuels."
+		},
+		"showSuggestionIcons": {
+			"name": "Afficher les icônes des suggestions",
+			"desc": "Afficher les icônes dans les fenêtres de suggestion."
 		},
 		"showQuickSwitcherIcons": {
 			"name": "Afficher les icônes des sélecteurs rapides",
