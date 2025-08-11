@@ -350,7 +350,7 @@ export default class Strings {
 		},
 		showSuggestionIcons: {
 			name: 'Show suggestion icons',
-			desc: 'Show icons in suggestion pop-ups.',
+			desc: 'Show icons in suggestion pop-ups for links, tags, and properties.',
 		},
 		showQuickSwitcherIcons: {
 			name: 'Show quick switcher icons',
