@@ -271,19 +271,19 @@
 	},
 	"commands": {
 		"openRulebook": "ルールブックを開く",
-		"toggleBiggerIcons": "大きいアイコンを切り替える",
+		"toggleBiggerIcons": "大きいアイコンをトグル",
 		"toggleClickableIcons": {
-			"desktop": "クリック可能なアイコンを切り替える",
-			"mobile": "タップ可能なアイコンを切り替える"
+			"desktop": "クリック可能なアイコンをトグル",
+			"mobile": "タップ可能なアイコンをトグル"
 		},
-		"toggleAllFileIcons": "すべてのファイルアイコンを切り替える",
-		"toggleAllFolderIcons": "すべてのフォルダアイコンを切り替える",
-		"toggleMinimalFolderIcons": "最小限のフォルダアイコンを切り替える",
-		"toggleMarkdownTabIcons": "マークダウンタブアイコンを切り替える",
-		"toggleTagPillIcons": "タグピルアイコンを切り替える",
-		"toggleMenuActions": "メニューアクションの切り替え",
-		"toggleQuickSwitcherIcons": "クイックスイッチャーアイコンの切り替え",
-		"toggleBiggerSearchResults": "検索結果を大きく切り替えます",
+		"toggleAllFileIcons": "すべてのファイルアイコンをトグル",
+		"toggleAllFolderIcons": "すべてのフォルダアイコンをトグル",
+		"toggleMinimalFolderIcons": "最小限のフォルダアイコンをトグル",
+		"toggleMarkdownTabIcons": "マークダウンタブアイコンをトグル",
+		"toggleTagPillIcons": "タグピルアイコンをトグル",
+		"toggleMenuActions": "メニューアクションをトグル",
+		"toggleQuickSwitcherIcons": "クイックスイッチャーアイコンをトグル",
+		"toggleBiggerSearchResults": "検索結果を大きくトグルする",
 		"changeIconCurrentFile": "現在のファイルのアイコンを変更する"
 	},
 	"settings": {
