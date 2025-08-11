@@ -281,8 +281,8 @@
 		"toggleMinimalFolderIcons": "Alternar íconos de carpeta mínimos",
 		"toggleMarkdownTabIcons": "Alternar íconos de pestañas de Markdown",
 		"toggleTagPillIcons": "Alternar íconos de píldoras de etiquetas",
-		"toggleMenuActions": "Alternar acciones del menú",
-		"toggleQuickSwitcherIcons": "Alternar íconos del selector rápido",
+		"toggleMenuActions": "Alternar acciones de menú",
+		"toggleQuickSwitcherIcons": "Alternar íconos de selector rápido",
 		"toggleBiggerSearchResults": "Alternar resultados de búsqueda más grandes",
 		"changeIconCurrentFile": "Cambiar el ícono del archivo actual"
 	},
@@ -346,7 +346,7 @@
 			"desc": "Mostrar íconos en ventanas emergentes de sugerencias."
 		},
 		"showQuickSwitcherIcons": {
-			"name": "Mostrar íconos del selector rápido",
+			"name": "Mostrar íconos de selector rápido",
 			"desc": "Mostrar íconos en los resultados de búsqueda de los selectores rápidos."
 		},
 		"headingIconPicker": "Selector de íconos",
