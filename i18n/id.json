@@ -88,7 +88,10 @@
 		"folderRules": "Aturan folder",
 		"rules": "Aturan",
 		"addRule": "Tambah aturan",
+		"duplicateRule": "Duplikat aturan",
 		"editRule": "Edit aturan",
+		"moveRuleToTop": "Pindahkan aturan ke atas",
+		"moveRuleToBottom": "Pindahkan aturan ke bawah",
 		"removeRule": "Hapus aturan",
 		"untitledRule": "Aturan tanpa judul",
 		"drag": "Seret untuk menata"
@@ -126,6 +129,7 @@
 			"path": "Jalur dalam brankas",
 			"headings": "Judul",
 			"links": "Tautan",
+			"embeds": "Sematan",
 			"tags": "Tag",
 			"properties": "Properti...",
 			"created": "Tanggal dibuat",
@@ -280,9 +284,12 @@
 		"toggleAllFolderIcons": "Beralih semua ikon folder",
 		"toggleMinimalFolderIcons": "Beralih ikon folder minimal",
 		"toggleMarkdownTabIcons": "Beralih ikon tab Markdown",
+		"toggleTitleIcons": "Beralih ikon judul",
 		"toggleTagPillIcons": "Beralih ikon pil tag",
 		"toggleMenuActions": "Beralih tindakan menu",
+		"toggleSuggestionIcons": "Beralih ikon saran",
 		"toggleQuickSwitcherIcons": "Beralih ikon peralih cepat",
+		"toggleMoveFileIcons": "Beralih ikon \"Pindahkan berkas\"",
 		"toggleBiggerSearchResults": "Beralih hasil pencarian yang lebih besar",
 		"changeIconCurrentFile": "Ubah ikon file saat ini"
 	},
@@ -343,11 +350,15 @@
 		},
 		"showSuggestionIcons": {
 			"name": "Tampilkan ikon saran",
-			"desc": "Tampilkan ikon di jendela pop-up saran."
+			"desc": "Tampilkan ikon di jendela pop-up saran untuk tautan, tag, dan properti."
 		},
 		"showQuickSwitcherIcons": {
 			"name": "Tampilkan ikon peralih cepat",
 			"desc": "Tampilkan ikon dalam hasil pencarian peralih cepat."
+		},
+		"showMoveFileIcons": {
+			"name": "Tampilkan ikon \"Pindahkan berkas\"",
+			"desc": "Tampilkan ikon folder di dialog \"Pindahkan berkas\"."
 		},
 		"headingIconPicker": "Pemilih ikon",
 		"showItemName": {

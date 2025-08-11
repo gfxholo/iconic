@@ -88,7 +88,10 @@
 		"folderRules": "قواعد المجلد",
 		"rules": "القواعد",
 		"addRule": "إضافة قاعدة",
+		"duplicateRule": "تكرار القاعدة",
 		"editRule": "تعديل القاعدة",
+		"moveRuleToTop": "نقل القاعدة إلى الأعلى",
+		"moveRuleToBottom": "نقل القاعدة إلى الأسفل",
 		"removeRule": "إزالة القاعدة",
 		"untitledRule": "قاعدة بلا عنوان",
 		"drag": "سحب لإعادة الترتيب"
@@ -126,6 +129,7 @@
 			"path": "المسار في المخزن",
 			"headings": "العناوين",
 			"links": "الروابط",
+			"embeds": "تضمينات",
 			"tags": "العلامات",
 			"properties": "الخصائص...",
 			"created": "وقت الإنشاء",
@@ -280,9 +284,12 @@
 		"toggleAllFolderIcons": "تبديل جميع أيقونات المجلد",
 		"toggleMinimalFolderIcons": "تبديل أيقونات المجلد البسيطة",
 		"toggleMarkdownTabIcons": "تبديل أيقونات علامات تبويب Markdown",
+		"toggleTitleIcons": "تبديل أيقونات العنوان",
 		"toggleTagPillIcons": "تبديل أيقونات حبوب الوسوم",
 		"toggleMenuActions": "تبديل إجراءات القائمة",
+		"toggleSuggestionIcons": "تبديل أيقونات الاقتراحات",
 		"toggleQuickSwitcherIcons": "تبديل أيقونات الانتقال السريع",
+		"toggleMoveFileIcons": "تبديل أيقونات \"نقل الملف\"",
 		"toggleBiggerSearchResults": "تبديل نتائج البحث الأكبر",
 		"changeIconCurrentFile": "تغيير أيقونة الملف الحالي"
 	},
@@ -343,11 +350,15 @@
 		},
 		"showSuggestionIcons": {
 			"name": "إظهار أيقونات الاقتراحات",
-			"desc": "إظهار الأيقونات في النوافذ المنبثقة للاقتراحات."
+			"desc": "إظهار الأيقونات في النوافذ المنبثقة للاقتراحات الخاصة بالروابط والعلامات والخصائص."
 		},
 		"showQuickSwitcherIcons": {
 			"name": "الانتقال السريع إظهار أيقونات",
 			"desc": "الانتقال السريع إظهار الأيقونات في نتائج بحث."
+		},
+		"showMoveFileIcons": {
+			"name": "إظهار أيقونات \"نقل الملف\"",
+			"desc": "إظهار أيقونات المجلدات في مربعات حوار \"نقل الملف\"."
 		},
 		"headingIconPicker": "أداة اختيار الأيقونات",
 		"showItemName": {

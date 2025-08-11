@@ -88,7 +88,10 @@
 		"folderRules": "フォルダールール",
 		"rules": "ルール",
 		"addRule": "ルールを追加",
+		"duplicateRule": "ルールを複製する",
 		"editRule": "ルールを編集",
+		"moveRuleToTop": "ルールを一番上に移動する",
+		"moveRuleToBottom": "ルールを一番下に移動する",
 		"removeRule": "ルールを削除",
 		"untitledRule": "無題のルール",
 		"drag": "ドラッグして順番を変更"
@@ -126,6 +129,7 @@
 			"path": "ボールト内のパス",
 			"headings": "見出し",
 			"links": "リンク",
+			"embeds": "埋め込み",
 			"tags": "タグ",
 			"properties": "プロパティ…",
 			"created": "作成日時",
@@ -280,9 +284,12 @@
 		"toggleAllFolderIcons": "すべてのフォルダアイコンをトグル",
 		"toggleMinimalFolderIcons": "最小限のフォルダアイコンをトグル",
 		"toggleMarkdownTabIcons": "マークダウンタブアイコンをトグル",
+		"toggleTitleIcons": "タイトルアイコンをトグル",
 		"toggleTagPillIcons": "タグピルアイコンをトグル",
 		"toggleMenuActions": "メニューアクションをトグル",
+		"toggleSuggestionIcons": "サジェストアイコンをトグル",
 		"toggleQuickSwitcherIcons": "クイックスイッチャーアイコンをトグル",
+		"toggleMoveFileIcons": "「ファイルを移動」のアイコンをトグル",
 		"toggleBiggerSearchResults": "検索結果を大きくトグルする",
 		"changeIconCurrentFile": "現在のファイルのアイコンを変更する"
 	},
@@ -343,11 +350,15 @@
 		},
 		"showSuggestionIcons": {
 			"name": "サジェストアイコンを表示する",
-			"desc": "候補ポップアップにアイコンを表示します。"
+			"desc": "リンク、タグ、プロパティの候補ポップアップにアイコンを表示します。"
 		},
 		"showQuickSwitcherIcons": {
 			"name": "クイックスイッチャーアイコンを表示",
 			"desc": "クイックスイッチャーの検索結果にアイコンを表示します。"
+		},
+		"showMoveFileIcons": {
+			"name": "「ファイルを移動」のアイコンを表示",
+			"desc": "「ファイルを移動」ダイアログ内のフォルダアイコンを表示。"
 		},
 		"headingIconPicker": "アイコン ピッカー",
 		"showItemName": {

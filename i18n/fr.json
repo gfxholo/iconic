@@ -88,7 +88,10 @@
 		"folderRules": "Règles pour les dossiers",
 		"rules": "Règles",
 		"addRule": "Ajouter une règle",
+		"duplicateRule": "Dupliquer la règle",
 		"editRule": "Modifier la règle",
+		"moveRuleToTop": "Déplacer la règle en haut",
+		"moveRuleToBottom": "Déplacer la règle en bas",
 		"removeRule": "Supprimer la règle",
 		"untitledRule": "Règle sans titre",
 		"drag": "Glisser pour réorganiser"
@@ -126,6 +129,7 @@
 			"path": "Chemin dans le coffre",
 			"headings": "Sous-titres",
 			"links": "Liens",
+			"embeds": "Aperçus",
 			"tags": "Mots-clés",
 			"properties": "Propriétés...",
 			"created": "Date de création",
@@ -280,9 +284,12 @@
 		"toggleAllFolderIcons": "Basculer toutes les icônes de dossier",
 		"toggleMinimalFolderIcons": "Basculer les icônes de dossier minimales",
 		"toggleMarkdownTabIcons": "Basculer les icônes d'onglets Markdown",
+		"toggleTitleIcons": "Basculer les icônes de titre",
 		"toggleTagPillIcons": "Basculer les icônes des pastilles de mots-clé",
 		"toggleMenuActions": "Basculer les actions du menu",
+		"toggleSuggestionIcons": "Basculer les icônes des suggestions",
 		"toggleQuickSwitcherIcons": "Basculer les icônes de sélecteur rapide",
+		"toggleMoveFileIcons": "Basculer les icônes de \"Déplacer le fichier\"",
 		"toggleBiggerSearchResults": "Basculer les résultats de recherche plus grands",
 		"changeIconCurrentFile": "Changer l'icône du fichier actuel"
 	},
@@ -343,11 +350,15 @@
 		},
 		"showSuggestionIcons": {
 			"name": "Afficher les icônes des suggestions",
-			"desc": "Afficher les icônes dans les fenêtres de suggestion."
+			"desc": "Afficher les icônes dans les fenêtres de suggestion pour les liens, les mots-clés et les propriétés."
 		},
 		"showQuickSwitcherIcons": {
 			"name": "Afficher les icônes des sélecteurs rapides",
 			"desc": "Afficher les icônes dans les résultats de recherche des sélecteurs rapides."
+		},
+		"showMoveFileIcons": {
+			"name": "Afficher les icônes de \"Déplacer le fichier\"",
+			"desc": "Afficher les icônes des dossiers dans les boîtes de dialogue \"Déplacer le fichier\"."
 		},
 		"headingIconPicker": "Sélecteur d'icônes",
 		"showItemName": {

@@ -88,7 +88,10 @@
 		"folderRules": "Reglas de carpeta",
 		"rules": "Reglas",
 		"addRule": "Agregar regla",
+		"duplicateRule": "Duplicar regla",
 		"editRule": "Editar regla",
+		"moveRuleToTop": "Mover regla al principio",
+		"moveRuleToBottom": "Mover regla al final",
 		"removeRule": "Eliminar regla",
 		"untitledRule": "Regla sin título",
 		"drag": "Arrastre para reordenar"
@@ -126,6 +129,7 @@
 			"path": "Ruta en el almacén",
 			"headings": "Encabezados",
 			"links": "Enlaces",
+			"embeds": "Adjuntos",
 			"tags": "Etiquetas",
 			"properties": "Propiedades...",
 			"created": "Fecha de creación",
@@ -280,9 +284,12 @@
 		"toggleAllFolderIcons": "Alternar todos los íconos de carpetas",
 		"toggleMinimalFolderIcons": "Alternar íconos de carpeta mínimos",
 		"toggleMarkdownTabIcons": "Alternar íconos de pestañas de Markdown",
+		"toggleTitleIcons": "Alternar íconos de título",
 		"toggleTagPillIcons": "Alternar íconos de píldoras de etiquetas",
 		"toggleMenuActions": "Alternar acciones de menú",
+		"toggleSuggestionIcons": "Alternar íconos de sugerencias",
 		"toggleQuickSwitcherIcons": "Alternar íconos de selector rápido",
+		"toggleMoveFileIcons": "Alternar los íconos de \"Mover archivo\"",
 		"toggleBiggerSearchResults": "Alternar resultados de búsqueda más grandes",
 		"changeIconCurrentFile": "Cambiar el ícono del archivo actual"
 	},
@@ -343,11 +350,15 @@
 		},
 		"showSuggestionIcons": {
 			"name": "Mostrar íconos de sugerencias",
-			"desc": "Mostrar íconos en ventanas emergentes de sugerencias."
+			"desc": "Mostrar íconos en ventanas emergentes de sugerencias para enlaces, etiquetas y propiedades."
 		},
 		"showQuickSwitcherIcons": {
 			"name": "Mostrar íconos de selector rápido",
 			"desc": "Mostrar íconos en los resultados de búsqueda de los selectores rápidos."
+		},
+		"showMoveFileIcons": {
+			"name": "Mostrar los íconos de \"Mover archivo\"",
+			"desc": "Mostrar los íconos de carpetas en los diálogos de \"Mover archivo\"."
 		},
 		"headingIconPicker": "Selector de íconos",
 		"showItemName": {

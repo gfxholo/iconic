@@ -88,7 +88,10 @@
 		"folderRules": "Ordnerregeln",
 		"rules": "Regeln",
 		"addRule": "Regel hinzufügen",
+		"duplicateRule": "Regel duplizieren",
 		"editRule": "Regel bearbeiten",
+		"moveRuleToTop": "Regel nach oben verschieben",
+		"moveRuleToBottom": "Regel nach unten verschieben",
 		"removeRule": "Regel entfernen",
 		"untitledRule": "Regel ohne Titel",
 		"drag": "Zum Umordnen ziehen"
@@ -126,6 +129,7 @@
 			"path": "Pfad im Tresor",
 			"headings": "Überschriften",
 			"links": "Links",
+			"embeds": "Einbettungen",
 			"tags": "Tags",
 			"properties": "Eigenschaften...",
 			"created": "Erstellungsdatum",
@@ -280,9 +284,12 @@
 		"toggleAllFolderIcons": "Alle Ordnersymbole umschalten",
 		"toggleMinimalFolderIcons": "Minimale Ordnersymbole umschalten",
 		"toggleMarkdownTabIcons": "Markdown-Tabsymbole umschalten",
+		"toggleTitleIcons": "Titelsymbole umschalten",
 		"toggleTagPillIcons": "Tag-Pillensymbole umschalten",
 		"toggleMenuActions": "Menüaktionen umschalten",
+		"toggleSuggestionIcons": "Vorschlagsymbole umschalten",
 		"toggleQuickSwitcherIcons": "Schnellauswahlsymbole umschalten",
+		"toggleMoveFileIcons": "\"Datei verschieben\"-Symbole umschalten",
 		"toggleBiggerSearchResults": "Größere Suchergebnisse umschalten",
 		"changeIconCurrentFile": "Symbol der aktuellen Datei ändern"
 	},
@@ -343,11 +350,15 @@
 		},
 		"showSuggestionIcons": {
 			"name": "Vorschlagsymbole anzeigen",
-			"desc": "Symbole in Vorschlags-Pop-ups anzeigen."
+			"desc": "Symbole in Vorschlags-Pop-ups für Links, Tags und Eigenschaften anzeigen."
 		},
 		"showQuickSwitcherIcons": {
 			"name": "Schnellauswahlsymbole anzeigen",
 			"desc": "Symbole in den Suchergebnissen von Schnellauswahl anzeigen."
+		},
+		"showMoveFileIcons": {
+			"name": "\"Datei verschieben\"-Symbole anzeigen",
+			"desc": "Ordnersymbole in \"Datei verschieben\"-Dialogen anzeigen."
 		},
 		"headingIconPicker": "Symbolauswahl",
 		"showItemName": {

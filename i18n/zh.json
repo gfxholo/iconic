@@ -88,7 +88,10 @@
 		"folderRules": "文件夹规则",
 		"rules": "规则",
 		"addRule": "添加规则",
+		"duplicateRule": "重复规则",
 		"editRule": "编辑规则",
+		"moveRuleToTop": "将规则移到顶部",
+		"moveRuleToBottom": "将规则移到底部",
 		"removeRule": "删除规则",
 		"untitledRule": "无标题规则",
 		"drag": "拖动可调整布局"
@@ -126,6 +129,7 @@
 			"path": "文件库中的路径",
 			"headings": "标题",
 			"links": "链接",
+			"embeds": "嵌入链接",
 			"tags": "标签",
 			"properties": "属性……",
 			"created": "创建日期",
@@ -280,9 +284,12 @@
 		"toggleAllFolderIcons": "切换所有文件夹图标",
 		"toggleMinimalFolderIcons": "切换极简文件夹图标",
 		"toggleMarkdownTabIcons": "切换 Markdown 标签图标",
+		"toggleTitleIcons": "切换标题图标",
 		"toggleTagPillIcons": "切换标签胶囊图标",
 		"toggleMenuActions": "切换菜单操作",
+		"toggleSuggestionIcons": "切换建议图标",
 		"toggleQuickSwitcherIcons": "切换快速切换图标",
+		"toggleMoveFileIcons": "切换\"将文件移动\"图标",
 		"toggleBiggerSearchResults": "切换更大的搜索结果",
 		"changeIconCurrentFile": "更改当前文件的图标"
 	},
@@ -343,11 +350,15 @@
 		},
 		"showSuggestionIcons": {
 			"name": "显示建议图标",
-			"desc": "在建议弹出窗口中显示图标。"
+			"desc": "在链接、标签和属性的建议弹出窗口中显示图标。"
 		},
 		"showQuickSwitcherIcons": {
 			"name": "显示快速切换器图标",
 			"desc": "在快速切换器的搜索结果中显示图标。"
+		},
+		"showMoveFileIcons": {
+			"name": "显示\"将文件移动\"图标",
+			"desc": "在\"将文件移动\"对话框中显示文件夹图标"
 		},
 		"headingIconPicker": "图标选择器",
 		"showItemName": {
