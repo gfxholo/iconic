@@ -236,14 +236,16 @@ export default class SuggestionDialogIconManager extends IconManager {
 	 */
 	private refreshSuggestionIconAQS(value: any, el: HTMLElement): void {
 		const tFile = value.file;
-		if (tFile instanceof TFile) {
-			const itemEl = el.find('.another-quick-switcher__item');
-			const file = this.plugin.getFileItem(tFile.path);
-			if (file.icon || file.color) {
-				const iconEl = itemEl.find('.iconic-icon') ?? itemEl.createDiv();
-				itemEl.prepend(iconEl);
-				this.refreshIcon(file, iconEl);
-			}
+		if (!(tFile instanceof TFile)) return;
+
+		const itemEl = el.find('.another-quick-switcher__item');
+		const file = this.plugin.getFileItem(tFile.path);
+		const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
+
+		if (rule.icon || rule.color) {
+			const iconEl = itemEl.find('.iconic-icon') ?? itemEl.createDiv();
+			itemEl.prepend(iconEl);
+			this.refreshIcon(rule, iconEl);
 		}
 	}
 
