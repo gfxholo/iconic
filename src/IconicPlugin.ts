@@ -319,7 +319,7 @@ export default class IconicPlugin extends Plugin {
 			.forEach(([id, name]) => ICONS.set(id, name));
 
 			this.startManagers();
-			this.refreshBodyClasses();
+			this.refreshBody();
 
 			this.registerEvent(this.app.vault.on('create', tAbstractFile => {
 				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
@@ -372,7 +372,7 @@ export default class IconicPlugin extends Plugin {
 
 		this.registerEvent(this.app.workspace.on('css-change', () => {
 			this.refreshManagers();
-			this.refreshBodyClasses();
+			this.refreshBody();
 		}));
 
 		// RIBBON: Open rulebook
@@ -406,7 +406,7 @@ export default class IconicPlugin extends Plugin {
 					else if (this.settings.biggerIcons === 'off') this.settings.biggerIcons = 'mobile';
 				}
 				this.saveSettings();
-				this.refreshBodyClasses();
+				this.refreshBody();
 			}
 		}));
 
@@ -428,7 +428,7 @@ export default class IconicPlugin extends Plugin {
 				}
 				this.saveSettings();
 				this.refreshManagers();
-				this.refreshBodyClasses();
+				this.refreshBody();
 			}
 		}));
 
@@ -472,7 +472,7 @@ export default class IconicPlugin extends Plugin {
 			callback: () => {
 				this.settings.showMarkdownTabIcons = !this.settings.showMarkdownTabIcons;
 				this.saveSettings();
-				this.refreshBodyClasses();
+				this.refreshBody();
 			}
 		}));
 
@@ -557,7 +557,7 @@ export default class IconicPlugin extends Plugin {
 					else if (this.settings.biggerSearchResults === 'off') this.settings.biggerSearchResults = 'mobile';
 				}
 				this.saveSettings();
-				this.refreshBodyClasses();
+				this.refreshBody();
 			}
 		}));
 
@@ -586,7 +586,7 @@ export default class IconicPlugin extends Plugin {
 	async onExternalSettingsChange(): Promise<any> {
 		await this.loadSettings();
 		this.refreshManagers();
-		this.refreshBodyClasses();
+		this.refreshBody();
 	}
 
 	/**
@@ -660,10 +660,10 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
-	 * Refresh any global classes on document body.
+	 * Refresh any classes or attributes on document body.
 	 * @param unloading Remove all classes if true
 	 */
-	refreshBodyClasses(unloading?: boolean): void {
+	refreshBody(unloading?: boolean): void {
 		const { body } = activeDocument;
 		body.toggleClass('iconic-bigger-icons', unloading ? false : this.isSettingEnabled('biggerIcons'));
 		body.toggleClass('iconic-clickable-icons', unloading ? false : this.isSettingEnabled('clickableIcons'));
@@ -674,23 +674,8 @@ export default class IconicPlugin extends Plugin {
 		body.toggleClass('iconic-uncolor-select', unloading ? false : this.settings.uncolorSelect);
 
 		// @ts-expect-error (Private API)
-		const theme = this.app.customCss?.theme;
-		body.toggleClass('iconic-theme-btopaz', unloading ? false : theme === 'Blue Topaz');
-		body.toggleClass('iconic-theme-cat', unloading ? false : theme === 'Catppuccin');
-		body.toggleClass('iconic-theme-cglow', unloading ? false : theme === 'Cyber Glow');
-		body.toggleClass('iconic-theme-discord', unloading ? false : theme === 'Discordian');
-		body.toggleClass('iconic-theme-its', unloading ? false : theme === 'ITS Theme');
-		body.toggleClass('iconic-theme-lyt', unloading ? false : theme === 'LYT Mode');
-		body.toggleClass('iconic-theme-mflow', unloading ? false : theme === 'Mado Miniflow');
-		body.toggleClass('iconic-theme-minimal', unloading ? false : theme === 'Minimal');
-		body.toggleClass('iconic-theme-medge', unloading ? false : theme === 'Minimal Edge');
-		body.toggleClass('iconic-theme-sanctum', unloading ? false : theme === 'Sanctum');
-		body.toggleClass('iconic-theme-shiba', unloading ? false : theme === 'Shiba Inu');
-		body.toggleClass('iconic-theme-shimmer', unloading ? false : theme === 'Shimmering Focus');
-		body.toggleClass('iconic-theme-sodalite', unloading ? false : theme === 'Sodalite');
-		body.toggleClass('iconic-theme-spectrum', unloading ? false : theme === 'Spectrum');
-		body.toggleClass('iconic-theme-terminal', unloading ? false : theme === 'Terminal');
-		body.toggleClass('iconic-theme-ukiyo', unloading ? false : theme === 'Ukiyo');
+		const theme = this.app.customCss?.theme ?? null;
+		body.setAttr('data-theme', theme);
 	}
 
 	/**
@@ -1483,6 +1468,6 @@ export default class IconicPlugin extends Plugin {
 		this.ribbonIconManager?.unload();
 		this.suggestionIconManager?.unload();
 		this.suggestionDialogIconManager?.unload();
-		this.refreshBodyClasses(true);
+		this.refreshBody(true);
 	}
 }

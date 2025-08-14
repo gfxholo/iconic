@@ -60,7 +60,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.refreshIndicator(this.indicators.biggerIcons, value);
 					this.plugin.settings.biggerIcons = value;
 					this.plugin.saveSettings();
-					this.plugin.refreshBodyClasses();
+					this.plugin.refreshBody();
 				});
 				this.refreshIndicator(this.indicators.biggerIcons, dropdown.getValue());
 			});
@@ -90,7 +90,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.settings.clickableIcons = value;
 					this.plugin.saveSettings();
 					this.plugin.refreshManagers();
-					this.plugin.refreshBodyClasses();
+					this.plugin.refreshBody();
 				});
 				this.refreshIndicator(this.indicators.clickableIcons, dropdown.getValue());
 			});
@@ -146,7 +146,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.onChange(value => {
 					this.plugin.settings.showMarkdownTabIcons = value;
 					this.plugin.saveSettings();
-					this.plugin.refreshBodyClasses();
+					this.plugin.refreshBody();
 				})
 			);
 
@@ -274,7 +274,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.refreshIndicator(this.indicators.biggerSearchResults, value);
 					this.plugin.settings.biggerSearchResults = value;
 					this.plugin.saveSettings();
-					this.plugin.refreshBodyClasses();
+					this.plugin.refreshBody();
 				});
 				this.refreshIndicator(this.indicators.biggerSearchResults, dropdown.getValue());
 			});
@@ -351,7 +351,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.onChange(value => {
 					this.plugin.settings.uncolorHover = value;
 					this.plugin.saveSettings();
-					this.plugin.refreshBodyClasses();
+					this.plugin.refreshBody();
 				})
 			);
 
@@ -364,7 +364,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.onChange(value => {
 					this.plugin.settings.uncolorDrag = value;
 					this.plugin.saveSettings();
-					this.plugin.refreshBodyClasses();
+					this.plugin.refreshBody();
 				})
 			);
 
@@ -377,7 +377,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.onChange(value => {
 					this.plugin.settings.uncolorSelect = value;
 					this.plugin.saveSettings();
-					this.plugin.refreshBodyClasses();
+					this.plugin.refreshBody();
 				})
 			);
 
