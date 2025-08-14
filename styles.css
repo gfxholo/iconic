@@ -554,6 +554,14 @@ body[data-theme="Minimal Edge"] .tree-item-self .tree-item-icon {
 	display: unset;
 }
 
+/* Theme: Primary */
+body[data-theme="Primary"] .modal-container:has(+ .modal-container) {
+	backdrop-filter: unset;
+}
+body[data-theme="Primary"] .modal-container:has(+ .modal-container) > .modal-bg {
+	background-color: unset;
+}
+
 /* Theme: Sanctum */
 body[data-theme="Sanctum"] .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:has(.iconic-sidekick) > .nav-folder-title-content::before {
 	display: none;
