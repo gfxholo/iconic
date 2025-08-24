@@ -11,7 +11,7 @@ export default class RuleSetting extends Setting {
 
 	// Elements
 	readonly iconEl: HTMLElement;
-	readonly handleEl: HTMLElement;
+	readonly gripEl: HTMLElement;
 	ghostRuleEl: HTMLElement | null = null;
 
 	// Callbacks
@@ -72,14 +72,14 @@ export default class RuleSetting extends Setting {
 			.setValue(rule.enabled)
 			.onChange(value => this.toggleCallback?.(value));
 
-		// BUTTON: Drag handle
-		this.handleEl = new ExtraButtonComponent(this.controlEl)
-			.setIcon('lucide-menu')
+		// BUTTON: Grip
+		this.gripEl = new ExtraButtonComponent(this.controlEl)
+			.setIcon('lucide-grip-vertical')
 			.extraSettingsEl;
-		this.handleEl.addClass('iconic-drag');
+		this.gripEl.addClass('iconic-grip');
 
 		// Drag & drop (mouse)
-		this.handleEl.addEventListener('pointerdown', () => {
+		this.gripEl.addEventListener('pointerdown', () => {
 			this.settingEl.draggable = true;
 		});
 		this.settingEl.addEventListener('dragstart', event => {
@@ -93,18 +93,18 @@ export default class RuleSetting extends Setting {
 		});
 
 		// Drag & drop (multi-touch)
-		this.handleEl.addEventListener('touchstart', event => {
+		this.gripEl.addEventListener('touchstart', event => {
 			event.preventDefault(); // Prevent dragstart
 			const touch = event.targetTouches[0];
 			this.dragStartCallback?.(touch.clientX, touch.clientY);
 		});
-		this.handleEl.addEventListener('touchmove', event => {
+		this.gripEl.addEventListener('touchmove', event => {
 			event.preventDefault(); // Prevent scrolling
 			const touch = event.targetTouches[0];
 			this.dragCallback?.(touch.clientX, touch.clientY);
 		});
-		this.handleEl.addEventListener('touchend', () => this.dragEndCallback?.());
-		this.handleEl.addEventListener('touchcancel', () => this.dragEndCallback?.());
+		this.gripEl.addEventListener('touchend', () => this.dragEndCallback?.());
+		this.gripEl.addEventListener('touchcancel', () => this.dragEndCallback?.());
 
 		// Register menu listener
 		this.settingEl.addEventListener('contextmenu', event => this.showMenu(event));

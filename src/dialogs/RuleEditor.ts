@@ -932,7 +932,7 @@ export default class RuleEditor extends Modal {
 	 * Create a ghost setting that the cursor will drag along.
 	 */
 	private onDragStart(setting: ConditionSetting, x: number, y: number): void {
-		const { settingEl, handleEl } = setting;
+		const { settingEl, gripEl } = setting;
 		navigator.vibrate?.(100); // Not supported on iOS
 
 		// Create ghost and set initial position
@@ -941,8 +941,8 @@ export default class RuleEditor extends Modal {
 			width: settingEl.clientWidth + 'px',
 			height: settingEl.clientHeight + 'px',
 			left: settingEl.doc.body.hasClass('mod-rtl')
-				? x - handleEl.clientWidth / 2 + 'px'
-				: x - settingEl.clientWidth + handleEl.clientWidth / 2 + 'px',
+				? x - gripEl.clientWidth / 2 + 'px'
+				: x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px',
 			top: y - settingEl.clientHeight / 2 + 'px',
 		});
 		setting.ghostEl.appendChild(settingEl.cloneNode(true));
@@ -961,7 +961,7 @@ export default class RuleEditor extends Modal {
 	}
 
 	private onDrag(setting: ConditionSetting, x: number, y: number): void {
-		const { settingEl, handleEl } = setting;
+		const { settingEl, gripEl } = setting;
 
 		// Ignore initial (0, 0) event
 		if (x === 0 && y === 0) return;
@@ -969,8 +969,8 @@ export default class RuleEditor extends Modal {
 		// Update ghost position
 		setting.ghostEl?.setCssStyles({
 			left: settingEl.doc.body.hasClass('mod-rtl')
-				? x - handleEl.clientWidth / 2 + 'px'
-				: x - settingEl.clientWidth + handleEl.clientWidth / 2 + 'px',
+				? x - gripEl.clientWidth / 2 + 'px'
+				: x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px',
 			top: y - settingEl.clientHeight / 2 + 'px',
 		});
 

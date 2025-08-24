@@ -325,10 +325,15 @@ a.tag {
 	background: var(--background-modifier-form-field);
 	color: var(--text-normal);
 }
-.iconic-drag-handle:hover {
+.iconic-grip {
+	color: var(--text-faint);
+}
+.iconic-grip:hover {
+	background-color: transparent;
 	cursor: grab;
 }
-.iconic-drag-handle:active {
+.iconic-grip:active {
+	background-color: transparent;
 	cursor: grabbing;
 }
 .iconic-add {

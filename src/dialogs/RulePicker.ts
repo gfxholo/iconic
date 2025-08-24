@@ -149,7 +149,7 @@ export default class RulePicker extends Modal {
 	insertRule(rule: RuleItem, index: number, isNewRule?: boolean): void {
 		const page = this.plugin.settings.dialogState.rulePage;
 		const ruleSetting = new RuleSetting(this.contentEl, rule);
-		const { settingEl, handleEl } = ruleSetting;
+		const { settingEl, gripEl } = ruleSetting;
 
 		// Set icon
 		this.iconManager.refreshIcon(rule, ruleSetting.iconEl);
@@ -239,8 +239,8 @@ export default class RulePicker extends Modal {
 				width: settingEl.clientWidth + 'px',
 				height: settingEl.clientHeight + 'px',
 				left: activeDocument.body.hasClass('mod-rtl')
-					? x - handleEl.clientWidth / 2 + 'px'
-					: x - settingEl.clientWidth + handleEl.clientWidth / 2 + 'px',
+					? x - gripEl.clientWidth / 2 + 'px'
+					: x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px',
 				top: y - settingEl.clientHeight / 2 + 'px',
 			});
 			ruleSetting.ghostRuleEl.appendChild(settingEl.cloneNode(true));
@@ -256,8 +256,8 @@ export default class RulePicker extends Modal {
 			// Update ghost position
 			ruleSetting.ghostRuleEl?.setCssStyles({
 				left: activeDocument.body.hasClass('mod-rtl')
-					? x - handleEl.clientWidth / 2 + 'px'
-					: x - settingEl.clientWidth + handleEl.clientWidth / 2 + 'px',
+					? x - gripEl.clientWidth / 2 + 'px'
+					: x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px',
 				top: y - settingEl.clientHeight / 2 + 'px',
 			});
 			// Get position in list

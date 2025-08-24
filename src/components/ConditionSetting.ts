@@ -16,7 +16,7 @@ export default class ConditionSetting extends Setting {
 	readonly valDropdown: DropdownComponent;
 
 	// Elements
-	readonly handleEl: HTMLElement;
+	readonly gripEl: HTMLElement;
 	ghostEl: HTMLElement | null = null;
 
 	// Callbacks
@@ -66,15 +66,14 @@ export default class ConditionSetting extends Setting {
 		this.valDropdown = new DropdownComponent(ctrlContainer)
 			.onChange(value => this.valueChangeCallback?.(value));
 
-		// BUTTON: Drag handle
-		this.handleEl = new ExtraButtonComponent(this.controlEl)
-			.setIcon('lucide-menu')
-			.setTooltip(STRINGS.rulePicker.drag)
+		// BUTTON: Grip
+		this.gripEl = new ExtraButtonComponent(this.controlEl)
+			.setIcon('lucide-grip-vertical')
 			.extraSettingsEl;
-		this.handleEl.addClass('iconic-drag');
+		this.gripEl.addClass('iconic-grip');
 
 		// Drag & drop (mouse)
-		this.handleEl.addEventListener('pointerdown', () => {
+		this.gripEl.addEventListener('pointerdown', () => {
 			this.settingEl.draggable = true;
 		});
 		this.settingEl.addEventListener('dragstart', event => {
@@ -86,18 +85,18 @@ export default class ConditionSetting extends Setting {
 		this.settingEl.addEventListener('dragend', () => this.dragEndCallback?.());
 
 		// Drag & drop (multi-touch)
-		this.handleEl.addEventListener('touchstart', event => {
+		this.gripEl.addEventListener('touchstart', event => {
 			event.preventDefault(); // Prevent dragstart
 			const touch = event.targetTouches[0];
 			this.dragStartCallback?.(touch.clientX, touch.clientY);
 		});
-		this.handleEl.addEventListener('touchmove', event => {
+		this.gripEl.addEventListener('touchmove', event => {
 			event.preventDefault(); // Prevent scrolling
 			const touch = event.targetTouches[0];
 			this.dragCallback?.(touch.clientX, touch.clientY);
 		});
-		this.handleEl.addEventListener('touchend', () => this.dragEndCallback?.());
-		this.handleEl.addEventListener('touchcancel', () => this.dragEndCallback?.());
+		this.gripEl.addEventListener('touchend', () => this.dragEndCallback?.());
+		this.gripEl.addEventListener('touchcancel', () => this.dragEndCallback?.());
 	}
 
 	onSourceChange(callback: (source: string) => any): this {
