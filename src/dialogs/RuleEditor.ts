@@ -7,343 +7,310 @@ import RuleChecker from 'src/dialogs/RuleChecker';
 import IconPicker from 'src/dialogs/IconPicker';
 import ConditionSetting from 'src/components/ConditionSetting';
 
-/**
- * Options for a DropdownComponent.
- * Localized strings are not available at compile time, so option labels are stored as functions.
- */
-export class DropdownOptions {
-	constructor(private readonly options: { [value: string]: () => string }) { }
+export type OperatorValueType = 'text' | 'regex' | 'number' | 'datetime' | 'date' | 'time' | 'weekday' | 'month' | 'color' | 'hex';
 
-	/**
-	 * Check if options contain a given value.
-	 */
-	has(value: string): boolean {
-		return this.options.hasOwnProperty(value);
-	}
+const FILE_SOURCES = [
+	'icon',
+	'color',
+	'name',
+	'filename',
+	'extension',
+	'tree',
+	'path',
+	'headings',
+	'links',
+	'embeds',
+	'tags',
+	'created',
+	'modified',
+	'clock',
+	'properties',
+];
 
-	/**
-	 * Get an object that can be loaded into addOptions().
-	 */
-	get(): Record<string, string> {
-		const options: { [value: string]: string } = {};
-		for (const [value, getLabel] of Object.entries(this.options)) {
-			options[value] = getLabel();
-		}
-		return options;
-	}
+const FOLDER_SOURCES = [
+	'icon',
+	'color',
+	'name',
+	'tree',
+	'path',
+	'created',
+	'modified',
+	'clock',
+];
 
-	/**
-	 * Concatenate options together, returning a new object.
-	 */
-	plus(moreOptions: DropdownOptions): DropdownOptions {
-		return new DropdownOptions({ ...this.options, ...moreOptions.options });
-	}
-}
+const TEXT_OPERATORS = [
+	'is',
+	'!is',
+	'contains',
+	'startsWith',
+	'endsWith',
+	'matches',
+	'!contains',
+	'!startsWith',
+	'!endsWith',
+	'!matches',
+];
 
-export const FILE_SOURCES = new DropdownOptions({
-	icon: () => STRINGS.ruleEditor.source.icon,
-	color: () => STRINGS.ruleEditor.source.color,
-	name: () => STRINGS.ruleEditor.source.name,
-	filename: () => STRINGS.ruleEditor.source.filename,
-	extension: () => STRINGS.ruleEditor.source.extension,
-	tree: () => STRINGS.ruleEditor.source.tree,
-	path: () => STRINGS.ruleEditor.source.path,
-	headings: () => STRINGS.ruleEditor.source.headings,
-	links: () => STRINGS.ruleEditor.source.links,
-	embeds: () => STRINGS.ruleEditor.source.embeds,
-	tags: () => STRINGS.ruleEditor.source.tags,
-	properties: () => STRINGS.ruleEditor.source.properties,
-	created: () => STRINGS.ruleEditor.source.created,
-	modified: () => STRINGS.ruleEditor.source.modified,
-	clock: () => STRINGS.ruleEditor.source.clock,
-});
+const LIST_OPERATORS = [
+	'includes',
+	'!includes',
+	'allAre',
+	'allContain',
+	'allStartWith',
+	'allEndWith',
+	'allMatch',
+	'anyContain',
+	'anyStartWith',
+	'anyEndWith',
+	'anyMatch',
+	'noneContain',
+	'noneStartWith',
+	'noneEndWith',
+	'noneMatch',
+	'countIs',
+	'!countIs',
+	'countIsLess',
+	'countIsMore',
+];
 
-export const FOLDER_SOURCES = new DropdownOptions({
-	icon: () => STRINGS.ruleEditor.source.icon,
-	color: () => STRINGS.ruleEditor.source.color,
-	name: () => STRINGS.ruleEditor.source.name,
-	tree: () => STRINGS.ruleEditor.source.tree,
-	path: () => STRINGS.ruleEditor.source.path,
-	created: () => STRINGS.ruleEditor.source.created,
-	modified: () => STRINGS.ruleEditor.source.modified,
-	clock: () => STRINGS.ruleEditor.source.clock,
-});
+const NUMBER_OPERATORS = [
+	'equals',
+	'!equals',
+	'isLess',
+	'isMore',
+	'isDivisible',
+	'!isLess',
+	'!isMore',
+	'!isDivisible',
+];
 
-export const TEXT_OPERATORS = new DropdownOptions({
-	is: () => STRINGS.ruleEditor.operator.is,
-	'!is': () => STRINGS.ruleEditor.operator['!is'],
-	contains: () => STRINGS.ruleEditor.operator.contains,
-	startsWith: () => STRINGS.ruleEditor.operator.startsWith,
-	endsWith: () => STRINGS.ruleEditor.operator.endsWith,
-	matches: () => STRINGS.ruleEditor.operator.matches,
-	'!contains': () => STRINGS.ruleEditor.operator['!contains'],
-	'!startsWith': () => STRINGS.ruleEditor.operator['!startsWith'],
-	'!endsWith': () => STRINGS.ruleEditor.operator['!endsWith'],
-	'!matches': () => STRINGS.ruleEditor.operator['!matches'],
-});
+const BOOLEAN_OPERATORS = [
+	'isTrue',
+	'!isTrue',
+	'isFalse',
+	'!isFalse',
+];
 
-export const LIST_OPERATORS = new DropdownOptions({
-	includes: () => STRINGS.ruleEditor.operator.includes,
-	'!includes': () => STRINGS.ruleEditor.operator['!includes'],
-	allAre: () => STRINGS.ruleEditor.operator.allAre,
-	allContain: () => STRINGS.ruleEditor.operator.allContain,
-	allStartWith: () => STRINGS.ruleEditor.operator.allStartWith,
-	allEndWith: () => STRINGS.ruleEditor.operator.allEndWith,
-	allMatch: () => STRINGS.ruleEditor.operator.allMatch,
-	anyContain: () => STRINGS.ruleEditor.operator.anyContain,
-	anyStartWith: () => STRINGS.ruleEditor.operator.anyStartWith,
-	anyEndWith: () => STRINGS.ruleEditor.operator.anyEndWith,
-	anyMatch: () => STRINGS.ruleEditor.operator.anyMatch,
-	noneContain: () => STRINGS.ruleEditor.operator.noneContain,
-	noneStartWith: () => STRINGS.ruleEditor.operator.noneStartWith,
-	noneEndWith: () => STRINGS.ruleEditor.operator.noneEndWith,
-	noneMatch: () => STRINGS.ruleEditor.operator.noneMatch,
-	countIs: () => STRINGS.ruleEditor.operator.countIs,
-	'!countIs': () => STRINGS.ruleEditor.operator['!countIs'],
-	countIsLess: () => STRINGS.ruleEditor.operator.countIsLess,
-	countIsMore: () => STRINGS.ruleEditor.operator.countIsMore,
-});
+const DATETIME_OPERATORS = [
+	'datetimeIs',
+	'!datetimeIs',
+	'datetimeIsBefore',
+	'datetimeIsAfter',
+	'isNow',
+	'!isNow',
+	'isBeforeNow',
+	'isAfterNow',
+	'timeIs',
+	'!timeIs',
+	'timeIsBefore',
+	'timeIsAfter',
+	'timeIsNow',
+	'!timeIsNow',
+	'timeIsBeforeNow',
+	'timeIsAfterNow',
+	'dateIs',
+	'!dateIs',
+	'dateIsBefore',
+	'dateIsAfter',
+	'isToday',
+	'!isToday',
+	'isBeforeToday',
+	'isAfterToday',
+	'isLessDaysAgo',
+	'isLessDaysAway',
+	'isMoreDaysAgo',
+	'isMoreDaysAway',
+	'weekdayIs',
+	'!weekdayIs',
+	'weekdayIsBefore',
+	'weekdayIsAfter',
+	'monthdayIs',
+	'!monthdayIs',
+	'monthdayIsBefore',
+	'monthdayIsAfter',
+	'monthIs',
+	'!monthIs',
+	'monthIsBefore',
+	'monthIsAfter',
+	'yearIs',
+	'!yearIs',
+	'yearIsBefore',
+	'yearIsAfter',
+];
 
-export const NUMBER_OPERATORS = new DropdownOptions({
-	equals: () => STRINGS.ruleEditor.operator.equals,
-	'!equals': () => STRINGS.ruleEditor.operator['!equals'],
-	isLess: () => STRINGS.ruleEditor.operator.isLess,
-	isMore: () => STRINGS.ruleEditor.operator.isMore,
-	isDivisible: () => STRINGS.ruleEditor.operator.isDivisible,
-	'!isLess': () => STRINGS.ruleEditor.operator['!isLess'],
-	'!isMore': () => STRINGS.ruleEditor.operator['!isMore'],
-	'!isDivisible': () => STRINGS.ruleEditor.operator['!isDivisible'],
-});
+const DATE_OPERATORS = [
+	'dateIs',
+	'!dateIs',
+	'dateIsBefore',
+	'dateIsAfter',
+	'isToday',
+	'!isToday',
+	'isBeforeToday',
+	'isAfterToday',
+	'isLessDaysAgo',
+	'isLessDaysAway',
+	'isMoreDaysAgo',
+	'isMoreDaysAway',
+	'weekdayIs',
+	'!weekdayIs',
+	'weekdayIsBefore',
+	'weekdayIsAfter',
+	'monthdayIs',
+	'!monthdayIs',
+	'monthdayIsBefore',
+	'monthdayIsAfter',
+	'monthIs',
+	'!monthIs',
+	'monthIsBefore',
+	'monthIsAfter',
+	'yearIs',
+	'!yearIs',
+	'yearIsBefore',
+	'yearIsAfter',
+];
 
-export const BOOLEAN_OPERATORS = new DropdownOptions({
-	isTrue: () => STRINGS.ruleEditor.operator.isTrue,
-	'!isTrue': () => STRINGS.ruleEditor.operator['!isTrue'],
-	isFalse: () => STRINGS.ruleEditor.operator.isFalse,
-	'!isFalse': () => STRINGS.ruleEditor.operator['!isFalse'],
-});
+const PAST_OPERATORS = [
+	'datetimeIs',
+	'!datetimeIs',
+	'datetimeIsBefore',
+	'datetimeIsAfter',
+	'timeIs',
+	'!timeIs',
+	'timeIsBefore',
+	'timeIsAfter',
+	'timeIsNow',
+	'!timeIsNow',
+	'timeIsBeforeNow',
+	'timeIsAfterNow',
+	'dateIs',
+	'!dateIs',
+	'dateIsBefore',
+	'dateIsAfter',
+	'isToday',
+	'!isToday',
+	'isLessDaysAgo',
+	'isMoreDaysAgo',
+	'weekdayIs',
+	'!weekdayIs',
+	'weekdayIsBefore',
+	'weekdayIsAfter',
+	'monthdayIs',
+	'!monthdayIs',
+	'monthdayIsBefore',
+	'monthdayIsAfter',
+	'monthIs',
+	'!monthIs',
+	'monthIsBefore',
+	'monthIsAfter',
+	'yearIs',
+	'!yearIs',
+	'yearIsBefore',
+	'yearIsAfter',
+];
 
-export const DATETIME_OPERATORS = new DropdownOptions({
-	datetimeIs: () => STRINGS.ruleEditor.operator.is,
-	'!datetimeIs': () => STRINGS.ruleEditor.operator['!is'],
-	datetimeIsBefore: () => STRINGS.ruleEditor.operator.isBefore,
-	datetimeIsAfter: () => STRINGS.ruleEditor.operator.isAfter,
-	isNow: () => STRINGS.ruleEditor.operator.isNow,
-	'!isNow': () => STRINGS.ruleEditor.operator['!isNow'],
-	isBeforeNow: () => STRINGS.ruleEditor.operator.isBeforeNow,
-	isAfterNow: () => STRINGS.ruleEditor.operator.isAfterNow,
-	timeIs: () => STRINGS.ruleEditor.operator.timeIs,
-	'!timeIs': () => STRINGS.ruleEditor.operator['!timeIs'],
-	timeIsBefore: () => STRINGS.ruleEditor.operator.timeIsBefore,
-	timeIsAfter: () => STRINGS.ruleEditor.operator.timeIsAfter,
-	timeIsNow: () => STRINGS.ruleEditor.operator.timeIsNow,
-	'!timeIsNow': () => STRINGS.ruleEditor.operator['!timeIsNow'],
-	timeIsBeforeNow: () => STRINGS.ruleEditor.operator.timeIsBeforeNow,
-	timeIsAfterNow: () => STRINGS.ruleEditor.operator.timeIsAfterNow,
-	dateIs: () => STRINGS.ruleEditor.operator.dateIs,
-	'!dateIs': () => STRINGS.ruleEditor.operator['!dateIs'],
-	dateIsBefore: () => STRINGS.ruleEditor.operator.dateIsBefore,
-	dateIsAfter: () => STRINGS.ruleEditor.operator.dateIsAfter,
-	isToday: () => STRINGS.ruleEditor.operator.isToday,
-	'!isToday': () => STRINGS.ruleEditor.operator['!isToday'],
-	isBeforeToday: () => STRINGS.ruleEditor.operator.isBeforeToday,
-	isAfterToday: () => STRINGS.ruleEditor.operator.isAfterToday,
-	isLessDaysAgo: () => STRINGS.ruleEditor.operator.isLessDaysAgo,
-	isLessDaysAway: () => STRINGS.ruleEditor.operator.isLessDaysAway,
-	isMoreDaysAgo: () => STRINGS.ruleEditor.operator.isMoreDaysAgo,
-	isMoreDaysAway: () => STRINGS.ruleEditor.operator.isMoreDaysAway,
-	weekdayIs: () => STRINGS.ruleEditor.operator.weekdayIs,
-	'!weekdayIs': () => STRINGS.ruleEditor.operator['!weekdayIs'],
-	weekdayIsBefore: () => STRINGS.ruleEditor.operator.weekdayIsBefore,
-	weekdayIsAfter: () => STRINGS.ruleEditor.operator.weekdayIsAfter,
-	monthdayIs: () => STRINGS.ruleEditor.operator.monthdayIs,
-	'!monthdayIs': () => STRINGS.ruleEditor.operator['!monthdayIs'],
-	monthdayIsBefore: () => STRINGS.ruleEditor.operator.monthdayIsBefore,
-	monthdayIsAfter: () => STRINGS.ruleEditor.operator.monthdayIsAfter,
-	monthIs: () => STRINGS.ruleEditor.operator.monthIs,
-	'!monthIs': () => STRINGS.ruleEditor.operator['!monthIs'],
-	monthIsBefore: () => STRINGS.ruleEditor.operator.monthIsBefore,
-	monthIsAfter: () => STRINGS.ruleEditor.operator.monthIsAfter,
-	yearIs: () => STRINGS.ruleEditor.operator.yearIs,
-	'!yearIs': () => STRINGS.ruleEditor.operator['!yearIs'],
-	yearIsBefore: () => STRINGS.ruleEditor.operator.yearIsBefore,
-	yearIsAfter: () => STRINGS.ruleEditor.operator.yearIsAfter,
-});
+const PRESENT_OPERATORS = [
+	'datetimeIs',
+	'!datetimeIs',
+	'datetimeIsBefore',
+	'datetimeIsAfter',
+	'timeIs',
+	'!timeIs',
+	'timeIsBefore',
+	'timeIsAfter',
+	'dateIs',
+	'!dateIs',
+	'dateIsBefore',
+	'dateIsAfter',
+	'weekdayIs',
+	'!weekdayIs',
+	'weekdayIsBefore',
+	'weekdayIsAfter',
+	'monthdayIs',
+	'!monthdayIs',
+	'monthdayIsBefore',
+	'monthdayIsAfter',
+	'monthIs',
+	'!monthIs',
+	'monthIsBefore',
+	'monthIsAfter',
+	'yearIs',
+	'!yearIs',
+	'yearIsBefore',
+	'yearIsAfter',
+];
 
-export const DATE_OPERATORS = new DropdownOptions({
-	dateIs: () => STRINGS.ruleEditor.operator.dateIs,
-	'!dateIs': () => STRINGS.ruleEditor.operator['dateIs'],
-	dateIsBefore: () => STRINGS.ruleEditor.operator.dateIsBefore,
-	dateIsAfter: () => STRINGS.ruleEditor.operator.dateIsAfter,
-	isToday: () => STRINGS.ruleEditor.operator.isToday,
-	'!isToday': () => STRINGS.ruleEditor.operator['!isToday'],
-	isBeforeToday: () => STRINGS.ruleEditor.operator.isBeforeToday,
-	isAfterToday: () => STRINGS.ruleEditor.operator.isAfterToday,
-	isLessDaysAgo: () => STRINGS.ruleEditor.operator.isLessDaysAgo,
-	isLessDaysAway: () => STRINGS.ruleEditor.operator.isLessDaysAway,
-	isMoreDaysAgo: () => STRINGS.ruleEditor.operator.isMoreDaysAgo,
-	isMoreDaysAway: () => STRINGS.ruleEditor.operator.isMoreDaysAway,
-	weekdayIs: () => STRINGS.ruleEditor.operator.weekdayIs,
-	'!weekdayIs': () => STRINGS.ruleEditor.operator['!weekdayIs'],
-	weekdayIsBefore: () => STRINGS.ruleEditor.operator.weekdayIsBefore,
-	weekdayIsAfter: () => STRINGS.ruleEditor.operator.weekdayIsAfter,
-	monthdayIs: () => STRINGS.ruleEditor.operator.monthdayIs,
-	'!monthdayIs': () => STRINGS.ruleEditor.operator['!monthdayIs'],
-	monthdayIsBefore: () => STRINGS.ruleEditor.operator.monthdayIsBefore,
-	monthdayIsAfter: () => STRINGS.ruleEditor.operator.monthdayIsAfter,
-	monthIs: () => STRINGS.ruleEditor.operator.monthIs,
-	'!monthIs': () => STRINGS.ruleEditor.operator['!monthIs'],
-	monthIsBefore: () => STRINGS.ruleEditor.operator.monthIsBefore,
-	monthIsAfter: () => STRINGS.ruleEditor.operator.monthIsAfter,
-	yearIs: () => STRINGS.ruleEditor.operator.yearIs,
-	'!yearIs': () => STRINGS.ruleEditor.operator['!yearIs'],
-	yearIsBefore: () => STRINGS.ruleEditor.operator.yearIsBefore,
-	yearIsAfter: () => STRINGS.ruleEditor.operator.yearIsAfter,
-});
+const ICON_OPERATORS = [
+	'iconIs',
+	'!iconIs',
+	'nameIs',
+	'!nameIs',
+	'nameContains',
+	'nameStartsWith',
+	'nameEndsWith',
+	'nameMatches',
+	'!nameContains',
+	'!nameStartsWith',
+	'!nameEndsWith',
+	'!nameMatches',
+];
 
-export const PAST_OPERATORS = new DropdownOptions({
-	datetimeIs: () => STRINGS.ruleEditor.operator.is,
-	'!datetimeIs': () => STRINGS.ruleEditor.operator['!is'],
-	datetimeIsBefore: () => STRINGS.ruleEditor.operator.isBefore,
-	datetimeIsAfter: () => STRINGS.ruleEditor.operator.isAfter,
-	timeIs: () => STRINGS.ruleEditor.operator.timeIs,
-	'!timeIs': () => STRINGS.ruleEditor.operator['!timeIs'],
-	timeIsBefore: () => STRINGS.ruleEditor.operator.timeIsBefore,
-	timeIsAfter: () => STRINGS.ruleEditor.operator.timeIsAfter,
-	timeIsNow: () => STRINGS.ruleEditor.operator.timeIsNow,
-	'!timeIsNow': () => STRINGS.ruleEditor.operator['!timeIsNow'],
-	timeIsBeforeNow: () => STRINGS.ruleEditor.operator.timeIsBeforeNow,
-	timeIsAfterNow: () => STRINGS.ruleEditor.operator.timeIsAfterNow,
-	dateIs: () => STRINGS.ruleEditor.operator.dateIs,
-	'!dateIs': () => STRINGS.ruleEditor.operator['!dateIs'],
-	dateIsBefore: () => STRINGS.ruleEditor.operator.dateIsBefore,
-	dateIsAfter: () => STRINGS.ruleEditor.operator.dateIsAfter,
-	isToday: () => STRINGS.ruleEditor.operator.isToday,
-	'!isToday': () => STRINGS.ruleEditor.operator['!isToday'],
-	isLessDaysAgo: () => STRINGS.ruleEditor.operator.isLessDaysAgo,
-	isMoreDaysAgo: () => STRINGS.ruleEditor.operator.isMoreDaysAgo,
-	weekdayIs: () => STRINGS.ruleEditor.operator.weekdayIs,
-	'!weekdayIs': () => STRINGS.ruleEditor.operator['!weekdayIs'],
-	weekdayIsBefore: () => STRINGS.ruleEditor.operator.weekdayIsBefore,
-	weekdayIsAfter: () => STRINGS.ruleEditor.operator.weekdayIsAfter,
-	monthdayIs: () => STRINGS.ruleEditor.operator.monthdayIs,
-	'!monthdayIs': () => STRINGS.ruleEditor.operator['!monthdayIs'],
-	monthdayIsBefore: () => STRINGS.ruleEditor.operator.monthdayIsBefore,
-	monthdayIsAfter: () => STRINGS.ruleEditor.operator.monthdayIsAfter,
-	monthIs: () => STRINGS.ruleEditor.operator.monthIs,
-	'!monthIs': () => STRINGS.ruleEditor.operator['!monthIs'],
-	monthIsBefore: () => STRINGS.ruleEditor.operator.monthIsBefore,
-	monthIsAfter: () => STRINGS.ruleEditor.operator.monthIsAfter,
-	yearIs: () => STRINGS.ruleEditor.operator.yearIs,
-	'!yearIs': () => STRINGS.ruleEditor.operator['!yearIs'],
-	yearIsBefore: () => STRINGS.ruleEditor.operator.yearIsBefore,
-	yearIsAfter: () => STRINGS.ruleEditor.operator.yearIsAfter,
-});
+const COLOR_OPERATORS = [
+	'colorIs',
+	'!colorIs',
+	'hexIs',
+	'!hexIs',
+];
 
-export const PRESENT_OPERATORS = new DropdownOptions({
-	datetimeIs: () => STRINGS.ruleEditor.operator.is,
-	'!datetimeIs': () => STRINGS.ruleEditor.operator['!is'],
-	datetimeIsBefore: () => STRINGS.ruleEditor.operator.isBefore,
-	datetimeIsAfter: () => STRINGS.ruleEditor.operator.isAfter,
-	timeIs: () => STRINGS.ruleEditor.operator.timeIs,
-	'!timeIs': () => STRINGS.ruleEditor.operator['!timeIs'],
-	timeIsBefore: () => STRINGS.ruleEditor.operator.timeIsBefore,
-	timeIsAfter: () => STRINGS.ruleEditor.operator.timeIsAfter,
-	dateIs: () => STRINGS.ruleEditor.operator.dateIs,
-	'!dateIs': () => STRINGS.ruleEditor.operator['!dateIs'],
-	dateIsBefore: () => STRINGS.ruleEditor.operator.dateIsBefore,
-	dateIsAfter: () => STRINGS.ruleEditor.operator.dateIsAfter,
-	weekdayIs: () => STRINGS.ruleEditor.operator.weekdayIs,
-	'!weekdayIs': () => STRINGS.ruleEditor.operator['!weekdayIs'],
-	weekdayIsBefore: () => STRINGS.ruleEditor.operator.weekdayIsBefore,
-	weekdayIsAfter: () => STRINGS.ruleEditor.operator.weekdayIsAfter,
-	monthdayIs: () => STRINGS.ruleEditor.operator.monthdayIs,
-	'!monthdayIs': () => STRINGS.ruleEditor.operator['!monthdayIs'],
-	monthdayIsBefore: () => STRINGS.ruleEditor.operator.monthdayIsBefore,
-	monthdayIsAfter: () => STRINGS.ruleEditor.operator.monthdayIsAfter,
-	monthIs: () => STRINGS.ruleEditor.operator.monthIs,
-	'!monthIs': () => STRINGS.ruleEditor.operator['!monthIs'],
-	monthIsBefore: () => STRINGS.ruleEditor.operator.monthIsBefore,
-	monthIsAfter: () => STRINGS.ruleEditor.operator.monthIsAfter,
-	yearIs: () => STRINGS.ruleEditor.operator.yearIs,
-	'!yearIs': () => STRINGS.ruleEditor.operator['!yearIs'],
-	yearIsBefore: () => STRINGS.ruleEditor.operator.yearIsBefore,
-	yearIsAfter: () => STRINGS.ruleEditor.operator.yearIsAfter,
-});
+const VALUE_OPERATORS = [
+	'hasValue',
+	'!hasValue',
+];
 
-export const ICON_OPERATORS = new DropdownOptions({
-	iconIs: () => STRINGS.ruleEditor.operator.iconIs,
-	'!iconIs': () => STRINGS.ruleEditor.operator['!iconIs'],
-	nameIs: () => STRINGS.ruleEditor.operator.nameIs,
-	'!nameIs': () => STRINGS.ruleEditor.operator['!nameIs'],
-	nameContains: () => STRINGS.ruleEditor.operator.nameContains,
-	nameStartsWith: () => STRINGS.ruleEditor.operator.nameStartsWith,
-	nameEndsWith: () => STRINGS.ruleEditor.operator.nameEndsWith,
-	nameMatches: () => STRINGS.ruleEditor.operator.nameMatches,
-	'!nameContains': () => STRINGS.ruleEditor.operator['!nameContains'],
-	'!nameStartsWith': () => STRINGS.ruleEditor.operator['!nameStartsWith'],
-	'!nameEndsWith': () => STRINGS.ruleEditor.operator['!nameEndsWith'],
-	'!nameMatches': () => STRINGS.ruleEditor.operator['!nameMatches'],
-});
+const PROPERTY_OPERATORS = [
+	'hasProperty',
+	'!hasProperty',
+];
 
-export const COLOR_OPERATORS = new DropdownOptions({
-	colorIs: () => STRINGS.ruleEditor.operator.colorIs,
-	'!colorIs': () => STRINGS.ruleEditor.operator['!colorIs'],
-	hexIs: () => STRINGS.ruleEditor.operator.hexIs,
-	'!hexIs': () => STRINGS.ruleEditor.operator['!hexIs'],
-});
+const WEEKDAY_VALUES = [
+	1,
+	2,
+	3,
+	4,
+	5,
+	6,
+	7,
+];
 
-export const VALUE_OPERATORS = new DropdownOptions({
-	hasValue: () => STRINGS.ruleEditor.operator.hasValue,
-	'!hasValue': () => STRINGS.ruleEditor.operator['!hasValue'],
-});
+const MONTH_VALUES = [
+	1,
+	2,
+	3,
+	4,
+	5,
+	6,
+	7,
+	8,
+	9,
+	10,
+	11,
+	12,
+];
 
-export const PROPERTY_OPERATORS = new DropdownOptions({
-	hasProperty: () => STRINGS.ruleEditor.operator.hasProperty,
-	'!hasProperty': () => STRINGS.ruleEditor.operator['!hasProperty'],
-});
+const COLOR_VALUES = [
+	'red',
+	'orange',
+	'yellow',
+	'green',
+	'cyan',
+	'blue',
+	'purple',
+	'pink',
+	'gray'
+];
 
-export const WEEKDAY_VALUES = new DropdownOptions({
-	1: () => STRINGS.ruleEditor.weekday[1],
-	2: () => STRINGS.ruleEditor.weekday[2],
-	3: () => STRINGS.ruleEditor.weekday[3],
-	4: () => STRINGS.ruleEditor.weekday[4],
-	5: () => STRINGS.ruleEditor.weekday[5],
-	6: () => STRINGS.ruleEditor.weekday[6],
-	7: () => STRINGS.ruleEditor.weekday[7],
-});
-
-export const MONTH_VALUES = new DropdownOptions({
-	1: () => STRINGS.ruleEditor.month[1],
-	2: () => STRINGS.ruleEditor.month[2],
-	3: () => STRINGS.ruleEditor.month[3],
-	4: () => STRINGS.ruleEditor.month[4],
-	5: () => STRINGS.ruleEditor.month[5],
-	6: () => STRINGS.ruleEditor.month[6],
-	7: () => STRINGS.ruleEditor.month[7],
-	8: () => STRINGS.ruleEditor.month[8],
-	9: () => STRINGS.ruleEditor.month[9],
-	10: () => STRINGS.ruleEditor.month[10],
-	11: () => STRINGS.ruleEditor.month[11],
-	12: () => STRINGS.ruleEditor.month[12],
-});
-
-export const COLOR_VALUES = new DropdownOptions({
-	'red': () => STRINGS.iconPicker.colors.red,
-	'orange': () => STRINGS.iconPicker.colors.orange,
-	'yellow': () => STRINGS.iconPicker.colors.yellow,
-	'green': () => STRINGS.iconPicker.colors.green,
-	'cyan': () => STRINGS.iconPicker.colors.cyan,
-	'blue': () => STRINGS.iconPicker.colors.blue,
-	'purple': () => STRINGS.iconPicker.colors.purple,
-	'pink': () => STRINGS.iconPicker.colors.pink,
-	'gray': () => STRINGS.iconPicker.colors.gray,
-});
-
-type ValueType = 'text' | 'number' | 'datetime' | 'date' | 'time' | 'weekday' | 'monthday' | 'month' | 'color';
-
-export const SOURCE_OPERATORS: { [key: string]: DropdownOptions } = {
-	icon: ICON_OPERATORS.plus(VALUE_OPERATORS),
-	color: COLOR_OPERATORS.plus(VALUE_OPERATORS),
+const SOURCE_OPERATORS: Record<string, string[]> = {
+	icon: [...ICON_OPERATORS, ...VALUE_OPERATORS],
+	color: [...COLOR_OPERATORS, ...VALUE_OPERATORS],
 	name: TEXT_OPERATORS,
 	filename: TEXT_OPERATORS,
 	extension: TEXT_OPERATORS,
@@ -358,33 +325,34 @@ export const SOURCE_OPERATORS: { [key: string]: DropdownOptions } = {
 	clock: PRESENT_OPERATORS,
 };
 
-export const OPERATOR_VALUE_TYPES: { [key: string]: ValueType } = {
+const OPERATOR_VALUE_TYPES: Record<string, OperatorValueType> = {
 	is: 'text',
 	'!is': 'text',
 	contains: 'text',
 	startsWith: 'text',
 	endsWith: 'text',
-	matches: 'text',
+	matches: 'regex',
 	'!contains': 'text',
 	'!startsWith': 'text',
 	'!endsWith': 'text',
-	'!matches': 'text',
+	'!matches': 'regex',
 	includes: 'text',
 	'!includes': 'text',
 	allAre: 'text',
 	allContain: 'text',
 	allStartWith: 'text',
 	allEndWith: 'text',
-	allMatch: 'text',
+	allMatch: 'regex',
 	anyContain: 'text',
 	anyStartWith: 'text',
 	anyEndWith: 'text',
-	anyMatch: 'text',
+	anyMatch: 'regex',
 	noneContain: 'text',
 	noneStartWith: 'text',
 	noneEndWith: 'text',
-	noneMatch: 'text',
+	noneMatch: 'regex',
 	countIs: 'number',
+	'!countIs': 'number',
 	countIsLess: 'number',
 	countIsMore: 'number',
 	equals: 'number',
@@ -434,15 +402,15 @@ export const OPERATOR_VALUE_TYPES: { [key: string]: ValueType } = {
 	nameContains: 'text',
 	nameStartsWith: 'text',
 	nameEndsWith: 'text',
-	nameMatches: 'text',
+	nameMatches: 'regex',
 	'!nameContains': 'text',
 	'!nameStartsWith': 'text',
 	'!nameEndsWith': 'text',
-	'!nameMatches': 'text',
+	'!nameMatches': 'regex',
 	colorIs: 'color',
 	'!colorIs': 'color',
-	hexIs: 'text',
-	'!hexIs': 'text',
+	hexIs: 'hex',
+	'!hexIs': 'hex',
 };
 
 /**
@@ -455,7 +423,7 @@ export interface RuleEditorCallback {
 /**
  * Exposes private methods as public for use by {@link RuleEditor}.
  */
-export class RuleEditorManager extends IconManager {
+class RuleEditorManager extends IconManager {
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
 	}
@@ -552,11 +520,11 @@ export default class RuleEditor extends Modal {
 			default: this.setTitle(STRINGS.categories.rule); break;
 		}
 
-		const ruleSetting = new Setting(this.contentEl);
-		ruleSetting.infoEl.remove();
+		const nameSetting = new Setting(this.contentEl);
+		nameSetting.infoEl.remove();
 
 		// BUTTON: Rule icon
-		ruleSetting.addExtraButton(button => { button
+		nameSetting.addExtraButton(button => { button
 			.setIcon(this.rule.icon ?? this.plugin.ruleManager.getPageIcon(this.page))
 			.setTooltip(STRINGS.iconPicker.changeIcon)
 			.onClick(() => IconPicker.openSingle(this.plugin, this.rule, (newIcon, newColor) => {
@@ -575,7 +543,7 @@ export default class RuleEditor extends Modal {
 		});
 
 		// FIELD: Rule name
-		ruleSetting.addText(text => { text
+		nameSetting.addText(text => { text
 			.setValue(this.rule.name)
 			.setPlaceholder(STRINGS.ruleEditor.enterName);
 			this.iconManager.setEventListener(text.inputEl, 'keydown', event => {
@@ -585,7 +553,7 @@ export default class RuleEditor extends Modal {
 		});
 
 		// TOGGLE: Enable/disable rule
-		ruleSetting.addToggle(toggle => { toggle
+		nameSetting.addToggle(toggle => { toggle
 			.setValue(this.rule.enabled)
 			.onChange(value => this.rule.enabled = value);
 		});
@@ -698,27 +666,245 @@ export default class RuleEditor extends Modal {
 	 * Append a condition to the rule.
 	 */
 	private appendCondition(condition: ConditionItem): void {
-		const condSetting = new ConditionSetting(
-			this.contentEl,
-			this.plugin,
-			this.iconManager,
-			this.page,
-			condition,
-			this.condEls,
-			() => this.updateMatchesButton(),
-			(toIndex) => this.moveCondition(condition, toIndex),
-			() => this.removeCondition(condition),
-		);
+		const condSetting: ConditionSetting = new ConditionSetting(this.contentEl, condition)
+			.onSourceChange(source => {
+				this.setConditionSource(condSetting, source);
+				this.setConditionOperator(condSetting, condition.operator);
+				this.setConditionValue(condSetting, condition.value);
+				this.updateMatchesButton();
+			})
+			.onOperatorChange(operator => {
+				this.setConditionOperator(condSetting, operator);
+				this.setConditionValue(condSetting, condition.value);
+				this.updateMatchesButton();
+			})
+			.onValueChange(value => {
+				this.setConditionValue(condSetting, value);
+				this.updateMatchesButton();
+			})
+			.onRemove(() => this.removeCondition(condSetting))
+			.onDragStart((x, y) => this.onDragStart(condSetting, x, y))
+			.onDrag((x, y) => this.onDrag(condSetting, x, y))
+			.onDragEnd(() => this.onDragEnd(condSetting));
+
+		this.setConditionSource(condSetting, condition.source);
+		this.setConditionOperator(condSetting, condition.operator);
+		this.setConditionValue(condSetting, condition.value);
+
 		this.condEls.push(condSetting.settingEl);
 
 		if (this.addCondSetting) {
-			condSetting.settingEl.insertAdjacentElement('afterend', this.addCondSetting.settingEl);
+			condSetting.settingEl.after(this.addCondSetting.settingEl);
 		}
+
 		this.updateMatchesButton();
 	}
 
 	/**
-	 * Create a new condition and append it to the rule.
+	 * Set the source of a condition setting, updating its dropdown box.
+	 */
+	private setConditionSource(setting: ConditionSetting, source: string): void {
+		setting.condition.source = source;
+		setting.srcDropdown.setValue(source);
+
+		if (setting.condition.source === 'properties' || setting.condition.source.startsWith('property:')) {
+			// Get property sources
+			let propSources: string[] = [];
+			propSources = this.plugin.getPropertyItems().map(prop => 'property:' + prop.id).sort((a, b) => a.localeCompare(b))
+			// Populate source dropdown
+			setting.srcDropdown.selectEl.empty();
+			setting.srcDropdown.addOption('properties-close', '...');
+			for (const propSource of propSources) {
+				setting.srcDropdown.addOption(propSource, propSource.replace('property:', ''));
+			}
+			// Preserve the selected property if possible
+			if (propSources.includes(setting.condition.source)) {
+				setting.srcDropdown.setValue(setting.condition.source);
+			} else {
+				setting.condition.source = propSources[0];
+				setting.srcDropdown.setValue(propSources[0]);
+			}
+		} else {
+			// Get sources based on rule page
+			let sources: string[] = [];
+			switch (this.page) {
+				case 'file': sources = FILE_SOURCES; break;
+				case 'folder': sources = FOLDER_SOURCES; break;
+			}
+			// Populate source dropdown
+			setting.srcDropdown.selectEl.empty();
+			for (const source of sources) {
+				const label = STRINGS.ruleEditor.source[source as keyof typeof STRINGS.ruleEditor.source]
+				setting.srcDropdown.addOption(source, label);
+			}
+			// Preserve the selected source if possible
+			if (sources.includes(setting.condition.source)) {
+				setting.srcDropdown.setValue(setting.condition.source);
+			} else {
+				setting.condition.source = sources[0];
+				setting.srcDropdown.setValue(sources[0]);
+			}
+		}
+	}
+
+	/**
+	 * Set the operator of a condition setting, updating its dropdown box.
+	 */
+	private setConditionOperator(setting: ConditionSetting, operator: string): void {
+		const oldValueType = OPERATOR_VALUE_TYPES[setting.condition.operator];
+		setting.condition.operator = operator;
+
+		// Determine the operators
+		let operators: string[] = [];
+		if (setting.condition.source.startsWith('property:')) {
+			const propId = setting.condition.source.replace('property:', '');
+			const prop = this.plugin.getPropertyItem(propId);
+			switch (prop.type) {
+				default: operators = TEXT_OPERATORS; break;
+				case 'multitext': operators = LIST_OPERATORS; break;
+				case 'number': operators = NUMBER_OPERATORS; break;
+				case 'checkbox': operators = BOOLEAN_OPERATORS; break;
+				case 'date': operators = DATE_OPERATORS; break;
+				case 'datetime': operators = DATETIME_OPERATORS; break;
+				case 'aliases': operators = LIST_OPERATORS; break;
+				case 'tags': operators = LIST_OPERATORS; break;
+			}
+		} else {
+			operators = SOURCE_OPERATORS[setting.condition.source];
+		}
+
+		// Populate operator dropdown
+		setting.opDropdown.selectEl.empty();
+		for (const operator of operators) {
+			const label = STRINGS.ruleEditor.operator[operator as keyof typeof STRINGS.ruleEditor.operator];
+			setting.opDropdown.addOption(operator, label);
+		}
+
+		// Preserve the selected operator if possible
+		if (operators.includes(setting.condition.operator)) {
+			setting.opDropdown.setValue(setting.condition.operator);
+		} else {
+			setting.condition.operator = operators[0];
+			setting.opDropdown.setValue(operators[0]);
+		}
+
+		// If value type has changed, empty the condition value
+		const valueType = OPERATOR_VALUE_TYPES[setting.condition.operator];
+		if (valueType !== oldValueType) {
+			setting.condition.value = '';
+		}
+	}
+
+	/**
+	 * Set the value of a condition setting, updating its input field or dropdown box.
+	 */
+	private setConditionValue(setting: ConditionSetting, value: string): void {
+		setting.condition.value = value;
+
+		const valueType = OPERATOR_VALUE_TYPES[setting.condition.operator];
+
+		// Decide how to display the value
+		let inputType: string | null = null;
+		let inputPlaceholder: string = '';
+		let dropdownValues: (string | number)[] | null = null;
+		let dropdownLabels: Record<(string | number), string> | null = null;
+		switch (valueType) {
+			case 'text': {
+				inputType = 'text';
+				inputPlaceholder = STRINGS.ruleEditor.enterValue;
+				break;
+			}
+			case 'regex': {
+				inputType = 'text';
+				inputPlaceholder = STRINGS.ruleEditor.enterRegex;
+				break;
+			}
+			case 'hex': {
+				inputType = 'text';
+				inputPlaceholder = STRINGS.ruleEditor.enterHexCode;
+				break;
+			}
+			case 'number': {
+				inputType = 'text';
+				inputPlaceholder = STRINGS.ruleEditor.enterNumber;
+				break;
+			}
+			case 'datetime': {
+				inputType = 'datetime_local';
+				inputPlaceholder = '';
+				break;
+			}
+			case 'date': {
+				inputType = 'date';
+				inputPlaceholder = '';
+				break;
+			}
+			case 'time': {
+				inputType = 'time';
+				inputPlaceholder = '';
+				break;
+			}
+			case 'weekday': {
+				dropdownValues = WEEKDAY_VALUES;
+				dropdownLabels = STRINGS.ruleEditor.weekday;
+				break;
+			}
+			case 'month': {
+				dropdownValues = MONTH_VALUES;
+				dropdownLabels = STRINGS.ruleEditor.month;
+				break;
+			}
+			case 'color': {
+				dropdownValues = COLOR_VALUES;
+				dropdownLabels = STRINGS.iconPicker.colors;
+				break;
+			}
+		}
+
+		// Populate value input, or remove it
+		if (inputType) {
+			setting.valInput.inputEl.type = inputType;
+			setting.valInput.setPlaceholder(inputPlaceholder);
+			setting.valInput.setValue(setting.condition.value);
+			// Insert element if not present
+			if (setting.opDropdown.selectEl.nextElementSibling !== setting.valInput.inputEl) {
+				setting.opDropdown.selectEl.after(setting.valInput.inputEl);
+			}
+		} else {
+			// Remove element
+			setting.valInput.inputEl.remove();
+		}
+
+		// Populate value dropdown, or remove
+		setting.valDropdown.selectEl.empty();
+		if (dropdownValues && dropdownLabels) {
+			for (const value of dropdownValues) {
+				const label = dropdownLabels[value as keyof typeof dropdownLabels];
+				setting.valDropdown.addOption(value.toString(), label);
+			}
+			if (dropdownValues.includes(setting.condition.value)) {
+				setting.valDropdown.setValue(setting.condition.value);
+			}
+			// Insert element if not present
+			if (setting.opDropdown.selectEl.nextElementSibling !== setting.valDropdown.selectEl) {
+				setting.opDropdown.selectEl.after(setting.valDropdown.selectEl);
+			}
+
+			// Preserve the selected value if possible
+			if (dropdownValues.includes(setting.condition.value)) {
+				setting.valDropdown.setValue(setting.condition.value);
+			} else {
+				setting.condition.value = dropdownValues[0].toString();
+				setting.valDropdown.setValue(dropdownValues[0].toString());
+			}
+		} else {
+			// Remove element
+			setting.valDropdown.selectEl.remove();
+		}
+	}
+
+	/**
+	 * Create a new condition and append it to the rule object.
 	 */
 	private newCondition(): void {
 		const lastCondition = this.rule.conditions.last();
@@ -733,7 +919,7 @@ export default class RuleEditor extends Modal {
 	}
 
 	/**
-	 * Move a condition within the rule.
+	 * Move a condition within the rule object.
 	 */
 	private moveCondition(condition: ConditionItem, toIndex: number): void {
 		const index = this.rule.conditions.indexOf(condition);
@@ -743,10 +929,96 @@ export default class RuleEditor extends Modal {
 	}
 
 	/**
-	 * Remove a condition from the rule.
+	 * Create a ghost setting that the cursor will drag along.
 	 */
-	private removeCondition(condition: ConditionItem): void {
-		this.rule.conditions.remove(condition);
+	private onDragStart(setting: ConditionSetting, x: number, y: number): void {
+		const { settingEl, handleEl } = setting;
+		navigator.vibrate?.(100); // Not supported on iOS
+
+		// Create ghost and set initial position
+		setting.ghostEl = settingEl.doc.body.createDiv({ cls: 'drag-reorder-ghost' });
+		setting.ghostEl.setCssStyles({
+			width: settingEl.clientWidth + 'px',
+			height: settingEl.clientHeight + 'px',
+			left: settingEl.doc.body.hasClass('mod-rtl')
+				? x - handleEl.clientWidth / 2 + 'px'
+				: x - settingEl.clientWidth + handleEl.clientWidth / 2 + 'px',
+			top: y - settingEl.clientHeight / 2 + 'px',
+		});
+		setting.ghostEl.appendChild(settingEl.cloneNode(true));
+
+		// Show correct values in ghost dropdowns
+		const [ghostSourceEl, ghostOperatorEl] = setting.ghostEl.findAll('select') as HTMLSelectElement[];
+		if (ghostSourceEl) ghostSourceEl.value = setting.condition.source;
+		if (ghostOperatorEl) ghostOperatorEl.value = setting.condition.operator;
+
+		// Show drop zone effect
+		settingEl.addClass('drag-ghost-hidden');
+
+		// Hack to hide the browser-native drag ghost
+		settingEl.style.opacity = '0%';
+		settingEl.win.requestAnimationFrame(() => settingEl.style.removeProperty('opacity'));
+	}
+
+	private onDrag(setting: ConditionSetting, x: number, y: number): void {
+		const { settingEl, handleEl } = setting;
+
+		// Ignore initial (0, 0) event
+		if (x === 0 && y === 0) return;
+
+		// Update ghost position
+		setting.ghostEl?.setCssStyles({
+			left: settingEl.doc.body.hasClass('mod-rtl')
+				? x - handleEl.clientWidth / 2 + 'px'
+				: x - settingEl.clientWidth + handleEl.clientWidth / 2 + 'px',
+			top: y - settingEl.clientHeight / 2 + 'px',
+		});
+
+		// Get position in list
+		const index = this.condEls.indexOf(settingEl);
+
+		// If ghost is dragged into condition above, swap the conditions
+		const prevCondEl = this.condEls[index - 1];
+		const prevOverdrag = prevCondEl?.clientHeight * 0.25 || 0;
+		if (prevCondEl && y < prevCondEl.getBoundingClientRect().bottom - prevOverdrag) {
+			navigator.vibrate?.(100); // Not supported on iOS
+			prevCondEl.before(settingEl);
+			this.condEls.splice(index, 1);
+			this.condEls.splice(index - 1, 0, settingEl);
+		}
+
+		// If ghost is dragged into condition below, swap the conditions
+		const nextCondEl = this.condEls[index + 1];
+		const nextOverdrag = nextCondEl?.clientHeight * 0.25 || 0;
+		if (nextCondEl && y > nextCondEl.getBoundingClientRect().top + nextOverdrag) {
+			navigator.vibrate?.(100); // Not supported on iOS
+			nextCondEl.after(settingEl);
+			this.condEls.splice(index, 1);
+			this.condEls.splice(index + 1, 0, settingEl);
+		}
+	}
+
+	/**
+	 * Reset drag UI and save the new position.
+	 */
+	private onDragEnd(setting: ConditionSetting): void {
+		setting.ghostEl?.remove()
+		setting.ghostEl = null;
+		setting.settingEl.removeClass('drag-ghost-hidden');
+		setting.settingEl.removeAttribute('draggable');
+
+		// Save condition position
+		const toIndex = this.condEls.indexOf(setting.settingEl);
+		if (toIndex > -1) this.moveCondition(setting.condition, toIndex);
+	}
+
+	/**
+	 * Remove a condition from the rule object.
+	 */
+	private removeCondition(setting: ConditionSetting): void {
+		setting.settingEl.remove();
+		this.rule.conditions.remove(setting.condition);
+		this.condEls.remove(setting.settingEl);
 		this.updateMatchesButton();
 	}
 
@@ -757,7 +1029,7 @@ export default class RuleEditor extends Modal {
 		if (!this.matchesButton) return;
 
 		// Show a loading spinner if check takes longer than 100ms
-		const timeoutId = setTimeout(() => {
+		const timeoutId = this.modalEl.win.setTimeout(() => {
 			// @ts-expect-error (Private API)
 			this.matchesButton.setLoading(true);
 			this.matchesButton.setDisabled(true);
@@ -768,9 +1040,9 @@ export default class RuleEditor extends Modal {
 			case 'file': this.matches = this.plugin.ruleManager.judgeFiles(this.rule, new Date(), true); break;
 			case 'folder': this.matches = this.plugin.ruleManager.judgeFolders(this.rule, new Date(), true); break;
 		}
-		clearTimeout(timeoutId);
+		this.modalEl.win.clearTimeout(timeoutId);
 
-		// Update button
+		// Update button text
 		switch (this.matches.length) {
 			case 0: this.matchesButton.setButtonText(STRINGS.ruleEditor.buttonNoMatches); break;
 			case 1: this.matchesButton.setButtonText(STRINGS.ruleEditor.buttonMatch); break;

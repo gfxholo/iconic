@@ -3,6 +3,7 @@ import IconicPlugin, { Category, Icon, Item, STRINGS } from 'src/IconicPlugin';
 import ColorUtils from 'src/ColorUtils';
 import { RuleItem } from 'src/managers/RuleManager';
 import IconManager from 'src/managers/IconManager';
+import IconPicker from 'src/dialogs/IconPicker';
 import RuleEditor from 'src/dialogs/RuleEditor';
 import RuleSetting from 'src/components/RuleSetting';
 
@@ -165,7 +166,16 @@ export default class RulePicker extends Modal {
 			if (isRulingChanged) this.plugin.refreshManagers(page);
 		})
 		.onIconClick(() => {
-
+			IconPicker.openSingle(this.plugin, rule, (newIcon, newColor) => {
+				this.iconManager.refreshIcon({
+					icon: newIcon ?? this.plugin.ruleManager.getPageIcon(page),
+					color: newColor,
+				}, ruleSetting.iconEl);
+				rule.icon = newIcon;
+				rule.color = newColor;
+				const isRulingChanged = this.plugin.ruleManager.saveRule(page, rule);
+				if (isRulingChanged) this.plugin.refreshManagers(page);
+			});
 		})
 		.onEditClick(() => {
 			RuleEditor.open(this.plugin, page, rule, newRule => {
