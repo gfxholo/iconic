@@ -1,8 +1,9 @@
-import { Menu, Modal, Setting } from 'obsidian';
+import { Modal, Setting } from 'obsidian';
 import IconicPlugin, { Category, Icon, Item, STRINGS } from 'src/IconicPlugin';
 import ColorUtils from 'src/ColorUtils';
 import { RuleItem } from 'src/managers/RuleManager';
 import IconManager from 'src/managers/IconManager';
+import RuleEditor from 'src/dialogs/RuleEditor';
 import RuleSetting from 'src/components/RuleSetting';
 
 /**
@@ -146,81 +147,146 @@ export default class RulePicker extends Modal {
 	 */
 	insertRule(rule: RuleItem, index: number, isNewRule?: boolean): void {
 		const page = this.plugin.settings.dialogState.rulePage;
-		const ruleSetting = new RuleSetting(
-			this.contentEl,
-			this.plugin,
-			this.iconManager,
-			page,
-			rule,
-			this.ruleEls,
-			(rule, index) => this.insertRule(rule, index),
-			() => this.plugin.refreshManagers(page),
-		);
+		const ruleSetting = new RuleSetting(this.contentEl, rule);
+		const { settingEl, handleEl } = ruleSetting;
+
+		// Set icon
+		this.iconManager.refreshIcon(rule, ruleSetting.iconEl);
+
+		// Set callbacks
+		ruleSetting.onRename(name => {
+			rule.name = name;
+			const isRulingChanged = this.plugin.ruleManager.saveRule(page, rule);
+			if (isRulingChanged) this.plugin.refreshManagers(page);
+		})
+		.onToggle(enabled => {
+			rule.enabled = enabled;
+			const isRulingChanged = this.plugin.ruleManager.saveRule(page, rule);
+			if (isRulingChanged) this.plugin.refreshManagers(page);
+		})
+		.onIconClick(() => {
+
+		})
+		.onEditClick(() => {
+			RuleEditor.open(this.plugin, page, rule, newRule => {
+				let isRulingChanged;
+				if (newRule) {
+					rule = newRule;
+					ruleSetting.setName(newRule.name);
+					this.iconManager.refreshIcon({
+						icon: newRule.icon ?? this.plugin.ruleManager.getPageIcon(page),
+						color: newRule.color,
+					}, ruleSetting.iconEl);
+					ruleSetting.toggle.setValue(newRule.enabled);
+					isRulingChanged = this.plugin.ruleManager.saveRule(page, newRule);
+				} else {
+					settingEl.remove();
+					this.ruleEls.remove(settingEl);
+					isRulingChanged = this.plugin.ruleManager.deleteRule(page, rule.id);
+				}
+				if (isRulingChanged) this.plugin.refreshManagers(page);
+			})
+		})
+		.onAdd(() => {
+			const atIndex = this.ruleEls.indexOf(settingEl);
+			this.addRule(atIndex);
+		})
+		.onDuplicate(() => {
+			const page = this.plugin.settings.dialogState.rulePage;
+			const duplicateRule = this.plugin.ruleManager.duplicateRule(page, rule);
+			const index = this.ruleEls.indexOf(settingEl) + 1;
+			this.insertRule(duplicateRule, index);
+		})
+		.onEdgeCheck(edge => {
+			switch (edge) {
+				case 'top': return settingEl === this.ruleEls.first();
+				case 'bottom': return settingEl === this.ruleEls.last();
+			}
+		})
+		.onEdgeMove(edge => {
+			const toIndex = edge === 'top' ? 0 : this.ruleEls.length;
+			if (edge === 'top') {
+				this.ruleEls.first()?.before(settingEl);
+			} else {
+				this.ruleEls.last()?.after(settingEl);
+			}
+			this.ruleEls.remove(settingEl);
+			this.ruleEls.splice(toIndex, 0, settingEl);
+			const isRulingChanged = this.plugin.ruleManager.moveRule(page, rule, toIndex);
+			if (isRulingChanged) this.plugin.refreshManagers(page);
+		})
+		.onRemove(() => {
+			settingEl.remove();
+			this.ruleEls.remove(settingEl);
+			const isRulingChanged = this.plugin.ruleManager.deleteRule(page, rule.id);
+			if (isRulingChanged) this.plugin.refreshManagers(page);
+		})
+		.onDragStart((x, y) => {
+			navigator.vibrate?.(100); // Not supported on iOS
+			// Create drag ghost
+			ruleSetting.ghostRuleEl = activeDocument.body.createDiv({ cls: 'drag-reorder-ghost' });
+			ruleSetting.ghostRuleEl.setCssStyles({
+				width: settingEl.clientWidth + 'px',
+				height: settingEl.clientHeight + 'px',
+				left: activeDocument.body.hasClass('mod-rtl')
+					? x - handleEl.clientWidth / 2 + 'px'
+					: x - settingEl.clientWidth + handleEl.clientWidth / 2 + 'px',
+				top: y - settingEl.clientHeight / 2 + 'px',
+			});
+			ruleSetting.ghostRuleEl.appendChild(settingEl.cloneNode(true));
+			// Display drop zone effect
+			settingEl.addClass('drag-ghost-hidden');
+			// Hack to hide the browser-native drag ghost
+			settingEl.style.opacity = '0%';
+			activeWindow.requestAnimationFrame(() => settingEl.style.removeProperty('opacity'));
+		})
+		.onDrag((x, y) => {
+			// Ignore initial (0, 0) event
+			if (x === 0 && y === 0) return;
+			// Update ghost position
+			ruleSetting.ghostRuleEl?.setCssStyles({
+				left: activeDocument.body.hasClass('mod-rtl')
+					? x - handleEl.clientWidth / 2 + 'px'
+					: x - settingEl.clientWidth + handleEl.clientWidth / 2 + 'px',
+				top: y - settingEl.clientHeight / 2 + 'px',
+			});
+			// Get position in list
+			const index = this.ruleEls.indexOf(settingEl);
+			// If ghost is dragged into rule above, swap the rules
+			const prevRuleEl = this.ruleEls[index - 1];
+			const prevOverdrag = prevRuleEl?.clientHeight * 0.25 || 0;
+			if (prevRuleEl && y < prevRuleEl.getBoundingClientRect().bottom - prevOverdrag) {
+				navigator.vibrate?.(100); // Not supported on iOS
+				prevRuleEl.before(settingEl);
+				this.ruleEls.splice(index, 1);
+				this.ruleEls.splice(index - 1, 0, settingEl);
+			}
+			// If ghost is dragged into rule below, swap the rules
+			const nextRuleEl = this.ruleEls[index + 1];
+			const nextOverdrag = nextRuleEl?.clientHeight * 0.25 || 0;
+			if (nextRuleEl && y > nextRuleEl.getBoundingClientRect().top + nextOverdrag) {
+				navigator.vibrate?.(100); // Not supported on iOS
+				nextRuleEl.after(settingEl);
+				this.ruleEls.splice(index, 1);
+				this.ruleEls.splice(index + 1, 0, settingEl);
+			}
+		})
+		.onDragEnd(() => {
+			ruleSetting.ghostRuleEl?.remove();
+			ruleSetting.ghostRuleEl = null;
+			settingEl.removeClass('drag-ghost-hidden');
+			settingEl.removeAttribute('draggable');
+			// Save rule position
+			const toIndex = this.ruleEls.indexOf(settingEl);
+			if (toIndex > -1) this.plugin.ruleManager.moveRule(page, rule, toIndex);
+		});
 
 		// Insert rule into DOM
-		this.ruleEls[index]?.insertAdjacentElement('beforebegin', ruleSetting.settingEl);
+		this.ruleEls[index]?.before(settingEl);
 		if (isNewRule) ruleSetting.toggleEditable(ruleSetting.nameEl, true);
 
 		// Insert rule into array
-		this.ruleEls.splice(index, 0, ruleSetting.settingEl);
-
-		// Register context menu
-		this.iconManager.setEventListener(ruleSetting.settingEl, 'contextmenu', event => {
-			navigator.vibrate?.(100); // Not supported on iOS
-			const menu = new Menu();
-
-			// Highlight the selected rule
-			ruleSetting.settingEl.addClass('has-active-menu');
-			menu.onHide(() => ruleSetting.settingEl.win.requestAnimationFrame(() => {
-				ruleSetting.settingEl.removeClass('has-active-menu');
-			}));
-
-			// MENU ITEM: Add rule
-			menu.addItem(item => { item
-				.setIcon('lucide-plus-circle')
-				.setTitle(STRINGS.rulePicker.addRule)
-				.setSection('action-primary')
-				.onClick(() => this.addRule(this.ruleEls.indexOf(ruleSetting.settingEl)));
-			});
-
-			// MENU ITEM: Duplicate rule
-			menu.addItem(item => { item
-				.setIcon('lucide-files')
-				.setTitle(STRINGS.rulePicker.duplicateRule)
-				.setSection('action-primary')
-				.onClick(() => ruleSetting.duplicateRule());
-			});
-
-			// MENU ITEM: Move rule to top
-			menu.addItem(item => { item
-				.setIcon('lucide-arrow-up-to-line')
-				.setTitle(STRINGS.rulePicker.moveRuleToTop)
-				.setSection('move')
-				.onClick(() => ruleSetting.moveRule(0))
-				.setDisabled(ruleSetting.settingEl === this.ruleEls.first());
-			});
-
-			// MENU ITEM: Move rule to bottom
-			menu.addItem(item => { item
-				.setIcon('lucide-arrow-down-to-line')
-				.setTitle(STRINGS.rulePicker.moveRuleToBottom)
-				.setSection('move')
-				.onClick(() => ruleSetting.moveRule(this.ruleEls.length))
-				.setDisabled(ruleSetting.settingEl === this.ruleEls.last());
-			});
-
-			// MENU ITEM: Remove rule
-			menu.addItem(item => { item
-				.setIcon('lucide-trash-2')
-				.setTitle(STRINGS.rulePicker.removeRule)
-				.setSection('danger')
-				.onClick(() => ruleSetting.deleteRule());
-				// @ts-expect-error (Private API)
-				item.dom?.addClass?.('is-warning');
-			});
-
-			menu.showAtMouseEvent(event);
-		});
+		this.ruleEls.splice(index, 0, settingEl);
 
 		// Move the Add Rule button to the bottom
 		this.contentEl.append(this.addRuleSetting.settingEl);

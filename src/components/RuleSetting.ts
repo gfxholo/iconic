@@ -1,256 +1,261 @@
-import { ExtraButtonComponent, Setting, ToggleComponent } from 'obsidian';
-import IconicPlugin, { Category, STRINGS } from 'src/IconicPlugin';
+import { ExtraButtonComponent, Menu, Setting, ToggleComponent } from 'obsidian';
+import { STRINGS } from 'src/IconicPlugin';
 import { RuleItem } from 'src/managers/RuleManager';
-import IconPicker from 'src/dialogs/IconPicker';
-import RuleEditor from 'src/dialogs/RuleEditor';
-import { RulePickerManager } from 'src/dialogs/RulePicker';
 
 /**
  * Setting for displaying a rule item.
  */
 export default class RuleSetting extends Setting {
-	private readonly plugin: IconicPlugin;
-	private readonly page: Category;
-	private readonly rule: RuleItem;
-
 	// Components
-	private readonly ruleEls: HTMLElement[];
-	private ghostRuleEl: HTMLElement | undefined;
+	readonly toggle: ToggleComponent;
+
+	// Elements
+	readonly iconEl: HTMLElement;
+	readonly handleEl: HTMLElement;
+	ghostRuleEl: HTMLElement | null = null;
 
 	// Callbacks
-	private readonly onInsertRule: (rule: RuleItem, index: number) => void;
-	private readonly onRulingChange: () => void;
+	private renameCallback: ((name: string) => any) | null = null;
+	private toggleCallback: ((enabled: boolean) => any) | null = null;
+	private iconClickCallback: (() => any) | null = null;
+	private editClickCallback: (() => any) | null = null;
+	private dragStartCallback: ((x: number, y: number) => any) | null = null;
+	private dragCallback: ((x: number, y: number) => any) | null = null;
+	private dragEndCallback: (() => any) | null = null;
 
-	constructor(
-		containerEl: HTMLElement,
-		plugin: IconicPlugin,
-		iconManager: RulePickerManager,
-		page: Category,
-		rule: RuleItem,
-		ruleEls: HTMLElement[],
-		onInsertRule: (rule: RuleItem, index: number) => void,
-		onRulingChange: () => void,
-	) {
+	// Menu callbacks
+	private addCallback: (() => any) | null = null;
+	private duplicateCallback: (() => any) | null = null;
+	private edgeCheckCallback: ((edge: 'top' | 'bottom') => boolean) | null = null;
+	private edgeMoveCallback: ((edge: 'top' | 'bottom') => any) | null = null;
+	private removeCallback: (() => any) | null = null;
+
+	constructor(containerEl: HTMLElement, rule: RuleItem) {
 		super(containerEl);
-		this.plugin = plugin;
-		this.page = page;
-		this.rule = rule;
-		this.ruleEls = ruleEls;
-		this.onInsertRule = onInsertRule;
-		this.onRulingChange = onRulingChange;
 		this.settingEl.addClass('iconic-rule');
 
-		// Components
-		let iconButton: ExtraButtonComponent;
-		let ruleToggle: ToggleComponent;
-
 		// BUTTON: Rule icon
-		this.addExtraButton(button => { button
+		this.iconEl = new ExtraButtonComponent(this.settingEl)
+			.setIcon(rule.icon ?? rule.iconDefault ?? 'lucide-file')
 			.setTooltip(STRINGS.iconPicker.changeIcon)
-			.onClick(() => IconPicker.openSingle(plugin, rule, (newIcon, newColor) => {
-				iconManager.refreshIcon({
-					icon: newIcon ?? plugin.ruleManager.getPageIcon(page),
-					color: newColor,
-				}, button.extraSettingsEl);
-				rule.icon = newIcon;
-				rule.color = newColor;
-				const isRulingChanged = plugin.ruleManager.saveRule(page, rule);
-				if (isRulingChanged) this.onRulingChange();
-			}));
-			iconManager.refreshIcon({
-				icon: rule.icon ?? plugin.ruleManager.getPageIcon(page),
-				color: rule.color,
-			}, button.extraSettingsEl);
-			button.extraSettingsEl.addClass('iconic-rule-icon');
-			this.settingEl.prepend(button.extraSettingsEl); // Move button to left side
-			iconButton = button;
-		});
+			.onClick(() => this.iconClickCallback?.())
+			.extraSettingsEl;
+		this.iconEl.addClass('iconic-rule-icon');
+		this.settingEl.prepend(this.iconEl);
 
 		// FIELD: Rule name
 		this.setName(rule.name);
 		this.nameEl.addClass('iconic-rule-name');
-		// Edit name when clicked
-		iconManager.setEventListener(this.nameEl, 'click', () => this.toggleEditable(this.nameEl, true));
-		// Save name when focus is lost
-		iconManager.setEventListener(this.nameEl, 'blur', () => {
+		this.nameEl.addEventListener('click', () => this.toggleEditable(this.nameEl, true));
+		this.nameEl.addEventListener('blur', () => {
 			this.toggleEditable(this.nameEl, false);
-			if (this.nameEl.getText()) {
-				rule.name = this.nameEl.getText();
-				plugin.ruleManager.saveRule(page, rule);
+			const name = this.nameEl.getText();
+			if (name.length > 0) {
+				this.renameCallback?.(name);
 			} else {
 				this.nameEl.setText(rule.name); // Prevent untitled rules
 			}
 		});
-		iconManager.setEventListener(this.nameEl, 'keydown', event => {
+		this.nameEl.addEventListener('keydown', event => {
 			if (event.key === 'Enter') this.nameEl.blur();
 		});
 
 		// BUTTON: Edit rule
-		this.addExtraButton(button => { button
+		this.addExtraButton(button => button
 			.setIcon('lucide-settings')
 			.setTooltip(STRINGS.rulePicker.editRule)
-			.onClick(() => RuleEditor.open(plugin, page, rule, newRule => {
-				let isRulingChanged;
-				if (newRule) {
-					rule = newRule;
-					this.setName(newRule.name);
-					iconManager.refreshIcon({
-						icon: newRule.icon ?? plugin.ruleManager.getPageIcon(page),
-						color: newRule.color,
-					}, iconButton.extraSettingsEl);
-					ruleToggle.setValue(newRule.enabled);
-					isRulingChanged = plugin.ruleManager.saveRule(page, newRule);
-				} else {
-					this.settingEl.remove();
-					this.ruleEls.remove(this.settingEl);
-					isRulingChanged = plugin.ruleManager.deleteRule(page, rule.id);
-				}
-				if (isRulingChanged) this.onRulingChange();
-			}));
-		});
+			.onClick(() => this.editClickCallback?.())
+		);
 
 		// TOGGLE: Enable/disable rule
-		this.addToggle(toggle => { toggle
+		this.toggle = new ToggleComponent(this.controlEl)
 			.setValue(rule.enabled)
-			.onChange(value => {
-				rule.enabled = value;
-				const isRulingChanged = plugin.ruleManager.saveRule(page, rule);
-				if (isRulingChanged) this.onRulingChange();
-			});
-			ruleToggle = toggle;
-		});
+			.onChange(value => this.toggleCallback?.(value));
 
 		// BUTTON: Drag handle
-		this.addExtraButton(button => { button
+		this.handleEl = new ExtraButtonComponent(this.controlEl)
 			.setIcon('lucide-menu')
-			.setTooltip(STRINGS.rulePicker.drag)
-			.extraSettingsEl.addClass('iconic-drag');
+			.extraSettingsEl;
+		this.handleEl.addClass('iconic-drag');
 
-			// Drag & drop (mouse)
-			iconManager.setEventListener(button.extraSettingsEl, 'pointerdown', () => {
-				this.settingEl.draggable = true;
-			});
-			iconManager.setEventListener(this.settingEl, 'dragstart', event => {
-				this.onDragStart(event.clientX, event.clientY, button.extraSettingsEl);
-			});
-			iconManager.setEventListener(this.settingEl, 'drag', event => {
-				this.onDrag(event.clientX, event.clientY, button.extraSettingsEl);
-			});
-			iconManager.setEventListener(this.settingEl, 'dragend', () => this.onDragEnd());
-
-			// Drag & drop (multi-touch)
-			iconManager.setEventListener(button.extraSettingsEl, 'touchstart', event => {
-				event.preventDefault(); // Prevent dragstart
-				const touch = event.targetTouches[0];
-				this.onDragStart(touch.clientX, touch.clientY, button.extraSettingsEl);
-			});
-			iconManager.setEventListener(button.extraSettingsEl, 'touchmove', event => {
-				event.preventDefault(); // Prevent scrolling
-				const touch = event.targetTouches[0];
-				this.onDrag(touch.clientX, touch.clientY, button.extraSettingsEl);
-			});
-			iconManager.setEventListener(button.extraSettingsEl, 'touchend', () => this.onDragEnd());
-			iconManager.setEventListener(button.extraSettingsEl, 'touchcancel', () => this.onDragEnd());
+		// Drag & drop (mouse)
+		this.handleEl.addEventListener('pointerdown', () => {
+			this.settingEl.draggable = true;
 		});
+		this.settingEl.addEventListener('dragstart', event => {
+			this.dragStartCallback?.(event.clientX, event.clientY);
+		});
+		this.settingEl.addEventListener('drag', event => {
+			this.dragCallback?.(event.clientX, event.clientY);
+		});
+		this.settingEl.addEventListener('dragend', () => {
+			this.dragEndCallback?.();
+		});
+
+		// Drag & drop (multi-touch)
+		this.handleEl.addEventListener('touchstart', event => {
+			event.preventDefault(); // Prevent dragstart
+			const touch = event.targetTouches[0];
+			this.dragStartCallback?.(touch.clientX, touch.clientY);
+		});
+		this.handleEl.addEventListener('touchmove', event => {
+			event.preventDefault(); // Prevent scrolling
+			const touch = event.targetTouches[0];
+			this.dragCallback?.(touch.clientX, touch.clientY);
+		});
+		this.handleEl.addEventListener('touchend', () => this.dragEndCallback?.());
+		this.handleEl.addEventListener('touchcancel', () => this.dragEndCallback?.());
+
+		// Register menu listener
+		this.settingEl.addEventListener('contextmenu', event => this.showMenu(event));
 	}
 
 	/**
-	 * Duplicate rule and insert the new one below.
+	 * Set the callback used when the name field is changed.
 	 */
-	duplicateRule(): void {
-		const page = this.plugin.settings.dialogState.rulePage;
-		const duplicateRule = this.plugin.ruleManager.duplicateRule(page, this.rule);
-		const index = this.ruleEls.indexOf(this.settingEl) + 1;
-		this.onInsertRule(duplicateRule, index);
+	onRename(callback: (name: string) => any): this {
+		this.renameCallback = callback;
+		return this;
 	}
 
 	/**
-	 * Move rule (and its setting element) within the current page.
-	 * @param toIndex Index to move the rule to.
+	 * Set the callback used when the enabled toggle changes.
 	 */
-	moveRule(toIndex: number): void {
-		if (toIndex < this.ruleEls.length) {
-			this.ruleEls[toIndex]?.insertAdjacentElement('beforebegin', this.settingEl);
-		} else {
-			this.ruleEls.last()?.insertAdjacentElement('afterend', this.settingEl);
-		}
-		this.ruleEls[toIndex]?.insertAdjacentElement('beforebegin', this.settingEl);
-		this.ruleEls.remove(this.settingEl);
-		this.ruleEls.splice(toIndex, 0, this.settingEl);
-		const isRulingChanged = this.plugin.ruleManager.moveRule(this.page, this.rule, toIndex);
-		if (isRulingChanged) this.plugin.refreshManagers(this.page);
+	onToggle(callback: (enabled: boolean) => any): this {
+		this.toggleCallback = callback;
+		return this;
 	}
 
 	/**
-	 * Delete rule (and its setting element) from the current page.
+	 * Set the callback used when the icon button is clicked.
 	 */
-	deleteRule(): void {
-		this.settingEl.remove();
-		this.ruleEls.remove(this.settingEl);
-		const isRulingChanged = this.plugin.ruleManager.deleteRule(this.page, this.rule.id);
-		if (isRulingChanged) this.plugin.refreshManagers(this.page);
+	onIconClick(callback: () => any): this {
+		this.iconClickCallback = callback;
+		return this;
 	}
 
-	private onDragStart(x: number, y: number, dragButtonEl: HTMLElement): void {
+	/**
+	 * Set the callback used when the edit button is clicked.
+	 */
+	onEditClick(callback: () => any): this {
+		this.editClickCallback = callback;
+		return this;
+	}
+
+	onDragStart(callback: ((x: number, y: number) => any) | null): this {
+		this.dragStartCallback = callback;
+		return this;
+	}
+
+	onDrag(callback: ((x: number, y: number) => any) | null): this {
+		this.dragCallback = callback;
+		return this;
+	}
+
+	onDragEnd(callback: (() => any) | null): this {
+		this.dragEndCallback = callback;
+		return this;
+	}
+
+	/**
+	 * Set the callback used when "Add rule" is selected.
+	 */
+	onAdd(callback: () => any): this {
+		this.addCallback = callback;
+		return this;
+	}
+
+	/**
+	 * Set the callback used when "Duplicate rule" is selected.
+	 */
+	onDuplicate(callback: () => any): this {
+		this.duplicateCallback = callback;
+		return this;
+	}
+
+	/**
+	 * Set the callback used to determine whether "Move to top" or "Move to bottom" are disabled.
+	 * @param callback Return true to disable the action specified by `edge`.
+	 */
+	onEdgeCheck(callback: (edge: 'top' | 'bottom') => boolean): this {
+		this.edgeCheckCallback = callback;
+		return this;
+	}
+
+	/**
+	 * Set the callback used when "Move to top" or "Move to bottom" are selected.
+	 */
+	onEdgeMove(callback: (edge: 'top' | 'bottom') => any): this {
+		this.edgeMoveCallback = callback;
+		return this;
+	}
+
+	/**
+	 * Set the callback used when "Remove rule" is selected.
+	 */
+	onRemove(callback: () => any): this {
+		this.removeCallback = callback;
+		return this;
+	}
+
+	/**
+	 * Show context menu for this rule.
+	 */
+	private showMenu(event: MouseEvent): void {
 		navigator.vibrate?.(100); // Not supported on iOS
-		// Create drag ghost
-		this.ghostRuleEl = activeDocument.body.createDiv({ cls: 'drag-reorder-ghost' });
-		this.ghostRuleEl.setCssStyles({
-			width: this.settingEl.clientWidth + 'px',
-			height: this.settingEl.clientHeight + 'px',
-			left: activeDocument.body.hasClass('mod-rtl')
-				? x - dragButtonEl.clientWidth / 2 + 'px'
-				: x - this.settingEl.clientWidth + dragButtonEl.clientWidth / 2 + 'px',
-			top: y - this.settingEl.clientHeight / 2 + 'px',
-		});
-		this.ghostRuleEl.appendChild(this.settingEl.cloneNode(true));
-		// Display drop zone effect
-		this.settingEl.addClass('drag-ghost-hidden');
-		// Hack to hide the browser-native drag ghost
-		this.settingEl.style.opacity = '0%';
-		activeWindow.requestAnimationFrame(() => this.settingEl.style.removeProperty('opacity'));
-	}
+		const menu = new Menu();
 
-	private onDrag(x: number, y: number, dragButtonEl: HTMLElement): void {
-		// Ignore initial (0, 0) event
-		if (x === 0 && y === 0) return;
-		// Update ghost position
-		this.ghostRuleEl?.setCssStyles({
-			left: activeDocument.body.hasClass('mod-rtl')
-				? x - dragButtonEl.clientWidth / 2 + 'px'
-				: x - this.settingEl.clientWidth + dragButtonEl.clientWidth / 2 + 'px',
-			top: y - this.settingEl.clientHeight / 2 + 'px',
-		});
-		// Get position in list
-		const index = this.ruleEls.indexOf(this.settingEl);
-		// If ghost is dragged into rule above, swap the rules
-		const prevRuleEl = this.ruleEls[index - 1];
-		const prevOverdrag = prevRuleEl?.clientHeight * 0.25 || 0;
-		if (prevRuleEl && y < prevRuleEl.getBoundingClientRect().bottom - prevOverdrag) {
-			navigator.vibrate?.(100); // Not supported on iOS
-			prevRuleEl.insertAdjacentElement('beforebegin', this.settingEl);
-			this.ruleEls.splice(index, 1);
-			this.ruleEls.splice(index - 1, 0, this.settingEl);
-		}
-		// If ghost is dragged into rule below, swap the rules
-		const nextRuleEl = this.ruleEls[index + 1];
-		const nextOverdrag = nextRuleEl?.clientHeight * 0.25 || 0;
-		if (nextRuleEl && y > nextRuleEl.getBoundingClientRect().top + nextOverdrag) {
-			navigator.vibrate?.(100); // Not supported on iOS
-			nextRuleEl.insertAdjacentElement('afterend', this.settingEl);
-			this.ruleEls.splice(index, 1);
-			this.ruleEls.splice(index + 1, 0, this.settingEl);
-		}
-	}
+		// Highlight rule until menu closes
+		this.settingEl.addClass('has-active-menu');
+		menu.onHide(() => activeWindow.requestAnimationFrame(() => {
+			this.settingEl.removeClass('has-active-menu');
+		}));
 
-	private onDragEnd(): void {
-		this.ghostRuleEl?.remove();
-		delete this.ghostRuleEl;
-		this.settingEl.removeClass('drag-ghost-hidden');
-		this.settingEl.removeAttribute('draggable');
-		// Save rule position
-		const toIndex = this.ruleEls.indexOf(this.settingEl);
-		if (toIndex > -1) this.plugin.ruleManager.moveRule(this.page, this.rule, toIndex);
+		// MENU ITEM: Add rule
+		menu.addItem(item => { item
+			.setIcon('lucide-circle-plus')
+			.setTitle(STRINGS.rulePicker.addRule)
+			.setSection('action-primary')
+			.onClick(() => this.addCallback?.());
+		});
+
+		// MENU ITEM: Duplicate rule
+		menu.addItem(item => { item
+			.setIcon('lucide-files')
+			.setTitle(STRINGS.rulePicker.duplicateRule)
+			.setSection('action-primary')
+			.onClick(() => this.duplicateCallback?.());
+		});
+
+		// MENU ITEM: Move rule to top
+		menu.addItem(item => { item
+			.setIcon('lucide-arrow-up-to-line')
+			.setTitle(STRINGS.rulePicker.moveRuleToTop)
+			.setSection('move')
+			.onClick(() => this.edgeMoveCallback?.('top'))
+			.setDisabled(this.edgeCheckCallback?.('top') === true);
+		});
+
+		// MENU ITEM: Move rule to bottom
+		menu.addItem(item => { item
+			.setIcon('lucide-arrow-down-to-line')
+			.setTitle(STRINGS.rulePicker.moveRuleToBottom)
+			.setSection('move')
+			.onClick(() => this.edgeMoveCallback?.('bottom'))
+			.setDisabled(this.edgeCheckCallback?.('bottom') === true);
+		});
+
+		// MENU ITEM: Remove rule
+		menu.addItem(item => { item
+			.setIcon('lucide-trash-2')
+			.setTitle(STRINGS.rulePicker.removeRule)
+			.setSection('danger')
+			.onClick(() => this.removeCallback?.());
+			// @ts-expect-error (Private API)
+			item.dom?.addClass?.('is-warning');
+		});
+
+		menu.showAtMouseEvent(event);
 	}
 
 	/**
