@@ -539,7 +539,6 @@ export default class RuleEditor extends Modal {
 				icon: this.rule.icon ?? this.plugin.ruleManager.getPageIcon(this.page),
 				color: this.rule.color,
 			}, button.extraSettingsEl);
-			button.extraSettingsEl.addClass('iconic-rule-icon');
 		});
 
 		// FIELD: Rule name
@@ -941,8 +940,8 @@ export default class RuleEditor extends Modal {
 			width: settingEl.clientWidth + 'px',
 			height: settingEl.clientHeight + 'px',
 			left: settingEl.doc.body.hasClass('mod-rtl')
-				? x - gripEl.clientWidth / 2 + 'px'
-				: x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px',
+				? x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px'
+				: x - gripEl.clientWidth / 2 + 'px',
 			top: y - settingEl.clientHeight / 2 + 'px',
 		});
 		setting.ghostEl.appendChild(settingEl.cloneNode(true));
@@ -969,8 +968,8 @@ export default class RuleEditor extends Modal {
 		// Update ghost position
 		setting.ghostEl?.setCssStyles({
 			left: settingEl.doc.body.hasClass('mod-rtl')
-				? x - gripEl.clientWidth / 2 + 'px'
-				: x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px',
+				? x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px'
+				: x - gripEl.clientWidth / 2 + 'px',
 			top: y - settingEl.clientHeight / 2 + 'px',
 		});
 

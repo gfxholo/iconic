@@ -1,6 +1,5 @@
 import { DropdownComponent, ExtraButtonComponent, Platform, Setting, TextComponent } from 'obsidian';
 import { STRINGS } from 'src/IconicPlugin';
-import ColorUtils from 'src/ColorUtils';
 import { ConditionItem } from 'src/managers/RuleManager';
 
 /**
@@ -35,13 +34,11 @@ export default class ConditionSetting extends Setting {
 		this.settingEl.addClass('iconic-condition');
 		this.infoEl.remove();
 
-		// BUTTON: Remove condition
-		this.addExtraButton(button => { button
-			.setIcon('lucide-circle-minus')
-			.setTooltip(STRINGS.ruleEditor.removeCondition)
-			.onClick(() => this.removeCallback?.())
-			.extraSettingsEl.style.color = ColorUtils.toRgb('red');
-		});
+		// BUTTON: Grip
+		this.gripEl = new ExtraButtonComponent(this.controlEl)
+			.setIcon('lucide-grip-vertical')
+			.extraSettingsEl;
+		this.gripEl.addClass('iconic-grip');
 
 		const ctrlContainer = Platform.isPhone
 			? this.controlEl.createDiv({ cls: 'iconic-control-column' })
@@ -66,11 +63,12 @@ export default class ConditionSetting extends Setting {
 		this.valDropdown = new DropdownComponent(ctrlContainer)
 			.onChange(value => this.valueChangeCallback?.(value));
 
-		// BUTTON: Grip
-		this.gripEl = new ExtraButtonComponent(this.controlEl)
-			.setIcon('lucide-grip-vertical')
-			.extraSettingsEl;
-		this.gripEl.addClass('iconic-grip');
+		// BUTTON: Remove condition
+		this.addExtraButton(button => button
+			.setIcon('lucide-trash-2')
+			.setTooltip(STRINGS.ruleEditor.removeCondition)
+			.onClick(() => this.removeCallback?.())
+		);
 
 		// Drag & drop (mouse)
 		this.gripEl.addEventListener('pointerdown', () => {

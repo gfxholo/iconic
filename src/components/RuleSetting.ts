@@ -34,18 +34,23 @@ export default class RuleSetting extends Setting {
 		super(containerEl);
 		this.settingEl.addClass('iconic-rule');
 
+		// BUTTON: Grip
+		this.gripEl = new ExtraButtonComponent(this.settingEl)
+			.setIcon('lucide-grip-vertical')
+			.extraSettingsEl;
+		this.gripEl.addClass('iconic-grip');
+		this.settingEl.prepend(this.gripEl);
+
 		// BUTTON: Rule icon
 		this.iconEl = new ExtraButtonComponent(this.settingEl)
 			.setIcon(rule.icon ?? rule.iconDefault ?? 'lucide-file')
 			.setTooltip(STRINGS.iconPicker.changeIcon)
 			.onClick(() => this.iconClickCallback?.())
 			.extraSettingsEl;
-		this.iconEl.addClass('iconic-rule-icon');
-		this.settingEl.prepend(this.iconEl);
+		this.gripEl.after(this.iconEl);
 
 		// FIELD: Rule name
 		this.setName(rule.name);
-		this.nameEl.addClass('iconic-rule-name');
 		this.nameEl.addEventListener('click', () => this.toggleEditable(this.nameEl, true));
 		this.nameEl.addEventListener('blur', () => {
 			this.toggleEditable(this.nameEl, false);
@@ -71,12 +76,6 @@ export default class RuleSetting extends Setting {
 		this.toggle = new ToggleComponent(this.controlEl)
 			.setValue(rule.enabled)
 			.onChange(value => this.toggleCallback?.(value));
-
-		// BUTTON: Grip
-		this.gripEl = new ExtraButtonComponent(this.controlEl)
-			.setIcon('lucide-grip-vertical')
-			.extraSettingsEl;
-		this.gripEl.addClass('iconic-grip');
 
 		// Drag & drop (mouse)
 		this.gripEl.addEventListener('pointerdown', () => {

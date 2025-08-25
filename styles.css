@@ -293,7 +293,18 @@ a.tag {
 }
 .iconic-rule,
 .iconic-condition {
+	column-gap: var(--size-4-2);
 	transition: background-color 0.25s ease, border-top-color 0.25s ease, border-radius 0.25s ease, box-shadow 0.25s ease;
+}
+.iconic-rule > *:first-child,
+.iconic-condition > *:first-child {
+	margin-inline-end: 0;
+}
+.setting-item.iconic-rule {
+	padding-inline-end: var(--size-4-2);
+}
+.iconic-rule > .clickable-icon {
+	padding: var(--size-2-2);
 }
 .iconic-rule.has-active-menu {
 	background-color: var(--background-modifier-hover);
@@ -307,17 +318,13 @@ a.tag {
 	border-top-left-radius: var(--radius-s);
 	border-top-right-radius: var(--radius-s);
 }
-.iconic-rule > .iconic-rule-icon {
-	padding: var(--size-2-2);
-	margin-inline-end: var(--size-4-2);
-}
-.iconic-rule > .setting-item-info > .iconic-rule-name {
+.iconic-rule > .setting-item-info > .setting-item-name {
 	width: fit-content;
 	min-width: var(--size-4-4);
 	overflow-wrap: anywhere;
 }
-.iconic-rule > .setting-item-info > .iconic-rule-name:hover,
-.iconic-rule > .setting-item-info > .iconic-rule-name[contenteditable="true"] {
+.iconic-rule > .setting-item-info > .setting-item-name:hover,
+.iconic-rule > .setting-item-info > .setting-item-name[contenteditable="true"] {
 	border: var(--input-border-width) solid var(--background-modifier-border);
 	border-radius: var(--input-radius);
 	margin: calc(-1 * var(--size-4-1) - var(--input-border-width)) calc(-1 * var(--size-4-2) - var(--input-border-width));
@@ -344,7 +351,7 @@ a.tag {
 }
 .drag-reorder-ghost .iconic-rule,
 .drag-reorder-ghost .iconic-condition {
-	padding: 0.75em 0;
+	padding-top: 0.75em;
 }
 .mod-rtl .drag-reorder-ghost .iconic-rule,
 .mod-rtl .drag-reorder-ghost .iconic-condition {
