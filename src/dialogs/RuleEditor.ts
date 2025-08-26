@@ -477,7 +477,7 @@ export default class RuleEditor extends Modal {
 	private matches: FileItem[] = [];
 
 	// Components
-	private readonly condEls: HTMLElement[] = [];
+	private scrollerEl: HTMLElement;
 	private nameField: TextComponent;
 	private matchesButton: ButtonComponent;
 
@@ -607,6 +607,7 @@ export default class RuleEditor extends Modal {
 			);
 
 		// LIST: Conditions
+		this.scrollerEl = this.modalEl.createDiv({ cls: 'iconic-scroller' });
 		for (const condition of this.rule.conditions) {
 			this.appendCondition(condition);
 		}
@@ -658,7 +659,7 @@ export default class RuleEditor extends Modal {
 	 * Append a condition to the rule.
 	 */
 	private appendCondition(condition: ConditionItem): void {
-		const condSetting: ConditionSetting = new ConditionSetting(this.contentEl, condition)
+		const condSetting: ConditionSetting = new ConditionSetting(this.scrollerEl, condition)
 			.onSourceChange(source => {
 				this.setConditionSource(condSetting, source);
 				this.setConditionOperator(condSetting, condition.operator);
@@ -683,7 +684,7 @@ export default class RuleEditor extends Modal {
 		this.setConditionOperator(condSetting, condition.operator);
 		this.setConditionValue(condSetting, condition.value);
 
-		this.condEls.push(condSetting.settingEl);
+		this.scrollerEl.append(condSetting.settingEl);
 
 		this.updateMatchesButton();
 	}
@@ -901,7 +902,7 @@ export default class RuleEditor extends Modal {
 			: { source: 'name', operator: 'contains', value: '' };
 		this.rule.conditions.push(condition);
 		this.appendCondition(condition);
-		this.condEls.last()?.scrollIntoView({ behavior: 'smooth' });
+		this.scrollerEl.lastElementChild?.scrollIntoView({ behavior: 'smooth' });
 	}
 
 	/**
@@ -961,26 +962,22 @@ export default class RuleEditor extends Modal {
 		});
 
 		// Get position in list
-		const index = this.condEls.indexOf(settingEl);
+		const index = this.scrollerEl.indexOf(settingEl);
 
 		// If ghost is dragged into condition above, swap the conditions
-		const prevCondEl = this.condEls[index - 1];
+		const prevCondEl = this.scrollerEl.children[index - 1];
 		const prevOverdrag = prevCondEl?.clientHeight * 0.25 || 0;
 		if (prevCondEl && y < prevCondEl.getBoundingClientRect().bottom - prevOverdrag) {
 			navigator.vibrate?.(100); // Not supported on iOS
 			prevCondEl.before(settingEl);
-			this.condEls.splice(index, 1);
-			this.condEls.splice(index - 1, 0, settingEl);
 		}
 
 		// If ghost is dragged into condition below, swap the conditions
-		const nextCondEl = this.condEls[index + 1];
+		const nextCondEl = this.scrollerEl.children[index + 1];
 		const nextOverdrag = nextCondEl?.clientHeight * 0.25 || 0;
 		if (nextCondEl && y > nextCondEl.getBoundingClientRect().top + nextOverdrag) {
 			navigator.vibrate?.(100); // Not supported on iOS
 			nextCondEl.after(settingEl);
-			this.condEls.splice(index, 1);
-			this.condEls.splice(index + 1, 0, settingEl);
 		}
 	}
 
@@ -994,7 +991,7 @@ export default class RuleEditor extends Modal {
 		setting.settingEl.removeAttribute('draggable');
 
 		// Save condition position
-		const toIndex = this.condEls.indexOf(setting.settingEl);
+		const toIndex = this.scrollerEl.indexOf(setting.settingEl);
 		if (toIndex > -1) this.moveCondition(setting.condition, toIndex);
 	}
 
@@ -1004,7 +1001,6 @@ export default class RuleEditor extends Modal {
 	private removeCondition(setting: ConditionSetting): void {
 		setting.settingEl.remove();
 		this.rule.conditions.remove(setting.condition);
-		this.condEls.remove(setting.settingEl);
 		this.updateMatchesButton();
 	}
 
@@ -1057,7 +1053,6 @@ export default class RuleEditor extends Modal {
 	 * @override
 	 */
 	onClose(): void {
-		this.condEls.length = 0;
 		this.contentEl.empty();
 		this.iconManager.stopEventListeners();
 		this.iconManager.stopMutationObservers();

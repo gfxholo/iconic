@@ -291,6 +291,13 @@ a.tag {
 .is-mobile .mod-confirmation > .modal.iconic-rule-picker {
 	background-color: var(--modal-background);
 }
+.iconic-scroller {
+	overflow-y: auto;
+	border-block: 1px solid var(--background-modifier-border);
+}
+.iconic-scroller > .setting-item:first-child {
+	padding-top: 0.75em;
+}
 .iconic-rule,
 .iconic-condition {
 	column-gap: var(--size-4-2);

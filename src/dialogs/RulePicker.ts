@@ -56,7 +56,7 @@ export default class RulePicker extends Modal {
 	private readonly iconManager: RulePickerManager;
 
 	// Components
-	private readonly ruleEls: HTMLElement[] = [];
+	private scrollerEl: HTMLElement;
 
 	private constructor(plugin: IconicPlugin) {
 		super(plugin.app);
@@ -117,8 +117,9 @@ export default class RulePicker extends Modal {
 			case 'file': rules.push(...this.plugin.ruleManager.getRules(dialogState.rulePage)); break;
 			case 'folder': rules.push(...this.plugin.ruleManager.getRules(dialogState.rulePage)); break;
 		}
+		this.scrollerEl = this.modalEl.createDiv({ cls: 'iconic-scroller' });
 		for (const rule of rules) {
-			this.insertRule(rule, this.ruleEls.length);
+			this.insertRule(rule, this.scrollerEl.childElementCount);
 		}
 	}
 
@@ -126,12 +127,9 @@ export default class RulePicker extends Modal {
 	 * Display a given page of rules.
 	 */
 	private refreshRules(): void {
-		for (const ruleEl of this.ruleEls) {
-			ruleEl.remove();
-		}
-		this.ruleEls.length = 0;
+		this.scrollerEl.empty();
 		for (const rule of this.plugin.ruleManager.getRules(this.plugin.settings.dialogState.rulePage)) {
-			this.insertRule(rule, this.ruleEls.length);
+			this.insertRule(rule, this.scrollerEl.childElementCount);
 		}
 	}
 
@@ -143,7 +141,7 @@ export default class RulePicker extends Modal {
 	 */
 	insertRule(rule: RuleItem, index: number, isNewRule?: boolean): void {
 		const page = this.plugin.settings.dialogState.rulePage;
-		const ruleSetting = new RuleSetting(this.contentEl, rule);
+		const ruleSetting = new RuleSetting(this.scrollerEl, rule);
 		const { settingEl, gripEl } = ruleSetting;
 
 		// Set icon
@@ -186,43 +184,39 @@ export default class RulePicker extends Modal {
 					isRulingChanged = this.plugin.ruleManager.saveRule(page, newRule);
 				} else {
 					settingEl.remove();
-					this.ruleEls.remove(settingEl);
 					isRulingChanged = this.plugin.ruleManager.deleteRule(page, rule.id);
 				}
 				if (isRulingChanged) this.plugin.refreshManagers(page);
 			})
 		})
 		.onAdd(() => {
-			const atIndex = this.ruleEls.indexOf(settingEl);
+			const atIndex = this.scrollerEl.indexOf(settingEl);
 			this.newRule(atIndex);
 		})
 		.onDuplicate(() => {
 			const page = this.plugin.settings.dialogState.rulePage;
 			const duplicateRule = this.plugin.ruleManager.duplicateRule(page, rule);
-			const index = this.ruleEls.indexOf(settingEl) + 1;
+			const index = this.scrollerEl.indexOf(settingEl) + 1;
 			this.insertRule(duplicateRule, index);
 		})
 		.onEdgeCheck(edge => {
 			switch (edge) {
-				case 'top': return settingEl === this.ruleEls.first();
-				case 'bottom': return settingEl === this.ruleEls.last();
+				case 'top': return settingEl === this.scrollerEl.firstElementChild;
+				case 'bottom': return settingEl === this.scrollerEl.lastElementChild;
 			}
 		})
 		.onEdgeMove(edge => {
-			const toIndex = edge === 'top' ? 0 : this.ruleEls.length;
+			const toIndex = edge === 'top' ? 0 : this.scrollerEl.childElementCount;
 			if (edge === 'top') {
-				this.ruleEls.first()?.before(settingEl);
+				this.scrollerEl.firstElementChild?.before(settingEl);
 			} else {
-				this.ruleEls.last()?.after(settingEl);
+				this.scrollerEl.lastElementChild?.after(settingEl);
 			}
-			this.ruleEls.remove(settingEl);
-			this.ruleEls.splice(toIndex, 0, settingEl);
 			const isRulingChanged = this.plugin.ruleManager.moveRule(page, rule, toIndex);
 			if (isRulingChanged) this.plugin.refreshManagers(page);
 		})
 		.onRemove(() => {
 			settingEl.remove();
-			this.ruleEls.remove(settingEl);
 			const isRulingChanged = this.plugin.ruleManager.deleteRule(page, rule.id);
 			if (isRulingChanged) this.plugin.refreshManagers(page);
 		})
@@ -256,24 +250,20 @@ export default class RulePicker extends Modal {
 				top: y - settingEl.clientHeight / 2 + 'px',
 			});
 			// Get position in list
-			const index = this.ruleEls.indexOf(settingEl);
+			const index = this.scrollerEl.indexOf(settingEl);
 			// If ghost is dragged into rule above, swap the rules
-			const prevRuleEl = this.ruleEls[index - 1];
+			const prevRuleEl = this.scrollerEl.children[index - 1];
 			const prevOverdrag = prevRuleEl?.clientHeight * 0.25 || 0;
 			if (prevRuleEl && y < prevRuleEl.getBoundingClientRect().bottom - prevOverdrag) {
 				navigator.vibrate?.(100); // Not supported on iOS
 				prevRuleEl.before(settingEl);
-				this.ruleEls.splice(index, 1);
-				this.ruleEls.splice(index - 1, 0, settingEl);
 			}
 			// If ghost is dragged into rule below, swap the rules
-			const nextRuleEl = this.ruleEls[index + 1];
+			const nextRuleEl = this.scrollerEl.children[index + 1];
 			const nextOverdrag = nextRuleEl?.clientHeight * 0.25 || 0;
 			if (nextRuleEl && y > nextRuleEl.getBoundingClientRect().top + nextOverdrag) {
 				navigator.vibrate?.(100); // Not supported on iOS
 				nextRuleEl.after(settingEl);
-				this.ruleEls.splice(index, 1);
-				this.ruleEls.splice(index + 1, 0, settingEl);
 			}
 		})
 		.onDragEnd(() => {
@@ -282,16 +272,13 @@ export default class RulePicker extends Modal {
 			settingEl.removeClass('drag-ghost-hidden');
 			settingEl.removeAttribute('draggable');
 			// Save rule position
-			const toIndex = this.ruleEls.indexOf(settingEl);
+			const toIndex = this.scrollerEl.indexOf(settingEl);
 			if (toIndex > -1) this.plugin.ruleManager.moveRule(page, rule, toIndex);
 		});
 
 		// Insert rule into DOM
-		this.ruleEls[index]?.before(settingEl);
+		this.scrollerEl.childNodes[index]?.before(settingEl);
 		if (isNewRule) ruleSetting.toggleEditable(ruleSetting.nameEl, true);
-
-		// Insert rule into array
-		this.ruleEls.splice(index, 0, settingEl);
 	}
 
 	/**
@@ -306,9 +293,9 @@ export default class RulePicker extends Modal {
 			this.plugin.ruleManager.moveRule(page, newRule, index);
 			this.insertRule(newRule, index, true);
 		} else {
-			index = this.ruleEls.length;
+			index = this.scrollerEl.childElementCount;
 			this.insertRule(newRule, index, true);
-			this.ruleEls.last()?.scrollIntoView({ behavior: 'smooth' });
+			this.scrollerEl.lastElementChild?.scrollIntoView({ behavior: 'smooth' });
 		}
 	}
 
@@ -316,7 +303,6 @@ export default class RulePicker extends Modal {
 	 * @override
 	 */
 	onClose(): void {
-		this.ruleEls.length = 0;
 		this.contentEl.empty();
 		this.iconManager.stopEventListeners();
 		this.iconManager.stopMutationObservers();
