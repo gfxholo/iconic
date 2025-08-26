@@ -1,6 +1,5 @@
 import { ButtonComponent, Modal, Platform, Setting, TextComponent } from 'obsidian';
 import IconicPlugin, { Category, Icon, Item, FileItem, STRINGS } from 'src/IconicPlugin';
-import ColorUtils from 'src/ColorUtils';
 import { RuleItem, ConditionItem } from 'src/managers/RuleManager';
 import IconManager from 'src/managers/IconManager';
 import RuleChecker from 'src/dialogs/RuleChecker';
@@ -480,7 +479,6 @@ export default class RuleEditor extends Modal {
 	// Components
 	private readonly condEls: HTMLElement[] = [];
 	private nameField: TextComponent;
-	private addCondSetting: Setting;
 	private matchesButton: ButtonComponent;
 
 	private constructor(plugin: IconicPlugin, page: Category, rule: RuleItem, callback: RuleEditorCallback | null) {
@@ -600,23 +598,18 @@ export default class RuleEditor extends Modal {
 			});
 
 		// HEADING: Conditions
-		new Setting(this.contentEl).setHeading().setName(STRINGS.ruleEditor.conditions);
+		new Setting(this.contentEl).setHeading()
+			.setName(STRINGS.ruleEditor.conditions)
+			.addExtraButton(button => button
+				.setIcon('lucide-plus')
+				.setTooltip(STRINGS.ruleEditor.addCondition)
+				.onClick(() => this.newCondition())
+			);
 
 		// LIST: Conditions
 		for (const condition of this.rule.conditions) {
 			this.appendCondition(condition);
 		}
-
-		// BUTTON: Add condition
-		this.addCondSetting = new Setting(this.contentEl)
-			.addExtraButton(button => { button
-				.setIcon('lucide-circle-plus')
-				.setTooltip(STRINGS.ruleEditor.addCondition)
-				.onClick(() => this.newCondition())
-				.extraSettingsEl.style.color = ColorUtils.toRgb('green');
-			});
-		this.addCondSetting.settingEl.addClass('iconic-add');
-		this.addCondSetting.infoEl.remove();
 
 		// Match styling of bookmark edit dialog
 		const buttonContainerEl = this.modalEl.createDiv({ cls: 'modal-button-container' });
@@ -691,10 +684,6 @@ export default class RuleEditor extends Modal {
 		this.setConditionValue(condSetting, condition.value);
 
 		this.condEls.push(condSetting.settingEl);
-
-		if (this.addCondSetting) {
-			condSetting.settingEl.after(this.addCondSetting.settingEl);
-		}
 
 		this.updateMatchesButton();
 	}
@@ -912,9 +901,7 @@ export default class RuleEditor extends Modal {
 			: { source: 'name', operator: 'contains', value: '' };
 		this.rule.conditions.push(condition);
 		this.appendCondition(condition);
-		if (this.addCondSetting) {
-			this.addCondSetting.settingEl.scrollIntoView({ behavior: 'smooth' });
-		}
+		this.condEls.last()?.scrollIntoView({ behavior: 'smooth' });
 	}
 
 	/**

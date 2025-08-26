@@ -57,7 +57,6 @@ export default class RulePicker extends Modal {
 
 	// Components
 	private readonly ruleEls: HTMLElement[] = [];
-	private addRuleSetting: Setting;
 
 	private constructor(plugin: IconicPlugin) {
 		super(plugin.app);
@@ -104,17 +103,13 @@ export default class RulePicker extends Modal {
 			});
 
 		// HEADING: Rules
-		new Setting(this.contentEl).setHeading().setName(STRINGS.rulePicker.rules);
-
-		// BUTTON: Add rule
-		this.addRuleSetting = new Setting(this.contentEl).addExtraButton(button => { button
-			.setIcon('lucide-circle-plus')
-			.setTooltip(STRINGS.rulePicker.addRule)
-			.onClick(() => this.addRule())
-			.extraSettingsEl.style.color = ColorUtils.toRgb('green');
-		});
-		this.addRuleSetting.settingEl.addClass('iconic-add');
-		this.addRuleSetting.infoEl.remove();
+		new Setting(this.contentEl).setHeading()
+			.setName(STRINGS.rulePicker.rules)
+			.addExtraButton(button => button
+				.setIcon('lucide-plus')
+				.setTooltip(STRINGS.rulePicker.addRule)
+				.onClick(() => this.newRule())
+			);
 
 		// LIST: Rules
 		const rules: RuleItem[] = [];
@@ -199,7 +194,7 @@ export default class RulePicker extends Modal {
 		})
 		.onAdd(() => {
 			const atIndex = this.ruleEls.indexOf(settingEl);
-			this.addRule(atIndex);
+			this.newRule(atIndex);
 		})
 		.onDuplicate(() => {
 			const page = this.plugin.settings.dialogState.rulePage;
@@ -297,16 +292,13 @@ export default class RulePicker extends Modal {
 
 		// Insert rule into array
 		this.ruleEls.splice(index, 0, settingEl);
-
-		// Move the Add Rule button to the bottom
-		this.contentEl.append(this.addRuleSetting.settingEl);
 	}
 
 	/**
 	 * Create new rule and insert it onto the page at a specific index.
 	 * @param index Index to create the rule at. If undefined or negative, append rule to the bottom.
 	 */
-	private addRule(index?: number): void {
+	private newRule(index?: number): void {
 		const page = this.plugin.settings.dialogState.rulePage;
 		const newRule = this.plugin.ruleManager.newRule(page);
 
@@ -316,7 +308,7 @@ export default class RulePicker extends Modal {
 		} else {
 			index = this.ruleEls.length;
 			this.insertRule(newRule, index, true);
-			this.addRuleSetting.settingEl.scrollIntoView({ behavior: 'smooth' });
+			this.ruleEls.last()?.scrollIntoView({ behavior: 'smooth' });
 		}
 	}
 

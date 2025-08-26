@@ -212,7 +212,7 @@ export default class RuleSetting extends Setting {
 
 		// MENU ITEM: Add rule
 		menu.addItem(item => { item
-			.setIcon('lucide-circle-plus')
+			.setIcon('lucide-plus')
 			.setTitle(STRINGS.rulePicker.addRule)
 			.setSection('action-primary')
 			.onClick(() => this.addCallback?.());
