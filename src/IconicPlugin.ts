@@ -1132,7 +1132,7 @@ export default class IconicPlugin extends Plugin {
 	private definePropertyItem(propBase: any, unloading?: boolean): PropertyItem {
 		const propIcon = this.settings.propertyIcons[propBase.name] ?? {};
 		// Pre-1.9.0 compatible
-		// @ts-expect-error internal Obsidian API
+		// @ts-expect-error (Private API)
 		const iconDefault = this.app.metadataTypeManager.getWidget(propBase.widget ?? propBase.type)?.icon ?? 'lucide-file-question';
 		return {
 			id: propBase.name,
