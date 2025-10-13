@@ -25,10 +25,13 @@ export default class PropertyIconManager extends IconManager {
 	 * Start managing this leaf if has a matching type.
 	 */
 	private manageLeaf(leaf: WorkspaceLeaf): void {
-		if (leaf.getViewState().type !== 'all-properties') return;
+		// Check if this is a Properties pane by looking for the properties container
+		const propertiesContainer = leaf.view.containerEl.find('.metadata-properties');
+		if (!propertiesContainer) return;
+		
 
 		this.stopMutationObserver(this.containerEl);
-		this.containerEl = leaf.view.containerEl.find(':scope > .view-content > div');
+		this.containerEl = propertiesContainer;
 		this.setMutationObserver(this.containerEl, {
 			subtree: true,
 			childList: true,
@@ -50,37 +53,77 @@ export default class PropertyIconManager extends IconManager {
 	refreshIcons(unloading?: boolean): void {
 		this.stopMutationObserver(this.containerEl);
 		const props = this.plugin.getPropertyItems(unloading);
-		const itemEls = this.containerEl?.findAll(':scope > .tree-item') ?? [];
+		const itemEls = this.containerEl?.findAll('.metadata-property') ?? [];
 
+		const foundPropertyNames = [];
 		for (const itemEl of itemEls) {
 			itemEl.addClass('iconic-item');
 
-			const textEl = itemEl.find('.tree-item-self > .tree-item-inner > .tree-item-inner-text');
-			const prop = props.find(prop => prop.id === textEl?.getText());
-			if (!prop) continue;
-
-			const iconEl = itemEl.find('.tree-item-self > .tree-item-icon');
-			if (!iconEl) continue;
-
-			if (this.plugin.isSettingEnabled('clickableIcons')) {
-				this.refreshIcon(prop, iconEl, event => {
-					IconPicker.openSingle(this.plugin, prop, (newIcon, newColor) => {
-						this.plugin.savePropertyIcon(prop, newIcon, newColor);
-						this.plugin.refreshManagers('property');
-					});
-					event.stopPropagation();
-				});
-			} else {
-				this.refreshIcon(prop, iconEl);
+			const propertyName = itemEl.dataset.propertyKey;
+			foundPropertyNames.push(propertyName);
+			
+			// Try multiple variations of the property name to handle different cases
+			const variations = [
+				propertyName, // Original name
+				propertyName?.toLowerCase(), // lowercase
+				propertyName?.toUpperCase(), // UPPERCASE
+				propertyName ? propertyName.charAt(0).toLowerCase() + propertyName.slice(1) : null, // camelCase
+				// Handle specific known conversions
+				propertyName === 'imagealt' ? 'imageAlt' : null,
+				propertyName === 'imageog' ? 'imageOG' : null,
+				propertyName === 'hidecoverimage' ? 'hideCoverImage' : null,
+				propertyName === 'targetkeyword' ? 'targetKeyword' : null,
+			].filter(Boolean) as string[]; // Remove null values and type as string array
+			
+			// Try to find a matching property using any of the variations
+			let prop: PropertyItem | undefined = undefined;
+			for (const variation of variations) {
+				prop = props.find(p => p.id === variation);
+				if (prop) break;
+			}
+			
+			if (!prop) {
+				// Create a fallback property for undefined names
+				if (propertyName === 'undefined' || !propertyName) {
+					prop = {
+						id: 'undefined',
+						name: 'undefined',
+						category: 'property' as const,
+						iconDefault: 'lucide-file-question',
+						icon: this.plugin.settings.propertyIcons['undefined']?.icon ?? null,
+						color: this.plugin.settings.propertyIcons['undefined']?.color ?? null,
+						type: null
+					};
+				} else {
+					continue;
+				}
 			}
 
-			if (this.plugin.settings.showMenuActions) {
-				this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(prop.id), { capture: true });
-			} else {
-				this.stopEventListener(itemEl, 'contextmenu');
+			const iconEl = itemEl.find('.metadata-property-icon');
+			if (!iconEl) continue;
+
+			if (prop) {
+				if (this.plugin.isSettingEnabled('clickableIcons')) {
+					this.refreshIcon(prop, iconEl, event => {
+						IconPicker.openSingle(this.plugin, prop!, (newIcon, newColor) => {
+							this.plugin.savePropertyIcon(prop!, newIcon, newColor);
+							this.plugin.refreshManagers('property');
+						});
+						event.stopPropagation();
+					});
+				} else {
+					this.refreshIcon(prop, iconEl);
+				}
+
+				if (this.plugin.settings.showMenuActions) {
+					this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(prop!.id), { capture: true });
+				} else {
+					this.stopEventListener(itemEl, 'contextmenu');
+				}
 			}
 		}
 
+		
 		this.setMutationsObserver(this.containerEl, {
 			subtree: true,
 			childList: true,
