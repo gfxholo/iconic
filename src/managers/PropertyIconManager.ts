@@ -52,52 +52,30 @@ export default class PropertyIconManager extends IconManager {
 	 */
 	refreshIcons(unloading?: boolean): void {
 		this.stopMutationObserver(this.containerEl);
-		const props = this.plugin.getPropertyItems(unloading);
 		const itemEls = this.containerEl?.findAll('.metadata-property') ?? [];
 
-		const foundPropertyNames = [];
 		for (const itemEl of itemEls) {
 			itemEl.addClass('iconic-item');
 
-			const propertyName = itemEl.dataset.propertyKey;
-			foundPropertyNames.push(propertyName);
+			const domPropertyName = itemEl.dataset.propertyKey;
 			
-			// Try multiple variations of the property name to handle different cases
-			const variations = [
-				propertyName, // Original name
-				propertyName?.toLowerCase(), // lowercase
-				propertyName?.toUpperCase(), // UPPERCASE
-				propertyName ? propertyName.charAt(0).toLowerCase() + propertyName.slice(1) : null, // camelCase
-				// Handle specific known conversions
-				propertyName === 'imagealt' ? 'imageAlt' : null,
-				propertyName === 'imageog' ? 'imageOG' : null,
-				propertyName === 'hidecoverimage' ? 'hideCoverImage' : null,
-				propertyName === 'targetkeyword' ? 'targetKeyword' : null,
-			].filter(Boolean) as string[]; // Remove null values and type as string array
+			// Use user's settings as the single source of truth
+			// This ensures we only show icons for properties the user actually configured
+			const settingsKeys = Object.keys(this.plugin.settings.propertyIcons);
+			const matchingKey = settingsKeys.find(key => key.toLowerCase() === domPropertyName?.toLowerCase());
 			
-			// Try to find a matching property using any of the variations
-			let prop: PropertyItem | undefined = undefined;
-			for (const variation of variations) {
-				prop = props.find(p => p.id === variation);
-				if (prop) break;
-			}
+			if (!matchingKey) continue; // Skip properties user hasn't configured icons for
 			
-			if (!prop) {
-				// Create a fallback property for undefined names
-				if (propertyName === 'undefined' || !propertyName) {
-					prop = {
-						id: 'undefined',
-						name: 'undefined',
-						category: 'property' as const,
-						iconDefault: 'lucide-file-question',
-						icon: this.plugin.settings.propertyIcons['undefined']?.icon ?? null,
-						color: this.plugin.settings.propertyIcons['undefined']?.color ?? null,
-						type: null
-					};
-				} else {
-					continue;
-				}
-			}
+			// Create property item using user's actual casing from settings
+			const prop: PropertyItem = {
+				id: matchingKey,
+				name: matchingKey,
+				category: 'property' as const,
+				iconDefault: 'lucide-file-question',
+				icon: unloading ? null : this.plugin.settings.propertyIcons[matchingKey]?.icon ?? null,
+				color: unloading ? null : this.plugin.settings.propertyIcons[matchingKey]?.color ?? null,
+				type: null
+			};
 
 			const iconEl = itemEl.find('.metadata-property-icon');
 			if (!iconEl) continue;
