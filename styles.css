@@ -143,16 +143,6 @@ a.tag {
 	font-size: inherit;
 }
 
-/* Make wrapper match Obsidian's readable line width content div behavior */
-.markdown-preview-view.is-readable-line-width .markdown-preview-sizer .iconic-title-wrapper,
-.markdown-preview-view.is-readable-line-width .markdown-preview-sizer > .iconic-title-wrapper,
-.markdown-preview-view.is-readable-line-width .markdown-preview-sizer > div > .iconic-title-wrapper,
-.markdown-source-view.is-readable-line-width .cm-sizer > .iconic-title-wrapper {
-	max-width: var(--file-line-width) !important;
-	margin-left: var(--content-margin-start) !important;
-	margin-right: auto !important;
-}
-
 /* Editor properties */
 .iconic-clickable-icons .metadata-property-icon.iconic-icon:hover {
 	cursor: var(--cursor-link);
