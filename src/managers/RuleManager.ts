@@ -30,6 +30,25 @@ export default class RuleManager {
 
 	constructor(plugin: IconicPlugin) {
 		this.plugin = plugin;
+
+		// Fix any duplicate rule IDs
+		const fileRuleIds: string[] = [];
+		const folderRuleIds: string[] = [];
+		for (const ruleBase of this.plugin.settings.fileRules) {
+			if (!ruleBase.id || fileRuleIds.includes(ruleBase.id)) {
+				ruleBase.id = this.newRuleId('file');
+			}
+			fileRuleIds.push(ruleBase.id);
+		}
+		for (const ruleBase of this.plugin.settings.folderRules) {
+			if (!ruleBase.id || folderRuleIds.includes(ruleBase.id)) {
+				ruleBase.id = this.newRuleId('folder');
+			}
+			folderRuleIds.push(ruleBase.id);
+		}
+		this.plugin.saveSettings();
+
+		// Initialize rulings
 		this.updateRulings('file');
 		this.updateRulings('folder');
 		this.startTriggerTimer();
@@ -124,7 +143,7 @@ export default class RuleManager {
 	/**
 	 * Generate a 5-character rule ID. 916,132,832 possible values.
 	 */
-	private newRuleId(page: Category): string {
+	newRuleId(page: Category): string {
 		const ids = this.getRuleBases(page).map(ruleBase => ruleBase.id);
 		let id: string;
 		let collisions = 0;
