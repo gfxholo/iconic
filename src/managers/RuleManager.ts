@@ -175,10 +175,18 @@ export default class RuleManager {
 			match: rule.match,
 			conditions: [...rule.conditions],
 			enabled: rule.enabled,
-		}
-
-		const index = ruleBases.indexOf(ruleBase);
-		ruleBases.splice(index, 0, ruleBase);
+		};
+		
+		const index = ruleBases.indexOf(ruleBase) + 1;
+		ruleBases.splice(index, 0, {
+			id: duplicateRule.id,
+			name: duplicateRule.name,
+			icon: duplicateRule.icon ?? undefined,
+			color: duplicateRule.color ?? undefined,
+			match: duplicateRule.match,
+			conditions: [...duplicateRule.conditions],
+			enabled: duplicateRule.enabled,
+		});
 
 		this.plugin.saveSettings();
 		return duplicateRule;
