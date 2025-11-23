@@ -81,8 +81,8 @@ export default class RuleManager {
 	 */
 	getRules(page: Category): RuleItem[] {
 		switch (page) {
-			case 'file': return this.plugin.settings.fileRules.map(ruleBase => this.defineRule(ruleBase));
-			case 'folder': return this.plugin.settings.folderRules.map(ruleBase => this.defineRule(ruleBase));
+			case 'file': return this.plugin.settings.fileRules.map(ruleBase => this.defineRule(page, ruleBase));
+			case 'folder': return this.plugin.settings.folderRules.map(ruleBase => this.defineRule(page, ruleBase));
 			default: return [];
 		}
 	}
@@ -98,7 +98,7 @@ export default class RuleManager {
 			default: ruleBases = [];
 		}
 		const ruleBase = ruleBases.find(rule => rule.id === ruleId);
-		return ruleBase ? this.defineRule(ruleBase) : null;
+		return ruleBase ? this.defineRule(page, ruleBase) : null;
 	}
 
 	/**
@@ -126,12 +126,12 @@ export default class RuleManager {
 	/**
 	 * Create rule definition.
 	 */
-	private defineRule(ruleBase: any): RuleItem {
+	private defineRule(page: Category, ruleBase: any): RuleItem {
 		return {
 			id: ruleBase.id ?? '0',
 			name: ruleBase.name ?? '',
 			category: 'rule',
-			iconDefault: 'lucide-file',
+			iconDefault: this.getPageIcon(page),
 			icon: ruleBase.icon ?? null,
 			color: ruleBase.color ?? null,
 			match: ruleBase.match ?? 'all',
@@ -165,7 +165,7 @@ export default class RuleManager {
 			id: this.newRuleId(page),
 			name: STRINGS.rulePicker.untitledRule,
 			category: 'rule',
-			iconDefault: null,
+			iconDefault: this.plugin.ruleManager.getPageIcon(page),
 			icon: null,
 			color: null,
 			match: 'all',
