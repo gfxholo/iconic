@@ -28,7 +28,7 @@ export default class AppIconManager extends IconManager {
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
 		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => this.refreshIcons()));
-		this.plugin.refreshManagers('app');
+		this.refreshIcons();
 	}
 
 	/**

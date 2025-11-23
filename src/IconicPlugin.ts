@@ -695,6 +695,14 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
+	 * Check whether the Obsidian API is equal to or greather than a minimum version.
+	 * @param minVersion Version string in the form of `MAJOR.MINOR.PATCH`
+	 */
+	isApiVersionAtLeast(minVersion: string): boolean {
+		return apiVersion.localeCompare(minVersion, undefined, { numeric: true }) >= 0;
+	}
+
+	/**
 	 * Get app item definition.
 	 */
 	getAppItem(appItemId: AppItemId, unloading?: boolean): AppItem {
@@ -718,14 +726,14 @@ export default class IconicPlugin extends Plugin {
 			}
 			case 'sidebarLeft': {
 				name = STRINGS.appItems.sidebarLeft;
-				iconDefault = apiVersion >= '1.9' // Pre-1.9.0 compatible
+				iconDefault = this.isApiVersionAtLeast('1.9.0')
 					? 'sidebar-toggle-button-icon'
 					: 'sidebar-left';
 				break;
 			}
 			case 'sidebarRight': {
 				name = STRINGS.appItems.sidebarRight;
-				iconDefault = apiVersion >= '1.9' // Pre-1.9.0 compatible
+				iconDefault = this.isApiVersionAtLeast('1.9.0')
 					? 'sidebar-toggle-button-icon'
 					: 'sidebar-right';
 				break;
