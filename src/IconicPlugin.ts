@@ -733,14 +733,18 @@ export default class IconicPlugin extends Plugin {
 			}
 			case 'sidebarLeft': {
 				name = STRINGS.appItems.sidebarLeft;
-				iconDefault = apiVersion >= '1.9' // Pre-1.9.0 compatible
+				iconDefault = apiVersion >= '1.10' // Updated for 1.10.0+
+					? 'sidebar-toggle-button-icon'
+					: apiVersion >= '1.9'
 					? 'sidebar-toggle-button-icon'
 					: 'sidebar-left';
 				break;
 			}
 			case 'sidebarRight': {
 				name = STRINGS.appItems.sidebarRight;
-				iconDefault = apiVersion >= '1.9' // Pre-1.9.0 compatible
+				iconDefault = apiVersion >= '1.10' // Updated for 1.10.0+
+					? 'sidebar-toggle-button-icon'
+					: apiVersion >= '1.9'
 					? 'sidebar-toggle-button-icon'
 					: 'sidebar-right';
 				break;
@@ -1131,27 +1135,28 @@ export default class IconicPlugin extends Plugin {
 	 */
 	private definePropertyItem(propBase: any, unloading?: boolean): PropertyItem {
 		const propIcon = this.settings.propertyIcons[propBase.name] ?? {};
-		let iconDefault;
-		switch (propBase.widget ?? propBase.type) { // Pre-1.9.0 compatible
-			case 'text': iconDefault = 'lucide-text'; break;
-			case 'multitext': iconDefault = 'lucide-list'; break;
-			case 'number': iconDefault = 'lucide-binary'; break;
-			case 'checkbox': iconDefault = 'lucide-check-square'; break;
-			case 'date': iconDefault = 'lucide-calendar'; break;
-			case 'datetime': iconDefault = 'lucide-clock'; break;
-			case 'aliases': iconDefault = 'lucide-forward'; break;
-			case 'tags': iconDefault = 'lucide-tags'; break;
-			default: iconDefault = 'lucide-file-question'; break;
+		// Pre-1.9.0 compatible - add null checks to prevent getWidget errors
+		let iconDefault = 'lucide-file-question';
+		try {
+			const widgetType = propBase.widget ?? propBase.type;
+			if (widgetType) {
+				// @ts-expect-error (Private API)
+				iconDefault = this.app.metadataTypeManager.getWidget(widgetType)?.icon ?? 'lucide-file-question';
+			}
+		} catch (error) {
+			console.warn('Iconic: Error getting widget icon for property:', propBase.name, error);
 		}
-		return {
+		
+		const propertyItem: PropertyItem = {
 			id: propBase.name,
 			name: propBase.name,
-			category: 'property',
+			category: 'property' as const,
 			iconDefault: iconDefault,
 			icon: unloading ? null : propIcon.icon ?? null,
 			color: unloading ? null : propIcon.color ?? null,
 			type: propBase.widget ?? propBase.type ?? null, // Pre-1.9.0 compatible
-		}
+		};
+		return propertyItem;
 	}
 
 	/**
