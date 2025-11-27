@@ -7,12 +7,13 @@ import IconPicker from 'src/dialogs/IconPicker';
  * Handles icons in the Properties pane.
  */
 export default class PropertyIconManager extends IconManager {
-	private containerEl: HTMLElement;
+	private containerEl: HTMLElement | null = null;
+	private propertyViewContainerEl: HTMLElement | null = null;
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
 		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => {
-			if (activeDocument.contains(this.containerEl)) {
+			if (this.containerEl && activeDocument.contains(this.containerEl)) {
 				return;
 			} else {
 				this.app.workspace.iterateAllLeaves(leaf => this.manageLeaf(leaf));
@@ -25,25 +26,47 @@ export default class PropertyIconManager extends IconManager {
 	 * Start managing this leaf if has a matching type.
 	 */
 	private manageLeaf(leaf: WorkspaceLeaf): void {
-		// Check if this is a Properties pane by looking for the properties container
+		// Check if this is a Properties pane (note editor) by looking for the properties container
 		const propertiesContainer = leaf.view.containerEl.find('.metadata-properties');
-		if (!propertiesContainer) return;
-		
-
-		this.stopMutationObserver(this.containerEl);
-		this.containerEl = propertiesContainer;
-		this.setMutationObserver(this.containerEl, {
-			subtree: true,
-			childList: true,
-		}, mutation => {
-			for (const addedNode of mutation.addedNodes) {
-				if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
-					this.refreshIcons();
-					return;
-				}
+		if (propertiesContainer) {
+			if (this.containerEl) {
+				this.stopMutationObserver(this.containerEl);
 			}
-		});
-		this.refreshIcons();
+			this.containerEl = propertiesContainer;
+			this.setMutationObserver(this.containerEl, {
+				subtree: true,
+				childList: true,
+			}, mutation => {
+				for (const addedNode of mutation.addedNodes) {
+					if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
+						this.refreshIcons();
+						return;
+					}
+				}
+			});
+			this.refreshIcons();
+		}
+
+		// Check if this is a PropertyView (core plugin) by looking for view-content with tree-items
+		const viewContent = leaf.view.containerEl.find('.view-content');
+		if (viewContent && viewContent.find('.tree-item')) {
+			if (this.propertyViewContainerEl) {
+				this.stopMutationObserver(this.propertyViewContainerEl);
+			}
+			this.propertyViewContainerEl = viewContent;
+			this.setMutationObserver(this.propertyViewContainerEl, {
+				subtree: true,
+				childList: true,
+			}, mutation => {
+				for (const addedNode of mutation.addedNodes) {
+					if (addedNode instanceof HTMLElement && addedNode.hasClass('tree-item')) {
+						this.refreshIcons();
+						return;
+					}
+				}
+			});
+			this.refreshIcons();
+		}
 	}
 
 	/**
@@ -51,10 +74,16 @@ export default class PropertyIconManager extends IconManager {
 	 * Refresh all property icons.
 	 */
 	refreshIcons(unloading?: boolean): void {
-		this.stopMutationObserver(this.containerEl);
-		const itemEls = this.containerEl?.findAll('.metadata-property') ?? [];
-
-		for (const itemEl of itemEls) {
+		if (this.containerEl) {
+			this.stopMutationObserver(this.containerEl);
+		}
+		if (this.propertyViewContainerEl) {
+			this.stopMutationObserver(this.propertyViewContainerEl);
+		}
+		
+		// Handle note editor properties (metadata-property elements)
+		const metadataItemEls = this.containerEl?.findAll('.metadata-property') ?? [];
+		for (const itemEl of metadataItemEls) {
 			itemEl.addClass('iconic-item');
 
 			const domPropertyName = itemEl.dataset.propertyKey;
@@ -101,11 +130,72 @@ export default class PropertyIconManager extends IconManager {
 			}
 		}
 
+		// Handle PropertyView tree items (core plugin's property view)
+		const treeItemEls = this.propertyViewContainerEl?.findAll('.tree-item') ?? [];
+		for (const itemEl of treeItemEls) {
+			itemEl.addClass('iconic-item');
+
+			// Get property name from tree-item-inner-text
+			const textEl = itemEl.find('.tree-item-inner-text');
+			const domPropertyName = textEl?.textContent?.trim();
+			
+			if (!domPropertyName) continue;
+			
+			// Use user's settings as the single source of truth
+			const settingsKeys = Object.keys(this.plugin.settings.propertyIcons);
+			const matchingKey = settingsKeys.find(key => key.toLowerCase() === domPropertyName.toLowerCase());
+			
+			if (!matchingKey) continue; // Skip properties user hasn't configured icons for
+			
+			// Create property item using user's actual casing from settings
+			const prop: PropertyItem = {
+				id: matchingKey,
+				name: matchingKey,
+				category: 'property' as const,
+				iconDefault: 'lucide-file-question',
+				icon: unloading ? null : this.plugin.settings.propertyIcons[matchingKey]?.icon ?? null,
+				color: unloading ? null : this.plugin.settings.propertyIcons[matchingKey]?.color ?? null,
+				type: null
+			};
+
+			const iconEl = itemEl.find('.tree-item-icon');
+			if (!iconEl) continue;
+
+			if (prop) {
+				if (this.plugin.isSettingEnabled('clickableIcons')) {
+					this.refreshIcon(prop, iconEl, event => {
+						IconPicker.openSingle(this.plugin, prop!, (newIcon, newColor) => {
+							this.plugin.savePropertyIcon(prop!, newIcon, newColor);
+							this.plugin.refreshManagers('property');
+						});
+						event.stopPropagation();
+					});
+				} else {
+					this.refreshIcon(prop, iconEl);
+				}
+
+				if (this.plugin.settings.showMenuActions) {
+					this.setEventListener(itemEl, 'contextmenu', () => this.onContextMenu(prop!.id), { capture: true });
+				} else {
+					this.stopEventListener(itemEl, 'contextmenu');
+				}
+			}
+		}
+
 		
-		this.setMutationsObserver(this.containerEl, {
-			subtree: true,
-			childList: true,
-		}, () => this.refreshIcons());
+		if (this.containerEl) {
+			this.setMutationsObserver(this.containerEl, {
+				subtree: true,
+				childList: true,
+			}, () => this.refreshIcons());
+		}
+		
+		if (this.propertyViewContainerEl) {
+			this.setMutationsObserver(this.propertyViewContainerEl, {
+				subtree: true,
+				childList: true,
+			}, () => this.refreshIcons());
+		}
 	}
 
 	/**
@@ -117,7 +207,7 @@ export default class PropertyIconManager extends IconManager {
 		const clickedProp: PropertyItem = this.plugin.getPropertyItem(clickedPropId);
 		const selectedProps: PropertyItem[] = [];
 
-		for (const selfEl of this.containerEl?.findAll('.tree-item-self.is-selected') ?? []) {
+		for (const selfEl of (this.containerEl?.findAll('.tree-item-self.is-selected') ?? []).concat(this.propertyViewContainerEl?.findAll('.tree-item-self.is-selected') ?? [])) {
 			const textEl = selfEl.find(':scope > .tree-item-inner > .tree-item-inner-text');
 			if (textEl?.textContent) {
 				selectedProps.push(this.plugin.getPropertyItem(textEl.textContent));
