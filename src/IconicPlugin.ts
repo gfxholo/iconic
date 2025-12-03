@@ -24,11 +24,15 @@ export { STRINGS };
 export type Category = 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'tag' | 'property' | 'ribbon' | 'rule';
 export type AppItemId = 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight' | 'minimize' | 'maximize' | 'unmaximize' | 'close';
 
-export const FILE_TAB_TYPES = [
-	'markdown', 'canvas', 'bases', 'image', 'audio', 'video', 'pdf',
-].concat([
-	'kanban', // Community plugin tab types
-]);
+// Plugin tabs that contain a file, but should still display a tab-specific icon
+export const PLUGIN_TAB_TYPES = [
+	'backlink',
+	'file-properties',
+	'footnotes',
+	'outgoing-link',
+	'outline',
+];
+
 const SYNCABLE_TYPES = ['image', 'audio', 'video', 'pdf', 'unsupported'];
 const IMAGE_EXTENSIONS = ['bmp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif'];
 const AUDIO_EXTENSIONS = ['mp3', 'wav', 'm4a', '3gp', 'flac', 'ogg', 'oga', 'opus'];
@@ -772,7 +776,7 @@ export default class IconicPlugin extends Plugin {
 		this.app.workspace.iterateAllLeaves(leaf => {
 			if (tab) return;
 			const tabType = leaf.view.getViewType();
-			if (tabType === tabId || FILE_TAB_TYPES.includes(tabType) && leaf.view.getState().file === tabId) {
+			if (tabType === tabId || leaf.view.getState().file === tabId && !PLUGIN_TAB_TYPES.includes(tabType)) {
 				tab = this.defineTabItem(leaf, unloading);
 			}
 		});
@@ -803,9 +807,9 @@ export default class IconicPlugin extends Plugin {
 		const isRoot = leaf.getRoot() === this.app.workspace.rootSplit;
 		// @ts-expect-error (Private API)
 		const isStacked = leaf.parent?.isStacked === true;
+		const filePath = leaf.view.getState().file; // Used because view.file is undefined on deferred views
 
-		if (FILE_TAB_TYPES.includes(tabType)) {
-			const filePath = leaf.view.getState().file; // Used because view.file is undefined on deferred views
+		if (filePath && !PLUGIN_TAB_TYPES.includes(tabType)) {
 			const fileId = typeof filePath === 'string' ? filePath : '';
 			const fileIcon = this.settings.fileIcons[fileId] ?? {};
 			const isMarkdown = tabType === 'markdown';

@@ -1,5 +1,5 @@
 import { Instruction, Plugin, SuggestModal, TFile, TFolder, WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { FILE_TAB_TYPES } from 'src/IconicPlugin';
+import IconicPlugin, { PLUGIN_TAB_TYPES } from 'src/IconicPlugin';
 import IconManager from 'src/managers/IconManager';
 
 type PluginModal = SuggestModal<any> & { plugin: Plugin };
@@ -209,7 +209,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 				const iconDefault = value.item.view.getIcon();
 
 				// Distinguish between file tabs and plugin tabs
-				if (FILE_TAB_TYPES.includes(tabType) && value.file instanceof TFile) {
+				if (!PLUGIN_TAB_TYPES.includes(tabType) && value.file instanceof TFile) {
 					const file = this.plugin.getFileItem(value.file.path);
 					const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
 					if (rule.icon || rule.color) {
