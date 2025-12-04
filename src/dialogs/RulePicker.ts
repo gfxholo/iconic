@@ -273,7 +273,10 @@ export default class RulePicker extends Modal {
 			settingEl.removeAttribute('draggable');
 			// Save rule position
 			const toIndex = this.scrollerEl.indexOf(settingEl);
-			if (toIndex > -1) this.plugin.ruleManager.moveRule(page, rule, toIndex);
+			if (toIndex > -1) {
+				const isRulingChanged = this.plugin.ruleManager.moveRule(page, rule, toIndex);
+				if (isRulingChanged) this.plugin.refreshManagers(page);
+			}
 		});
 
 		// Insert rule into DOM
