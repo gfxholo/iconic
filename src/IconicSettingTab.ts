@@ -405,6 +405,50 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 				})
 			);
+
+		// Icon in frontmatter
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.useFrontmatterIcon.name)
+			.setDesc(STRINGS.settings.useFrontmatterIcon.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.useFrontmatterIcon)
+				.onChange(value => {
+					this.plugin.settings.useFrontmatterIcon = value;
+					this.plugin.saveSettings();
+					this.plugin.fileIconManager?.refreshIcons();
+					this.display()
+				})
+			);
+
+		if(this.plugin.settings.useFrontmatterIcon){
+			// Frontmatter icon property name
+			new Setting(this.containerEl)
+				.setName(STRINGS.settings.frontmatterIconProperty.name)
+				.setDesc(STRINGS.settings.frontmatterIconProperty.desc)
+				.addText(text => text
+					.setPlaceholder(STRINGS.settings.frontmatterIconProperty.placeholder)
+					.setValue(this.plugin.settings.frontmatterIconProperty)
+					.onChange(value => {
+						this.plugin.settings.frontmatterIconProperty = value;
+						this.plugin.saveSettings();
+						this.plugin.fileIconManager?.refreshIcons();
+					})
+				);
+
+			// Frontmatter color property name
+			new Setting(this.containerEl)
+				.setName(STRINGS.settings.frontmatterIconColorProperty.name)
+				.setDesc(STRINGS.settings.frontmatterIconColorProperty.desc)
+				.addText(text => text
+					.setPlaceholder(STRINGS.settings.frontmatterIconColorProperty.placeholder)
+					.setValue(this.plugin.settings.frontmatterIconColorProperty)
+					.onChange(value => {
+						this.plugin.settings.frontmatterIconColorProperty = value;
+						this.plugin.saveSettings();
+						this.plugin.fileIconManager?.refreshIcons();
+					})
+				);
+		}
 	}
 
 	/**
