@@ -2,44 +2,44 @@
 	"appItems": {
 		"help": "查看帮助",
 		"settings": "打开设置",
-		"pin": "解锁/锁定",
+		"pin": "固定/取消固定",
 		"sidebarLeft": "折叠/展开左侧边栏",
 		"sidebarRight": "折叠/展开右侧边栏",
 		"minimize": "最小化",
 		"maximize": "最大化",
-		"unmaximize": "向下还原",
+		"unmaximize": "还原窗口大小",
 		"close": "关闭"
 	},
 	"menu": {
-		"changeIcon": "更改图标……",
-		"changeIcons": "更改 {#} 个图标……",
-		"removeIcon": "删除图标",
-		"removeIcons": "删除 {#} 个图标",
+		"changeIcon": "更改图标...",
+		"changeIcons": "更改 {#} 个项目的图标...",
+		"removeIcon": "移除图标",
+		"removeIcons": "移除 {#} 个项目的图标",
 		"resetColor": "重置颜色",
-		"resetColors": "重置 {#} 种颜色",
-		"editRule": "编辑规则……"
+		"resetColors": "重置 {#} 个项目的图标颜色",
+		"editRule": "编辑规则..."
 	},
 	"iconPicker": {
 		"changeIcon": "更改图标",
-		"changeIcons": "更改 {#} 个图标",
+		"changeIcons": "更改 {#} 个项目的图标",
 		"changeEmoji": "更改表情符号",
-		"changeEmojis": "更换 {#} 个表情符号",
+		"changeEmojis": "更改 {#} 个项目的表情符号",
 		"changeMix": "更改图标/表情符号",
-		"changeMixes": "更改 {#} 个图标/表情符号",
-		"overrulePrefix": "覆盖",
-		"overruleSuffix": " 覆盖",
-		"overrules": "您的规则书正在覆盖这些图标中的一些。",
+		"changeMixes": "更改 {#} 个项目的图标/表情符号",
+		"overrulePrefix": "您的规则 ",
+		"overruleSuffix": " 覆盖了这个图标。",
+		"overrules": "您的规则表覆盖了部分图标。",
 		"search": "搜索",
-		"searchIcons": "搜索图标……",
-		"searchEmojis": "搜索表情符号……",
-		"searchMix": "搜索图标/表情符号……",
-		"changeColor": "换颜色",
+		"searchIcons": "搜索图标...",
+		"searchEmojis": "搜索表情符号...",
+		"searchMix": "搜索图标/表情符号...",
+		"changeColor": "更改颜色",
 		"resetColor": "重置颜色",
-		"toggleIcons": "切换图标",
-		"toggleEmojis": "切换表情符号",
+		"toggleIcons": "使用图标",
+		"toggleEmojis": "使用表情符号",
 		"icons": "图标",
 		"emojis": "表情符号",
-		"mixed": "混合",
+		"mixed": "图标/表情符号",
 		"cancel": "取消",
 		"save": "保存",
 		"colors": {
@@ -50,7 +50,7 @@
 			"cyan": "青色",
 			"blue": "蓝色",
 			"purple": "紫色",
-			"pink": "粉红色",
+			"pink": "粉色",
 			"gray": "灰色"
 		}
 	},
@@ -59,8 +59,8 @@
 		"items": "项",
 		"appItem": "按钮",
 		"appItems": "按钮",
-		"tab": "标签",
-		"tabs": "标签",
+		"tab": "标签页",
+		"tabs": "标签页",
 		"file": "文件",
 		"files": "文件",
 		"folder": "文件夹",
@@ -77,24 +77,24 @@
 		"tags": "标签",
 		"property": "文档属性",
 		"properties": "文档属性",
-		"ribbonItem": "工具栏命令",
-		"ribbonItems": "工具栏命令",
+		"ribbonItem": "功能区项目",
+		"ribbonItems": "功能区项目",
 		"rule": "规则",
 		"rules": "规则"
 	},
 	"rulePicker": {
-		"selectPage": "选择页面",
+		"selectPage": "选择规则类型",
 		"fileRules": "文件规则",
 		"folderRules": "文件夹规则",
 		"rules": "规则",
 		"addRule": "添加规则",
-		"duplicateRule": "重复规则",
+		"duplicateRule": "创建副本",
 		"editRule": "编辑规则",
-		"moveRuleToTop": "将规则移到顶部",
-		"moveRuleToBottom": "将规则移到底部",
+		"moveRuleToTop": "移到首位",
+		"moveRuleToBottom": "移到末位",
 		"removeRule": "删除规则",
-		"untitledRule": "无标题规则",
-		"drag": "拖动可调整布局"
+		"untitledRule": "未命名规则",
+		"drag": "拖动以调整顺序"
 	},
 	"ruleEditor": {
 		"fileRule": "文件规则",
@@ -104,20 +104,20 @@
 		"resetCondition": "重置条件",
 		"removeCondition": "删除条件",
 		"removeRule": "删除规则",
-		"buttonMatch": "1 个匹配",
-		"buttonMatches": "{#} 个匹配",
-		"buttonNoMatches": "无匹配",
-		"enterName": "为该规则命名",
-		"enterValue": "输入一个值",
-		"enterRegex": "输入一个正则表达式",
-		"enterHexCode": "输入一个十六进制代码",
-		"enterNumber": "输入一个数字",
+		"buttonMatch": "1 个匹配项",
+		"buttonMatches": "{#} 个匹配项",
+		"buttonNoMatches": "没有匹配项",
+		"enterName": "为规则命名",
+		"enterValue": "输入值",
+		"enterRegex": "输入正则表达式",
+		"enterHexCode": "输入十六进制颜色码",
+		"enterNumber": "输入数字",
 		"matchConditions": {
-			"name": "匹配条件",
-			"desc": "选择需要匹配的条件数量。",
+			"name": "条件匹配方式",
+			"desc": "选择要满足的条件数量。",
 			"all": "全部",
 			"any": "任意",
-			"none": "无"
+			"none": "均不"
 		},
 		"source": {
 			"icon": "图标",
@@ -125,16 +125,16 @@
 			"name": "名称",
 			"filename": "文件名",
 			"extension": "扩展名",
-			"tree": "文件夹树",
-			"path": "文件库中的路径",
-			"headings": "标题",
-			"links": "链接",
+			"tree": "所在文件夹路径",
+			"path": "文件完整路径",
+			"headings": "文中标题",
+			"links": "内部链接",
 			"embeds": "嵌入链接",
 			"tags": "标签",
-			"properties": "属性……",
+			"properties": "属性...",
 			"created": "创建日期",
 			"modified": "修改日期",
-			"clock": "系统时钟"
+			"clock": "系统时间"
 		},
 		"operator": {
 			"is": "是",
@@ -147,25 +147,25 @@
 			"!startsWith": "不以...开头",
 			"!endsWith": "不以...结尾",
 			"!matches": "不匹配正则表达式",
-			"includes": "包含项目",
-			"!includes": "不包括项目",
-			"allAre": "全部是",
+			"includes": "等于",
+			"!includes": "不等于",
+			"allAre": "全部等于",
 			"allContain": "全部包含",
 			"allStartWith": "全部以...开头",
 			"allEndWith": "全部以...结尾",
 			"allMatch": "全部匹配正则表达式",
-			"anyContain": "任何包含",
-			"anyStartWith": "任何以...开头",
-			"anyEndWith": "任何以...结尾",
-			"anyMatch": "任何匹配正则表达式",
+			"anyContain": "任一包含",
+			"anyStartWith": "任一以...开头",
+			"anyEndWith": "任一以...结尾",
+			"anyMatch": "任一匹配正则表达式",
 			"noneContain": "不包含",
 			"noneStartWith": "不以...开头",
 			"noneEndWith": "不以...结尾",
 			"noneMatch": "不匹配正则表达式",
-			"countIs": "计数是",
-			"!countIs": "计数不是",
-			"countIsLess": "计数小于",
-			"countIsMore": "计数大于",
+			"countIs": "数量等于",
+			"!countIs": "数量不等于",
+			"countIsLess": "数量小于",
+			"countIsMore": "数量大于",
 			"isTrue": "为真",
 			"!isTrue": "不为真",
 			"isFalse": "为假",
@@ -178,48 +178,48 @@
 			"!isLess": "不小于",
 			"!isMore": "不大于",
 			"!isDivisible": "不能被...整除",
-			"isBefore": "在...之前",
-			"isAfter": "在...之后",
-			"isNow": "是现在的",
-			"!isNow": "不是现在的",
-			"isBeforeNow": "在现在之前",
-			"isAfterNow": "在现在之后",
+			"isBefore": "早于",
+			"isAfter": "晚于",
+			"isNow": "是现在",
+			"!isNow": "不是现在",
+			"isBeforeNow": "早于当前时间",
+			"isAfterNow": "晚于当前时间",
 			"timeIs": "时间是",
 			"!timeIs": "时间不是",
-			"timeIsBefore": "时间在之前",
-			"timeIsAfter": "时间在之后",
-			"timeIsNow": "时间是现在",
-			"!timeIsNow": "时间不是现在",
-			"timeIsBeforeNow": "时间在现在之前",
-			"timeIsAfterNow": "时间在现在之后",
+			"timeIsBefore": "时间早于",
+			"timeIsAfter": "时间晚于",
+			"timeIsNow": "是当前时间",
+			"!timeIsNow": "不是当前时间",
+			"timeIsBeforeNow": "早于当前时间",
+			"timeIsAfterNow": "晚于当前时间",
 			"dateIs": "日期是",
 			"!dateIs": "日期不是",
-			"dateIsBefore": "日期在之前",
-			"dateIsAfter": "日期在之后",
+			"dateIsBefore": "日期早于",
+			"dateIsAfter": "日期晚于",
 			"isToday": "日期是今天",
 			"!isToday": "日期不是今天",
-			"isBeforeToday": "日期在今天之前",
-			"isAfterToday": "日期在今天之后",
-			"isLessDaysAgo": "少于...天前",
-			"isLessDaysAway": "距离...天还不到",
-			"isMoreDaysAgo": "超过...天前",
-			"isMoreDaysAway": "距离...天还超过",
-			"weekdayIs": "星期几是",
-			"!weekdayIs": "星期几不是",
-			"weekdayIsBefore": "星期几在之前",
-			"weekdayIsAfter": "星期几在之后",
-			"monthdayIs": "月份的日期是",
-			"!monthdayIs": "月份的日期不是",
-			"monthdayIsBefore": "月份的日期是之前",
-			"monthdayIsAfter": "月份的日期是之后",
+			"isBeforeToday": "日期早于今天",
+			"isAfterToday": "日期晚于今天",
+			"isLessDaysAgo": "在过去...天内",
+			"isLessDaysAway": "在未来...天内",
+			"isMoreDaysAgo": "在...天前",
+			"isMoreDaysAway": "在...天后",
+			"weekdayIs": "星期是",
+			"!weekdayIs": "星期不是",
+			"weekdayIsBefore": "星期小于",
+			"weekdayIsAfter": "星期大于",
+			"monthdayIs": "日是",
+			"!monthdayIs": "日不是",
+			"monthdayIsBefore": "日小于",
+			"monthdayIsAfter": "日大于",
 			"monthIs": "月份是",
 			"!monthIs": "月份不是",
-			"monthIsBefore": "月份在之前",
-			"monthIsAfter": "月份在之后",
-			"yearIs": "年份在",
-			"!yearIs": "年份不在",
-			"yearIsBefore": "年份在之前",
-			"yearIsAfter": "年份在之后",
+			"monthIsBefore": "月份小于",
+			"monthIsAfter": "月份大于",
+			"yearIs": "年份是",
+			"!yearIs": "年份不是",
+			"yearIsBefore": "年份小于",
+			"yearIsAfter": "年份大于",
 			"iconIs": "图标是",
 			"!iconIs": "图标不是",
 			"nameIs": "名称是",
@@ -234,8 +234,8 @@
 			"!nameMatches": "名称与正则表达式不匹配",
 			"colorIs": "是",
 			"!colorIs": "不是",
-			"hexIs": "十六进制颜色是",
-			"!hexIs": "十六进制颜色不是",
+			"hexIs": "十六进制颜色码是",
+			"!hexIs": "十六进制颜色码不是",
 			"hasValue": "有任何值",
 			"!hasValue": "没有值",
 			"hasProperty": "有属性",
@@ -270,139 +270,139 @@
 		"folderMatch": "1 个匹配文件夹",
 		"filesMatch": "{#} 个匹配文件",
 		"foldersMatch": "{#} 个匹配文件夹",
-		"highlight": "突出显示",
-		"headingMatches": "匹配"
+		"highlight": "高亮显示",
+		"headingMatches": "匹配结果"
 	},
 	"commands": {
-		"openRulebook": "打开规则书",
-		"toggleBiggerIcons": "切换更大图标",
+		"openRulebook": "打开规则表",
+		"toggleBiggerIcons": "开/关大图标",
 		"toggleClickableIcons": {
-			"desktop": "切换可点击图标",
-			"mobile": "切换可触摸图标"
+			"desktop": "开/关可点击图标",
+			"mobile": "开/关可触控图标"
 		},
-		"toggleAllFileIcons": "切换所有文件图标",
-		"toggleAllFolderIcons": "切换所有文件夹图标",
-		"toggleMinimalFolderIcons": "切换极简文件夹图标",
-		"toggleMarkdownTabIcons": "切换 Markdown 标签图标",
-		"toggleTitleIcons": "切换标题图标",
-		"toggleTagPillIcons": "切换标签胶囊图标",
-		"toggleMenuActions": "切换菜单操作",
-		"toggleSuggestionIcons": "切换建议图标",
-		"toggleQuickSwitcherIcons": "切换快速切换图标",
-		"toggleMoveFileIcons": "切换\"将文件移动\"图标",
-		"toggleBiggerSearchResults": "切换更大的搜索结果",
-		"changeIconCurrentFile": "更改当前文件的图标"
+		"toggleAllFileIcons": "显示/隐藏所有文件的图标",
+		"toggleAllFolderIcons": "显示/隐藏所有文件夹的图标",
+		"toggleMinimalFolderIcons": "开/关简洁文件夹图标",
+		"toggleMarkdownTabIcons": "显示/隐藏 Markdown 标签页图标",
+		"toggleTitleIcons": "显示/隐藏大标题图标",
+		"toggleTagPillIcons": "显示/隐藏标签图标",
+		"toggleMenuActions": "显示/隐藏菜单操作",
+		"toggleSuggestionIcons": "显示/隐藏建议弹窗图标",
+		"toggleQuickSwitcherIcons": "显示/隐藏快速切换图标",
+		"toggleMoveFileIcons": "显示/隐藏\"将文件移动到\"图标",
+		"toggleBiggerSearchResults": "开/关搜索结果大图标",
+		"changeIconCurrentFile": "更改当前文件图标"
 	},
 	"settings": {
 		"values": {
 			"on": "开启",
 			"off": "关闭",
-			"desktop": "仅限桌面",
-			"mobile": "仅限移动设备",
-			"list": "颜色列表",
+			"desktop": "仅桌面端",
+			"mobile": "仅移动端",
+			"list": "颜色选单",
 			"rgb": "RGB 选择器"
 		},
 		"rulebook": {
-			"name": "规则书",
-			"desc": "为文件和文件夹图标设置自动规则。",
+			"name": "规则表",
+			"desc": "为文件/文件夹图标设置自动化规则。",
 			"manage": "管理"
 		},
 		"biggerIcons": {
-			"name": "更大的图标",
+			"name": "大图标",
 			"desc": "显示比默认 UI 更大的图标。"
 		},
 		"clickableIcons": {
-			"nameDesktop": "可点击的图标",
-			"nameMobile": "可触摸图标",
-			"descDesktop": "单击图标以打开图标选择器。",
-			"descMobile": "点击图标以打开图标选择器。"
+			"nameDesktop": "可点击图标",
+			"nameMobile": "可触控图标",
+			"descDesktop": "单击图标打开图标选择器。",
+			"descMobile": "轻点图标打开图标选择器。"
 		},
-		"headingSidebarsAndTabs": "侧边栏和标签页标题",
+		"headingSidebarsAndTabs": "侧边栏 & 标签页",
 		"showAllFileIcons": {
-			"name": "显示所有文件图标",
-			"desc": "显示没有自定义图标的文件图标。"
+			"name": "显示所有文件的图标",
+			"desc": "为没有定义图标的文件显示默认图标。"
 		},
 		"showAllFolderIcons": {
 			"name": "显示所有文件夹图标",
-			"desc": "显示没有自定义图标的文件夹图标。"
+			"desc": "为没有定义图标的文件夹显示默认图标。"
 		},
 		"minimalFolderIcons": {
-			"name": "最小文件夹图标",
-			"desc": "用您的文件夹图标替换文件夹箭头。"
+			"name": "简洁文件夹图标",
+			"desc": "将文件夹旁边的箭头，使用您选择的图标替换。"
 		},
 		"showMarkdownTabIcons": {
-			"name": "显示 Markdown 标签图标",
-			"desc": "显示 Markdown 文件的标签图标。"
+			"name": "显示 Markdown 标签页图标",
+			"desc": "在 Markdown 文件的标签页中显示图标。"
 		},
 		"headingEditor": "编辑器",
 		"showTitleIcons": {
-			"name": "显示标题图标",
-			"desc": "如果启用了页内标题，则显示笔记标题中的图标。"
+			"name": "显示大标题图标",
+			"desc": "在启用了页内标题时，在笔记大标题旁边显示图标。"
 		},
 		"showTagPillIcons": {
-			"name": "显示标签胶囊图标",
-			"desc": "显示 #标签 和 tags 属性中的图标。"
+			"name": "显示标签图标",
+			"desc": "在 #标签 和 tags 属性中显示图标。"
 		},
-		"headingMenusAndDialogs": "菜单和对话框",
+		"headingMenusAndDialogs": "菜单 & 对话框",
 		"showMenuActions": {
 			"name": "显示菜单操作",
-			"desc": "在上下文菜单中显示与图标相关的操作。"
+			"desc": "在右键菜单中显示与图标相关的操作。"
 		},
 		"showSuggestionIcons": {
-			"name": "显示建议图标",
-			"desc": "在链接、标签和属性的建议弹出窗口中显示图标。"
+			"name": "显示建议弹窗图标",
+			"desc": "在链接、标签、属性的建议弹窗中显示图标。"
 		},
 		"showQuickSwitcherIcons": {
-			"name": "显示快速切换器图标",
-			"desc": "在快速切换器的搜索结果中显示图标。"
+			"name": "显示快速切换图标",
+			"desc": "在快速切换的搜索结果中显示图标。"
 		},
 		"showMoveFileIcons": {
-			"name": "显示\"将文件移动\"图标",
-			"desc": "在\"将文件移动\"对话框中显示文件夹图标"
+			"name": "显示\"将文件移动到\"图标",
+			"desc": "在\"将文件移动到\"对话框中显示文件夹图标。"
 		},
 		"headingIconPicker": "图标选择器",
 		"showItemName": {
 			"name": "显示项目名称",
-			"desc": "显示正在编辑的项目的名称。"
+			"desc": "显示正在编辑的项目名称。"
 		},
 		"biggerSearchResults": {
-			"name": "更大的搜索结果",
+			"name": "搜索结果大图标",
 			"desc": "在搜索结果中显示更大的图标。"
 		},
 		"maxSearchResults": {
-			"name": "最大搜索结果",
-			"desc": "选择一次显示多少个图标。"
+			"name": "搜索结果最大数量",
+			"desc": "设置搜索结果中一次显示的图标数量。"
 		},
 		"colorPicker1": {
 			"name": "主颜色选择器",
 			"descDesktop": "单击颜色气泡时显示。",
-			"descMobile": "触摸颜色气泡时显示。"
+			"descMobile": "轻点颜色气泡时显示。"
 		},
 		"colorPicker2": {
-			"name": "第二个颜色选择器",
-			"descDesktop": "当您双击颜色气泡时显示。",
-			"descMobile": "当您按住颜色气泡时显示。"
+			"name": "次颜色选择器",
+			"descDesktop": "右键单击颜色气泡时显示。",
+			"descMobile": "轻点并按住颜色气泡时显示。"
 		},
 		"headingAdvanced": "高级",
 		"uncolorHover": {
-			"name": "无色悬停",
-			"desc": "悬停项目时禁用图标颜色。"
+			"name": "悬停项目无色",
+			"desc": "在光标悬停在项目上时，禁用这个项目的图标颜色。"
 		},
 		"uncolorDrag": {
-			"name": "无色拖动",
-			"desc": "拖动项目时禁用图标颜色。"
+			"name": "拖动项目无色",
+			"desc": "在拖动项目时，禁用这个项目的图标颜色。"
 		},
 		"uncolorSelect": {
-			"name": "无色选择",
-			"desc": "选择项目时禁用图标颜色。"
+			"name": "活动项目无色",
+			"desc": "在打开一个项目并将其置于前台时，禁用这个项目的图标颜色。"
 		},
 		"uncolorQuick": {
-			"name": "无色功能区按钮",
-			"desc": "禁用移动设备上快速访问功能区按钮的图标颜色。"
+			"name": "功能区项目按钮无色",
+			"desc": "在移动端功能区的项目按钮中，禁用图标颜色。"
 		},
 		"rememberDeletedItems": {
 			"name": "记住已删除项目的图标",
-			"desc": "当项目再次存在时，任何自定义图标都会重新出现。"
+			"desc": "当被删除的项目被重新创建时，自定义图标会恢复显示。"
 		}
 	}
 }
