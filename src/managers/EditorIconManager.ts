@@ -318,8 +318,13 @@ export default class EditorIconManager extends IconManager {
 		const propEls = propListEl.findAll(':scope > .metadata-property');
 
 		for (const propEl of propEls) {
-			const prop = props.find(prop => prop.id === propEl.dataset.propertyKey);
-			if (!prop) return;
+			const domPropId = propEl.dataset.propertyKey; // Lowercase
+			if (!domPropId) continue;
+
+			// Use case-insensitive matching to find the property
+			const prop = props.find(prop => prop.id.toLowerCase() === domPropId.toLowerCase());
+
+			if (!prop) continue;
 
 			const keyEl = propEl.find(':scope > .metadata-property-key');
 			const iconEl = keyEl?.find(':scope > .metadata-property-icon');
