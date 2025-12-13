@@ -128,8 +128,8 @@ export default class EditorIconManager extends IconManager {
 			const iconEl = pointEls.find(el => el.hasClass('metadata-property-icon'));
 			const propEl = pointEls.find(el => el.hasClass('metadata-property'));
 			if (iconEl && propEl instanceof HTMLElement) {
-				const prop = propEl.dataset.propertyKey
-					? this.plugin.getPropertyItem(propEl.dataset.propertyKey) : null;
+				const domPropId = propEl.dataset.propertyKey; // Lowercase
+				const prop = domPropId ? this.plugin.getPropertyItem(domPropId) : null;
 				if (!prop) return;
 				if (this.plugin.isSettingEnabled('clickableIcons')) {
 					IconPicker.openSingle(this.plugin, prop, (newIcon, newColor) => {
@@ -149,9 +149,8 @@ export default class EditorIconManager extends IconManager {
 				const iconEl = pointEls.find(el => el.hasClass('metadata-property-icon'));
 				const propEl = pointEls.find(el => el.hasClass('metadata-property'));
 				if (iconEl && propEl instanceof HTMLElement) {
-					const prop = propEl.dataset.propertyKey
-						? this.plugin.getPropertyItem(propEl.dataset.propertyKey)
-						: null;
+					const domPropId = propEl.dataset.propertyKey; // Lowercase
+					const prop = domPropId ? this.plugin.getPropertyItem(domPropId) : null;
 					if (prop) this.onPropertyContextMenu(prop.id);
 				}
 			}, { capture: true });

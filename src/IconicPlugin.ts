@@ -1115,11 +1115,12 @@ export default class IconicPlugin extends Plugin {
 
 	/**
 	 * Get property definition.
+	 * @param propId Case-insensitive
 	 */
 	getPropertyItem(propId: string, unloading?: boolean): PropertyItem {
 		// @ts-expect-error (Private API)
 		const propBases: any[] = Object.values(this.app.metadataTypeManager?.properties) ?? [];
-		const propBase = propBases.find(propBase => propBase.name === propId) ?? {};
+		const propBase = propBases.find(propBase => propBase.name.toLowerCase() === propId.toLowerCase()) ?? {};
 		return this.definePropertyItem(propBase, unloading);
 	}
 
@@ -1399,6 +1400,7 @@ export default class IconicPlugin extends Plugin {
 			fileIcon.unsynced?.every(appId => appId === thisAppId) ?? true
 		);
 
+		// Prune file icons
 		for (const [fileId] of fileIcons) {
 			const { path, subpath } = this.splitFilePath(fileId);
 			const bmarkSubpath = subpath.replaceAll(/(?<!^)#|(?<!^#)\^|\s\s/g, ' ');
@@ -1409,22 +1411,24 @@ export default class IconicPlugin extends Plugin {
 			}
 		}
 
+		// Prune bookmark icons
 		if (bmarkBases.length > 0) {
-			const bmarkIds = bmarkBases
+			const baseIds = bmarkBases
 				.filter(bmarkBase => bmarkBase.type !== 'file' && bmarkBase.type !== 'folder')
 				.map(bmarkBase => bmarkBase.ctime.toString());
-			for (const bmarkId in this.settings.bookmarkIcons) {
-				if (!bmarkIds.includes(bmarkId)) {
-					delete this.settings.bookmarkIcons[bmarkId];
+			for (const savedId in this.settings.bookmarkIcons) {
+				if (!baseIds.includes(savedId)) {
+					delete this.settings.bookmarkIcons[savedId];
 				}
 			}
 		}
 
+		// Prune property icons
 		if (propBases.length > 0) {
-			const propIds = Object.keys(propBases);
-			for (const propId in this.settings.propertyIcons) {
-				if (!propIds.includes(propId)) {
-					delete this.settings.propertyIcons[propId];
+			const baseIds = Object.keys(propBases);
+			for (const savedId in this.settings.propertyIcons) {
+				if (!baseIds.some(baseId => baseId.toLowerCase() !== savedId.toLowerCase())) {
+					delete this.settings.propertyIcons[savedId];
 				}
 			}
 		}

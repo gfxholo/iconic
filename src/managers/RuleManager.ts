@@ -572,9 +572,10 @@ export default class RuleManager {
 			// Resolve the source
 			if (condition.source.startsWith('property:')) {
 				const propId = condition.source.replace('property:', '');
-				source = metadata?.frontmatter?.hasOwnProperty(propId)
-					? metadata.frontmatter[propId] ?? null
-					: undefined;
+				if (metadata?.frontmatter) {
+					const fmProps = Object.entries(metadata.frontmatter);
+					source = fmProps.find(([fmPropId]) => fmPropId.toLowerCase() === propId.toLowerCase());
+				}
 			} else switch (condition.source) {
 				case 'icon': {
 					if (!file.icon || operator === 'iconIs' || operator === 'hasValue') {

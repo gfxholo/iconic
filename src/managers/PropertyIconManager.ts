@@ -104,7 +104,7 @@ export default class PropertyIconManager extends IconManager {
 		}
 
 		// If clicked property is not selected, ignore selected items
-		if (!selectedProps.some(selectedFile => selectedFile.id === clickedProp.id)) {
+		if (!selectedProps.some(selectedProp => selectedProp.id === clickedProp.id)) {
 			selectedProps.length = 0;
 		}
 
