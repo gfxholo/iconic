@@ -664,22 +664,36 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
-	 * Refresh any classes or attributes on document body.
+	 * Refresh any classes or attributes on every document body.
 	 * @param unloading Remove all classes if true
 	 */
 	refreshBody(unloading?: boolean): void {
-		const { body } = activeDocument;
-		body.toggleClass('iconic-bigger-icons', unloading ? false : this.isSettingEnabled('biggerIcons'));
-		body.toggleClass('iconic-clickable-icons', unloading ? false : this.isSettingEnabled('clickableIcons'));
-		body.toggleClass('iconic-markdown-tab-icons', unloading ? false : this.settings.showMarkdownTabIcons);
-		body.toggleClass('iconic-bigger-search-results', unloading ? false : this.isSettingEnabled('biggerSearchResults'));
-		body.toggleClass('iconic-uncolor-hover', unloading ? false : this.settings.uncolorHover);
-		body.toggleClass('iconic-uncolor-drag', unloading ? false : this.settings.uncolorDrag);
-		body.toggleClass('iconic-uncolor-select', unloading ? false : this.settings.uncolorSelect);
+		// Check all open windows
+		const bodyEls = new Set<HTMLElement>();
+		this.app.workspace.iterateAllLeaves(leaf => {
+			// @ts-expect-error (Private API)
+			const bodyEl = leaf?.containerEl?.doc?.body;
+			if (bodyEl instanceof HTMLElement) bodyEls.add(bodyEl);
+		});
 
-		// @ts-expect-error (Private API)
-		const theme = this.app.customCss?.theme ?? null;
-		body.setAttr('data-theme', theme);
+		// Refresh classes and theme attribute
+		for (const bodyEl of bodyEls) {
+			bodyEl.toggleClass('iconic-bigger-icons', unloading ? false : this.isSettingEnabled('biggerIcons'));
+			bodyEl.toggleClass('iconic-clickable-icons', unloading ? false : this.isSettingEnabled('clickableIcons'));
+			bodyEl.toggleClass('iconic-markdown-tab-icons', unloading ? false : this.settings.showMarkdownTabIcons);
+			bodyEl.toggleClass('iconic-bigger-search-results', unloading ? false : this.isSettingEnabled('biggerSearchResults'));
+			bodyEl.toggleClass('iconic-uncolor-hover', unloading ? false : this.settings.uncolorHover);
+			bodyEl.toggleClass('iconic-uncolor-drag', unloading ? false : this.settings.uncolorDrag);
+			bodyEl.toggleClass('iconic-uncolor-select', unloading ? false : this.settings.uncolorSelect);
+
+			// @ts-expect-error (Private API)
+			const theme = this.app.customCss?.theme;
+			if (theme) {
+				bodyEl.setAttr('data-theme', theme);
+			} else {
+				bodyEl.removeAttribute('data-theme');
+			}
+		}
 	}
 
 	/**
