@@ -1,4 +1,4 @@
-import { Command, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceLeaf, apiVersion, getIconIds } from 'obsidian';
+import { Command, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceFloating, WorkspaceLeaf, WorkspaceRoot, apiVersion, getIconIds } from 'obsidian';
 import IconicSettingTab from 'src/IconicSettingTab';
 import EMOJIS from 'src/Emojis';
 import STRINGS from 'src/Strings';
@@ -804,7 +804,8 @@ export default class IconicPlugin extends Plugin {
 		const tabType = leaf.view.getViewType();
 		// @ts-expect-error (Private API)
 		const isActive = leaf.view === this.app.workspace.getActiveViewOfType(View) || leaf.tabHeaderEl?.hasClass('is-active');
-		const isRoot = leaf.getRoot() === this.app.workspace.rootSplit;
+		const isRoot = leaf.getRoot() instanceof WorkspaceRoot || leaf.getRoot() instanceof WorkspaceFloating;
+
 		// @ts-expect-error (Private API)
 		const isStacked = leaf.parent?.isStacked === true;
 		const filePath = leaf.view.getState().file; // Used because view.file is undefined on deferred views
