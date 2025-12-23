@@ -295,8 +295,9 @@ a.tag {
 	overflow-y: auto;
 	border-block: 1px solid var(--background-modifier-border);
 }
-.iconic-scroller > .setting-item:first-child {
-	padding-top: 0.75em;
+.modal-container > .modal > .iconic-scroller > .setting-item:first-child,
+.modal-container > .modal > .iconic-scroller > .setting-item:last-child {
+	padding-block: var(--size-4-4);
 }
 .iconic-rule,
 .iconic-condition {
