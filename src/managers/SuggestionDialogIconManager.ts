@@ -145,6 +145,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 	 */
 	private refreshSuggestionIconQS(value: any, el: HTMLElement): void {
 		switch (value?.type) {
+			case 'alias': // Fallthrough
 			case 'file': {
 				if (value.file instanceof TFile) {
 					const file = this.plugin.getFileItem(value.file.path);
