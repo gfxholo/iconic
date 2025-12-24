@@ -314,14 +314,14 @@ a.tag {
 .iconic-rule > .clickable-icon {
 	padding: var(--size-2-2);
 }
-.iconic-rule.has-active-menu {
+.iconic-rule-picker .iconic-scroller .iconic-rule.has-active-menu {
 	background-color: var(--background-modifier-hover);
 	border-top-color: transparent;
 	border-radius: var(--radius-s);
 	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 	transition: none;
 }
-.iconic-rule.has-active-menu + .setting-item {
+.iconic-rule-picker .iconic-scroller .iconic-rule.has-active-menu + .setting-item {
 	border-top-color: transparent;
 	border-top-left-radius: var(--radius-s);
 	border-top-right-radius: var(--radius-s);
@@ -369,8 +369,8 @@ a.tag {
 .iconic-condition.drag-ghost-hidden {
 	border-top-color: transparent;
 }
-.iconic-rule.drag-ghost-hidden + .setting-item,
-.iconic-condition.drag-ghost-hidden + .setting-item {
+.iconic-rule-picker .iconic-rule.drag-ghost-hidden + .setting-item,
+.iconic-rule-editor .iconic-condition.drag-ghost-hidden + .setting-item {
 	border-top-color: transparent;
 }
 
