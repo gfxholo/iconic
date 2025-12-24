@@ -357,7 +357,7 @@ export default class IconPicker extends Modal {
 		this.searchResultsSetting.settingEl.tabIndex = 0;
 		// Allow vertical scrolling to work horizontally
 		this.iconManager.setEventListener(this.searchResultsSetting.settingEl, 'wheel', event => {
-			if (activeDocument.body.hasClass('mod-rtl')) {
+			if (this.modalEl.doc.body.hasClass('mod-rtl')) {
 				this.searchResultsSetting.settingEl.scrollLeft -= event.deltaY;
 			} else {
 				this.searchResultsSetting.settingEl.scrollLeft += event.deltaY;
@@ -664,7 +664,7 @@ export default class IconPicker extends Modal {
 
 		// Preserve UI state
 		const { controlEl, settingEl } = this.searchResultsSetting;
-		const focusedEl = activeDocument.activeElement;
+		const focusedEl = this.modalEl.doc.activeElement;
 		const focusedIndex = focusedEl ? controlEl.indexOf(focusedEl) : -1;
 		const scrollLeft = settingEl.scrollLeft;
 

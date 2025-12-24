@@ -1057,7 +1057,7 @@ export default class RuleEditor extends Modal {
 		this.iconManager.stopEventListeners();
 		this.iconManager.stopMutationObservers();
 		// Clean up any drag ghosts left hanging when dialog is closed
-		for (const ghostEl of activeDocument.body.findAll(':scope > .drag-reorder-ghost')) {
+		for (const ghostEl of this.modalEl.doc.body.findAll(':scope > .drag-reorder-ghost')) {
 			ghostEl.remove();
 		}
 

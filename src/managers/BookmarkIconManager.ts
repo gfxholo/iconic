@@ -171,7 +171,7 @@ export default class BookmarkIconManager extends IconManager {
 			// Update ghost icon when dragging
 			this.setEventListener(selfEl, 'dragstart', () => {
 				if (rule.icon || rule.iconDefault || rule.color) {
-					const ghostEl = activeDocument.body.find(':scope > .drag-ghost > .drag-ghost-self');
+					const ghostEl = selfEl.doc.body.find(':scope > .drag-ghost > .drag-ghost-self');
 					if (ghostEl) {
 						const spanEl = ghostEl.find('span');
 						const ghostIcon = (bmark.category === 'group' && rule.icon === null)

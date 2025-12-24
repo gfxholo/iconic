@@ -223,11 +223,11 @@ export default class RulePicker extends Modal {
 		.onDragStart((x, y) => {
 			navigator.vibrate?.(100); // Not supported on iOS
 			// Create drag ghost
-			ruleSetting.ghostRuleEl = activeDocument.body.createDiv({ cls: 'drag-reorder-ghost' });
+			ruleSetting.ghostRuleEl = this.modalEl.doc.body.createDiv({ cls: 'drag-reorder-ghost' });
 			ruleSetting.ghostRuleEl.setCssStyles({
 				width: settingEl.clientWidth + 'px',
 				height: settingEl.clientHeight + 'px',
-				left: activeDocument.body.hasClass('mod-rtl')
+				left: this.modalEl.doc.body.hasClass('mod-rtl')
 					? x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px'
 					: x - gripEl.clientWidth / 2 + 'px',
 				top: y - settingEl.clientHeight / 2 + 'px',
@@ -244,7 +244,7 @@ export default class RulePicker extends Modal {
 			if (x === 0 && y === 0) return;
 			// Update ghost position
 			ruleSetting.ghostRuleEl?.setCssStyles({
-				left: activeDocument.body.hasClass('mod-rtl')
+				left: this.modalEl.doc.body.hasClass('mod-rtl')
 					? x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px'
 					: x - gripEl.clientWidth / 2 + 'px',
 				top: y - settingEl.clientHeight / 2 + 'px',
@@ -310,7 +310,7 @@ export default class RulePicker extends Modal {
 		this.iconManager.stopEventListeners();
 		this.iconManager.stopMutationObservers();
 		// Clean up any drag ghosts left hanging when dialog is closed
-		for (const ghostEl of activeDocument.body.findAll(':scope > .drag-reorder-ghost')) {
+		for (const ghostEl of this.modalEl.doc.body.findAll(':scope > .drag-reorder-ghost')) {
 			ghostEl.remove();
 		}
 		this.plugin.saveSettings(); // Save any changes to dialogState

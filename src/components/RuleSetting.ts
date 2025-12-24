@@ -267,9 +267,9 @@ export default class RuleSetting extends Setting {
 			el.removeAttribute('contenteditable');
 		}
 		// Select text if element isn't focused already
-		if (value && el !== activeDocument.activeElement) {
-			const range = activeDocument.createRange();
-			const selection = activeWindow.getSelection();
+		if (value && el !== el.doc.activeElement) {
+			const range = el.doc.createRange();
+			const selection = el.win.getSelection();
 			range.selectNodeContents(el);
 			selection?.removeAllRanges();
 			selection?.addRange(range);
