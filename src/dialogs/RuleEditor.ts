@@ -856,8 +856,8 @@ export default class RuleEditor extends Modal {
 			setting.valInput.setPlaceholder(inputPlaceholder);
 			setting.valInput.setValue(setting.condition.value);
 			// Insert element if not present
-			if (setting.opDropdown.selectEl.nextElementSibling !== setting.valInput.inputEl) {
-				setting.opDropdown.selectEl.after(setting.valInput.inputEl);
+			if (!setting.ctrlContainerEl.contains(setting.valInput.inputEl)) {
+				setting.ctrlContainerEl.append(setting.valInput.inputEl);
 			}
 		} else {
 			// Remove element
@@ -875,8 +875,8 @@ export default class RuleEditor extends Modal {
 				setting.valDropdown.setValue(setting.condition.value);
 			}
 			// Insert element if not present
-			if (setting.opDropdown.selectEl.nextElementSibling !== setting.valDropdown.selectEl) {
-				setting.opDropdown.selectEl.after(setting.valDropdown.selectEl);
+			if (!setting.ctrlContainerEl.contains(setting.valDropdown.selectEl)) {
+				setting.ctrlContainerEl.append(setting.valDropdown.selectEl);
 			}
 
 			// Preserve the selected value if possible

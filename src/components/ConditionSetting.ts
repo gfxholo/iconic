@@ -13,6 +13,8 @@ export default class ConditionSetting extends Setting {
 	readonly opDropdown: DropdownComponent;
 	readonly valInput: TextComponent;
 	readonly valDropdown: DropdownComponent;
+	readonly ctrlContainerEl: HTMLElement;
+	readonly dropContainerEl: HTMLElement;
 
 	// Elements
 	readonly gripEl: HTMLElement;
@@ -40,27 +42,27 @@ export default class ConditionSetting extends Setting {
 			.extraSettingsEl;
 		this.gripEl.addClass('iconic-grip');
 
-		const ctrlContainer = Platform.isPhone
+		this.ctrlContainerEl = Platform.isPhone
 			? this.controlEl.createDiv({ cls: 'iconic-control-column' })
 			: this.controlEl;
-		const dropContainer = Platform.isPhone
-			? ctrlContainer.createDiv({ cls: 'iconic-dropdown-row' })
+		this.dropContainerEl = Platform.isPhone
+			? this.ctrlContainerEl.createDiv({ cls: 'iconic-dropdown-row' })
 			: this.controlEl;
 
 		// DROPDOWN: Source
-		this.srcDropdown = new DropdownComponent(dropContainer)
+		this.srcDropdown = new DropdownComponent(this.dropContainerEl)
 			.onChange(value => this.sourceChangeCallback?.(value));
 
 		// DROPDOWN: Operator
-		this.opDropdown = new DropdownComponent(dropContainer)
+		this.opDropdown = new DropdownComponent(this.dropContainerEl)
 			.onChange(value => this.operatorChangeCallback?.(value));
 
 		// FIELD: Value
-		this.valInput = new TextComponent(ctrlContainer)
+		this.valInput = new TextComponent(this.ctrlContainerEl)
 			.onChange(value => this.valueChangeCallback?.(value));
 
 		// DROPDOWN: Value
-		this.valDropdown = new DropdownComponent(ctrlContainer)
+		this.valDropdown = new DropdownComponent(this.ctrlContainerEl)
 			.onChange(value => this.valueChangeCallback?.(value));
 
 		// BUTTON: Remove condition
