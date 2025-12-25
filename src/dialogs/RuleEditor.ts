@@ -927,7 +927,7 @@ export default class RuleEditor extends Modal {
 		const gripRect = gripEl.getBoundingClientRect();
 
 		// Create ghost and set initial position
-		setting.ghostEl = settingEl.doc.body.createDiv({ cls: 'drag-reorder-ghost' });
+		setting.ghostEl = settingEl.doc.body.createDiv({ cls: ['drag-reorder-ghost', 'iconic-condition-dragger'] });
 		setting.ghostEl.setCssStyles({
 			width: settingRect.width + 'px',
 			height: settingRect.height + 'px',
@@ -1061,7 +1061,7 @@ export default class RuleEditor extends Modal {
 		this.iconManager.stopEventListeners();
 		this.iconManager.stopMutationObservers();
 		// Clean up any drag ghosts left hanging when dialog is closed
-		for (const ghostEl of this.modalEl.doc.body.findAll(':scope > .drag-reorder-ghost')) {
+		for (const ghostEl of this.modalEl.doc.body.findAll(':scope > .iconic-condition-dragger')) {
 			ghostEl.remove();
 		}
 

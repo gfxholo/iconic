@@ -291,6 +291,10 @@ a.tag {
 .is-mobile .mod-confirmation > .modal.iconic-rule-picker {
 	background-color: var(--modal-background);
 }
+.iconic-rule-picker > .modal-content,
+.iconic-rule-editor > .modal-content {
+	overflow: visible;
+}
 .iconic-scroller {
 	overflow-y: auto;
 	border-block: 1px solid var(--background-modifier-border);
@@ -303,6 +307,16 @@ a.tag {
 .iconic-condition {
 	column-gap: var(--size-4-2);
 	transition: background-color 0.25s ease, border-top-color 0.25s ease, border-radius 0.25s ease, box-shadow 0.25s ease;
+}
+.is-phone .iconic-rule,
+.is-phone .iconic-condition {
+    flex-direction: row !important;
+    align-items: center !important;
+	padding: var(--size-4-4) !important;
+}
+.is-phone .iconic-rule > .setting-item-control,
+.is-phone .iconic-condition > .setting-item-control {
+    width: auto !important;
 }
 .iconic-rule > *:first-child,
 .iconic-condition > *:first-child {
@@ -357,12 +371,35 @@ a.tag {
 .iconic-add > .setting-item-control {
 	justify-content: flex-start;
 }
-.drag-reorder-ghost .iconic-rule,
-.drag-reorder-ghost .iconic-condition {
-	padding-top: 0.75em;
+.iconic-rule-dragger,
+.iconic-condition-dragger {
+	background-color: transparent;
+	box-shadow: none;
 }
-.mod-rtl .drag-reorder-ghost .iconic-rule,
-.mod-rtl .drag-reorder-ghost .iconic-condition {
+.iconic-rule-dragger .iconic-rule,
+.iconic-condition-dragger .iconic-condition {
+	padding: var(--size-4-4) 0;
+	margin-bottom: 0;
+	box-shadow: none;
+}
+.is-phone .iconic-rule-dragger .iconic-rule,
+.is-phone .iconic-condition-dragger .iconic-condition {
+	gap: var(--size-4-4);
+}
+.iconic-rule-dragger .checkbox-container,
+.iconic-condition-dragger .checkbox-container {
+	width: var(--toggle-width);
+    height: calc(var(--toggle-thumb-height) + var(--toggle-border-width) * 2);
+}
+.iconic-rule-dragger .checkbox-container:after,
+.iconic-condition-dragger .checkbox-container:after {
+	width: var(--toggle-thumb-width);
+    height: var(--toggle-thumb-height);
+    margin: var(--toggle-border-width) 0 0 0;
+    transform: translate3d(calc(var(--toggle-width) - var(--toggle-thumb-width) - var(--toggle-border-width)), 0, 0);
+}
+.mod-rtl .iconic-rule-dragger,
+.mod-rtl .iconic-condition-dragger {
 	direction: rtl;
 }
 .iconic-rule.drag-ghost-hidden,

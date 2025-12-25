@@ -226,7 +226,7 @@ export default class RulePicker extends Modal {
 			const settingRect = settingEl.getBoundingClientRect();
 			const gripRect = gripEl.getBoundingClientRect();
 			// Create drag ghost
-			ruleSetting.ghostRuleEl = this.modalEl.doc.body.createDiv({ cls: 'drag-reorder-ghost' });
+			ruleSetting.ghostRuleEl = this.modalEl.doc.body.createDiv({ cls: ['drag-reorder-ghost', 'iconic-rule-dragger'] });
 			ruleSetting.ghostRuleEl.setCssStyles({
 				width: settingRect.width + 'px',
 				height: settingRect.height + 'px',
@@ -312,7 +312,7 @@ export default class RulePicker extends Modal {
 		this.iconManager.stopEventListeners();
 		this.iconManager.stopMutationObservers();
 		// Clean up any drag ghosts left hanging when dialog is closed
-		for (const ghostEl of this.modalEl.doc.body.findAll(':scope > .drag-reorder-ghost')) {
+		for (const ghostEl of this.modalEl.doc.body.findAll(':scope > .iconic-rule-dragger')) {
 			ghostEl.remove();
 		}
 		this.plugin.saveSettings(); // Save any changes to dialogState
