@@ -922,15 +922,17 @@ export default class RuleEditor extends Modal {
 		const { settingEl, gripEl } = setting;
 		navigator.vibrate?.(100); // Not supported on iOS
 
+		// Get bounding rectangles
+		const settingRect = settingEl.getBoundingClientRect();
+		const gripRect = gripEl.getBoundingClientRect();
+
 		// Create ghost and set initial position
 		setting.ghostEl = settingEl.doc.body.createDiv({ cls: 'drag-reorder-ghost' });
 		setting.ghostEl.setCssStyles({
-			width: settingEl.clientWidth + 'px',
-			height: settingEl.clientHeight + 'px',
-			left: settingEl.doc.body.hasClass('mod-rtl')
-				? x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px'
-				: x - gripEl.clientWidth / 2 + 'px',
-			top: y - settingEl.clientHeight / 2 + 'px',
+			width: settingRect.width + 'px',
+			height: settingRect.height + 'px',
+			left: x - (gripRect.x - settingRect.x) - (gripRect.width / 2) + 'px',
+			top: y - settingRect.height / 2 + 'px',
 		});
 		setting.ghostEl.appendChild(settingEl.cloneNode(true));
 
@@ -953,12 +955,14 @@ export default class RuleEditor extends Modal {
 		// Ignore initial (0, 0) event
 		if (x === 0 && y === 0) return;
 
+		// Get bounding rectangles
+		const settingRect = settingEl.getBoundingClientRect();
+		const gripRect = gripEl.getBoundingClientRect();
+
 		// Update ghost position
 		setting.ghostEl?.setCssStyles({
-			left: settingEl.doc.body.hasClass('mod-rtl')
-				? x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px'
-				: x - gripEl.clientWidth / 2 + 'px',
-			top: y - settingEl.clientHeight / 2 + 'px',
+			left: x - (gripRect.x - settingRect.x) - (gripRect.width / 2) + 'px',
+			top: y - settingRect.height / 2 + 'px',
 		});
 
 		// Get position in list

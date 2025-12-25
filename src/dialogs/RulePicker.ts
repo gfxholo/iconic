@@ -222,15 +222,16 @@ export default class RulePicker extends Modal {
 		})
 		.onDragStart((x, y) => {
 			navigator.vibrate?.(100); // Not supported on iOS
+			// Get bounding rectangles
+			const settingRect = settingEl.getBoundingClientRect();
+			const gripRect = gripEl.getBoundingClientRect();
 			// Create drag ghost
 			ruleSetting.ghostRuleEl = this.modalEl.doc.body.createDiv({ cls: 'drag-reorder-ghost' });
 			ruleSetting.ghostRuleEl.setCssStyles({
-				width: settingEl.clientWidth + 'px',
-				height: settingEl.clientHeight + 'px',
-				left: this.modalEl.doc.body.hasClass('mod-rtl')
-					? x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px'
-					: x - gripEl.clientWidth / 2 + 'px',
-				top: y - settingEl.clientHeight / 2 + 'px',
+				width: settingRect.width + 'px',
+				height: settingRect.height + 'px',
+				left: x - (gripRect.x - settingRect.x) - (gripRect.width / 2) + 'px',
+				top: y - settingRect.height / 2 + 'px',
 			});
 			ruleSetting.ghostRuleEl.appendChild(settingEl.cloneNode(true));
 			// Display drop zone effect
@@ -242,12 +243,13 @@ export default class RulePicker extends Modal {
 		.onDrag((x, y) => {
 			// Ignore initial (0, 0) event
 			if (x === 0 && y === 0) return;
+			// Get bounding rectangles
+			const settingRect = settingEl.getBoundingClientRect();
+			const gripRect = gripEl.getBoundingClientRect();
 			// Update ghost position
 			ruleSetting.ghostRuleEl?.setCssStyles({
-				left: this.modalEl.doc.body.hasClass('mod-rtl')
-					? x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px'
-					: x - gripEl.clientWidth / 2 + 'px',
-				top: y - settingEl.clientHeight / 2 + 'px',
+				left: x - (gripRect.x - settingRect.x) - (gripRect.width / 2) + 'px',
+				top: y - settingRect.height / 2 + 'px',
 			});
 			// Get position in list
 			const index = this.scrollerEl.indexOf(settingEl);
