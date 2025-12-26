@@ -404,6 +404,20 @@ export default class Strings {
 			name: 'Remember icons of deleted items',
 			desc: 'Any custom icons will reappear when their item exists again.',
 		},
+		useFrontmatterIcon: {
+			name: 'Frontmatter icon',
+			desc: 'Use a frontmatter property to set/read the icon of a file.',
+		},
+		frontmatterIconProperty: {
+			name: 'Frontmatter icon property',
+			desc: 'Name of the frontmatter property to set/read the icon.',
+			placeholder: 'icon',
+		},
+		frontmatterIconColorProperty: {
+			name: 'Frontmatter icon color property',
+			desc: 'Name of the frontmatter property to set/read the icon color.',
+			placeholder: 'iconColor',
+		}
 	};
 
 	static {

@@ -101,6 +101,9 @@ interface IconicSettings {
 	uncolorSelect: boolean;
 	uncolorQuick: boolean;
 	rememberDeletedItems: boolean;
+	useFrontmatterIcon: boolean;
+	frontmatterIconProperty: string;
+	frontmatterIconColorProperty: string;
 	dialogState: {
 		iconMode: boolean;
 		emojiMode: boolean;
@@ -163,6 +166,9 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	uncolorDrag: false,
 	uncolorSelect: false,
 	uncolorQuick: false,
+	useFrontmatterIcon: false,
+	frontmatterIconProperty: 'icon',
+	frontmatterIconColorProperty: 'iconColor',
 	rememberDeletedItems: false,
 	dialogState: {
 		iconMode: true,
@@ -372,6 +378,12 @@ export default class IconicPlugin extends Plugin {
 					this.ruleManager.updateRulings(page);
 				}
 			}));
+
+			this.registerEvent(this.app.metadataCache.on('changed', (_file, _data, cache) => {
+					if (this.settings.useFrontmatterIcon && (cache.frontmatter?.[this.settings.frontmatterIconProperty] || cache.frontmatter?.[this.settings.frontmatterIconColorProperty])) {
+					this.fileIconManager?.refreshIcons();
+				}
+			}))
 		});
 
 		this.registerEvent(this.app.workspace.on('css-change', () => {
@@ -1104,6 +1116,79 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
+	 * Get icon from frontmatter
+	 */
+	getIconAndColorFromFrontmatter = (
+		item: Item | Icon
+	): Promise<{
+		icon?: string;
+		iconColor?: string;
+	} | undefined> => {
+		return new Promise((resolve) => {
+			if (!("category" in item) || item.category !== "file") {
+				return resolve(undefined);
+			}
+			const file = this.app.vault.getFileByPath(item.id);
+			if (!file){
+				return resolve(undefined);
+			} 
+			try{
+				this.app.fileManager.processFrontMatter(
+				file,
+				(frontmatter) => {
+					if (!(this.settings.frontmatterIconProperty in frontmatter) && !(this.settings.frontmatterIconColorProperty in frontmatter)) {
+						return resolve(undefined);
+					}
+					return resolve({
+						icon: frontmatter[this.settings.frontmatterIconProperty],
+						iconColor: frontmatter[this.settings.frontmatterIconColorProperty],
+					});
+				}
+			)} catch (e) {
+				return resolve(undefined);
+			}
+		});
+	};
+
+	/**
+	 * Set icon in frontmatter
+	 */
+	 setIconAndColorInFrontmatter = (
+		item: Item | Icon,
+		icon: string | null,
+		color: string | null
+	): Promise<void> => {
+		return new Promise((resolve) => {
+			if (!("category" in item) || item.category !== "file") {
+				return resolve();
+			}
+			const file = this.app.vault.getFileByPath(item.id);
+			if (!file) {
+				return resolve();
+			}
+			try {
+				this.app.fileManager.processFrontMatter(
+				file,
+				(frontmatter) => {
+					if (icon === null) {
+						delete frontmatter[this.settings.frontmatterIconProperty];
+					} else {
+						frontmatter[this.settings.frontmatterIconProperty] = icon;
+					}
+					if (color === null) {
+						delete frontmatter[this.settings.frontmatterIconColorProperty]
+					} else {
+						frontmatter[this.settings.frontmatterIconColorProperty] = color;
+					}
+					return resolve();
+				}
+			)} catch (e) {
+				return resolve();
+			}
+		});
+	}
+
+	/**
 	 * Create tag definition.
 	 */
 	private defineTagItem(tagBase: any, unloading?: boolean): TagItem {
@@ -1219,6 +1304,9 @@ export default class IconicPlugin extends Plugin {
 		const fileBase = this.settings.fileIcons[file.id];
 		if (icon !== fileBase?.icon) triggers.add('icon');
 		if (color !== fileBase?.color) triggers.add('color');
+		if(this.settings.useFrontmatterIcon) {
+			this.setIconAndColorInFrontmatter(file, icon, color)
+		}
 		this.updateIconSetting(this.settings.fileIcons, file.id, icon, color);
 		this.saveSettings();
 		this.ruleManager.triggerRulings('file', ...triggers);

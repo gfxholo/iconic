@@ -74,7 +74,7 @@ export default class FileIconManager extends IconManager {
 	/**
 	 * Refresh an array of file icons, including any subitems.
 	 */
-	private refreshChildIcons(files: FileItem[], itemEls: HTMLElement[], unloading?: boolean): void {
+	private async refreshChildIcons(files: FileItem[], itemEls: HTMLElement[], unloading?: boolean): Promise<void> {
 		for (const itemEl of itemEls) {
 			itemEl.addClass('iconic-item');
 
@@ -164,6 +164,15 @@ export default class FileIconManager extends IconManager {
 				iconEl = folderIconEl;
 			}
 
+			if(this.plugin.settings.useFrontmatterIcon && !unloading) {
+				const frontmatterIcon = (await this.plugin.getIconAndColorFromFrontmatter(rule));
+				if (frontmatterIcon?.icon) {
+					rule.icon = frontmatterIcon.icon;
+				}
+				if (frontmatterIcon?.iconColor) {
+					rule.color = frontmatterIcon.iconColor;
+				}
+			}
 			if (iconEl.hasClass('collapse-icon') && !rule.icon && !rule.iconDefault) {
 				this.refreshIcon(rule, iconEl); // Skip click listener if icon will be a collapse arrow
 			} else if (this.plugin.isSettingEnabled('clickableIcons')) {
