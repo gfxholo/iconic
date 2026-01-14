@@ -1,6 +1,6 @@
 /**
  * 1,915 emojis, with alternate encodings / skin tone variants excluded.
- * @see {@link https://unicode.org/Public/emoji/16.0/emoji-test.txt}
+ * @see {@link https://www.unicode.org/Public/17.0.0/emoji/emoji-test.txt}
  * @see {@link https://www.unicode.org/emoji/charts/full-emoji-list.html}
  */
 export default new Map<string, string>([
@@ -89,6 +89,7 @@ export default new Map<string, string>([
 	['😯', 'Hushed face'],
 	['😲', 'Astonished face'],
 	['😳', 'Flushed face'],
+	['🫪', 'Distorted face'],
 	['🥺', 'Pleading face'],
 	['🥹', 'Face holding back tears'],
 	['😦', 'Frowning face with open mouth'],
@@ -162,6 +163,7 @@ export default new Map<string, string>([
 	['💋', 'Kiss mark'],
 	['💯', 'Hundred points'],
 	['💢', 'Anger symbol'],
+	['🫯', 'Fight cloud'],
 	['💥', 'Collision'],
 	['💫', 'Dizzy'],
 	['💦', 'Sweat droplets'],
@@ -406,6 +408,7 @@ export default new Map<string, string>([
 	['🧟‍♂️', 'Man zombie'],
 	['🧟‍♀️', 'Woman zombie'],
 	['🧌', 'Troll'],
+	['🫈', 'Hairy creature'],
 	['💆', 'Person getting massage'],
 	['💆‍♂️', 'Man getting massage'],
 	['💆‍♀️', 'Woman getting massage'],
@@ -451,6 +454,7 @@ export default new Map<string, string>([
 	['🏃‍➡️', 'Person running facing right'],
 	['🏃‍♀️‍➡️', 'Woman running facing right'],
 	['🏃‍♂️‍➡️', 'Man running facing right'],
+	['🧑‍🩰', 'Ballet dancer'],
 	['💃', 'Woman dancing'],
 	['🕺', 'Man dancing'],
 	['🕴️', 'Person in suit levitating'],
@@ -668,6 +672,7 @@ export default new Map<string, string>([
 	['🐳', 'Spouting whale'],
 	['🐋', 'Whale'],
 	['🐬', 'Dolphin'],
+	['🫍', 'Orca'],
 	['🦭', 'Seal'],
 	['🐟', 'Fish'],
 	['🐠', 'Tropical fish'],
@@ -867,6 +872,7 @@ export default new Map<string, string>([
 	['🧭', 'Compass'],
 	['🏔️', 'Snow-capped mountain'],
 	['⛰️', 'Mountain'],
+	['🛘', 'Landslide'],
 	['🌋', 'Volcano'],
 	['🗻', 'Mount Fuji'],
 	['🏕️', 'Camping'],
@@ -1227,10 +1233,11 @@ export default new Map<string, string>([
 	['🎧', 'Headphone'],
 	['📻', 'Radio'],
 	['🎷', 'Saxophone'],
+	['🎺', 'Trumpet'],
+	['🪊', 'Trombone'],
 	['🪗', 'Accordion'],
 	['🎸', 'Guitar'],
 	['🎹', 'Musical keyboard'],
-	['🎺', 'Trumpet'],
 	['🎻', 'Violin'],
 	['🪕', 'Banjo'],
 	['🥁', 'Drum'],
@@ -1291,8 +1298,9 @@ export default new Map<string, string>([
 	['📑', 'Bookmark tabs'],
 	['🔖', 'Bookmark'],
 	['🏷️', 'Label'],
-	['💰', 'Money bag'],
 	['🪙', 'Coin'],
+	['💰', 'Money bag'],
+	['🪎', 'Treasure chest'],
 	['💴', 'Yen banknote'],
 	['💵', 'Dollar banknote'],
 	['💶', 'Euro banknote'],
