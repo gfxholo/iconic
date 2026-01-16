@@ -1,4 +1,4 @@
-import { Command, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceLeaf, apiVersion, getIconIds } from 'obsidian';
+import { Command, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceFloating, WorkspaceLeaf, WorkspaceRoot, apiVersion, getIconIds } from 'obsidian';
 import IconicSettingTab from 'src/IconicSettingTab';
 import EMOJIS from 'src/Emojis';
 import STRINGS from 'src/Strings';
@@ -24,11 +24,15 @@ export { STRINGS };
 export type Category = 'app' | 'tab' | 'file' | 'folder' | 'group' | 'search' | 'graph' | 'url' | 'tag' | 'property' | 'ribbon' | 'rule';
 export type AppItemId = 'help' | 'settings' | 'pin' | 'sidebarLeft' | 'sidebarRight' | 'minimize' | 'maximize' | 'unmaximize' | 'close';
 
-export const FILE_TAB_TYPES = [
-	'markdown', 'canvas', 'bases', 'image', 'audio', 'video', 'pdf',
-].concat([
-	'kanban', // Community plugin tab types
-]);
+// Plugin tabs that contain a file, but should still display a tab-specific icon
+export const PLUGIN_TAB_TYPES = [
+	'backlink',
+	'file-properties',
+	'footnotes',
+	'outgoing-link',
+	'outline',
+];
+
 const SYNCABLE_TYPES = ['image', 'audio', 'video', 'pdf', 'unsupported'];
 const IMAGE_EXTENSIONS = ['bmp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif'];
 const AUDIO_EXTENSIONS = ['mp3', 'wav', 'm4a', '3gp', 'flac', 'ogg', 'oga', 'opus'];
@@ -319,7 +323,7 @@ export default class IconicPlugin extends Plugin {
 			.forEach(([id, name]) => ICONS.set(id, name));
 
 			this.startManagers();
-			this.refreshBodyClasses();
+			this.refreshBody();
 
 			this.registerEvent(this.app.vault.on('create', tAbstractFile => {
 				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
@@ -372,7 +376,7 @@ export default class IconicPlugin extends Plugin {
 
 		this.registerEvent(this.app.workspace.on('css-change', () => {
 			this.refreshManagers();
-			this.refreshBodyClasses();
+			this.refreshBody();
 		}));
 
 		// RIBBON: Open rulebook
@@ -406,7 +410,7 @@ export default class IconicPlugin extends Plugin {
 					else if (this.settings.biggerIcons === 'off') this.settings.biggerIcons = 'mobile';
 				}
 				this.saveSettings();
-				this.refreshBodyClasses();
+				this.refreshBody();
 			}
 		}));
 
@@ -428,7 +432,7 @@ export default class IconicPlugin extends Plugin {
 				}
 				this.saveSettings();
 				this.refreshManagers();
-				this.refreshBodyClasses();
+				this.refreshBody();
 			}
 		}));
 
@@ -472,7 +476,7 @@ export default class IconicPlugin extends Plugin {
 			callback: () => {
 				this.settings.showMarkdownTabIcons = !this.settings.showMarkdownTabIcons;
 				this.saveSettings();
-				this.refreshBodyClasses();
+				this.refreshBody();
 			}
 		}));
 
@@ -557,7 +561,7 @@ export default class IconicPlugin extends Plugin {
 					else if (this.settings.biggerSearchResults === 'off') this.settings.biggerSearchResults = 'mobile';
 				}
 				this.saveSettings();
-				this.refreshBodyClasses();
+				this.refreshBody();
 			}
 		}));
 
@@ -586,7 +590,7 @@ export default class IconicPlugin extends Plugin {
 	async onExternalSettingsChange(): Promise<any> {
 		await this.loadSettings();
 		this.refreshManagers();
-		this.refreshBodyClasses();
+		this.refreshBody();
 	}
 
 	/**
@@ -660,37 +664,36 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
-	 * Refresh any global classes on document body.
+	 * Refresh any classes or attributes on every document body.
 	 * @param unloading Remove all classes if true
 	 */
-	refreshBodyClasses(unloading?: boolean): void {
-		const { body } = activeDocument;
-		body.toggleClass('iconic-bigger-icons', unloading ? false : this.isSettingEnabled('biggerIcons'));
-		body.toggleClass('iconic-clickable-icons', unloading ? false : this.isSettingEnabled('clickableIcons'));
-		body.toggleClass('iconic-markdown-tab-icons', unloading ? false : this.settings.showMarkdownTabIcons);
-		body.toggleClass('iconic-bigger-search-results', unloading ? false : this.isSettingEnabled('biggerSearchResults'));
-		body.toggleClass('iconic-uncolor-hover', unloading ? false : this.settings.uncolorHover);
-		body.toggleClass('iconic-uncolor-drag', unloading ? false : this.settings.uncolorDrag);
-		body.toggleClass('iconic-uncolor-select', unloading ? false : this.settings.uncolorSelect);
+	refreshBody(unloading?: boolean): void {
+		// Check all open windows
+		const bodyEls = new Set<HTMLElement>();
+		this.app.workspace.iterateAllLeaves(leaf => {
+			// @ts-expect-error (Private API)
+			const bodyEl = leaf?.containerEl?.doc?.body;
+			if (bodyEl instanceof HTMLElement) bodyEls.add(bodyEl);
+		});
 
-		// @ts-expect-error (Private API)
-		const theme = this.app.customCss?.theme;
-		body.toggleClass('iconic-theme-btopaz', unloading ? false : theme === 'Blue Topaz');
-		body.toggleClass('iconic-theme-cat', unloading ? false : theme === 'Catppuccin');
-		body.toggleClass('iconic-theme-cglow', unloading ? false : theme === 'Cyber Glow');
-		body.toggleClass('iconic-theme-discord', unloading ? false : theme === 'Discordian');
-		body.toggleClass('iconic-theme-its', unloading ? false : theme === 'ITS Theme');
-		body.toggleClass('iconic-theme-lyt', unloading ? false : theme === 'LYT Mode');
-		body.toggleClass('iconic-theme-mflow', unloading ? false : theme === 'Mado Miniflow');
-		body.toggleClass('iconic-theme-minimal', unloading ? false : theme === 'Minimal');
-		body.toggleClass('iconic-theme-medge', unloading ? false : theme === 'Minimal Edge');
-		body.toggleClass('iconic-theme-sanctum', unloading ? false : theme === 'Sanctum');
-		body.toggleClass('iconic-theme-shiba', unloading ? false : theme === 'Shiba Inu');
-		body.toggleClass('iconic-theme-shimmer', unloading ? false : theme === 'Shimmering Focus');
-		body.toggleClass('iconic-theme-sodalite', unloading ? false : theme === 'Sodalite');
-		body.toggleClass('iconic-theme-spectrum', unloading ? false : theme === 'Spectrum');
-		body.toggleClass('iconic-theme-terminal', unloading ? false : theme === 'Terminal');
-		body.toggleClass('iconic-theme-ukiyo', unloading ? false : theme === 'Ukiyo');
+		// Refresh classes and theme attribute
+		for (const bodyEl of bodyEls) {
+			bodyEl.toggleClass('iconic-bigger-icons', unloading ? false : this.isSettingEnabled('biggerIcons'));
+			bodyEl.toggleClass('iconic-clickable-icons', unloading ? false : this.isSettingEnabled('clickableIcons'));
+			bodyEl.toggleClass('iconic-markdown-tab-icons', unloading ? false : this.settings.showMarkdownTabIcons);
+			bodyEl.toggleClass('iconic-bigger-search-results', unloading ? false : this.isSettingEnabled('biggerSearchResults'));
+			bodyEl.toggleClass('iconic-uncolor-hover', unloading ? false : this.settings.uncolorHover);
+			bodyEl.toggleClass('iconic-uncolor-drag', unloading ? false : this.settings.uncolorDrag);
+			bodyEl.toggleClass('iconic-uncolor-select', unloading ? false : this.settings.uncolorSelect);
+
+			// @ts-expect-error (Private API)
+			const theme = this.app.customCss?.theme;
+			if (theme) {
+				bodyEl.setAttr('data-theme', theme);
+			} else {
+				bodyEl.removeAttribute('data-theme');
+			}
+		}
 	}
 
 	/**
@@ -707,6 +710,14 @@ export default class IconicPlugin extends Plugin {
 	isPluginEnabled(pluginId: string): boolean {
 		// @ts-expect-error (Private API)
 		return this.app.plugins?.plugins?.hasOwnProperty(pluginId) === true;
+	}
+
+	/**
+	 * Check whether the Obsidian API is equal to or greather than a minimum version.
+	 * @param minVersion Version string in the form of `MAJOR.MINOR.PATCH`
+	 */
+	isApiVersionAtLeast(minVersion: string): boolean {
+		return apiVersion.localeCompare(minVersion, undefined, { numeric: true }) >= 0;
 	}
 
 	/**
@@ -733,14 +744,14 @@ export default class IconicPlugin extends Plugin {
 			}
 			case 'sidebarLeft': {
 				name = STRINGS.appItems.sidebarLeft;
-				iconDefault = apiVersion >= '1.9' // Pre-1.9.0 compatible
+				iconDefault = this.isApiVersionAtLeast('1.9.0')
 					? 'sidebar-toggle-button-icon'
 					: 'sidebar-left';
 				break;
 			}
 			case 'sidebarRight': {
 				name = STRINGS.appItems.sidebarRight;
-				iconDefault = apiVersion >= '1.9' // Pre-1.9.0 compatible
+				iconDefault = this.isApiVersionAtLeast('1.9.0')
 					? 'sidebar-toggle-button-icon'
 					: 'sidebar-right';
 				break;
@@ -779,7 +790,7 @@ export default class IconicPlugin extends Plugin {
 		this.app.workspace.iterateAllLeaves(leaf => {
 			if (tab) return;
 			const tabType = leaf.view.getViewType();
-			if (tabType === tabId || FILE_TAB_TYPES.includes(tabType) && leaf.view.getState().file === tabId) {
+			if (tabType === tabId || leaf.view.getState().file === tabId && !PLUGIN_TAB_TYPES.includes(tabType)) {
 				tab = this.defineTabItem(leaf, unloading);
 			}
 		});
@@ -807,12 +818,13 @@ export default class IconicPlugin extends Plugin {
 		const tabType = leaf.view.getViewType();
 		// @ts-expect-error (Private API)
 		const isActive = leaf.view === this.app.workspace.getActiveViewOfType(View) || leaf.tabHeaderEl?.hasClass('is-active');
-		const isRoot = leaf.getRoot() === this.app.workspace.rootSplit;
+		const isRoot = leaf.getRoot() instanceof WorkspaceRoot || leaf.getRoot() instanceof WorkspaceFloating;
+
 		// @ts-expect-error (Private API)
 		const isStacked = leaf.parent?.isStacked === true;
+		const filePath = leaf.view.getState().file; // Used because view.file is undefined on deferred views
 
-		if (FILE_TAB_TYPES.includes(tabType)) {
-			const filePath = leaf.view.getState().file; // Used because view.file is undefined on deferred views
+		if (filePath && !PLUGIN_TAB_TYPES.includes(tabType)) {
 			const fileId = typeof filePath === 'string' ? filePath : '';
 			const fileIcon = this.settings.fileIcons[fileId] ?? {};
 			const isMarkdown = tabType === 'markdown';
@@ -1118,11 +1130,12 @@ export default class IconicPlugin extends Plugin {
 
 	/**
 	 * Get property definition.
+	 * @param propId Case-insensitive
 	 */
 	getPropertyItem(propId: string, unloading?: boolean): PropertyItem {
 		// @ts-expect-error (Private API)
 		const propBases: any[] = Object.values(this.app.metadataTypeManager?.properties) ?? [];
-		const propBase = propBases.find(propBase => propBase.name === propId) ?? {};
+		const propBase = propBases.find(propBase => propBase.name.toLowerCase() === propId.toLowerCase()) ?? {};
 		return this.definePropertyItem(propBase, unloading);
 	}
 
@@ -1131,18 +1144,10 @@ export default class IconicPlugin extends Plugin {
 	 */
 	private definePropertyItem(propBase: any, unloading?: boolean): PropertyItem {
 		const propIcon = this.settings.propertyIcons[propBase.name] ?? {};
-		let iconDefault;
-		switch (propBase.widget ?? propBase.type) { // Pre-1.9.0 compatible
-			case 'text': iconDefault = 'lucide-text'; break;
-			case 'multitext': iconDefault = 'lucide-list'; break;
-			case 'number': iconDefault = 'lucide-binary'; break;
-			case 'checkbox': iconDefault = 'lucide-check-square'; break;
-			case 'date': iconDefault = 'lucide-calendar'; break;
-			case 'datetime': iconDefault = 'lucide-clock'; break;
-			case 'aliases': iconDefault = 'lucide-forward'; break;
-			case 'tags': iconDefault = 'lucide-tags'; break;
-			default: iconDefault = 'lucide-file-question'; break;
-		}
+		// @ts-expect-error (Private API)
+		const widget = this.app.metadataTypeManager?.getWidget?.(propBase.widget ?? propBase.type);
+		const iconDefault = widget?.icon ?? 'lucide-file-question';
+
 		return {
 			id: propBase.name,
 			name: propBase.name,
@@ -1402,6 +1407,7 @@ export default class IconicPlugin extends Plugin {
 			fileIcon.unsynced?.every(appId => appId === thisAppId) ?? true
 		);
 
+		// Prune file icons
 		for (const [fileId] of fileIcons) {
 			const { path, subpath } = this.splitFilePath(fileId);
 			const bmarkSubpath = subpath.replaceAll(/(?<!^)#|(?<!^#)\^|\s\s/g, ' ');
@@ -1412,22 +1418,24 @@ export default class IconicPlugin extends Plugin {
 			}
 		}
 
+		// Prune bookmark icons
 		if (bmarkBases.length > 0) {
-			const bmarkIds = bmarkBases
+			const baseIds = bmarkBases
 				.filter(bmarkBase => bmarkBase.type !== 'file' && bmarkBase.type !== 'folder')
 				.map(bmarkBase => bmarkBase.ctime.toString());
-			for (const bmarkId in this.settings.bookmarkIcons) {
-				if (!bmarkIds.includes(bmarkId)) {
-					delete this.settings.bookmarkIcons[bmarkId];
+			for (const savedId in this.settings.bookmarkIcons) {
+				if (!baseIds.includes(savedId)) {
+					delete this.settings.bookmarkIcons[savedId];
 				}
 			}
 		}
 
+		// Prune property icons
 		if (propBases.length > 0) {
-			const propIds = Object.keys(propBases);
-			for (const propId in this.settings.propertyIcons) {
-				if (!propIds.includes(propId)) {
-					delete this.settings.propertyIcons[propId];
+			const baseIds = Object.keys(propBases);
+			for (const savedId in this.settings.propertyIcons) {
+				if (!baseIds.some(baseId => baseId.toLowerCase() !== savedId.toLowerCase())) {
+					delete this.settings.propertyIcons[savedId];
 				}
 			}
 		}
@@ -1483,6 +1491,6 @@ export default class IconicPlugin extends Plugin {
 		this.ribbonIconManager?.unload();
 		this.suggestionIconManager?.unload();
 		this.suggestionDialogIconManager?.unload();
-		this.refreshBodyClasses(true);
+		this.refreshBody(true);
 	}
 }

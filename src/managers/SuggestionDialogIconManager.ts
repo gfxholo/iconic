@@ -1,5 +1,5 @@
 import { Instruction, Plugin, SuggestModal, TFile, TFolder, WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { FILE_TAB_TYPES } from 'src/IconicPlugin';
+import IconicPlugin, { PLUGIN_TAB_TYPES } from 'src/IconicPlugin';
 import IconManager from 'src/managers/IconManager';
 
 type PluginModal = SuggestModal<any> & { plugin: Plugin };
@@ -145,6 +145,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 	 */
 	private refreshSuggestionIconQS(value: any, el: HTMLElement): void {
 		switch (value?.type) {
+			case 'alias': // Fallthrough
 			case 'file': {
 				if (value.file instanceof TFile) {
 					const file = this.plugin.getFileItem(value.file.path);
@@ -209,7 +210,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 				const iconDefault = value.item.view.getIcon();
 
 				// Distinguish between file tabs and plugin tabs
-				if (FILE_TAB_TYPES.includes(tabType) && value.file instanceof TFile) {
+				if (!PLUGIN_TAB_TYPES.includes(tabType) && value.file instanceof TFile) {
 					const file = this.plugin.getFileItem(value.file.path);
 					const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
 					if (rule.icon || rule.color) {
@@ -236,14 +237,16 @@ export default class SuggestionDialogIconManager extends IconManager {
 	 */
 	private refreshSuggestionIconAQS(value: any, el: HTMLElement): void {
 		const tFile = value.file;
-		if (tFile instanceof TFile) {
-			const itemEl = el.find('.another-quick-switcher__item');
-			const file = this.plugin.getFileItem(tFile.path);
-			if (file.icon || file.color) {
-				const iconEl = itemEl.find('.iconic-icon') ?? itemEl.createDiv();
-				itemEl.prepend(iconEl);
-				this.refreshIcon(file, iconEl);
-			}
+		if (!(tFile instanceof TFile)) return;
+
+		const itemEl = el.find('.another-quick-switcher__item');
+		const file = this.plugin.getFileItem(tFile.path);
+		const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
+
+		if (rule.icon || rule.color) {
+			const iconEl = itemEl.find('.iconic-icon') ?? itemEl.createDiv();
+			itemEl.prepend(iconEl);
+			this.refreshIcon(rule, iconEl);
 		}
 	}
 

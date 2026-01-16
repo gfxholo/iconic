@@ -291,33 +291,48 @@ a.tag {
 .is-mobile .mod-confirmation > .modal.iconic-rule-picker {
 	background-color: var(--modal-background);
 }
+.iconic-scroller {
+	overflow-y: auto;
+	border-block: 1px solid var(--background-modifier-border);
+}
+.modal-container > .modal > .iconic-scroller > .setting-item:first-child,
+.modal-container > .modal > .iconic-scroller > .setting-item:last-child {
+	padding-block: var(--size-4-4);
+}
 .iconic-rule,
 .iconic-condition {
+	column-gap: var(--size-4-2);
 	transition: background-color 0.25s ease, border-top-color 0.25s ease, border-radius 0.25s ease, box-shadow 0.25s ease;
 }
-.iconic-rule.has-active-menu {
+.iconic-rule > *:first-child,
+.iconic-condition > *:first-child {
+	margin-inline-end: 0;
+}
+.setting-item.iconic-rule {
+	padding-inline-end: var(--size-4-2);
+}
+.iconic-rule > .clickable-icon {
+	padding: var(--size-2-2);
+}
+.iconic-rule-picker .iconic-scroller .iconic-rule.has-active-menu {
 	background-color: var(--background-modifier-hover);
 	border-top-color: transparent;
 	border-radius: var(--radius-s);
 	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 	transition: none;
 }
-.iconic-rule.has-active-menu + .setting-item {
+.iconic-rule-picker .iconic-scroller .iconic-rule.has-active-menu + .setting-item {
 	border-top-color: transparent;
 	border-top-left-radius: var(--radius-s);
 	border-top-right-radius: var(--radius-s);
 }
-.iconic-rule > .iconic-rule-icon {
-	padding: var(--size-2-2);
-	margin-inline-end: var(--size-4-2);
-}
-.iconic-rule > .setting-item-info > .iconic-rule-name {
+.iconic-rule > .setting-item-info > .setting-item-name {
 	width: fit-content;
 	min-width: var(--size-4-4);
 	overflow-wrap: anywhere;
 }
-.iconic-rule > .setting-item-info > .iconic-rule-name:hover,
-.iconic-rule > .setting-item-info > .iconic-rule-name[contenteditable="true"] {
+.iconic-rule > .setting-item-info > .setting-item-name:hover,
+.iconic-rule > .setting-item-info > .setting-item-name[contenteditable="true"] {
 	border: var(--input-border-width) solid var(--background-modifier-border);
 	border-radius: var(--input-radius);
 	margin: calc(-1 * var(--size-4-1) - var(--input-border-width)) calc(-1 * var(--size-4-2) - var(--input-border-width));
@@ -325,10 +340,15 @@ a.tag {
 	background: var(--background-modifier-form-field);
 	color: var(--text-normal);
 }
-.iconic-drag-handle:hover {
+.iconic-grip {
+	color: var(--text-faint);
+}
+.iconic-grip:hover {
+	background-color: transparent;
 	cursor: grab;
 }
-.iconic-drag-handle:active {
+.iconic-grip:active {
+	background-color: transparent;
 	cursor: grabbing;
 }
 .iconic-add {
@@ -339,7 +359,7 @@ a.tag {
 }
 .drag-reorder-ghost .iconic-rule,
 .drag-reorder-ghost .iconic-condition {
-	padding: 0.75em 0;
+	padding-top: 0.75em;
 }
 .mod-rtl .drag-reorder-ghost .iconic-rule,
 .mod-rtl .drag-reorder-ghost .iconic-condition {
@@ -349,8 +369,8 @@ a.tag {
 .iconic-condition.drag-ghost-hidden {
 	border-top-color: transparent;
 }
-.iconic-rule.drag-ghost-hidden + .setting-item,
-.iconic-condition.drag-ghost-hidden + .setting-item {
+.iconic-rule-picker .iconic-rule.drag-ghost-hidden + .setting-item,
+.iconic-rule-editor .iconic-condition.drag-ghost-hidden + .setting-item {
 	border-top-color: transparent;
 }
 
@@ -450,117 +470,125 @@ a.tag {
 }
 
 /* Theme: Blue Topaz */
-.iconic-theme-btopaz .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon:not(.collapse-icon) {
+body[data-theme="Blue Topaz"] .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon:not(.collapse-icon) {
 	margin-inline-start: 0;
 }
-.iconic-theme-btopaz .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content {
+body[data-theme="Blue Topaz"] .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content {
 	margin-inline-start: var(--size-4-5);
 }
-.iconic-theme-btopaz .workspace-leaf-content[data-type="file-explorer"] .nav-file-title .nav-file-title-content:not(.mk-tree-text)::before {
+body[data-theme="Blue Topaz"] .workspace-leaf-content[data-type="file-explorer"] .nav-file-title .nav-file-title-content:not(.mk-tree-text)::before {
 	display: none;
 }
-.iconic-theme-btopaz .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:has(.collapse-icon.iconic-icon) > .collapse-icon::before {
+body[data-theme="Blue Topaz"] .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:has(.collapse-icon.iconic-icon) > .collapse-icon::before {
 	display: none;
 }
-.iconic-theme-btopaz .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:has(.collapse-icon.iconic-icon) > .collapse-icon > svg {
+body[data-theme="Blue Topaz"] .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:has(.collapse-icon.iconic-icon) > .collapse-icon > svg {
 	display: flex;
 }
 
 /* Theme: Catppuccin */
-.iconic-theme-cat .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title-content::before {
+body[data-theme="Catppuccin"] .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title-content::before {
 	display: none;
 }
 
 /* Theme: Cyber Glow */
-.iconic-theme-cglow .workspace-leaf-content[data-type="file-explorer"] .tree-item-self > .tree-item-inner::before {
+body[data-theme="Cyber Glow"] .workspace-leaf-content[data-type="file-explorer"] .tree-item-self > .tree-item-inner::before {
 	display: none;
 }
-.iconic-theme-cglow .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon.collapse-icon.nav-folder-collapse-indicator {
+body[data-theme="Cyber Glow"] .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon.collapse-icon.nav-folder-collapse-indicator {
 	display: flex;
 }
 
 /* Theme: Discordian */
-.iconic-theme-discord .workspace-leaf-content[data-type="file-explorer"] .nav-file-title > .tree-item-icon {
+body[data-theme="Discordian"] .workspace-leaf-content[data-type="file-explorer"] .nav-file-title > .tree-item-icon {
 	margin-inline-start: 0;
 }
-.iconic-theme-discord .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content {
+body[data-theme="Discordian"] .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content {
 	margin-inline-start: var(--size-4-5);
 }
 
 /* Theme: ITS Theme */
-.iconic-theme-its .tree-item-self > .tree-item-icon {
+body[data-theme="ITS Theme"] .tree-item-self > .tree-item-icon {
 	margin-right: 6px;
 }
-.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon {
+body[data-theme="ITS Theme"] .workspace-leaf-content[data-type="file-explorer"] .tree-item-icon {
 	position: absolute;
 }
-.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content {
+body[data-theme="ITS Theme"] .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content {
 	margin-inline-start: var(--size-4-5);
 }
-.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content::before,
-.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title-content::before {
+body[data-theme="ITS Theme"] .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content::before,
+body[data-theme="ITS Theme"] .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title-content::before {
 	display: none;
 }
-.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .nav-folder-collapse-indicator {
+body[data-theme="ITS Theme"] .workspace-leaf-content[data-type="file-explorer"] .nav-folder-collapse-indicator {
 	display: flex;
 }
-.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:not(:has(.iconic-sidekick)) > .nav-folder-title-content {
+body[data-theme="ITS Theme"] .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:not(:has(.iconic-sidekick)) > .nav-folder-title-content {
 	margin-inline-start: var(--size-4-5);
 }
-.iconic-theme-its .workspace-leaf-content[data-type="file-explorer"] .iconic-sidekick {
+body[data-theme="ITS Theme"] .workspace-leaf-content[data-type="file-explorer"] .iconic-sidekick {
 	margin-inline-start: var(--size-4-5);
 }
 
 /* Theme: LYT Mode */
-.iconic-theme-lyt .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item-inner {
+body[data-theme="LYT Mode"] .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item-inner {
 	padding-inline-start: var(--size-4-2);
 }
-.iconic-theme-lyt .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .iconic-sidekick {
+body[data-theme="LYT Mode"] .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .iconic-sidekick {
 	margin-inline-start: var(--size-4-2);
 	margin-inline-end: 0;
 }
-.iconic-theme-lyt .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item-icon:not(.collapse-icon) {
+body[data-theme="LYT Mode"] .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item-icon:not(.collapse-icon) {
 	margin-inline-start: calc(-0.5 * var(--size-4-5));
 }
-.iconic-theme-lyt .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .mod-collapsible:not(:has(.iconic-sidekick)) > .tree-item-inner {
+body[data-theme="LYT Mode"] .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .mod-collapsible:not(:has(.iconic-sidekick)) > .tree-item-inner {
 	padding-inline-start: var(--size-4-2);
 	margin-inline-start: var(--size-4-2);
 }
-.iconic-theme-lyt .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) :not(.mod-collapsible) > .tree-item-inner {
+body[data-theme="LYT Mode"] .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) :not(.mod-collapsible) > .tree-item-inner {
 	margin-inline-start: var(--size-4-2);
 }
-.iconic-theme-lyt .workspace-leaf-content > :is(.nav-files-container, .view-content).node-insert-event {
+body[data-theme="LYT Mode"] .workspace-leaf-content > :is(.nav-files-container, .view-content).node-insert-event {
 	padding: var(--size-4-1) var(--size-4-3) var(--size-4-6) var(--size-4-3);
 }
 
 /* Theme: Mado Miniflow */
-.iconic-theme-mflow .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item:not(.mod-collapsible) {
+body[data-theme="Mado Miniflow"] .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .tree-item:not(.mod-collapsible) {
 	margin-inline-start: var(--size-4-2);
 }
-.iconic-theme-mflow .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title > .collapse-icon {
+body[data-theme="Mado Miniflow"] .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title > .collapse-icon {
 	display: flex;
 }
 
 /* Theme: Minimal */
-.iconic-theme-minimal .markdown-source-view.is-readable-line-width .iconic-title-wrapper {
+body[data-theme="Minimal"] .markdown-source-view.is-readable-line-width .iconic-title-wrapper {
 	margin-inline-start: var(--content-margin-start);
 }
-.iconic-theme-minimal:not(.is-mobile) .iconic-title-wrapper > .iconic-icon {
+body[data-theme="Minimal"]:not(.is-mobile) .iconic-title-wrapper > .iconic-icon {
 	padding-top: 16px;
 }
 
 /* Theme: Minimal Edge */
-.iconic-theme-medge .tree-item-self .tree-item-icon {
+body[data-theme="Minimal Edge"] .tree-item-self .tree-item-icon {
 	display: unset;
 }
 
+/* Theme: Primary */
+body[data-theme="Primary"] .modal-container:has(+ .modal-container) {
+	backdrop-filter: unset;
+}
+body[data-theme="Primary"] .modal-container:has(+ .modal-container) > .modal-bg {
+	background-color: unset;
+}
+
 /* Theme: Sanctum */
-.iconic-theme-sanctum .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:has(.iconic-sidekick) > .nav-folder-title-content::before {
+body[data-theme="Sanctum"] .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title:has(.iconic-sidekick) > .nav-folder-title-content::before {
 	display: none;
 }
 
 /* Theme: Shiba Inu */
-.iconic-theme-shiba.theme-light:not(.default-light-theme, .lily-light, .ivory-light, .sky-light, .stone-light) {
+body[data-theme="Shiba Inu"].theme-light:not(.default-light-theme, .lily-light, .ivory-light, .sky-light, .stone-light) {
 	--color-red: rgb(240, 68, 114);
 	--color-orange: rgb(249, 102, 50);
 	--color-yellow: rgb(228, 147, 32);
@@ -570,7 +598,7 @@ a.tag {
 	--color-purple: rgb(176, 110, 201);
 	--color-pink: rgb(215, 125, 146);
 }
-.iconic-theme-shiba.theme-dark:not(.default-dark-theme, .Lilac-dark, .pure-dark, .warm-dark) {
+body[data-theme="Shiba Inu"].theme-dark:not(.default-dark-theme, .Lilac-dark, .pure-dark, .warm-dark) {
 	--color-red: rgb(255, 98, 107);
 	--color-orange: rgb(247, 157, 124);
 	--color-yellow: rgb(249, 226, 175);
@@ -580,30 +608,30 @@ a.tag {
 	--color-purple: rgb(196, 167, 231);
 	--color-pink: rgb(243, 137, 143);
 }
-.iconic-theme-shiba .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content::before {
+body[data-theme="Shiba Inu"] .workspace-leaf-content[data-type="file-explorer"] .nav-file-title-content::before {
 	display: none;
 }
 
 /* Theme: Sodalite */
-.iconic-theme-sodalite .workspace-leaf-content[data-type="file-explorer"] .nav-files-container {
+body[data-theme="Sodalite"] .workspace-leaf-content[data-type="file-explorer"] .nav-files-container {
 	padding-inline-start: var(--size-4-3);
 	padding-inline-end: var(--size-4-3);
 }
-.iconic-theme-sodalite .workspace-leaf-content[data-type="file-explorer"] .tree-item-inner::before {
+body[data-theme="Sodalite"] .workspace-leaf-content[data-type="file-explorer"] .tree-item-inner::before {
 	display: none;
 }
 
 /* Theme: Spectrum */
-.iconic-theme-spectrum .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title > .nav-folder-title-content::before {
+body[data-theme="Spectrum"] .workspace-leaf-content[data-type="file-explorer"] .nav-folder-title > .nav-folder-title-content::before {
 	display: none;
 }
 
 /* Theme: Terminal */
-.iconic-theme-terminal .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .collapse-icon.iconic-icon::before {
+body[data-theme="Terminal"] .workspace-leaf-content:is([data-type="file-explorer"], [data-type="bookmarks"]) .collapse-icon.iconic-icon::before {
 	display: none;
 }
 
 /* Theme: Ukiyo */
-.iconic-theme-ukiyo .workspace-leaf > .workspace-leaf-content[data-type="file-explorer"] > .nav-files-container.node-insert-event {
+body[data-theme="Ukiyo"] .workspace-leaf > .workspace-leaf-content[data-type="file-explorer"] > .nav-files-container.node-insert-event {
 	padding: var(--size-4-1) var(--size-4-3) var(--size-4-6) var(--size-4-3);
 }

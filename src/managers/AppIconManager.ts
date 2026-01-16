@@ -28,7 +28,7 @@ export default class AppIconManager extends IconManager {
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
 		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => this.refreshIcons()));
-		this.plugin.refreshManagers('app');
+		this.refreshIcons();
 	}
 
 	/**
@@ -203,7 +203,7 @@ export default class AppIconManager extends IconManager {
 		// @ts-expect-error (Electron API)
 		const isMaximized = activeWindow.electron.remote.getCurrentWindow().isMaximized() ?? true;
 
-		if (this.maximizeEl) this.stopMutationObserver(this.maximizeEl);
+		this.stopMutationObserver(this.maximizeEl);
 		if (!activeDocument.contains(this.maximizeEl)) {
 			this.stopEventListener(this.maximizeEl, 'contextmenu');
 			this.maximizeEl = fish('.titlebar-button.mod-maximize');

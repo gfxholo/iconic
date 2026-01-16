@@ -153,7 +153,8 @@ export default abstract class IconManager {
 	/**
 	 * Stop a mutation observer (of the given element) set by this {@link IconManager}.
 	 */
-	protected stopMutationObserver(element: HTMLElement): void {
+	protected stopMutationObserver(element: HTMLElement | null): void {
+		if (!element) return;
 		this.mutationObservers.get(element)?.disconnect();
 		this.mutationObservers.delete(element);
 	}

@@ -30,6 +30,25 @@ export default class RuleManager {
 
 	constructor(plugin: IconicPlugin) {
 		this.plugin = plugin;
+
+		// Fix any duplicate rule IDs
+		const fileRuleIds: string[] = [];
+		const folderRuleIds: string[] = [];
+		for (const ruleBase of this.plugin.settings.fileRules) {
+			if (!ruleBase.id || fileRuleIds.includes(ruleBase.id)) {
+				ruleBase.id = this.newRuleId('file');
+			}
+			fileRuleIds.push(ruleBase.id);
+		}
+		for (const ruleBase of this.plugin.settings.folderRules) {
+			if (!ruleBase.id || folderRuleIds.includes(ruleBase.id)) {
+				ruleBase.id = this.newRuleId('folder');
+			}
+			folderRuleIds.push(ruleBase.id);
+		}
+		this.plugin.saveSettings();
+
+		// Initialize rulings
 		this.updateRulings('file');
 		this.updateRulings('folder');
 		this.startTriggerTimer();
@@ -62,8 +81,8 @@ export default class RuleManager {
 	 */
 	getRules(page: Category): RuleItem[] {
 		switch (page) {
-			case 'file': return this.plugin.settings.fileRules.map(ruleBase => this.defineRule(ruleBase));
-			case 'folder': return this.plugin.settings.folderRules.map(ruleBase => this.defineRule(ruleBase));
+			case 'file': return this.plugin.settings.fileRules.map(ruleBase => this.defineRule(page, ruleBase));
+			case 'folder': return this.plugin.settings.folderRules.map(ruleBase => this.defineRule(page, ruleBase));
 			default: return [];
 		}
 	}
@@ -79,7 +98,7 @@ export default class RuleManager {
 			default: ruleBases = [];
 		}
 		const ruleBase = ruleBases.find(rule => rule.id === ruleId);
-		return ruleBase ? this.defineRule(ruleBase) : null;
+		return ruleBase ? this.defineRule(page, ruleBase) : null;
 	}
 
 	/**
@@ -107,12 +126,12 @@ export default class RuleManager {
 	/**
 	 * Create rule definition.
 	 */
-	private defineRule(ruleBase: any): RuleItem {
+	private defineRule(page: Category, ruleBase: any): RuleItem {
 		return {
 			id: ruleBase.id ?? '0',
 			name: ruleBase.name ?? '',
 			category: 'rule',
-			iconDefault: 'lucide-file',
+			iconDefault: this.getPageIcon(page),
 			icon: ruleBase.icon ?? null,
 			color: ruleBase.color ?? null,
 			match: ruleBase.match ?? 'all',
@@ -124,7 +143,7 @@ export default class RuleManager {
 	/**
 	 * Generate a 5-character rule ID. 916,132,832 possible values.
 	 */
-	private newRuleId(page: Category): string {
+	newRuleId(page: Category): string {
 		const ids = this.getRuleBases(page).map(ruleBase => ruleBase.id);
 		let id: string;
 		let collisions = 0;
@@ -146,7 +165,7 @@ export default class RuleManager {
 			id: this.newRuleId(page),
 			name: STRINGS.rulePicker.untitledRule,
 			category: 'rule',
-			iconDefault: null,
+			iconDefault: this.plugin.ruleManager.getPageIcon(page),
 			icon: null,
 			color: null,
 			match: 'all',
@@ -175,10 +194,18 @@ export default class RuleManager {
 			match: rule.match,
 			conditions: [...rule.conditions],
 			enabled: rule.enabled,
-		}
-
-		const index = ruleBases.indexOf(ruleBase);
-		ruleBases.splice(index, 0, ruleBase);
+		};
+		
+		const index = ruleBases.indexOf(ruleBase) + 1;
+		ruleBases.splice(index, 0, {
+			id: duplicateRule.id,
+			name: duplicateRule.name,
+			icon: duplicateRule.icon ?? undefined,
+			color: duplicateRule.color ?? undefined,
+			match: duplicateRule.match,
+			conditions: [...duplicateRule.conditions],
+			enabled: duplicateRule.enabled,
+		});
 
 		this.plugin.saveSettings();
 		return duplicateRule;
@@ -545,9 +572,10 @@ export default class RuleManager {
 			// Resolve the source
 			if (condition.source.startsWith('property:')) {
 				const propId = condition.source.replace('property:', '');
-				source = metadata?.frontmatter?.hasOwnProperty(propId)
-					? metadata.frontmatter[propId] ?? null
-					: undefined;
+				if (metadata?.frontmatter) {
+					const fmProps = Object.entries(metadata.frontmatter);
+					source = fmProps.find(([fmPropId]) => fmPropId.toLowerCase() === propId.toLowerCase());
+				}
 			} else switch (condition.source) {
 				case 'icon': {
 					if (!file.icon || operator === 'iconIs' || operator === 'hasValue') {

@@ -79,7 +79,7 @@ export default class TabIconManager extends IconManager {
 			// Update ghost icon when dragging
 			this.setEventListener(tabEl, 'dragstart', () => {
 				if (rule.icon || rule.iconDefault) {
-					const ghostEl = activeDocument.body.find(':scope > .drag-ghost > .drag-ghost-icon');
+					const ghostEl = tabEl.doc.body.find(':scope > .drag-ghost > .drag-ghost-icon');
 					if (ghostEl) {
 						this.refreshIcon({ icon: rule.icon ?? rule.iconDefault, color: rule.color }, ghostEl);
 					}

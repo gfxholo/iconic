@@ -1,4 +1,4 @@
-import { AbstractInputSuggest, EditorSuggest } from 'obsidian';
+import { AbstractInputSuggest, EditorSuggest, TFile } from 'obsidian';
 import IconicPlugin from 'src/IconicPlugin';
 import IconManager from 'src/managers/IconManager';
 
@@ -139,7 +139,9 @@ export default class SuggestionIconManager extends IconManager {
 	private getSuggestionType(value: any): string | null {
 		if (!value || typeof value !== 'object') {
 			return UNKNOWN_SUGGESTION;
-		} else if (value.type === 'file' && value.file) {
+		} else if (value.type === 'file' && value.file instanceof TFile) {
+			return FILE_SUGGESTION;
+		} else if (value.type === 'alias' && value.file instanceof TFile) {
 			return FILE_SUGGESTION;
 		} else if (value.tag) {
 			return TAG_SUGGESTION;
