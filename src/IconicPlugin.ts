@@ -713,14 +713,6 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
-	 * Check whether the Obsidian API is equal to or greather than a minimum version.
-	 * @param minVersion Version string in the form of `MAJOR.MINOR.PATCH`
-	 */
-	isApiVersionAtLeast(minVersion: string): boolean {
-		return apiVersion.localeCompare(minVersion, undefined, { numeric: true }) >= 0;
-	}
-
-	/**
 	 * Get app item definition.
 	 */
 	getAppItem(appItemId: AppItemId, unloading?: boolean): AppItem {
@@ -744,16 +736,12 @@ export default class IconicPlugin extends Plugin {
 			}
 			case 'sidebarLeft': {
 				name = STRINGS.appItems.sidebarLeft;
-				iconDefault = this.isApiVersionAtLeast('1.9.0')
-					? 'sidebar-toggle-button-icon'
-					: 'sidebar-left';
+				iconDefault = 'sidebar-toggle-button-icon';
 				break;
 			}
 			case 'sidebarRight': {
 				name = STRINGS.appItems.sidebarRight;
-				iconDefault = this.isApiVersionAtLeast('1.9.0')
-					? 'sidebar-toggle-button-icon'
-					: 'sidebar-right';
+				iconDefault = 'sidebar-toggle-button-icon';
 				break;
 			}
 			case 'minimize': name = STRINGS.appItems.minimize; break;
@@ -1155,7 +1143,7 @@ export default class IconicPlugin extends Plugin {
 			iconDefault: iconDefault,
 			icon: unloading ? null : propIcon.icon ?? null,
 			color: unloading ? null : propIcon.color ?? null,
-			type: propBase.widget ?? propBase.type ?? null, // Pre-1.9.0 compatible
+			type: propBase.widget ?? null,
 		}
 	}
 
@@ -1350,17 +1338,6 @@ export default class IconicPlugin extends Plugin {
 	 */
 	private async loadSettings(): Promise<void> {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-
-		// 1.0.9: Migrate groupIcons from versions 1.0.3 ~ 1.0.8
-		if ('groupIcons' in this.settings) {
-			type GroupSettings = IconicSettings & {
-				groupIcons?: {},
-			}
-			if (Object.keys(this.settings.bookmarkIcons).length === 0) {
-				this.settings.bookmarkIcons = (this.settings as GroupSettings).groupIcons ?? {};
-			}
-			delete (this.settings as GroupSettings).groupIcons;
-		}
 	}
 
 	/**
