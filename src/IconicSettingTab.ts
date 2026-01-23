@@ -1,4 +1,4 @@
-import { ExtraButtonComponent, Platform, PluginSettingTab, Setting, SettingGroup } from 'obsidian';
+import { ExtraButtonComponent, Platform, PluginSettingTab, SettingGroup } from 'obsidian';
 import IconicPlugin, { STRINGS } from 'src/IconicPlugin';
 import RulePicker from 'src/dialogs/RulePicker';
 

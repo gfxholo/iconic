@@ -1,6 +1,5 @@
-import { Modal, Setting, SettingGroup } from 'obsidian';
+import { Modal, Setting } from 'obsidian';
 import IconicPlugin, { Category, Icon, Item, STRINGS } from 'src/IconicPlugin';
-import ColorUtils from 'src/ColorUtils';
 import { RuleItem } from 'src/managers/RuleManager';
 import IconManager from 'src/managers/IconManager';
 import IconPicker from 'src/dialogs/IconPicker';

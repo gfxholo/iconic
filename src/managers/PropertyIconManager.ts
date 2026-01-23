@@ -111,7 +111,7 @@ export default class PropertyIconManager extends IconManager {
 
 			const propId = propInputEl.value;
 			if (!propId) continue;
-			
+
 			const prop = this.plugin.getPropertyItem(propId);
 			if (!prop) continue;
 			const iconEl = propEl.find('.metadata-property-icon');

@@ -259,7 +259,7 @@ export default class EditorIconManager extends IconManager {
 			this.refreshIcon(rule, iconEl);
 		}
 		iconEl.addClass('iconic-icon');
-		
+
 		// Add menu actions
 		if (this.plugin.settings.showMenuActions) {
 			this.setEventListener(iconEl, 'contextmenu', event => {

@@ -195,7 +195,7 @@ export default class RuleManager {
 			conditions: [...rule.conditions],
 			enabled: rule.enabled,
 		};
-		
+
 		const index = ruleBases.indexOf(ruleBase) + 1;
 		ruleBases.splice(index, 0, {
 			id: duplicateRule.id,
