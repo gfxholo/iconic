@@ -15,6 +15,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 		colorPicker1: undefined as unknown,
 		colorPicker2: undefined as unknown,
 	} as Record<string, ExtraButtonComponent>;
+	public icon = 'lucide-images';
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin.app, plugin);
@@ -27,10 +28,11 @@ export default class IconicSettingTab extends PluginSettingTab {
 	display(): void {
 		this.containerEl.empty();
 
-		const groupFirst = new SettingGroup(this.containerEl);
+		// GROUP: Top
+		const groupTop = new SettingGroup(this.containerEl);
 
-		// Rules
-		groupFirst.addSetting(setting => setting
+		// SETTING: Rules
+		groupTop.addSetting(setting => setting
 			.setName(STRINGS.settings.rulebook.name)
 			.setDesc(STRINGS.settings.rulebook.desc)
 			.addButton(button => { button
@@ -45,8 +47,8 @@ export default class IconicSettingTab extends PluginSettingTab {
 			})
 		);
 
-		// Bigger icons
-		groupFirst.addSetting(setting => setting
+		// SETTING: Bigger icons
+		groupTop.addSetting(setting => setting
 			.setName(STRINGS.settings.biggerIcons.name)
 			.setDesc(STRINGS.settings.biggerIcons.desc)
 			.addExtraButton(indicator => {
@@ -69,8 +71,8 @@ export default class IconicSettingTab extends PluginSettingTab {
 			})
 		);
 
-		// Clickable icons
-		groupFirst.addSetting(setting => setting
+		// SETTING: Clickable icons
+		groupTop.addSetting(setting => setting
 			.setName(Platform.isDesktop
 				? STRINGS.settings.clickableIcons.nameDesktop
 				: STRINGS.settings.clickableIcons.nameMobile
