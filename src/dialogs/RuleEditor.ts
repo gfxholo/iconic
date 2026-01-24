@@ -5,6 +5,7 @@ import IconManager from 'src/managers/IconManager';
 import RuleChecker from 'src/dialogs/RuleChecker';
 import IconPicker from 'src/dialogs/IconPicker';
 import ConditionSetting from 'src/components/ConditionSetting';
+import ConditionValueSuggest from 'src/components/ConditionValueSuggest';
 import RuleNameSuggest from 'src/components/RuleNameSuggest';
 
 export type OperatorValueType = 'text' | 'regex' | 'number' | 'datetime' | 'date' | 'time' | 'weekday' | 'month' | 'color' | 'hex';
@@ -682,10 +683,10 @@ export default class RuleEditor extends Modal {
 			.onDrag((x, y) => this.onDrag(condSetting, x, y))
 			.onDragEnd(() => this.onDragEnd(condSetting));
 
+		new ConditionValueSuggest(this.plugin, this.page, condition, condSetting.valInput);
 		this.setConditionSource(condSetting, condition.source);
 		this.setConditionOperator(condSetting, condition.operator);
 		this.setConditionValue(condSetting, condition.value);
-
 		this.scrollerEl.append(condSetting.settingEl);
 
 		this.updateMatchesButton();
