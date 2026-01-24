@@ -145,7 +145,7 @@ export default class SuggestionIconManager extends IconManager {
 			return FILE_SUGGESTION;
 		} else if (value.tag) {
 			return TAG_SUGGESTION;
-		} else if (value.type && value.text) {
+		} else if (value.widget) {
 			return PROPERTY_SUGGESTION;
 		} else {
 			return UNKNOWN_SUGGESTION;

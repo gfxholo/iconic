@@ -1133,7 +1133,7 @@ export default class IconicPlugin extends Plugin {
 	private definePropertyItem(propBase: any, unloading?: boolean): PropertyItem {
 		const propIcon = this.settings.propertyIcons[propBase.name] ?? {};
 		// @ts-expect-error (Private API)
-		const widget = this.app.metadataTypeManager?.getWidget?.(propBase.widget ?? propBase.type);
+		const widget = this.app.metadataTypeManager?.getWidget?.(propBase.widget ?? '');
 		const iconDefault = widget?.icon ?? 'lucide-file-question';
 
 		return {
