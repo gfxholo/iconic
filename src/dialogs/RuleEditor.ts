@@ -5,6 +5,7 @@ import IconManager from 'src/managers/IconManager';
 import RuleChecker from 'src/dialogs/RuleChecker';
 import IconPicker from 'src/dialogs/IconPicker';
 import ConditionSetting from 'src/components/ConditionSetting';
+import RuleNameSuggest from 'src/components/RuleNameSuggest';
 
 export type OperatorValueType = 'text' | 'regex' | 'number' | 'datetime' | 'date' | 'time' | 'weekday' | 'month' | 'color' | 'hex';
 
@@ -546,6 +547,7 @@ export default class RuleEditor extends Modal {
 			this.iconManager.setEventListener(text.inputEl, 'keydown', event => {
 				if (event.key === 'Enter') this.closeAndSave(this.rule);
 			});
+			new RuleNameSuggest(this.plugin, this.page, text);
 			this.nameField = text;
 		});
 
