@@ -56,6 +56,7 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 	 * @override
 	 */
 	protected getSuggestions(query: string): any[] | Promise<any[]> {
+		const currentValue = this.inputComponent.getValue();
 		const suggestions: any[] = [];
 		const fuzzySearch = prepareFuzzySearch(query);
 
@@ -66,6 +67,7 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				const names = Array.from(unsortedNames).sort((a, b) => a.localeCompare(b));
 
 				for (const name of names) {
+					if (name === currentValue) continue;
 					const result = fuzzySearch(name);
 					if (result) suggestions.push({
 						type: 'file',
@@ -82,6 +84,7 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				const filenames = Array.from(unsortedFilenames).sort((a, b) => a.localeCompare(b));
 
 				for (const filename of filenames) {
+					if (filename === currentValue) continue;
 					const result = fuzzySearch(filename);
 					if (result) suggestions.push({
 						type: 'file',
@@ -98,6 +101,7 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				const extensions = Array.from(unsortedExtensions).sort((a, b) => a.localeCompare(b));
 
 				for (const extension of extensions) {
+					if (extension === currentValue) continue;
 					const result = fuzzySearch(extension);
 					if (result) suggestions.push({
 						type: 'file',
@@ -114,6 +118,7 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				const paths = Array.from(unsortedPaths).sort((a, b) => a.localeCompare(b));
 
 				for (const path of paths) {
+					if (path === currentValue) continue;
 					const result = fuzzySearch(path);
 					if (result) suggestions.push({
 						type: 'file',
@@ -130,6 +135,7 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				const names = Array.from(unsortedNames).sort((a, b) => a.localeCompare(b));
 
 				for (const name of names) {
+					if (name === currentValue) continue;
 					const result = fuzzySearch(name);
 					if (result) suggestions.push({
 						type: 'folder',
@@ -146,6 +152,7 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				const paths = Array.from(unsortedPaths).sort((a, b) => a.localeCompare(b));
 
 				for (const path of paths) {
+					if (path === currentValue) continue;
 					const result = fuzzySearch(path);
 					if (result) suggestions.push({
 						type: 'folder',

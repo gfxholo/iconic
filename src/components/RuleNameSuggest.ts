@@ -20,13 +20,16 @@ export default class RuleNameSuggest extends AbstractInputSuggest<any> {
 	 * @override
 	 */
 	protected getSuggestions(query: string): any[] | Promise<any[]> {
+		const currentName = this.inputComponent.getValue();
 		const suggestions: any[] = [];
 		const fuzzySearch = prepareFuzzySearch(query);
 		const unsortedRules = this.plugin.ruleManager.getRules(this.page);
 		const unsortedNames = new Set(unsortedRules.map(rule => rule.name));
-		const names = Array.from(unsortedNames).sort((a, b) => a.localeCompare(b))
+		const names = Array.from(unsortedNames).sort((a, b) => a.localeCompare(b));
 
 		for (const name of names) {
+			// Skip suggestions that already match the current name
+			if (name === currentName) continue;
 			const result = fuzzySearch(name);
 			if (result) suggestions.push({
 				type: 'rule',
