@@ -62,9 +62,8 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 
 		switch (this.getSuggestionType()) {
 			case SUGGEST_FILE_NAMES: {
-				const unsortedFiles = this.app.vault.getFiles();
-				const unsortedNames = new Set(unsortedFiles.map(file => file.basename));
-				const names = Array.from(unsortedNames).sort((a, b) => a.localeCompare(b));
+				const tFiles = this.app.vault.getFiles();
+				const names = new Set(tFiles.map(tFile => tFile.basename));
 
 				for (const name of names) {
 					if (name === currentValue) continue;
@@ -79,9 +78,8 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				break;
 			}
 			case SUGGEST_FILE_FILENAMES: {
-				const unsortedFiles = this.app.vault.getFiles();
-				const unsortedFilenames = new Set(unsortedFiles.map(file => file.name));
-				const filenames = Array.from(unsortedFilenames).sort((a, b) => a.localeCompare(b));
+				const tFiles = this.app.vault.getFiles();
+				const filenames = new Set(tFiles.map(tFile => tFile.name));
 
 				for (const filename of filenames) {
 					if (filename === currentValue) continue;
@@ -96,9 +94,8 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				break;
 			}
 			case SUGGEST_FILE_EXTENSIONS: {
-				const unsortedFiles = this.app.vault.getFiles();
-				const unsortedExtensions = new Set(unsortedFiles.map(file => file.extension));
-				const extensions = Array.from(unsortedExtensions).sort((a, b) => a.localeCompare(b));
+				const tFiles = this.app.vault.getFiles();
+				const extensions = new Set(tFiles.map(tFile => tFile.extension));
 
 				for (const extension of extensions) {
 					if (extension === currentValue) continue;
@@ -113,9 +110,8 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				break;
 			}
 			case SUGGEST_FILE_PATHS: {
-				const unsortedFiles = this.app.vault.getFiles();
-				const unsortedPaths = new Set(unsortedFiles.map(file => file.path));
-				const paths = Array.from(unsortedPaths).sort((a, b) => a.localeCompare(b));
+				const tFiles = this.app.vault.getFiles();
+				const paths = new Set(tFiles.map(tFile => tFile.path));
 
 				for (const path of paths) {
 					if (path === currentValue) continue;
@@ -130,9 +126,8 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				break;
 			}
 			case SUGGEST_FOLDER_NAMES: {
-				const unsortedFolders = this.app.vault.getAllFolders();
-				const unsortedNames = new Set(unsortedFolders.map(folder => folder.name));
-				const names = Array.from(unsortedNames).sort((a, b) => a.localeCompare(b));
+				const tFolders = this.app.vault.getAllFolders();
+				const names = new Set(tFolders.map(tFolder => tFolder.name));
 
 				for (const name of names) {
 					if (name === currentValue) continue;
@@ -147,9 +142,8 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				break;
 			}
 			case SUGGEST_FOLDER_PATHS: {
-				const unsortedFolders = this.app.vault.getAllFolders();
-				const unsortedPaths = new Set(unsortedFolders.map(folder => folder.path));
-				const paths = Array.from(unsortedPaths).sort((a, b) => a.localeCompare(b));
+				const tFolders = this.app.vault.getAllFolders();
+				const paths = new Set(tFolders.map(tFolder => tFolder.path));
 
 				for (const path of paths) {
 					if (path === currentValue) continue;
@@ -164,6 +158,15 @@ export default class ConditionValueSuggest extends AbstractInputSuggest<any> {
 				break;
 			}
 		}
+
+		// Sort by relevance, or else alphabetically
+		suggestions.sort((a, b) => {
+			if (a.score !== b.score) {
+				return b.score - a.score; // Descending
+			} else {
+				return a.text.localeCompare(b.text); // Ascending
+			}
+		});
 
 		return suggestions;
 	}

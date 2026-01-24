@@ -23,9 +23,8 @@ export default class RuleNameSuggest extends AbstractInputSuggest<any> {
 		const currentName = this.inputComponent.getValue();
 		const suggestions: any[] = [];
 		const fuzzySearch = prepareFuzzySearch(query);
-		const unsortedRules = this.plugin.ruleManager.getRules(this.page);
-		const unsortedNames = new Set(unsortedRules.map(rule => rule.name));
-		const names = Array.from(unsortedNames).sort((a, b) => a.localeCompare(b));
+		const rules = this.plugin.ruleManager.getRules(this.page);
+		const names = new Set(rules.map(rule => rule.name));
 
 		for (const name of names) {
 			// Skip suggestions that already match the current name
@@ -38,6 +37,15 @@ export default class RuleNameSuggest extends AbstractInputSuggest<any> {
 				text: name,
 			});
 		}
+
+		// Sort by relevance, or else alphabetically
+		suggestions.sort((a, b) => {
+			if (a.score !== b.score) {
+				return b.score - a.score; // Descending
+			} else {
+				return a.text.localeCompare(b.text); // Ascending
+			}
+		});
 
 		return suggestions;
 	}
