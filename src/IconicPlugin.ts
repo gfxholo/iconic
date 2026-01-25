@@ -1,4 +1,4 @@
-import { Command, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceFloating, WorkspaceLeaf, WorkspaceRoot, getIconIds } from 'obsidian';
+import { Command, Notice, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceFloating, WorkspaceLeaf, WorkspaceRoot, getIconIds, getLanguage, normalizePath } from 'obsidian';
 import IconicSettingTab from 'src/IconicSettingTab';
 import EMOJIS from 'src/Emojis';
 import STRINGS from 'src/Strings';
@@ -38,6 +38,10 @@ const IMAGE_EXTENSIONS = ['bmp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'av
 const AUDIO_EXTENSIONS = ['mp3', 'wav', 'm4a', '3gp', 'flac', 'ogg', 'oga', 'opus'];
 const VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogv', 'mov', 'mkv'];
 const SYNCABLE_EXTENSIONS = ['md', 'canvas', 'pdf'].concat(IMAGE_EXTENSIONS).concat(AUDIO_EXTENSIONS).concat(VIDEO_EXTENSIONS);
+
+const HOUR = 1000 * 60 * 60; // 1 hour in millis
+const MINUTE = 1000 * 60; // 1 minute in millis
+const SECOND = 1000; // 1 second in millis
 
 /**
  * Base interface for all icon objects.
@@ -101,6 +105,7 @@ interface IconicSettings {
 	uncolorSelect: boolean;
 	uncolorQuick: boolean;
 	rememberDeletedItems: boolean;
+	maxBackups: number;
 	dialogState: {
 		iconMode: boolean;
 		emojiMode: boolean;
@@ -164,6 +169,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	uncolorSelect: false,
 	uncolorQuick: false,
 	rememberDeletedItems: false,
+	maxBackups: 5,
 	dialogState: {
 		iconMode: true,
 		emojiMode: false,
@@ -198,6 +204,7 @@ export default class IconicPlugin extends Plugin {
 	suggestionIconManager?: SuggestionIconManager;
 	suggestionDialogIconManager?: SuggestionDialogIconManager;
 	dialogCommands: Command[] = [];
+	private isSaving = false;
 
 	/**
 	 * @override
@@ -1337,13 +1344,73 @@ export default class IconicPlugin extends Plugin {
 	 * Load settings from storage.
 	 */
 	private async loadSettings(): Promise<void> {
+		const { adapter } = this.app.vault;
+		const dataPath = normalizePath(this.app.vault.configDir + '/plugins/iconic/data.json');
+		const backupPath = normalizePath(dataPath + '.backup');
+
+		// If a backup exists, check `data.json` for corruption
+		if (await adapter.exists(backupPath + 1)) {
+			let dataObject = {};
+
+			// Try to read `data.json`
+			if (await adapter.exists(dataPath)) {
+				const dataJson = await adapter.read(dataPath);
+				try { dataObject = JSON.parse(dataJson) } catch (e) { /* Ignore */ }
+			}
+
+			// If `data.json` is missing or corrupted, restore the backup
+			if (Object.keys(dataObject).length === 0) {
+				await this.restoreBackup();
+			}
+		}
+
+		// Load `data.json`
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+	}
+
+	/**
+	 * Restore backup settings from storage.
+	 */
+	private async restoreBackup(): Promise<void> {
+		const { adapter } = this.app.vault;
+		const dataPath = normalizePath(this.app.vault.configDir + '/plugins/iconic/data.json');
+		const backupPath = normalizePath(dataPath + '.backup');
+		const backupStat = await adapter.stat(backupPath + 1);
+		if (!backupStat) return;
+
+		// Overwrite `data.json` with the backup
+		if (await adapter.exists(dataPath)) {
+			await adapter.remove(dataPath);
+		}
+		await adapter.copy(backupPath + 1, dataPath);
+
+		// Describe how long ago the backup was made
+		const ago = Date.now() - backupStat.mtime;
+		let message = STRINGS.backups.backupNotice + '\n\n';
+		if (ago < 60 * SECOND) {
+			message += STRINGS.backups.backupSecondsAgo.replace('{#}', Math.round(ago / SECOND).toString());
+		} else if (ago < 60 * MINUTE) {
+			message += STRINGS.backups.backupMinutesAgo.replace('{#}', Math.round(ago / MINUTE).toString());
+		} else if (ago < 24 * HOUR) {
+			message += STRINGS.backups.backupHoursAgo.replace('{#}', Math.round(ago / HOUR).toString());
+		} else {
+			const dateFormat = new Intl.DateTimeFormat(getLanguage(), {
+				dateStyle: 'long',
+				timeStyle: 'short'
+			}).format(backupStat?.mtime);
+			message += STRINGS.backups.backupDate.replace('{#}', dateFormat);
+		}
+
+		// Notify user about the restored data
+		new Notice(message, 0);
 	}
 
 	/**
 	 * Save settings to storage.
 	 */
 	async saveSettings(): Promise<void> {
+		if (this.isSaving) return;
+		this.isSaving = true;
 		this.pruneSettings();
 
 		// Sort item IDs for human-readability
@@ -1353,7 +1420,42 @@ export default class IconicPlugin extends Plugin {
 		this.settings.bookmarkIcons = Object.fromEntries(Object.entries(this.settings.bookmarkIcons).sort());
 		this.settings.propertyIcons = Object.fromEntries(Object.entries(this.settings.propertyIcons).sort());
 		this.settings.ribbonIcons = Object.fromEntries(Object.entries(this.settings.ribbonIcons).sort());
+
+		// Save and backup settings
 		await this.saveData(this.settings);
+		this.saveBackup();
+		this.isSaving = false;
+	}
+
+	/**
+	 * Backup settings to separate file
+	 */
+	async saveBackup(): Promise<void> {
+		const dataPath = normalizePath(this.app.vault.configDir + '/plugins/iconic/data.json');
+		const backupPath = normalizePath(dataPath + '.backup');
+		const { adapter } = this.app.vault;
+
+		// Determine if a new backup is due for creation
+		const backupStat = await adapter.stat(backupPath + 1);
+		const isDueForBackup = !backupStat || Date.now() - backupStat.mtime >= HOUR * 3;
+
+		// Loop through backup files
+		for (let i = 10; i--; i === 0) {
+			if (await adapter.exists(backupPath + i)) {
+				if (i > this.settings.maxBackups) {
+					// Delete any backup numbered higher than the maximum
+					await adapter.remove(backupPath + i);
+				} else if (isDueForBackup) {
+					// Increment backup number
+					await adapter.rename(backupPath + i, backupPath + (i + 1));
+				}
+			}
+		}
+
+		// Create new backup if necessary
+		if (isDueForBackup) {
+			await adapter.copy(dataPath, backupPath + 1);
+		}
 	}
 
 	/**

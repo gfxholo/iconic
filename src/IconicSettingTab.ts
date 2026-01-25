@@ -1,4 +1,4 @@
-import { ExtraButtonComponent, Platform, PluginSettingTab, SettingGroup } from 'obsidian';
+import { ExtraButtonComponent, normalizePath, Platform, PluginSettingTab, SettingGroup } from 'obsidian';
 import IconicPlugin, { STRINGS } from 'src/IconicPlugin';
 import RulePicker from 'src/dialogs/RulePicker';
 
@@ -437,6 +437,35 @@ export default class IconicSettingTab extends PluginSettingTab {
 				})
 			)
 		);
+
+		// SETTING: Maximum automatic backups
+		groupAdvanced.addSetting(setting => setting
+			.setName(STRINGS.settings.maxBackups.name)
+			.setDesc(STRINGS.settings.maxBackups.desc)
+			.then(setting => {
+				if (Platform.isDesktop) setting.addExtraButton(button => button
+					.setIcon('lucide-folder-open')
+					// @ts-expect-error (Private API)
+					.onClick(() => this.app.openWithDefaultApp(normalizePath(this.app.vault.configDir + '/plugins/iconic')))
+				)
+			})
+			.addDropdown(dropdown => dropdown
+			.addOption('0', STRINGS.settings.values.none)
+			.addOption('1', '1')
+			.addOption('2', '2')
+			.addOption('3', '3')
+			.addOption('4', '4')
+			.addOption('5', '5')
+			.addOption('6', '6')
+			.addOption('7', '7')
+			.addOption('8', '8')
+			.addOption('9', '9')
+			.setValue(this.plugin.settings.maxBackups.toString())
+			.onChange(value => {
+				this.plugin.settings.maxBackups = Number(value) || 0;
+				this.plugin.saveSettings();
+			})
+		));
 	}
 
 	/**

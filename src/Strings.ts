@@ -299,6 +299,7 @@ export default class Strings {
 		values: {
 			on: 'On',
 			off: 'Off',
+			none: 'None',
 			desktop: 'Desktop only',
 			mobile: 'Mobile only',
 			list: 'List of colors',
@@ -406,7 +407,18 @@ export default class Strings {
 			name: 'Remember icons of deleted items',
 			desc: 'Any custom icons will reappear when their item exists again.',
 		},
+		maxBackups: {
+			name: 'Maximum automatic backups',
+			desc: 'Choose how many backups to keep of your icon settings. Backups are spaced 3 hours apart.',
+		},
 	};
+	static backups = {
+		backupNotice: 'Iconic had a problem loading its icon settings.',
+		backupSecondsAgo: 'Your icons have been restored from a backup saved {#} seconds ago.',
+		backupMinutesAgo: 'Your icons have been restored from a backup saved {#} minutes ago.',
+		backupHoursAgo: 'Your icons have been restored from a backup saved {#} hours ago.',
+		backupDate: 'Your icons have been restored from a backup saved on {#}.',
+	}
 
 	static {
 		Strings.localize();
