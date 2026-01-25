@@ -300,7 +300,8 @@
 			"desktop": "Solo escritorio",
 			"mobile": "Solo móvil",
 			"list": "Lista de colores",
-			"rgb": "Selector RGB"
+			"rgb": "Selector RGB",
+			"none": "Ninguno"
 		},
 		"rulebook": {
 			"name": "Libro de reglas",
@@ -403,6 +404,17 @@
 		"rememberDeletedItems": {
 			"name": "Recordar íconos de elementos eliminados",
 			"desc": "Cualquier ícono personalizado reaparecerá cuando su elemento vuelva a existir."
+		},
+		"maxBackups": {
+			"name": "Copias de seguridad automáticas máximas",
+			"desc": "Elige cuántas copias de seguridad quieres conservar de la configuración de tus íconos. Las copias de seguridad se realizan con un intervalo de 3 horas."
 		}
+	},
+	"backups": {
+		"backupNotice": "Iconic tuvo un problema al cargar la configuración de sus íconos.",
+		"backupSecondsAgo": "Sus íconos se han restaurado a partir de una copia de seguridad guardada hace {#} segundos.",
+		"backupMinutesAgo": "Sus íconos se han restaurado a partir de una copia de seguridad guardada hace {#} minutos.",
+		"backupHoursAgo": "Sus íconos se han restaurado a partir de una copia de seguridad guardada hace {#} horas.",
+		"backupDate": "Sus íconos se han restaurado a partir de una copia de seguridad guardada el {#}."
 	}
 }

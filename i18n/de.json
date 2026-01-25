@@ -300,7 +300,8 @@
 			"desktop": "Nur Desktop",
 			"mobile": "Nur Mobilgerät",
 			"list": "Farbliste",
-			"rgb": "RGB-Auswahl"
+			"rgb": "RGB-Auswahl",
+			"none": "Keine"
 		},
 		"rulebook": {
 			"name": "Regelbuch",
@@ -403,6 +404,17 @@
 		"rememberDeletedItems": {
 			"name": "Symbole gelöschter Elemente merken",
 			"desc": "Alle benutzerdefinierten Symbole werden wieder angezeigt, wenn ihr Element wieder existiert."
+		},
+		"maxBackups": {
+			"name": "Maximale Anzahl automatischer Backups",
+			"desc": "Wählen Sie, wie viele Backups Ihrer Symboleinstellungen gespeichert werden sollen. Backups werden im Abstand von 3 Stunden erstellt."
 		}
+	},
+	"backups": {
+		"backupNotice": "Iconic hatte ein Problem beim Laden der Symboleinstellungen.",
+		"backupSecondsAgo": "Ihre Symbole wurden aus einer Sicherung wiederhergestellt, die vor {#} Sekunden gespeichert wurde.",
+		"backupMinutesAgo": "Ihre Symbole wurden aus einer Sicherung wiederhergestellt, die vor {#} Minuten gespeichert wurde.",
+		"backupHoursAgo": "Ihre Symbole wurden aus einer Sicherung wiederhergestellt, die vor {#} Stunden gespeichert wurde.",
+		"backupDate": "Ihre Symbole wurden aus einer Sicherung wiederhergestellt, die am {#} gespeichert wurde."
 	}
 }

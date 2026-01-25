@@ -300,7 +300,8 @@
 			"desktop": "仅限桌面",
 			"mobile": "仅限移动设备",
 			"list": "颜色列表",
-			"rgb": "RGB 选择器"
+			"rgb": "RGB 选择器",
+			"none": "无"
 		},
 		"rulebook": {
 			"name": "规则书",
@@ -403,6 +404,17 @@
 		"rememberDeletedItems": {
 			"name": "记住已删除项目的图标",
 			"desc": "当项目再次存在时，任何自定义图标都会重新出现。"
+		},
+		"maxBackups": {
+			"name": "最大自动备份次数",
+			"desc": "选择要保留的图标设置备份数量。备份间隔为 3 小时。"
 		}
+	},
+	"backups": {
+		"backupNotice": "Iconic 加载图标设置时出现问题。",
+		"backupSecondsAgo": "您的图标已从 {#} 秒前保存的备份中恢复。",
+		"backupMinutesAgo": "您的图标已从 {#} 分钟前保存的备份中恢复。",
+		"backupHoursAgo": "您的图标已从 {#} 小时前保存的备份中恢复。",
+		"backupDate": "您的图标已从 {#} 日保存的备份中恢复。"
 	}
 }
