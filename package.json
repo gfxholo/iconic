@@ -1,6 +1,6 @@
 {
 	"name": "iconic",
-	"version": "1.1.7",
+	"version": "1.1.8",
 	"description": "Customize your icons and their colors directly from the UI, including tabs, files & folders, bookmarks, tags, properties, and ribbon commands.",
 	"main": "main.js",
 	"scripts": {
