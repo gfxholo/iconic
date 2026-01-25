@@ -1,3 +1,5 @@
+import { getLanguage } from 'obsidian';
+
 export default class Strings {
 	static appItems = {
 		help: 'Open help',
@@ -415,7 +417,7 @@ export default class Strings {
 	 */
 	private static async localize(): Promise<void> {
 		let localizedStrings: any;
-		switch (window.localStorage.language) {
+		switch (getLanguage()) {
 			case 'ar': localizedStrings = await import('i18n/ar.json'); break;
 			case 'de': localizedStrings = await import('i18n/de.json'); break;
 			case 'en-GB': localizedStrings = await import('i18n/en-GB.json'); break;
