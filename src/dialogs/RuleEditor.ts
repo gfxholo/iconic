@@ -5,6 +5,8 @@ import IconManager from 'src/managers/IconManager';
 import RuleChecker from 'src/dialogs/RuleChecker';
 import IconPicker from 'src/dialogs/IconPicker';
 import ConditionSetting from 'src/components/ConditionSetting';
+import ConditionValueSuggest from 'src/components/ConditionValueSuggest';
+import RuleNameSuggest from 'src/components/RuleNameSuggest';
 
 export type OperatorValueType = 'text' | 'regex' | 'number' | 'datetime' | 'date' | 'time' | 'weekday' | 'month' | 'color' | 'hex';
 
@@ -546,6 +548,7 @@ export default class RuleEditor extends Modal {
 			this.iconManager.setEventListener(text.inputEl, 'keydown', event => {
 				if (event.key === 'Enter') this.closeAndSave(this.rule);
 			});
+			new RuleNameSuggest(this.plugin, this.page, text);
 			this.nameField = text;
 		});
 
@@ -680,10 +683,10 @@ export default class RuleEditor extends Modal {
 			.onDrag((x, y) => this.onDrag(condSetting, x, y))
 			.onDragEnd(() => this.onDragEnd(condSetting));
 
+		new ConditionValueSuggest(this.plugin, this.page, condition, condSetting.valInput);
 		this.setConditionSource(condSetting, condition.source);
 		this.setConditionOperator(condSetting, condition.operator);
 		this.setConditionValue(condSetting, condition.value);
-
 		this.scrollerEl.append(condSetting.settingEl);
 
 		this.updateMatchesButton();
@@ -856,8 +859,8 @@ export default class RuleEditor extends Modal {
 			setting.valInput.setPlaceholder(inputPlaceholder);
 			setting.valInput.setValue(setting.condition.value);
 			// Insert element if not present
-			if (setting.opDropdown.selectEl.nextElementSibling !== setting.valInput.inputEl) {
-				setting.opDropdown.selectEl.after(setting.valInput.inputEl);
+			if (!setting.ctrlContainerEl.contains(setting.valInput.inputEl)) {
+				setting.ctrlContainerEl.append(setting.valInput.inputEl);
 			}
 		} else {
 			// Remove element
@@ -875,8 +878,8 @@ export default class RuleEditor extends Modal {
 				setting.valDropdown.setValue(setting.condition.value);
 			}
 			// Insert element if not present
-			if (setting.opDropdown.selectEl.nextElementSibling !== setting.valDropdown.selectEl) {
-				setting.opDropdown.selectEl.after(setting.valDropdown.selectEl);
+			if (!setting.ctrlContainerEl.contains(setting.valDropdown.selectEl)) {
+				setting.ctrlContainerEl.append(setting.valDropdown.selectEl);
 			}
 
 			// Preserve the selected value if possible
@@ -922,15 +925,17 @@ export default class RuleEditor extends Modal {
 		const { settingEl, gripEl } = setting;
 		navigator.vibrate?.(100); // Not supported on iOS
 
+		// Get bounding rectangles
+		const settingRect = settingEl.getBoundingClientRect();
+		const gripRect = gripEl.getBoundingClientRect();
+
 		// Create ghost and set initial position
-		setting.ghostEl = settingEl.doc.body.createDiv({ cls: 'drag-reorder-ghost' });
+		setting.ghostEl = settingEl.doc.body.createDiv({ cls: ['drag-reorder-ghost', 'iconic-condition-dragger'] });
 		setting.ghostEl.setCssStyles({
-			width: settingEl.clientWidth + 'px',
-			height: settingEl.clientHeight + 'px',
-			left: settingEl.doc.body.hasClass('mod-rtl')
-				? x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px'
-				: x - gripEl.clientWidth / 2 + 'px',
-			top: y - settingEl.clientHeight / 2 + 'px',
+			width: settingRect.width + 'px',
+			height: settingRect.height + 'px',
+			left: x - (gripRect.x - settingRect.x) - (gripRect.width / 2) + 'px',
+			top: y - settingRect.height / 2 + 'px',
 		});
 		setting.ghostEl.appendChild(settingEl.cloneNode(true));
 
@@ -953,12 +958,14 @@ export default class RuleEditor extends Modal {
 		// Ignore initial (0, 0) event
 		if (x === 0 && y === 0) return;
 
+		// Get bounding rectangles
+		const settingRect = settingEl.getBoundingClientRect();
+		const gripRect = gripEl.getBoundingClientRect();
+
 		// Update ghost position
 		setting.ghostEl?.setCssStyles({
-			left: settingEl.doc.body.hasClass('mod-rtl')
-				? x - settingEl.clientWidth + gripEl.clientWidth / 2 + 'px'
-				: x - gripEl.clientWidth / 2 + 'px',
-			top: y - settingEl.clientHeight / 2 + 'px',
+			left: x - (gripRect.x - settingRect.x) - (gripRect.width / 2) + 'px',
+			top: y - settingRect.height / 2 + 'px',
 		});
 
 		// Get position in list
@@ -1057,7 +1064,7 @@ export default class RuleEditor extends Modal {
 		this.iconManager.stopEventListeners();
 		this.iconManager.stopMutationObservers();
 		// Clean up any drag ghosts left hanging when dialog is closed
-		for (const ghostEl of this.modalEl.doc.body.findAll(':scope > .drag-reorder-ghost')) {
+		for (const ghostEl of this.modalEl.doc.body.findAll(':scope > .iconic-condition-dragger')) {
 			ghostEl.remove();
 		}
 

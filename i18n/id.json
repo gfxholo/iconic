@@ -300,7 +300,8 @@
 			"desktop": "Hanya desktop",
 			"mobile": "Hanya seluler",
 			"list": "Daftar warna",
-			"rgb": "Pemilih RGB"
+			"rgb": "Pemilih RGB",
+			"none": "Tidak ada"
 		},
 		"rulebook": {
 			"name": "Buku aturan",
@@ -403,6 +404,17 @@
 		"rememberDeletedItems": {
 			"name": "Ingat ikon item yang dihapus",
 			"desc": "Ikon khusus apa pun akan muncul kembali ketika itemnya ada lagi."
+		},
+		"maxBackups": {
+			"name": "Jumlah maksimum cadangan otomatis",
+			"desc": "Pilih berapa banyak cadangan pengaturan ikon yang ingin Anda simpan. Cadangan disimpan dengan jarak 3 jam."
 		}
+	},
+	"backups": {
+		"backupNotice": "Iconic mengalami masalah saat memuat pengaturan ikonnya.",
+		"backupSecondsAgo": "Ikon Anda telah dipulihkan dari cadangan yang disimpan {#} detik yang lalu.",
+		"backupMinutesAgo": "Ikon Anda telah dipulihkan dari cadangan yang disimpan {#} menit yang lalu.",
+		"backupHoursAgo": "Ikon Anda telah dipulihkan dari cadangan yang disimpan {#} jam yang lalu.",
+		"backupDate": "Ikon Anda telah dipulihkan dari cadangan yang disimpan pada {#}."
 	}
 }

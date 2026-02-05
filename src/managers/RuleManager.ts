@@ -195,7 +195,7 @@ export default class RuleManager {
 			conditions: [...rule.conditions],
 			enabled: rule.enabled,
 		};
-		
+
 		const index = ruleBases.indexOf(ruleBase) + 1;
 		ruleBases.splice(index, 0, {
 			id: duplicateRule.id,
@@ -574,7 +574,8 @@ export default class RuleManager {
 				const propId = condition.source.replace('property:', '');
 				if (metadata?.frontmatter) {
 					const fmProps = Object.entries(metadata.frontmatter);
-					source = fmProps.find(([fmPropId]) => fmPropId.toLowerCase() === propId.toLowerCase());
+					const fmProp = fmProps.find(([fmPropId]) => fmPropId.toLowerCase() === propId.toLowerCase());
+					if (Array.isArray(fmProp)) source = fmProp[1];
 				}
 			} else switch (condition.source) {
 				case 'icon': {

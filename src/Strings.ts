@@ -1,3 +1,5 @@
+import { getLanguage } from 'obsidian';
+
 export default class Strings {
 	static appItems = {
 		help: 'Open help',
@@ -297,6 +299,7 @@ export default class Strings {
 		values: {
 			on: 'On',
 			off: 'Off',
+			none: 'None',
 			desktop: 'Desktop only',
 			mobile: 'Mobile only',
 			list: 'List of colors',
@@ -404,7 +407,18 @@ export default class Strings {
 			name: 'Remember icons of deleted items',
 			desc: 'Any custom icons will reappear when their item exists again.',
 		},
+		maxBackups: {
+			name: 'Maximum automatic backups',
+			desc: 'Choose how many backups to keep of your icon settings. Backups are spaced 3 hours apart.',
+		},
 	};
+	static backups = {
+		backupNotice: 'Iconic had a problem loading its icon settings.',
+		backupSecondsAgo: 'Your icons have been restored from a backup saved {#} seconds ago.',
+		backupMinutesAgo: 'Your icons have been restored from a backup saved {#} minutes ago.',
+		backupHoursAgo: 'Your icons have been restored from a backup saved {#} hours ago.',
+		backupDate: 'Your icons have been restored from a backup saved on {#}.',
+	}
 
 	static {
 		Strings.localize();
@@ -415,7 +429,7 @@ export default class Strings {
 	 */
 	private static async localize(): Promise<void> {
 		let localizedStrings: any;
-		switch (window.localStorage.language) {
+		switch (getLanguage()) {
 			case 'ar': localizedStrings = await import('i18n/ar.json'); break;
 			case 'de': localizedStrings = await import('i18n/de.json'); break;
 			case 'en-GB': localizedStrings = await import('i18n/en-GB.json'); break;

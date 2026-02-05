@@ -96,8 +96,8 @@ export default class PropertyIconManager extends IconManager {
 			// Add menu items
 			if (this.plugin.settings.showMenuActions) {
 				this.setEventListener(itemEl, 'contextmenu', () => {
-					this.onContextMenu(prop.id), { capture: true };
-				});
+					this.onContextMenu(prop.id);
+				}, { capture: true });
 			} else {
 				this.stopEventListener(itemEl, 'contextmenu');
 			}
@@ -111,7 +111,7 @@ export default class PropertyIconManager extends IconManager {
 
 			const propId = propInputEl.value;
 			if (!propId) continue;
-			
+
 			const prop = this.plugin.getPropertyItem(propId);
 			if (!prop) continue;
 			const iconEl = propEl.find('.metadata-property-icon');
@@ -133,8 +133,8 @@ export default class PropertyIconManager extends IconManager {
 			// Add menu items
 			if (this.plugin.settings.showMenuActions) {
 				this.setEventListener(propEl, 'contextmenu', () => {
-					this.onContextMenu(prop.id), { capture: true };
-				});
+					this.onContextMenu(prop.id);
+				}, { capture: true });
 			} else {
 				this.stopEventListener(propEl, 'contextmenu');
 			}
