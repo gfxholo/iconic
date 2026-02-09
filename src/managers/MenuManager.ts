@@ -6,6 +6,8 @@ import { Menu, MenuItem, MenuPositionDef } from 'obsidian';
 export default class MenuManager {
 	private menu: Menu | null;
 	private queuedActions: (() => void)[] = [];
+	/** When true, the next menu opened will have queued actions applied to it. */
+	private expectingMenu: boolean = false;
 	private showAtPositionOriginal: typeof Menu.prototype.showAtPosition;
 	private showAtPositionProxy: typeof Menu.prototype.showAtPosition;
 
@@ -19,8 +21,9 @@ export default class MenuManager {
 		this.showAtPositionProxy = new Proxy(Menu.prototype.showAtPosition, {
 			apply(showAtPosition, menu: Menu, args: [position: MenuPositionDef, doc?: Document]) {
 				manager.menu = menu;
-				if (manager.queuedActions.length > 0) {
-					manager.runQueuedActions.call(manager); // Menu is unhappy with your customer service
+				if (manager.expectingMenu && manager.queuedActions.length > 0) {
+					manager.runQueuedActions.call(manager);
+					manager.expectingMenu = false;
 				}
 				return showAtPosition.call(menu, ...args);
 			}
@@ -117,12 +120,20 @@ export default class MenuManager {
 	}
 
 	/**
-	 * Close menu and flush any queued actions.
+	 * Check if a menu is currently captured.
+	 */
+	hasMenu(): boolean {
+		return this.menu !== null;
+	}
+
+	/**
+	 * Close menu and flush any queued actions, then prepare for a new menu.
 	 */
 	closeAndFlush(): void {
 		this.menu?.close();
 		this.menu = null;
 		this.flush();
+		this.expectingMenu = true;
 	}
 
 	/**
