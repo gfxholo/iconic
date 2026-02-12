@@ -1,16 +1,23 @@
-import { Platform } from 'obsidian';
-import IconicPlugin, { Category, FileItem, TabItem, STRINGS } from 'src/IconicPlugin';
+import { Platform, WorkspaceLeaf } from 'obsidian';
+import IconicPlugin, { Category, FileItem, TabItem, STRINGS, PLUGIN_TAB_TYPES } from 'src/IconicPlugin';
 import IconManager from 'src/managers/IconManager';
 import RuleEditor from 'src/dialogs/RuleEditor';
 import IconPicker from 'src/dialogs/IconPicker';
+
+const VERTICAL_TABS_VIEW_TYPE = 'vertical-tabs';
 
 /**
  * Handles icons in workspace tab headers.
  */
 export default class TabIconManager extends IconManager {
+	private vtObserverTimeout: number | null = null;
+
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
-		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => this.refreshIcons()));
+		this.plugin.registerEvent(this.app.workspace.on('layout-change', () => {
+			this.refreshIcons();
+			this.observeVerticalTabs();
+		}));
 		this.plugin.registerEvent(this.app.workspace.on('active-leaf-change', () => this.refreshIcons()));
 
 		// Refresh icons in tab selector dropdown ▼
@@ -34,6 +41,7 @@ export default class TabIconManager extends IconManager {
 		});
 
 		this.refreshIcons();
+		this.observeVerticalTabs();
 	}
 
 	/**
@@ -142,6 +150,8 @@ export default class TabIconManager extends IconManager {
 				}
 			}
 		}
+
+		this.refreshVerticalTabsIcons(unloading);
 	}
 
 	/**
@@ -235,6 +245,87 @@ export default class TabIconManager extends IconManager {
 					}
 				}));
 			});
+		}
+	}
+
+	/**
+	 * Get the Vertical Tabs plugin container element, if present.
+	 */
+	private getVerticalTabsContainer(): HTMLElement | null {
+		const leaves = this.app.workspace.getLeavesOfType(VERTICAL_TABS_VIEW_TYPE);
+		if (leaves.length === 0) return null;
+		return leaves[0].view.containerEl ?? null;
+	}
+
+	/**
+	 * Set up MutationObserver to catch Vertical Tabs React re-renders.
+	 */
+	private observeVerticalTabs(): void {
+		const vtContainer = this.getVerticalTabsContainer();
+		if (!vtContainer) return;
+
+		this.setMutationObserver(vtContainer, { childList: true, subtree: true }, () => {
+			if (this.vtObserverTimeout) window.cancelAnimationFrame(this.vtObserverTimeout);
+			this.vtObserverTimeout = window.requestAnimationFrame(() => {
+				this.refreshVerticalTabsIcons();
+			});
+		});
+	}
+
+	/**
+	 * Refresh icons in Vertical Tabs plugin view.
+	 */
+	private refreshVerticalTabsIcons(unloading?: boolean): void {
+		const vtContainer = this.getVerticalTabsContainer();
+		if (!vtContainer) return;
+
+		// Build a map of leaf IDs to leaves
+		const leafMap = new Map<string, WorkspaceLeaf>();
+		this.app.workspace.iterateAllLeaves(leaf => {
+			// @ts-expect-error (Private API)
+			leafMap.set(leaf.id, leaf);
+		});
+
+		const vtTabs = vtContainer.querySelectorAll('.tree-item.is-tab');
+
+		for (const vtTabEl of vtTabs) {
+			const leafId = vtTabEl.getAttribute('data-id');
+			if (!leafId) continue;
+
+			const vtIconEl = vtTabEl.querySelector(':scope > .tree-item-self > .tree-item-icon') as HTMLElement | null;
+			if (!vtIconEl) continue;
+
+			const leaf = leafMap.get(leafId);
+			if (!leaf) continue;
+
+			const viewType = leaf.view.getViewType();
+			if (viewType === 'webviewer') continue;
+			const filePath = leaf.view.getState().file;
+
+			let icon: string | null = null;
+			let color: string | null = null;
+			let iconDefault: string | null = leaf.view.getIcon();
+			let category: Category = 'tab';
+			let id: string = viewType;
+
+			if (filePath && !PLUGIN_TAB_TYPES.includes(viewType)) {
+				category = 'file';
+				id = typeof filePath === 'string' ? filePath : '';
+				const fileIcon = this.plugin.settings.fileIcons[id] ?? {};
+				icon = unloading ? null : fileIcon.icon ?? null;
+				color = unloading ? null : fileIcon.color ?? null;
+			} else {
+				const tabIcon = this.plugin.settings.tabIcons[viewType] ?? {};
+				icon = unloading ? null : tabIcon.icon ?? null;
+				color = unloading ? null : tabIcon.color ?? null;
+			}
+
+			const item = { id, name: leaf.getDisplayText(), icon, color, iconDefault, category };
+			const rule = category === 'file'
+				? this.plugin.ruleManager.checkRuling('file', id, unloading) ?? item
+				: item;
+
+			this.refreshIcon(rule, vtIconEl);
 		}
 	}
 
