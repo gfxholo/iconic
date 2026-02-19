@@ -1435,6 +1435,11 @@ export default class IconicPlugin extends Plugin {
 		const backupPath = normalizePath(dataPath + '.backup');
 		const { adapter } = this.app.vault;
 
+		// Disable automatic backups when set to "none"
+		if (this.settings.maxBackups <= 0) {
+			return;
+		}
+
 		// Determine if a new backup is due for creation
 		const backupStat = await adapter.stat(backupPath + 1);
 		const isDueForBackup = !backupStat || Date.now() - backupStat.mtime >= HOUR * 3;
