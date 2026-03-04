@@ -333,6 +333,10 @@ export default class Strings {
 			name: 'Minimal folder icons',
 			desc: 'Replace folder arrows with your folder icons.',
 		},
+		integrateFolderNotes: {
+			name: 'Folder Notes integration',
+			desc: 'Apply file rules to folders when the matched file is that folder\'s Folder Note.',
+		},
 		showMarkdownTabIcons: {
 			name: 'Show Markdown tab icons',
 			desc: 'Show tab icons for Markdown files.',

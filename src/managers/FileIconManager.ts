@@ -1,5 +1,5 @@
 import { WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { FileItem, STRINGS } from 'src/IconicPlugin';
+import IconicPlugin, { FileItem, STRINGS, Item } from 'src/IconicPlugin';
 import IconManager from 'src/managers/IconManager';
 import RuleEditor from 'src/dialogs/RuleEditor';
 import IconPicker from 'src/dialogs/IconPicker';
@@ -13,6 +13,10 @@ export default class FileIconManager extends IconManager {
 	 * Tracks pending refresh operations to prevent multiple rapid refreshes when expanding folders.
 	 */
 	private refreshTimerId: number;
+	/**
+	 * Cache for folder → folder-note file path mappings.
+	 */
+	private folderNoteCache = new Map<string, string | null>();
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
@@ -62,10 +66,113 @@ export default class FileIconManager extends IconManager {
 	}
 
 	/**
+	 * Clear the folder note cache.
+	 * Call this when the Folder Notes plugin settings might have changed.
+	 */
+	private clearFolderNoteCache(): void {
+		this.folderNoteCache.clear();
+	}
+
+	/**
+	 * Get the path of the folder note for a given folder path.
+	 * Returns null if no folder note exists or Folder Notes plugin is not enabled.
+	 */
+	private getFolderNotePath(folderPath: string): string | null {
+		if (!this.plugin.settings.integrateFolderNotes) return null;
+
+		// Check cache first
+		if (this.folderNoteCache.has(folderPath)) {
+			return this.folderNoteCache.get(folderPath) ?? null;
+		}
+
+		// Get Folder Notes plugin instance
+		// @ts-expect-error accessing other plugin via ID
+		const folderNotes = this.app.plugins.getPlugin('folder-notes');
+		if (!folderNotes) {
+			this.folderNoteCache.set(folderPath, null);
+			return null;
+		}
+
+		let folderNotePath: string | null = null;
+
+		// Check for detached folder note first
+		// Access Folder Notes plugin internals via any type
+		const excludedFolders = (folderNotes as any)?.settings?.excludeFolders ?? [];
+		const detachedFolder = excludedFolders.find((f: any) => f.path === folderPath && f.detached && f.detachedFilePath);
+		if (detachedFolder) {
+			const tFile = this.app.vault.getAbstractFileByPath(detachedFolder.detachedFilePath);
+			if (tFile) {
+				folderNotePath = tFile.path;
+			}
+		}
+
+		// If not detached, compute attached folder note path
+		if (!folderNotePath) {
+			// Access Folder Notes plugin internals via any type
+			const settings = (folderNotes as any)?.settings;
+			if (settings) {
+				const folderNoteName = settings.folderNoteName ?? '{{folder_name}}';
+				const folderNoteType = settings.folderNoteType ?? '.md';
+				const storageLocation = settings.storageLocation ?? 'insideFolder';
+				const supportedFileTypes = settings.supportedFileTypes ?? [];
+
+				const folderName = folderPath.split('/').pop() ?? '';
+				const fileName = folderNoteName.replace('{{folder_name}}', folderName);
+				const noteType = folderNoteType === '.excalidraw' ? '.md' : folderNoteType;
+
+				const possiblePaths: string[] = [];
+
+				if (storageLocation === 'insideFolder') {
+					possiblePaths.push(`${folderPath}/${fileName}${noteType}`);
+				} else if (storageLocation === 'parentFolder') {
+					const parentPath = folderPath.split('/').slice(0, -1).join('/') || '';
+					if (parentPath) {
+						possiblePaths.push(`${parentPath}/${fileName}${noteType}`);
+					} else {
+						possiblePaths.push(`${fileName}${noteType}`);
+					}
+				} else if (storageLocation === 'vaultFolder') {
+					possiblePaths.push(`${fileName}${noteType}`);
+				}
+
+				// Try primary type first, then fallback to supported types
+				for (const path of possiblePaths) {
+					const tFile = this.app.vault.getAbstractFileByPath(path);
+					if (tFile) {
+						folderNotePath = tFile.path;
+						break;
+					}
+				}
+
+				// If no primary type found, try supported file types
+				if (!folderNotePath && supportedFileTypes.length > 0) {
+					for (const type of supportedFileTypes) {
+						if (type === 'excalidraw') continue; // handled as .md
+						const ext = type.startsWith('.') ? type : `.${type}`;
+						for (const basePath of possiblePaths) {
+							const path = basePath.slice(0, -noteType.length) + ext;
+							const tFile = this.app.vault.getAbstractFileByPath(path);
+							if (tFile) {
+								folderNotePath = tFile.path;
+								break;
+							}
+						}
+						if (folderNotePath) break;
+					}
+				}
+			}
+		}
+
+		this.folderNoteCache.set(folderPath, folderNotePath);
+		return folderNotePath;
+	}
+
+	/**
 	 * @override
 	 * Refresh all file icons.
 	 */
 	refreshIcons(unloading?: boolean): void {
+		this.clearFolderNoteCache();
 		const files = this.plugin.getFileItems(unloading);
 		const itemEls = this.containerEl?.findAll(':scope > .tree-item');
 		if (itemEls) this.refreshChildIcons(files, itemEls, unloading);
@@ -84,7 +191,30 @@ export default class FileIconManager extends IconManager {
 
 			// Check for an icon ruling
 			const page = file.items ? 'folder' : 'file';
-			const rule = this.plugin.ruleManager.checkRuling(page, file.id, unloading) ?? file;
+			let rule: Item | null = this.plugin.ruleManager.checkRuling(page, file.id, unloading);
+
+			// For folders, also check folder-note file rulings if no folder rule exists
+			if (file.items && !rule && this.plugin.settings.integrateFolderNotes) {
+				const folderNotePath = this.getFolderNotePath(file.id);
+				if (folderNotePath) {
+					const noteRule = this.plugin.ruleManager.checkRuling('file', folderNotePath, unloading);
+					if (noteRule) {
+						// Use the folder-note rule's icon and color
+						// If noteRule has no icon but has color, synthesize a folder icon
+						if (!noteRule.icon && noteRule.color) {
+							rule = { ...noteRule, iconDefault: 'lucide-folder' };
+						} else {
+							rule = noteRule;
+						}
+					}
+				}
+			}
+
+			// Fall back to file's own icon settings if no rule applies
+			// Precedence: Folder rule > Folder-note rule > Manual folder icon
+			if (!rule) {
+				rule = file;
+			}
 
 			if (file.items) {
 				// Refresh children immediately if folder is expanded
@@ -136,6 +266,11 @@ export default class FileIconManager extends IconManager {
 					}
 				});
 			}
+			// rule is guaranteed to be non-null here
+			const nonNullRule = rule!;
+
+			// Declare display rule (will be set below)
+			let displayRule: Item = nonNullRule;
 
 			// Ensure icon element positioned before filename
 			let iconEl = selfEl.find(':scope > .tree-item-icon') ?? selfEl.createDiv({ cls: 'tree-item-icon' });
@@ -146,16 +281,31 @@ export default class FileIconManager extends IconManager {
 
 			if (file.items) {
 				// Toggle default icon based on expand/collapse state
-				if (file.iconDefault) file.iconDefault = iconEl.hasClass('is-collapsed')
+				// If rule is from folder-note and has iconDefault (color-only case),
+				// use a folder icon based on collapse state
+				let iconDefault = nonNullRule.iconDefault;
+				if (iconDefault === 'lucide-folder') {
+					iconDefault = iconEl.hasClass('is-collapsed')
+						? 'lucide-folder-closed'
+						: 'lucide-folder-open';
+				}
+			// Use file.iconDefault for manual folder icons if rule doesn't provide one
+			if (!iconDefault && file.iconDefault) {
+				iconDefault = iconEl.hasClass('is-collapsed')
 					? 'lucide-folder-closed'
 					: 'lucide-folder-open';
 			}
+			// Create a display rule with the correct iconDefault
+			displayRule = { ...nonNullRule, iconDefault };
+		} else {
+			displayRule = nonNullRule;
+		}
 
 			let folderIconEl = selfEl.find(':scope > .iconic-sidekick:not(.tree-item-icon)');
-			if (this.plugin.settings.minimalFolderIcons || !this.plugin.settings.showAllFolderIcons && !rule.icon && !rule.iconDefault) {
+			if (this.plugin.settings.minimalFolderIcons || !this.plugin.settings.showAllFolderIcons && !displayRule.icon && !displayRule.iconDefault) {
 				folderIconEl?.remove();
 			} else {
-				const arrowColor = rule.icon || rule.iconDefault ? null : rule.color;
+				const arrowColor = displayRule.icon || displayRule.iconDefault ? null : displayRule.color;
 				this.refreshIcon({ icon: null, color: arrowColor }, iconEl);
 				folderIconEl = folderIconEl ?? selfEl.createDiv({ cls: 'iconic-sidekick' });
 				if (iconEl.nextElementSibling !== folderIconEl) {
@@ -164,10 +314,10 @@ export default class FileIconManager extends IconManager {
 				iconEl = folderIconEl;
 			}
 
-			if (iconEl.hasClass('collapse-icon') && !rule.icon && !rule.iconDefault) {
-				this.refreshIcon(rule, iconEl); // Skip click listener if icon will be a collapse arrow
+			if (iconEl.hasClass('collapse-icon') && !displayRule.icon && !displayRule.iconDefault) {
+				this.refreshIcon(displayRule, iconEl); // Skip click listener if icon will be a collapse arrow
 			} else if (this.plugin.isSettingEnabled('clickableIcons')) {
-				this.refreshIcon(rule, iconEl, event => {
+				this.refreshIcon(displayRule, iconEl, event => {
 					IconPicker.openSingle(this.plugin, file, (newIcon, newColor) => {
 						this.plugin.saveFileIcon(file, newIcon, newColor);
 						this.plugin.refreshManagers('file', 'folder');
@@ -175,19 +325,19 @@ export default class FileIconManager extends IconManager {
 					event.stopPropagation();
 				});
 			} else {
-				this.refreshIcon(rule, iconEl);
+				this.refreshIcon(displayRule, iconEl);
 			}
 
 			// Update ghost icon when dragging
 			this.setEventListener(selfEl, 'dragstart', () => {
-				if (rule.icon || rule.iconDefault || rule.color) {
+				if (displayRule.icon || displayRule.iconDefault || displayRule.color) {
 					const ghostEl = selfEl.doc.body.find(':scope > .drag-ghost > .drag-ghost-self');
 					if (ghostEl) {
 						const spanEl = ghostEl.find('span');
-						const ghostIcon = (file.category === 'folder' && rule.icon === null)
+						const ghostIcon = (file.category === 'folder' && displayRule.icon === null)
 							? 'lucide-folder-open'
-							: rule.icon || rule.iconDefault;
-						this.refreshIcon({ icon: ghostIcon, color: rule.color }, ghostEl);
+							: displayRule.icon || displayRule.iconDefault;
+						this.refreshIcon({ icon: ghostIcon, color: displayRule.color }, ghostEl);
 						ghostEl.appendChild(spanEl);
 					}
 				}

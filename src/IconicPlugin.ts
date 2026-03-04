@@ -106,6 +106,7 @@ interface IconicSettings {
 	uncolorQuick: boolean;
 	rememberDeletedItems: boolean;
 	maxBackups: number;
+	integrateFolderNotes: boolean;
 	dialogState: {
 		iconMode: boolean;
 		emojiMode: boolean;
@@ -170,6 +171,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	uncolorQuick: false,
 	rememberDeletedItems: false,
 	maxBackups: 5,
+	integrateFolderNotes: false,
 	dialogState: {
 		iconMode: true,
 		emojiMode: false,

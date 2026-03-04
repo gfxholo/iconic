@@ -1,4 +1,4 @@
-import { ExtraButtonComponent, normalizePath, Platform, PluginSettingTab, SettingGroup } from 'obsidian';
+import { ExtraButtonComponent, normalizePath, Platform, PluginSettingTab, Setting } from 'obsidian';
 import IconicPlugin, { STRINGS } from 'src/IconicPlugin';
 import RulePicker from 'src/dialogs/RulePicker';
 
@@ -28,11 +28,8 @@ export default class IconicSettingTab extends PluginSettingTab {
 	display(): void {
 		this.containerEl.empty();
 
-		// GROUP: Top
-		const groupTop = new SettingGroup(this.containerEl);
-
 		// SETTING: Rules
-		groupTop.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.rulebook.name)
 			.setDesc(STRINGS.settings.rulebook.desc)
 			.addButton(button => { button
@@ -44,11 +41,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.app.setting.close();
 					RulePicker.open(this.plugin);
 				});
-			})
-		);
+			});
 
 		// SETTING: Bigger icons
-		groupTop.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.biggerIcons.name)
 			.setDesc(STRINGS.settings.biggerIcons.desc)
 			.addExtraButton(indicator => {
@@ -68,11 +64,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.refreshBody();
 				});
 				this.refreshIndicator(this.indicators.biggerIcons, dropdown.getValue());
-			})
-		);
+			});
 
 		// SETTING: Clickable icons
-		groupTop.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(Platform.isDesktop
 				? STRINGS.settings.clickableIcons.nameDesktop
 				: STRINGS.settings.clickableIcons.nameMobile
@@ -99,15 +94,13 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.refreshBody();
 				});
 				this.refreshIndicator(this.indicators.clickableIcons, dropdown.getValue());
-			})
-		);
+			});
 
 		// GROUP: Sidebars & tabs
-		const groupSidebarsAndTabs = new SettingGroup(this.containerEl)
-			.setHeading(STRINGS.settings.headingSidebarsAndTabs);
+		this.containerEl.createEl('h2', { text: STRINGS.settings.headingSidebarsAndTabs });
 
 		// SETTING: Show all file icons
-		groupSidebarsAndTabs.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showAllFileIcons.name)
 			.setDesc(STRINGS.settings.showAllFileIcons.desc)
 			.addToggle(toggle => toggle
@@ -117,11 +110,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 					this.plugin.refreshManagers('file');
 				})
-			)
-		);
+			);
 
 		// SETTING: Show all folder icons
-		groupSidebarsAndTabs.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showAllFolderIcons.name)
 			.setDesc(STRINGS.settings.showAllFolderIcons.desc)
 			.addToggle(toggle => toggle
@@ -131,11 +123,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 					this.plugin.refreshManagers('folder');
 				})
-			)
-		);
+			);
 
 		// SETTING: Minimal folder icons
-		groupSidebarsAndTabs.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.minimalFolderIcons.name)
 			.setDesc(STRINGS.settings.minimalFolderIcons.desc)
 			.addToggle(toggle => toggle
@@ -145,11 +136,23 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 					this.plugin.refreshManagers('folder');
 				})
-			)
-		);
+			);
+
+		// SETTING: Folder Notes integration
+		new Setting(this.containerEl)
+			.setName(STRINGS.settings.integrateFolderNotes.name)
+			.setDesc(STRINGS.settings.integrateFolderNotes.desc)
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.integrateFolderNotes)
+				.onChange(value => {
+					this.plugin.settings.integrateFolderNotes = value;
+					this.plugin.saveSettings();
+					this.plugin.refreshManagers('file');
+				})
+			);
 
 		// SETTING: Show Markdown tab icons
-		groupSidebarsAndTabs.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showMarkdownTabIcons.name)
 			.setDesc(STRINGS.settings.showMarkdownTabIcons.desc)
 			.addToggle(toggle => toggle
@@ -159,15 +162,13 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 					this.plugin.refreshBody();
 				})
-			)
-		);
+			);
 
 		// GROUP: Editor
-		const groupEditor = new SettingGroup(this.containerEl)
-			.setHeading(STRINGS.settings.headingEditor);
+		this.containerEl.createEl('h2', { text: STRINGS.settings.headingEditor });
 
 		// SETTING: Show title icons
-		groupEditor.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showTitleIcons.name)
 			.setDesc(STRINGS.settings.showTitleIcons.desc)
 			.addToggle(toggle => toggle
@@ -177,11 +178,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 					this.plugin.refreshManagers('file');
 				})
-			)
-		);
+			);
 
 		// SETTING: Show tag pill icons
-		groupEditor.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showTagPillIcons.name)
 			.setDesc(STRINGS.settings.showTagPillIcons.desc)
 			.addToggle(toggle => toggle
@@ -191,15 +191,13 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 					this.plugin.refreshManagers('tag');
 				})
-			)
-		);
+			);
 
 		// GROUP: Menus & dialogs
-		const groupMenusAndDialogs = new SettingGroup(this.containerEl)
-			.setHeading(STRINGS.settings.headingMenusAndDialogs);
+		this.containerEl.createEl('h2', { text: STRINGS.settings.headingMenusAndDialogs });
 
 		// SETTING: Show menu actions
-		groupMenusAndDialogs.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showMenuActions.name)
 			.setDesc(STRINGS.settings.showMenuActions.desc)
 			.addToggle(toggle => toggle
@@ -209,11 +207,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 					this.plugin.refreshManagers();
 				})
-			)
-		);
+			);
 
 		// SETTING: Show suggestion icons
-		groupMenusAndDialogs.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showSuggestionIcons.name)
 			.setDesc(STRINGS.settings.showSuggestionIcons.desc)
 			.addToggle(toggle => toggle
@@ -222,11 +219,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.settings.showSuggestionIcons = value;
 					this.plugin.saveSettings();
 				})
-			)
-		);
+			);
 
 		// SETTING: Show quick switcher icons
-		groupMenusAndDialogs.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showQuickSwitcherIcons.name)
 			.setDesc(STRINGS.settings.showQuickSwitcherIcons.desc)
 			.addToggle(toggle => toggle
@@ -235,11 +231,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.settings.showQuickSwitcherIcons = value;
 					this.plugin.saveSettings();
 				})
-			)
-		);
+			);
 
 		// SETTING: Show "Move file" dialog icons
-		groupMenusAndDialogs.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showMoveFileIcons.name)
 			.setDesc(STRINGS.settings.showMoveFileIcons.desc)
 			.addToggle(toggle => toggle
@@ -248,15 +243,13 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.settings.showMoveFileIcons = value;
 					this.plugin.saveSettings();
 				})
-			)
-		);
+			);
 
 		// GROUP: Icon picker
-		const groupIconPicker = new SettingGroup(this.containerEl)
-			.setHeading(STRINGS.settings.headingIconPicker);
+		this.containerEl.createEl('h2', { text: STRINGS.settings.headingIconPicker });
 
 		// SETTING: Show item name
-		groupIconPicker.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.showItemName.name)
 			.setDesc(STRINGS.settings.showItemName.desc)
 			.addExtraButton(indicator => {
@@ -275,11 +268,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 				});
 				this.refreshIndicator(this.indicators.showItemName, dropdown.getValue());
-			})
-		);
+			});
 
 		// SETTING: Bigger search results
-		groupIconPicker.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.biggerSearchResults.name)
 			.setDesc(STRINGS.settings.biggerSearchResults.desc)
 			.addExtraButton(indicator => {
@@ -299,11 +291,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.refreshBody();
 				});
 				this.refreshIndicator(this.indicators.biggerSearchResults, dropdown.getValue());
-			})
-		);
+			});
 
 		// SETTING: Max search results
-		groupIconPicker.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.maxSearchResults.name)
 			.setDesc(STRINGS.settings.maxSearchResults.desc)
 			.addSlider(slider => slider
@@ -314,11 +305,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.settings.maxSearchResults = value;
 					this.plugin.saveSettings();
 				})
-			)
-		);
+			);
 
 		// SETTING: Main color picker
-		groupIconPicker.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.colorPicker1.name)
 			.setDesc(Platform.isDesktop
 				? STRINGS.settings.colorPicker1.descDesktop
@@ -338,11 +328,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 				})
 				this.refreshIndicator(this.indicators.colorPicker1, dropdown.getValue());
-			})
-		);
+			});
 
 		// SETTING: Second color picker
-		groupIconPicker.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.colorPicker2.name)
 			.setDesc(Platform.isDesktop
 				? STRINGS.settings.colorPicker2.descDesktop
@@ -362,15 +351,13 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 				});
 				this.refreshIndicator(this.indicators.colorPicker2, dropdown.getValue());
-			})
-		);
+			});
 
 		// GROUP: Advanced
-		const groupAdvanced = new SettingGroup(this.containerEl)
-			.setHeading(STRINGS.settings.headingAdvanced);
+		this.containerEl.createEl('h2', { text: STRINGS.settings.headingAdvanced });
 
 		// SETTING: Colorless hover
-		groupAdvanced.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.uncolorHover.name)
 			.setDesc(STRINGS.settings.uncolorHover.desc)
 			.addToggle(toggle => toggle
@@ -380,11 +367,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 					this.plugin.refreshBody();
 				})
-			)
-		);
+			);
 
 		// SETTING: Colorless drag
-		groupAdvanced.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.uncolorDrag.name)
 			.setDesc(STRINGS.settings.uncolorDrag.desc)
 			.addToggle(toggle => toggle
@@ -394,11 +380,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 					this.plugin.refreshBody();
 				})
-			)
-		);
+			);
 
 		// SETTING: Colorless selection
-		groupAdvanced.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.uncolorSelect.name)
 			.setDesc(STRINGS.settings.uncolorSelect.desc)
 			.addToggle(toggle => toggle
@@ -408,11 +393,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 					this.plugin.refreshBody();
 				})
-			)
-		);
+			);
 
 		// SETTING: Colorless ribbon button
-		groupAdvanced.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.uncolorQuick.name)
 			.setDesc(STRINGS.settings.uncolorQuick.desc)
 			.addToggle(toggle => toggle
@@ -422,11 +406,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 					this.plugin.refreshManagers('ribbon');
 				})
-			)
-		);
+			);
 
 		// SETTING: Remember icons of deleted items
-		groupAdvanced.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.rememberDeletedItems.name)
 			.setDesc(STRINGS.settings.rememberDeletedItems.desc)
 			.addToggle(toggle => toggle
@@ -435,11 +418,10 @@ export default class IconicSettingTab extends PluginSettingTab {
 					this.plugin.settings.rememberDeletedItems = value;
 					this.plugin.saveSettings();
 				})
-			)
-		);
+			);
 
 		// SETTING: Maximum automatic backups
-		groupAdvanced.addSetting(setting => setting
+		new Setting(this.containerEl)
 			.setName(STRINGS.settings.maxBackups.name)
 			.setDesc(STRINGS.settings.maxBackups.desc)
 			.then(setting => {
@@ -465,7 +447,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 				this.plugin.settings.maxBackups = Number(value) || 0;
 				this.plugin.saveSettings();
 			})
-		));
+		);
 	}
 
 	/**
