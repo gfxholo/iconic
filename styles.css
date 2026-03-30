@@ -116,6 +116,18 @@ a.tag {
 	filter: contrast(200%);
 }
 
+/* Bases views */
+.bases-td .internal-link > .iconic-icon {
+	--icon-size: var(--icon-xs);
+	display: inline-flex;
+	margin-inline-end: var(--size-4-1);
+	vertical-align: middle;
+}
+.iconic-clickable-icons .bases-td .internal-link > .iconic-icon:hover {
+	cursor: var(--cursor-link);
+	filter: contrast(200%);
+}
+
 /* Editor title */
 .iconic-title-wrapper {
 	display: none;
