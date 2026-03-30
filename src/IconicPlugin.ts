@@ -14,6 +14,7 @@ import PropertyIconManager from 'src/managers/PropertyIconManager';
 import EditorIconManager from 'src/managers/EditorIconManager';
 import RibbonIconManager from 'src/managers/RibbonIconManager';
 import SuggestionIconManager from 'src/managers/SuggestionIconManager';
+import BaseIconManager from 'src/managers/BaseIconManager';
 import SuggestionDialogIconManager from 'src/managers/SuggestionDialogIconManager';
 import IconPicker from 'src/dialogs/IconPicker';
 import RulePicker from 'src/dialogs/RulePicker';
@@ -202,6 +203,7 @@ export default class IconicPlugin extends Plugin {
 	editorIconManager?: EditorIconManager;
 	ribbonIconManager?: RibbonIconManager;
 	suggestionIconManager?: SuggestionIconManager;
+	baseIconManager?: BaseIconManager;
 	suggestionDialogIconManager?: SuggestionDialogIconManager;
 	dialogCommands: Command[] = [];
 	private isSaving = false;
@@ -625,6 +627,7 @@ export default class IconicPlugin extends Plugin {
 		try { this.propertyIconManager = new PropertyIconManager(this) } catch (e) { console.error(e) }
 		try { this.editorIconManager = new EditorIconManager(this) } catch (e) { console.error(e) }
 		try { this.ribbonIconManager = new RibbonIconManager(this) } catch (e) { console.error(e) }
+		try { this.baseIconManager = new BaseIconManager(this) } catch (e) { console.error(e) }
 		try { this.suggestionIconManager = new SuggestionIconManager(this) } catch (e) { console.error(e) }
 		try { this.suggestionDialogIconManager = new SuggestionDialogIconManager(this) } catch (e) { console.error(e) }
 	}
@@ -649,6 +652,7 @@ export default class IconicPlugin extends Plugin {
 			managers.add(this.fileIconManager);
 			managers.add(this.bookmarkIconManager);
 			managers.add(this.editorIconManager);
+			managers.add(this.baseIconManager);
 		}
 		if (categories?.includes('folder')) {
 			managers.add(this.fileIconManager);
@@ -657,6 +661,7 @@ export default class IconicPlugin extends Plugin {
 		if (categories?.includes('tag')) {
 			managers.add(this.tagIconManager);
 			managers.add(this.editorIconManager);
+			managers.add(this.baseIconManager);
 		}
 		if (categories?.includes('property')) {
 			managers.add(this.propertyIconManager);
@@ -1565,6 +1570,7 @@ export default class IconicPlugin extends Plugin {
 		this.fileIconManager?.unload();
 		this.bookmarkIconManager?.unload();
 		this.tagIconManager?.unload();
+		this.baseIconManager?.unload();
 		this.propertyIconManager?.unload();
 		this.editorIconManager?.unload();
 		this.ribbonIconManager?.unload();
