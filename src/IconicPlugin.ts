@@ -1,22 +1,22 @@
 import { Command, Notice, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceFloating, WorkspaceLeaf, WorkspaceRoot, getIconIds, getLanguage, normalizePath } from 'obsidian';
-import IconicSettingTab from 'src/IconicSettingTab';
-import EMOJIS from 'src/Emojis';
-import STRINGS from 'src/Strings';
-import MenuManager from 'src/managers/MenuManager';
-import RuleManager, { RuleTrigger } from 'src/managers/RuleManager';
-import IconManager from 'src/managers/IconManager';
-import AppIconManager from 'src/managers/AppIconManager';
-import TabIconManager from 'src/managers/TabIconManager';
-import FileIconManager from 'src/managers/FileIconManager';
-import BookmarkIconManager from 'src/managers/BookmarkIconManager';
-import TagIconManager from 'src/managers/TagIconManager';
-import PropertyIconManager from 'src/managers/PropertyIconManager';
-import EditorIconManager from 'src/managers/EditorIconManager';
-import RibbonIconManager from 'src/managers/RibbonIconManager';
-import SuggestionIconManager from 'src/managers/SuggestionIconManager';
-import SuggestionDialogIconManager from 'src/managers/SuggestionDialogIconManager';
-import IconPicker from 'src/dialogs/IconPicker';
-import RulePicker from 'src/dialogs/RulePicker';
+import IconicSettingTab from 'src/IconicSettingTab.js';
+import EMOJIS from 'src/Emojis.js';
+import STRINGS from 'src/Strings.js';
+import MenuManager from 'src/managers/MenuManager.js';
+import RuleManager, { RuleTrigger } from 'src/managers/RuleManager.js';
+import IconManager from 'src/managers/IconManager.js';
+import AppIconManager from 'src/managers/AppIconManager.js';
+import TabIconManager from 'src/managers/TabIconManager.js';
+import FileIconManager from 'src/managers/FileIconManager.js';
+import BookmarkIconManager from 'src/managers/BookmarkIconManager.js';
+import TagIconManager from 'src/managers/TagIconManager.js';
+import PropertyIconManager from 'src/managers/PropertyIconManager.js';
+import EditorIconManager from 'src/managers/EditorIconManager.js';
+import RibbonIconManager from 'src/managers/RibbonIconManager.js';
+import SuggestionIconManager from 'src/managers/SuggestionIconManager.js';
+import SuggestionDialogIconManager from 'src/managers/SuggestionDialogIconManager.js';
+import IconPicker from 'src/dialogs/IconPicker.js';
+import RulePicker from 'src/dialogs/RulePicker.js';
 
 export const ICONS = new Map<string, string>();
 export { EMOJIS };
@@ -33,11 +33,8 @@ export const PLUGIN_TAB_TYPES = [
 	'outline',
 ];
 
-const SYNCABLE_TYPES = ['image', 'audio', 'video', 'pdf', 'unsupported'];
 const IMAGE_EXTENSIONS = ['bmp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif'];
 const AUDIO_EXTENSIONS = ['mp3', 'wav', 'm4a', '3gp', 'flac', 'ogg', 'oga', 'opus'];
-const VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogv', 'mov', 'mkv'];
-const SYNCABLE_EXTENSIONS = ['md', 'canvas', 'pdf'].concat(IMAGE_EXTENSIONS).concat(AUDIO_EXTENSIONS).concat(VIDEO_EXTENSIONS);
 
 const HOUR = 1000 * 60 * 60; // 1 hour in millis
 const MINUTE = 1000 * 60; // 1 minute in millis
@@ -104,7 +101,6 @@ interface IconicSettings {
 	uncolorDrag: boolean;
 	uncolorSelect: boolean;
 	uncolorQuick: boolean;
-	rememberDeletedItems: boolean;
 	maxBackups: number;
 	dialogState: {
 		iconMode: boolean;
@@ -113,7 +109,7 @@ interface IconicSettings {
 	},
 	appIcons: Record<string, { icon?: string, color?: string }>;
 	tabIcons: Record<string, { icon?: string, color?: string }>;
-	fileIcons: Record<string, { icon?: string, color?: string, unsynced?: string[] }>;
+	fileIcons: Record<string, { icon?: string, color?: string }>;
 	bookmarkIcons: Record<string, { icon?: string, color?: string }>;
 	tagIcons: Record<string, { icon?: string, color?: string }>;
 	propertyIcons: Record<string, { icon?: string, color?: string }>;
@@ -168,8 +164,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	uncolorDrag: false,
 	uncolorSelect: false,
 	uncolorQuick: false,
-	rememberDeletedItems: false,
-	maxBackups: 5,
+	maxBackups: 2,
 	dialogState: {
 		iconMode: true,
 		emojiMode: false,
@@ -190,9 +185,9 @@ const DEFAULT_SETTINGS: IconicSettings = {
  * Loads, unloads, and manages storage for the plugin.
  */
 export default class IconicPlugin extends Plugin {
-	settings: IconicSettings;
-	menuManager: MenuManager;
-	ruleManager: RuleManager;
+	settings: IconicSettings = DEFAULT_SETTINGS;
+	menuManager?: MenuManager;
+	ruleManager?: RuleManager;
 	appIconManager?: AppIconManager;
 	tabIconManager?: TabIconManager;
 	fileIconManager?: FileIconManager;
@@ -325,9 +320,13 @@ export default class IconicPlugin extends Plugin {
 				}
 			})
 			// Sort icon names alphabetically
-			.sort(([, aName], [, bName]) => aName.localeCompare(bName))
+			.sort(([, aName], [, bName]) => {
+				return (aName && bName) ? aName.localeCompare(bName) : 0;
+			})
 			// Populate ICONS map
-			.forEach(([id, name]) => ICONS.set(id, name));
+			.forEach(([id, name]) => {
+				if (id && name) ICONS.set(id, name);
+			});
 
 			this.startManagers();
 			this.refreshBody();
@@ -335,7 +334,7 @@ export default class IconicPlugin extends Plugin {
 			this.registerEvent(this.app.vault.on('create', tAbstractFile => {
 				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
 				// If a created file/folder triggers a new ruling, refresh icons
-				if (this.ruleManager.triggerRulings(page, 'rename', 'move', 'modify')) {
+				if (this.ruleManager?.triggerRulings(page, 'rename', 'move', 'modify')) {
 					this.refreshManagers(page);
 				}
 			}));
@@ -352,10 +351,10 @@ export default class IconicPlugin extends Plugin {
 				const { filename: oldFilename, tree: oldTree } = this.splitFilePath(oldPath);
 				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
 				// If a renamed file/folder triggers a new ruling, refresh icons
-				if (filename !== oldFilename && this.ruleManager.triggerRulings(page, 'rename')) {
+				if (filename !== oldFilename && this.ruleManager?.triggerRulings(page, 'rename')) {
 					this.refreshManagers(page);
 				// If a moved file/folder triggers a new ruling, refresh icons
-				} else if (tree !== oldTree && this.ruleManager.triggerRulings(page, 'move')) {
+				} else if (tree !== oldTree && this.ruleManager?.triggerRulings(page, 'move')) {
 					this.refreshManagers(page);
 				}
 			}));
@@ -369,13 +368,11 @@ export default class IconicPlugin extends Plugin {
 
 			this.registerEvent(this.app.vault.on('delete', (tAbstractFile) => {
 				const { path } = tAbstractFile;
-				if (this.settings.rememberDeletedItems === false) {
-					delete this.settings.fileIcons[path];
-					this.saveSettings();
-				}
+				delete this.settings.fileIcons[path];
+				this.saveSettings();
 				// If a deleted file/folder was associated with a ruling, update rulings
 				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
-				if (this.ruleManager.checkRuling(page, path)) {
+				if (this.ruleManager?.checkRuling(page, path)) {
 					this.ruleManager.updateRulings(page);
 				}
 			}));
@@ -517,7 +514,7 @@ export default class IconicPlugin extends Plugin {
 				this.settings.showMenuActions = !this.settings.showMenuActions;
 				this.saveSettings();
 				this.refreshManagers();
-				this.menuManager.closeAndFlush();
+				this.menuManager?.closeAndFlush();
 			}
 		});
 
@@ -581,12 +578,15 @@ export default class IconicPlugin extends Plugin {
 				if (tFile === null) return false;
 
 				const file = this.getFileItem(tFile.path);
-				if (checking) return file !== null;
+				if (file === null) return false;
 
-				IconPicker.openSingle(this, file, (newIcon, newColor) => {
-					this.saveFileIcon(file, newIcon, newColor);
-					this.refreshManagers('file');
-				});
+				if (!checking) {
+					IconPicker.openSingle(this, file, (newIcon, newColor) => {
+						this.saveFileIcon(file, newIcon, newColor);
+						this.refreshManagers('file');
+					});
+				}
+				return true
 			},
 		});
 	}
@@ -606,7 +606,7 @@ export default class IconicPlugin extends Plugin {
 	private onFileModify(tAbstractFile: TAbstractFile): void {
 		const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
 		// If a modified file/folder triggers a new ruling, refresh icons
-		if (this.ruleManager.triggerRulings(page, 'modify')) {
+		if (this.ruleManager?.triggerRulings(page, 'modify')) {
 			this.refreshManagers(page);
 		}
 	}
@@ -633,36 +633,36 @@ export default class IconicPlugin extends Plugin {
 	 * Refresh all icon managers, or a specific group of them.
 	 */
 	refreshManagers(...categories: Category[]): void {
-		if (categories) {
+		if (categories.length === 0) {
 			categories = ['app', 'tab', 'file', 'folder', 'tag', 'property', 'ribbon'];
 		}
 		const managers = new Set<IconManager | undefined>();
 
-		if (categories?.includes('app')) {
+		if (categories.includes('app')) {
 			managers.add(this.appIconManager);
 		}
-		if (categories?.includes('tab')) {
+		if (categories.includes('tab')) {
 			managers.add(this.tabIconManager);
 		}
-		if (categories?.includes('file')) {
+		if (categories.includes('file')) {
 			managers.add(this.tabIconManager);
 			managers.add(this.fileIconManager);
 			managers.add(this.bookmarkIconManager);
 			managers.add(this.editorIconManager);
 		}
-		if (categories?.includes('folder')) {
+		if (categories.includes('folder')) {
 			managers.add(this.fileIconManager);
 			managers.add(this.bookmarkIconManager);
 		}
-		if (categories?.includes('tag')) {
+		if (categories.includes('tag')) {
 			managers.add(this.tagIconManager);
 			managers.add(this.editorIconManager);
 		}
-		if (categories?.includes('property')) {
+		if (categories.includes('property')) {
 			managers.add(this.propertyIconManager);
 			managers.add(this.editorIconManager);
 		}
-		if (categories?.includes('ribbon')) {
+		if (categories.includes('ribbon')) {
 			managers.add(this.ribbonIconManager);
 		}
 
@@ -845,8 +845,6 @@ export default class IconicPlugin extends Plugin {
 			switch (tabType) {
 				case 'empty':
 					iconDefault = !isRoot || isStacked || tabIcon.color ? leaf.view.getIcon() : null; break;
-				case 'release-notes': // Add some sparkle to Obsidian updates
-					iconDefault = unloading ? leaf.view.getIcon() : 'lucide-sparkle'; break;
 				default:
 					iconDefault = leaf.view.getIcon(); break;
 			}
@@ -934,7 +932,7 @@ export default class IconicPlugin extends Plugin {
 		extension: string // Extension only
 		subpath: string   // #Subpath after extension
 	} {
-		const subpathExts = ['md', 'pdf']; // Extensions with linkable subpaths
+		const subpathExts = ['md', 'base', 'pdf']; // Extensions with linkable subpaths
 		const subpathStart = Math.max(...subpathExts.map(ext => {
 			const index = fileId.lastIndexOf(`.${ext}#`);
 			return index > -1 ? (index + ext.length + 1) : -1;
@@ -942,7 +940,7 @@ export default class IconicPlugin extends Plugin {
 		const subpath = subpathStart > -1 ? fileId.substring(subpathStart, fileId.length) : '';
 		const path = subpathStart > -1 ? fileId.substring(0, subpathStart) : fileId;
 
-		const [, tree = '', filename] = path.match(/^(.*\/)?(.*)$/s) ?? [];
+		const [, tree = '', filename = ''] = path.match(/^(.*\/)?(.*)$/s) ?? [];
 		const extensionStart = filename.lastIndexOf('.');
 		const extension = filename.substring(extensionStart > -1 ? extensionStart + 1 : filename.length) || '';
 		const basename = filename.substring(0, extensionStart > -1 ? extensionStart : filename.length) || '';
@@ -1216,7 +1214,7 @@ export default class IconicPlugin extends Plugin {
 		if (color !== fileBase?.color) triggers.add('color');
 		this.updateIconSetting(this.settings.fileIcons, file.id, icon, color);
 		this.saveSettings();
-		this.ruleManager.triggerRulings('file', ...triggers);
+		this.ruleManager?.triggerRulings('file', ...triggers);
 	}
 
 	/**
@@ -1235,7 +1233,7 @@ export default class IconicPlugin extends Plugin {
 			this.updateIconSetting(this.settings.fileIcons, file.id, file.icon, file.color);
 		}
 		this.saveSettings();
-		this.ruleManager.triggerRulings('file', ...triggers);
+		this.ruleManager?.triggerRulings('file', ...triggers);
 	}
 
 	/**
@@ -1256,7 +1254,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}
 		this.saveSettings();
-		this.ruleManager.triggerRulings('file', ...triggers);
+		this.ruleManager?.triggerRulings('file', ...triggers);
 	}
 
 	/**
@@ -1283,7 +1281,7 @@ export default class IconicPlugin extends Plugin {
 			}
 		}
 		this.saveSettings();
-		this.ruleManager.triggerRulings('file', ...triggers);
+		this.ruleManager?.triggerRulings('file', ...triggers);
 	}
 
 	/**
@@ -1345,7 +1343,7 @@ export default class IconicPlugin extends Plugin {
 	 */
 	private async loadSettings(): Promise<void> {
 		const { adapter } = this.app.vault;
-		const dataPath = normalizePath(this.app.vault.configDir + '/plugins/iconic/data.json');
+		const dataPath = normalizePath(this.manifest.dir + '/data.json');
 		const backupPath = normalizePath(dataPath + '.backup');
 
 		// If a backup exists, check `data.json` for corruption
@@ -1373,7 +1371,7 @@ export default class IconicPlugin extends Plugin {
 	 */
 	private async restoreBackup(): Promise<void> {
 		const { adapter } = this.app.vault;
-		const dataPath = normalizePath(this.app.vault.configDir + '/plugins/iconic/data.json');
+		const dataPath = normalizePath(this.manifest.dir + '/data.json');
 		const backupPath = normalizePath(dataPath + '.backup');
 		const backupStat = await adapter.stat(backupPath + 1);
 		if (!backupStat) return;
@@ -1411,7 +1409,6 @@ export default class IconicPlugin extends Plugin {
 	async saveSettings(): Promise<void> {
 		if (this.isSaving) return;
 		this.isSaving = true;
-		this.pruneSettings();
 
 		// Sort item IDs for human-readability
 		this.settings.appIcons = Object.fromEntries(Object.entries(this.settings.appIcons).sort());
@@ -1420,6 +1417,9 @@ export default class IconicPlugin extends Plugin {
 		this.settings.bookmarkIcons = Object.fromEntries(Object.entries(this.settings.bookmarkIcons).sort());
 		this.settings.propertyIcons = Object.fromEntries(Object.entries(this.settings.propertyIcons).sort());
 		this.settings.ribbonIcons = Object.fromEntries(Object.entries(this.settings.ribbonIcons).sort());
+
+		// Pause before writing to storage, in case the current state cause an instant crash
+		await sleep(300);
 
 		// Save and backup settings
 		await this.saveData(this.settings);
@@ -1431,21 +1431,22 @@ export default class IconicPlugin extends Plugin {
 	 * Backup settings to separate file
 	 */
 	async saveBackup(): Promise<void> {
-		const dataPath = normalizePath(this.app.vault.configDir + '/plugins/iconic/data.json');
+		const dataPath = normalizePath(this.manifest.dir + '/data.json');
 		const backupPath = normalizePath(dataPath + '.backup');
 		const { adapter } = this.app.vault;
 
 		// Determine if a new backup is due for creation
 		const backupStat = await adapter.stat(backupPath + 1);
-		const isDueForBackup = !backupStat || Date.now() - backupStat.mtime >= HOUR * 3;
+		const timeSinceLastBackup = Date.now() - (backupStat?.mtime ?? 0);
+		const isDueForBackup = this.settings.maxBackups > 0 && timeSinceLastBackup >= HOUR * 3;
 
 		// Loop through backup files
 		for (let i = 10; i--; i === 0) {
 			if (await adapter.exists(backupPath + i)) {
-				if (i > this.settings.maxBackups) {
-					// Delete any backup numbered higher than the maximum
+				if (i > this.settings.maxBackups || isDueForBackup && i === this.settings.maxBackups) {
+					// Delete any backup numbered higher than the maximum, or due for replacement
 					await adapter.remove(backupPath + i);
-				} else if (isDueForBackup) {
+				} else if (isDueForBackup && i < this.settings.maxBackups) {
 					// Increment backup number
 					await adapter.rename(backupPath + i, backupPath + (i + 1));
 				}
@@ -1459,107 +1460,11 @@ export default class IconicPlugin extends Plugin {
 	}
 
 	/**
-	 * Check for any deleted items and prune their icons.
-	 */
-	private pruneSettings(): void {
-		this.updateUnsyncedFiles();
-
-		// @ts-expect-error (Private API)
-		const isSyncing = this.app.internalPlugins?.plugins?.sync?.instance?.syncing === true;
-		// @ts-expect-error (Private API)
-		const isPaused = this.app.internalPlugins?.plugins?.sync?.instance?.pause === true;
-
-		// Disable pruning under these conditions
-		if (isSyncing || isPaused || this.settings.rememberDeletedItems) {
-			return;
-		}
-
-		// @ts-expect-error (Private API)
-		const thisAppId = this.app.appId;
-		// @ts-expect-error (Private API)
-		const bmarkBases = this.flattenBookmarks(this.app.internalPlugins?.plugins?.bookmarks?.instance?.items ?? []);
-		// @ts-expect-error (Private API)
-		const propBases = this.app.metadataTypeManager?.properties ?? [];
-
-		const fileIcons = Object.entries(this.settings.fileIcons).filter(([fileId, fileIcon]) =>
-			// Never prune files that are unsynced on another device
-			fileIcon.unsynced?.every(appId => appId === thisAppId) ?? true
-		);
-
-		// Prune file icons
-		for (const [fileId] of fileIcons) {
-			const { path, subpath } = this.splitFilePath(fileId);
-			const bmarkSubpath = subpath.replaceAll(/(?<!^)#|(?<!^#)\^|\s\s/g, ' ');
-			if (!this.app.vault.getAbstractFileByPath(path)) {
-				delete this.settings.fileIcons[fileId];
-			} else if (subpath && !bmarkBases.some(bmarkBase => bmarkBase.path === path && bmarkBase.subpath === bmarkSubpath)) {
-				delete this.settings.fileIcons[fileId];
-			}
-		}
-
-		// Prune bookmark icons
-		if (bmarkBases.length > 0) {
-			const baseIds = bmarkBases
-				.filter(bmarkBase => bmarkBase.type !== 'file' && bmarkBase.type !== 'folder')
-				.map(bmarkBase => bmarkBase.ctime.toString());
-			for (const savedId in this.settings.bookmarkIcons) {
-				if (!baseIds.includes(savedId)) {
-					delete this.settings.bookmarkIcons[savedId];
-				}
-			}
-		}
-
-		// Prune property icons
-		if (propBases.length > 0) {
-			const baseIds = Object.keys(propBases);
-			for (const savedId in this.settings.propertyIcons) {
-				if (!baseIds.some(baseId => baseId.toLowerCase() !== savedId.toLowerCase())) {
-					delete this.settings.propertyIcons[savedId];
-				}
-			}
-		}
-	}
-
-	/**
-	 * Flag any files excluded from Sync on this device.
-	 */
-	private updateUnsyncedFiles(): void {
-		// @ts-expect-error (Private API)
-		const appId = this.app.appId;
-		// @ts-expect-error (Private API)
-		const unsyncedFolders: string[] = this.app.internalPlugins?.plugins?.sync?.instance?.ignoreFolders ?? [];
-		// @ts-expect-error (Private API)
-		const unsyncedTypes: string[] = SYNCABLE_TYPES.filter(type => !this.app.internalPlugins?.plugins?.sync?.instance?.allowTypes.has(type));
-
-		for (const [fileId, fileIcon] of Object.entries(this.settings.fileIcons)) {
-			if (!Array.isArray(fileIcon.unsynced)) {
-				delete fileIcon.unsynced;
-			}
-
-			const { extension } = this.splitFilePath(fileId);
-			const unsynced = unsyncedFolders.some(folder => folder === fileId || fileId.startsWith(folder + '/'))
-				|| unsyncedTypes.includes('unsupported') && !SYNCABLE_EXTENSIONS.includes(extension)
-				|| unsyncedTypes.includes('image') && IMAGE_EXTENSIONS.includes(extension)
-				|| unsyncedTypes.includes('audio') && AUDIO_EXTENSIONS.includes(extension)
-				|| unsyncedTypes.includes('video') && VIDEO_EXTENSIONS.includes(extension)
-				|| unsyncedTypes.includes('pdf') && extension === 'pdf';
-
-			if (unsynced) {
-				fileIcon.unsynced = fileIcon.unsynced ?? [];
-				if (!fileIcon.unsynced.includes(appId)) fileIcon.unsynced.push(appId);
-			} else {
-				if (fileIcon.unsynced?.includes(appId)) fileIcon.unsynced?.remove(appId);
-				if (fileIcon.unsynced?.length === 0) delete fileIcon.unsynced;
-			}
-		}
-	}
-
-	/**
 	 * @override
 	 */
 	onunload(): void {
-		this.menuManager.unload();
-		this.ruleManager.unload();
+		this.menuManager?.unload();
+		this.ruleManager?.unload();
 		this.appIconManager?.unload();
 		this.tabIconManager?.unload();
 		this.fileIconManager?.unload();

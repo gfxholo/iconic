@@ -1,5 +1,5 @@
 import { AbstractInputSuggest, TextComponent, prepareFuzzySearch } from 'obsidian';
-import IconicPlugin, { Category } from 'src/IconicPlugin';
+import IconicPlugin, { Category } from 'src/IconicPlugin.js';
 
 /**
  * Popover that suggests names for a rule.
@@ -23,7 +23,7 @@ export default class RuleNameSuggest extends AbstractInputSuggest<any> {
 		const currentName = this.inputComponent.getValue();
 		const suggestions: any[] = [];
 		const fuzzySearch = prepareFuzzySearch(query);
-		const rules = this.plugin.ruleManager.getRules(this.page);
+		const rules = this.plugin.ruleManager!.getRules(this.page);
 		const names = new Set(rules.map(rule => rule.name));
 
 		for (const name of names) {

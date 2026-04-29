@@ -1,6 +1,6 @@
 import { AbstractInputSuggest, TextComponent, prepareFuzzySearch } from 'obsidian';
-import IconicPlugin, { Category } from 'src/IconicPlugin';
-import { ConditionItem } from 'src/managers/RuleManager';
+import IconicPlugin, { Category } from 'src/IconicPlugin.js';
+import { ConditionItem } from 'src/managers/RuleManager.js';
 
 const SUGGEST_FILE_NAMES = 'file-name';
 const SUGGEST_FILE_FILENAMES = 'file-filename';

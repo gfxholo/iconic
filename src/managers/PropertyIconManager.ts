@@ -1,7 +1,7 @@
 import { WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { PropertyItem, STRINGS } from 'src/IconicPlugin';
-import IconManager from 'src/managers/IconManager';
-import IconPicker from 'src/dialogs/IconPicker';
+import IconicPlugin, { PropertyItem, STRINGS } from 'src/IconicPlugin.js';
+import IconManager from 'src/managers/IconManager.js';
+import IconPicker from 'src/dialogs/IconPicker.js';
 
 /**
  * Handles icons in the All Properties and File Properties panes.
@@ -156,7 +156,7 @@ export default class PropertyIconManager extends IconManager {
 	 */
 	private onContextMenu(clickedPropId: string): void {
 		navigator.vibrate?.(100); // Not supported on iOS
-		this.plugin.menuManager.closeAndFlush();
+		this.plugin.menuManager?.closeAndFlush();
 		const clickedProp: PropertyItem = this.plugin.getPropertyItem(clickedPropId);
 		const selectedProps: PropertyItem[] = [];
 
@@ -176,7 +176,7 @@ export default class PropertyIconManager extends IconManager {
 		const changeTitle = selectedProps.length < 2
 			? STRINGS.menu.changeIcon
 			: STRINGS.menu.changeIcons.replace('{#}', selectedProps.length.toString());
-		this.plugin.menuManager.addItemAfter(['action.changeType', 'action'], item => item
+		this.plugin.menuManager?.addItemAfter(['action.changeType', 'action'], item => item
 			.setTitle(changeTitle)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')
@@ -207,7 +207,7 @@ export default class PropertyIconManager extends IconManager {
 				: STRINGS.menu.resetColors.replace('{#}', selectedProps.length.toString())
 		const removeIcon = clickedProp.icon || anySelectedIcons ? 'lucide-image-minus' : 'lucide-rotate-ccw';
 		if (clickedProp.icon || clickedProp.color || anySelectedIcons || anySelectedColors) {
-			this.plugin.menuManager.addItem(item => item
+			this.plugin.menuManager?.addItem(item => item
 				.setTitle(removeTitle)
 				.setIcon(removeIcon)
 				.setSection('icon')

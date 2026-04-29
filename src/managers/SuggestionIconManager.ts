@@ -1,6 +1,6 @@
 import { AbstractInputSuggest, EditorSuggest, TFile } from 'obsidian';
-import IconicPlugin from 'src/IconicPlugin';
-import IconManager from 'src/managers/IconManager';
+import IconicPlugin from 'src/IconicPlugin.js';
+import IconManager from 'src/managers/IconManager.js';
 
 const FILE_SUGGESTION = 'file';
 const TAG_SUGGESTION = 'tag';
@@ -12,16 +12,16 @@ const UNKNOWN_SUGGESTION = null;
  */
 export default class SuggestionIconManager extends IconManager {
 	// @ts-expect-error (Private API)
-	private showAbstractSuggestionsOriginal: typeof AbstractInputSuggest.prototype.showSuggestions;
+	private showAbstractSuggestionsOriginal: typeof AbstractInputSuggest.prototype.showSuggestions | null = null;
 	// @ts-expect-error (Private API)
-	private showAbstractSuggestionsProxy: typeof AbstractInputSuggest.prototype.showSuggestions;
-	private renderAbstractSuggestionProxy: typeof AbstractInputSuggest.prototype.renderSuggestion;
+	private showAbstractSuggestionsProxy: typeof AbstractInputSuggest.prototype.showSuggestions | null = null;
+	private renderAbstractSuggestionProxy: typeof AbstractInputSuggest.prototype.renderSuggestion | null = null;
 
 	// @ts-expect-error (Private API)
-	private showEditorSuggestionsOriginal: typeof AbstractInputSuggest.prototype.showSuggestions;
+	private showEditorSuggestionsOriginal: typeof AbstractInputSuggest.prototype.showSuggestions | null = null;
 	// @ts-expect-error (Private API)
-	private showEditorSuggestionsProxy: typeof AbstractInputSuggest.prototype.showSuggestions;
-	private renderEditorSuggestionProxy: typeof AbstractInputSuggest.prototype.renderSuggestion;
+	private showEditorSuggestionsProxy: typeof AbstractInputSuggest.prototype.showSuggestions | null = null;
+	private renderEditorSuggestionProxy: typeof AbstractInputSuggest.prototype.renderSuggestion | null = null;
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
@@ -160,7 +160,7 @@ export default class SuggestionIconManager extends IconManager {
 		if (!fileId) return;
 		const file = this.plugin.getFileItem(fileId);
 		if (!file) return;
-		const rule = this.plugin.ruleManager.checkRuling('file', fileId) ?? file;
+		const rule = this.plugin.ruleManager?.checkRuling('file', fileId) ?? file;
 
 		el.addClass('iconic-item');
 		const iconContainerEl = el.find(':scope > .suggestion-icon')

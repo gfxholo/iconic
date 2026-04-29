@@ -54,6 +54,10 @@
 			"gray": "灰色"
 		}
 	},
+	"usageChecker": {
+		"unusedIcons": "未使用的图标",
+		"noUnusedIconsFound": "未找到未使用的图标。"
+	},
 	"categories": {
 		"item": "项",
 		"items": "项",
@@ -132,8 +136,8 @@
 			"embeds": "嵌入链接",
 			"tags": "标签",
 			"properties": "属性...",
-			"created": "创建日期",
-			"modified": "修改日期",
+			"created": "创建时间",
+			"modified": "修改时间",
 			"clock": "系统时间"
 		},
 		"operator": {
@@ -170,10 +174,10 @@
 			"!isTrue": "不为真",
 			"isFalse": "为假",
 			"!isFalse": "不为假",
-			"equals": "等于",
-			"!equals": "不等于",
-			"isLess": "小于",
-			"isMore": "大于",
+			"equals": "=",
+			"!equals": "≠",
+			"isLess": "<",
+			"isMore": ">",
 			"isDivisible": "能被...整除",
 			"!isLess": "不小于",
 			"!isMore": "不大于",
@@ -270,8 +274,7 @@
 		"folderMatch": "1 个匹配文件夹",
 		"filesMatch": "{#} 个匹配文件",
 		"foldersMatch": "{#} 个匹配文件夹",
-		"highlight": "高亮显示",
-		"headingMatches": "匹配结果"
+		"highlight": "高亮显示"
 	},
 	"commands": {
 		"openRulebook": "打开规则表",
@@ -294,6 +297,7 @@
 		"changeIconCurrentFile": "更改当前文件图标"
 	},
 	"settings": {
+		"manage": "管理",
 		"values": {
 			"on": "开启",
 			"off": "关闭",
@@ -305,8 +309,7 @@
 		},
 		"rulebook": {
 			"name": "规则表",
-			"desc": "为文件/文件夹图标设置自动化规则。",
-			"manage": "管理"
+			"desc": "为文件/文件夹图标设置自动化规则。"
 		},
 		"biggerIcons": {
 			"name": "大图标",
@@ -401,13 +404,14 @@
 			"name": "功能区项目按钮无色",
 			"desc": "在移动端功能区的项目按钮中，禁用图标颜色。"
 		},
-		"rememberDeletedItems": {
-			"name": "记住已删除项目的图标",
-			"desc": "当被删除的项目被重新创建时，自定义图标会恢复显示。"
+		"viewUnusedIcons": {
+			"name": "查看未使用的图标",
+			"desc": "移除分配给已不存在于库中的文件或文件夹的图标。"
 		},
 		"maxBackups": {
 			"name": "最大自动备份次数",
-			"desc": "选择要保留的图标设置备份数量。备份间隔为 3 小时。"
+			"desc": "选择要保留的图标设置备份数量。备份间隔为 3 小时。",
+			"openPluginFolder": "打开插件文件夹"
 		}
 	},
 	"backups": {

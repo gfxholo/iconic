@@ -1,13 +1,13 @@
 import { Menu, WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { TagItem, STRINGS } from 'src/IconicPlugin';
-import IconManager from 'src/managers/IconManager';
-import IconPicker from 'src/dialogs/IconPicker';
+import IconicPlugin, { TagItem, STRINGS } from 'src/IconicPlugin.js';
+import IconManager from 'src/managers/IconManager.js';
+import IconPicker from 'src/dialogs/IconPicker.js';
 
 /**
  * Handles icons in the Tags pane.
  */
 export default class TagIconManager extends IconManager {
-	private containerEl: HTMLElement;
+	private containerEl: HTMLElement | null = null;
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
@@ -102,7 +102,7 @@ export default class TagIconManager extends IconManager {
 	 */
 	onContextMenu(tagId: string, event: MouseEvent): void {
 		navigator.vibrate?.(100); // Not supported on iOS
-		this.plugin.menuManager.closeAndFlush();
+		this.plugin.menuManager?.closeAndFlush();
 		const tag = this.plugin.getTagItem(tagId);
 		if (!tag) return;
 
@@ -112,7 +112,7 @@ export default class TagIconManager extends IconManager {
 			: new Menu();
 
 		// Change icon
-		menu.addItem(menuItem => menuItem
+		menu?.addItem(menuItem => menuItem
 			.setTitle(STRINGS.menu.changeIcon)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')
@@ -124,7 +124,7 @@ export default class TagIconManager extends IconManager {
 
 		// Remove icon / Reset color
 		if (tag.icon || tag.color) {
-			menu.addItem(menuItem => menuItem
+			menu?.addItem(menuItem => menuItem
 				.setTitle(tag.icon ? STRINGS.menu.removeIcon : STRINGS.menu.resetColor)
 				.setIcon(tag.icon ? 'lucide-image-minus' : 'lucide-rotate-ccw')
 				.setSection('icon')

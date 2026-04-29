@@ -1,8 +1,8 @@
 import { Platform } from 'obsidian';
-import IconicPlugin, { Category, FileItem, TabItem, STRINGS } from 'src/IconicPlugin';
-import IconManager from 'src/managers/IconManager';
-import RuleEditor from 'src/dialogs/RuleEditor';
-import IconPicker from 'src/dialogs/IconPicker';
+import IconicPlugin, { Category, FileItem, TabItem, STRINGS } from 'src/IconicPlugin.js';
+import IconManager from 'src/managers/IconManager.js';
+import RuleEditor from 'src/dialogs/RuleEditor.js';
+import IconPicker from 'src/dialogs/IconPicker.js';
 
 /**
  * Handles icons in workspace tab headers.
@@ -17,11 +17,11 @@ export default class TabIconManager extends IconManager {
 		const tabListEl = activeDocument.body.find('.mod-root .workspace-tab-header-tab-list > .clickable-icon');
 		if (tabListEl) this.setEventListener(tabListEl, 'click', () => {
 			const tabs = this.plugin.getTabItems().filter(tab => tab.isRoot);
-			this.plugin.menuManager.forSection('tablist', (item, i) => {
+			this.plugin.menuManager?.forSection('tablist', (item, i) => {
 				const tab = tabs[i];
 				if (!tab) return;
 				if (tab.category === 'file') {
-					const rule = this.plugin.ruleManager.checkRuling('file', tab.id) ?? tab;
+					const rule = this.plugin.ruleManager?.checkRuling('file', tab.id) ?? tab;
 					rule.iconDefault = rule.iconDefault ?? 'lucide-file';
 					// @ts-expect-error (Private API)
 					this.refreshIcon(rule, item.iconEl);
@@ -50,7 +50,7 @@ export default class TabIconManager extends IconManager {
 
 			// Check for an icon ruling
 			const rule = tab.category === 'file'
-				? this.plugin.ruleManager.checkRuling('file', tab.id, unloading) ?? tab
+				? this.plugin.ruleManager?.checkRuling('file', tab.id, unloading) ?? tab
 				: tab;
 
 			if (tab.isRoot && this.plugin.isSettingEnabled('clickableIcons')) {
@@ -148,7 +148,7 @@ export default class TabIconManager extends IconManager {
 	 * When user context-clicks a tab, add custom items to the menu.
 	 */
 	private onContextMenu(tabId: string, tabCategory: Category) {
-		this.plugin.menuManager.closeAndFlush();
+		this.plugin.menuManager?.closeAndFlush();
 
 		if (tabCategory === 'file') {
 			this.onFileContextMenu(this.plugin.getFileItem(tabId));
@@ -162,10 +162,10 @@ export default class TabIconManager extends IconManager {
 	 * Add custom items to a tab menu.
 	 */
 	private onTabContextMenu(tab: TabItem): void {
-		this.plugin.menuManager.flush();
+		this.plugin.menuManager?.flush();
 
 		// Change icon
-		this.plugin.menuManager.addItemAfter('close', item => item
+		this.plugin.menuManager?.addItemAfter('close', item => item
 			.setTitle(STRINGS.menu.changeIcon)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')
@@ -177,7 +177,7 @@ export default class TabIconManager extends IconManager {
 
 		// Remove icon / Reset color
 		if (tab.icon || tab.color) {
-			this.plugin.menuManager.addItem(item => item
+			this.plugin.menuManager?.addItem(item => item
 				.setTitle(tab.icon ? STRINGS.menu.removeIcon : STRINGS.menu.resetColor)
 				.setIcon(tab.icon ? 'lucide-image-minus' : 'lucide-rotate-ccw')
 				.setSection('icon')
@@ -193,10 +193,10 @@ export default class TabIconManager extends IconManager {
 	 * Add custom items to a file tab menu.
 	 */
 	private onFileContextMenu(file: FileItem): void {
-		this.plugin.menuManager.flush();
+		this.plugin.menuManager?.flush();
 
 		// Change icon
-		this.plugin.menuManager.addItemAfter('close', item => item
+		this.plugin.menuManager?.addItemAfter('close', item => item
 			.setTitle(STRINGS.menu.changeIcon)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')
@@ -208,7 +208,7 @@ export default class TabIconManager extends IconManager {
 
 		// Remove icon / Reset color
 		if (file.icon || file.color) {
-			this.plugin.menuManager.addItem(item => item
+			this.plugin.menuManager?.addItem(item => item
 				.setTitle(file.icon ? STRINGS.menu.removeIcon : STRINGS.menu.resetColor)
 				.setIcon(file.icon ? 'lucide-image-minus' : 'lucide-rotate-ccw')
 				.setSection('icon')
@@ -220,16 +220,16 @@ export default class TabIconManager extends IconManager {
 		}
 
 		// Edit rule
-		const rule = this.plugin.ruleManager.checkRuling('file', file.id);
+		const rule = this.plugin.ruleManager?.checkRuling('file', file.id);
 		if (rule) {
-			this.plugin.menuManager.addItem(item => { item
+			this.plugin.menuManager?.addItem(item => { item
 				.setTitle(STRINGS.menu.editRule)
 				.setIcon('lucide-image-play')
 				.setSection('icon')
 				.onClick(() => RuleEditor.open(this.plugin, 'file', rule, newRule => {
 					const isRulingChanged = newRule
-						? this.plugin.ruleManager.saveRule('file', newRule)
-						: this.plugin.ruleManager.deleteRule('file', rule.id);
+						? this.plugin.ruleManager?.saveRule('file', newRule)
+						: this.plugin.ruleManager?.deleteRule('file', rule.id);
 					if (isRulingChanged) {
 						this.plugin.refreshManagers('file');
 					}

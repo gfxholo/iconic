@@ -54,6 +54,10 @@
 			"gray": "Gris"
 		}
 	},
+	"usageChecker": {
+		"unusedIcons": "Icônes inutilisées",
+		"noUnusedIconsFound": "Aucune icône inutilisée trouvée."
+	},
 	"categories": {
 		"item": "Élément",
 		"items": "Éléments",
@@ -126,10 +130,10 @@
 			"filename": "Nom de fichier",
 			"extension": "Extension",
 			"tree": "Chemin du dossier",
-			"path": "Chemin dans le coffre",
+			"path": "Chemin de coffre",
 			"headings": "Sous-titres",
 			"links": "Liens",
-			"embeds": "Aperçus",
+			"embeds": "Intégrations",
 			"tags": "Mots-clés",
 			"properties": "Propriétés...",
 			"created": "Date de création",
@@ -170,10 +174,10 @@
 			"!isTrue": "n'est pas vrai",
 			"isFalse": "est faux",
 			"!isFalse": "n'est pas faux",
-			"equals": "égale",
-			"!equals": "n'est pas égal à",
-			"isLess": "est inférieur à",
-			"isMore": "est supérieur à",
+			"equals": "=",
+			"!equals": "≠",
+			"isLess": "<",
+			"isMore": ">",
 			"isDivisible": "est divisible par",
 			"!isLess": "n'est pas inférieur à",
 			"!isMore": "n'est pas supérieur à",
@@ -270,8 +274,7 @@
 		"folderMatch": "1 dossier correspondant",
 		"filesMatch": "{#} fichiers correspondants",
 		"foldersMatch": "{#} dossiers correspondants",
-		"highlight": "Surligner",
-		"headingMatches": "Correspondances"
+		"highlight": "Surligner"
 	},
 	"commands": {
 		"openRulebook": "Ouvrir le livre de règles",
@@ -294,6 +297,7 @@
 		"changeIconCurrentFile": "Changer l'icône du fichier actuel"
 	},
 	"settings": {
+		"manage": "Gérer",
 		"values": {
 			"on": "Activé",
 			"off": "Désactivé",
@@ -305,8 +309,7 @@
 		},
 		"rulebook": {
 			"name": "Livre de règles",
-			"desc": "Configurer des règles automatisées pour les icônes de fichiers et de dossiers.",
-			"manage": "Gérer"
+			"desc": "Configurer des règles automatisées pour les icônes de fichiers et de dossiers."
 		},
 		"biggerIcons": {
 			"name": "Icônes plus grandes",
@@ -401,13 +404,14 @@
 			"name": "Bouton de ruban incolore",
 			"desc": "Désactiver la couleur de l'icône pour le bouton de ruban d'accès rapide sur mobile."
 		},
-		"rememberDeletedItems": {
-			"name": "Mémoriser les icônes des éléments supprimés",
-			"desc": "Toutes les icônes personnalisées réapparaîtront lorsque leur élément existera à nouveau."
+		"viewUnusedIcons": {
+			"name": "Afficher les icônes inutilisées",
+			"desc": "Nettoyer les icônes attribuées aux fichiers ou dossiers qui ne se trouvent plus dans votre coffre-fort."
 		},
 		"maxBackups": {
 			"name": "Nombre maximal de sauvegardes automatiques",
-			"desc": "Choisissez le nombre de sauvegardes de vos paramètres d'icônes à conserver. Les sauvegardes sont espacées de 3 heures."
+			"desc": "Choisissez le nombre de sauvegardes de vos paramètres d'icônes à conserver. Les sauvegardes sont espacées de 3 heures.",
+			"openPluginFolder": "Ouvrir le dossier des module complémentaire"
 		}
 	},
 	"backups": {

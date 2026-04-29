@@ -1,6 +1,6 @@
 import { Instruction, Plugin, SuggestModal, TFile, TFolder, WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { PLUGIN_TAB_TYPES } from 'src/IconicPlugin';
-import IconManager from 'src/managers/IconManager';
+import IconicPlugin, { PLUGIN_TAB_TYPES } from 'src/IconicPlugin.js';
+import IconManager from 'src/managers/IconManager.js';
 
 type PluginModal = SuggestModal<any> & { plugin: Plugin };
 
@@ -35,14 +35,14 @@ export default class SuggestionDialogIconManager extends IconManager {
 
 		// Catch Quick Switcher, Quick Switcher++, and "Move file" dialogs
 		this.onOpenProxy = new Proxy(SuggestModal.prototype.onOpen, {
-			apply(onOpen, modal, args) {
+			apply(onOpen, modal) {
 				if (manager.isDisabled()) {
-					return onOpen.call(modal, ...args);
+					return onOpen.call(modal);
 				}
 
 				const modalType = manager.getModalType(modal);
 				if (!modalType) {
-					return onOpen.call(modal, ...args);
+					return onOpen.call(modal);
 				}
 
 				// Proxy renderSuggestion() for each instance
@@ -73,7 +73,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 					}
 				});
 
-				return onOpen.call(modal, ...args);
+				return onOpen.call(modal);
 			}
 		});
 
@@ -149,7 +149,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 			case 'file': {
 				if (value.file instanceof TFile) {
 					const file = this.plugin.getFileItem(value.file.path);
-					const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
+					const rule = this.plugin.ruleManager?.checkRuling('file', file.id) ?? file;
 					if (rule.icon || rule.color) {
 						const iconEl = el.find('.iconic-icon') ?? el.createDiv();
 						el.prepend(iconEl);
@@ -162,7 +162,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 				const bmarkBase = value.item;
 				if (bmarkBase.type === 'file') {
 					const file = this.plugin.getFileItem(bmarkBase.path);
-					const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
+					const rule = this.plugin.ruleManager?.checkRuling('file', file.id) ?? file;
 					if (rule.icon || rule.color) {
 						const iconEl = el.find('.iconic-icon') ?? el.createDiv();
 						this.refreshIcon(rule, iconEl);
@@ -182,7 +182,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 			case 'file': {
 				if (value.file instanceof TFile) {
 					const file = this.plugin.getFileItem(value.file.path);
-					const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
+					const rule = this.plugin.ruleManager?.checkRuling('file', file.id) ?? file;
 					if (rule.icon || rule.color) {
 						const iconEl = el.find('.iconic-icon') ?? el.createDiv();
 						el.prepend(iconEl);
@@ -195,7 +195,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 				const bmarkBase = value.item;
 				if (bmarkBase.type === 'file' || bmarkBase.type === 'folder') {
 					const file = this.plugin.getFileItem(bmarkBase.path);
-					const rule = this.plugin.ruleManager.checkRuling(bmarkBase.type, file.id) ?? file;
+					const rule = this.plugin.ruleManager?.checkRuling(bmarkBase.type, file.id) ?? file;
 					if (rule.icon || rule.color) {
 						const iconEl = el.find('.iconic-icon') ?? el.createDiv();
 						el.prepend(iconEl);
@@ -212,7 +212,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 				// Distinguish between file tabs and plugin tabs
 				if (!PLUGIN_TAB_TYPES.includes(tabType) && value.file instanceof TFile) {
 					const file = this.plugin.getFileItem(value.file.path);
-					const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
+					const rule = this.plugin.ruleManager?.checkRuling('file', file.id) ?? file;
 					if (rule.icon || rule.color) {
 						const iconEl = el.find('.iconic-icon') ?? el.createDiv();
 						el.prepend(iconEl);
@@ -241,7 +241,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 
 		const itemEl = el.find('.another-quick-switcher__item');
 		const file = this.plugin.getFileItem(tFile.path);
-		const rule = this.plugin.ruleManager.checkRuling('file', file.id) ?? file;
+		const rule = this.plugin.ruleManager?.checkRuling('file', file.id) ?? file;
 
 		if (rule.icon || rule.color) {
 			const iconEl = itemEl.find('.iconic-icon') ?? itemEl.createDiv();
@@ -267,7 +267,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 		}
 
 		const folder = this.plugin.getFileItem(tFolder.path);
-		const rule = this.plugin.ruleManager.checkRuling('folder', folder.id) ?? folder;
+		const rule = this.plugin.ruleManager?.checkRuling('folder', folder.id) ?? folder;
 
 		if (rule.icon || rule.color) {
 			const iconEl = el.find('.iconic-icon') ?? el.createDiv();

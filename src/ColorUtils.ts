@@ -220,7 +220,7 @@ export default class ColorUtils {
 	 * @param color a color name, or a specific CSS color
 	 */
 	static toRgbObject(color: string | null | undefined): RGB {
-		const [r, g, b] = this.toRgb(color)
+		const [r = 128, g = 128, b = 128] = this.toRgb(color)
 			.replaceAll(/[^\d.,]/g, '')
 			.split(',')
 			.map(Number);
@@ -233,7 +233,7 @@ export default class ColorUtils {
 	 * @see {@link https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB}
 	 */
 	static toHslArray(color: string | null | undefined): [h: number, s: number, l: number] {
-		let [r, g, b] = this.toRgb(color)
+		let [r = 128, g = 128, b = 128] = this.toRgb(color)
 			.replaceAll(/[^\d.,]/g, '')
 			.split(',')
 			.map(Number);
@@ -266,7 +266,10 @@ export default class ColorUtils {
 		const matches = colorMix.match(REGEX_COLOR_MIX);
 		if (!matches) return 'rgb(0, 0, 0)';
 
-		let [, r1, g1, b1, a1, p1, r2, g2, b2, a2, p2] = matches.map(Number);
+		let [,
+			r1 = 128, g1 = 128, b1 = 128, a1 = 255, p1 = 50,
+			r2 = 128, g2 = 128, b2 = 128, a2 = 255, p2 = 50
+		] = matches.map(Number);
 
 		// Normalize any missing percentages
 		p1 = isNaN(p1) ? (isNaN(p2) ? 50 : 100 - p2) : p1;

@@ -1,10 +1,10 @@
 import { Modal, Setting } from 'obsidian';
-import IconicPlugin, { Category, Icon, Item, STRINGS } from 'src/IconicPlugin';
-import { RuleItem } from 'src/managers/RuleManager';
-import IconManager from 'src/managers/IconManager';
-import IconPicker from 'src/dialogs/IconPicker';
-import RuleEditor from 'src/dialogs/RuleEditor';
-import RuleSetting from 'src/components/RuleSetting';
+import IconicPlugin, { Icon, Item, STRINGS } from 'src/IconicPlugin.js';
+import { RuleItem } from 'src/managers/RuleManager.js';
+import IconManager from 'src/managers/IconManager.js';
+import IconPicker from 'src/dialogs/IconPicker.js';
+import RuleEditor from 'src/dialogs/RuleEditor.js';
+import RuleSetting from 'src/components/RuleSetting.js';
 
 /**
  * Exposes private methods as public for use by {@link RulePicker}.
@@ -55,7 +55,7 @@ export default class RulePicker extends Modal {
 	private readonly iconManager: RulePickerManager;
 
 	// Components
-	private scrollerEl: HTMLElement;
+	private scrollerEl!: HTMLElement;
 
 	private constructor(plugin: IconicPlugin) {
 		super(plugin.app);
@@ -94,8 +94,12 @@ export default class RulePicker extends Modal {
 					file: STRINGS.rulePicker.fileRules,
 					folder: STRINGS.rulePicker.folderRules,
 				})
-				.onChange((value: Category) => {
-					dialogState.rulePage = value;
+				.onChange(value => {
+					switch (value) {
+						default: dialogState.rulePage = 'file'; break;
+						case 'file': dialogState.rulePage = 'file'; break;
+						case 'folder': dialogState.rulePage = 'folder'; break;
+					}
 					this.refreshRules();
 				})
 				.setValue(dialogState.rulePage);
@@ -113,8 +117,8 @@ export default class RulePicker extends Modal {
 		// LIST: Rules
 		const rules: RuleItem[] = [];
 		switch (dialogState.rulePage) {
-			case 'file': rules.push(...this.plugin.ruleManager.getRules(dialogState.rulePage)); break;
-			case 'folder': rules.push(...this.plugin.ruleManager.getRules(dialogState.rulePage)); break;
+			case 'file': rules.push(...this.plugin.ruleManager!.getRules('file')); break;
+			case 'folder': rules.push(...this.plugin.ruleManager!.getRules('folder')); break;
 		}
 		this.scrollerEl = this.modalEl.createDiv({ cls: 'iconic-scroller' });
 		for (const rule of rules) {
@@ -127,7 +131,7 @@ export default class RulePicker extends Modal {
 	 */
 	private refreshRules(): void {
 		this.scrollerEl.empty();
-		for (const rule of this.plugin.ruleManager.getRules(this.plugin.settings.dialogState.rulePage)) {
+		for (const rule of this.plugin.ruleManager!.getRules(this.plugin.settings.dialogState.rulePage)) {
 			this.insertRule(rule, this.scrollerEl.childElementCount);
 		}
 	}
@@ -149,23 +153,23 @@ export default class RulePicker extends Modal {
 		// Set callbacks
 		ruleSetting.onRename(name => {
 			rule.name = name;
-			const isRulingChanged = this.plugin.ruleManager.saveRule(page, rule);
+			const isRulingChanged = this.plugin.ruleManager!.saveRule(page, rule);
 			if (isRulingChanged) this.plugin.refreshManagers(page);
 		})
 		.onToggle(enabled => {
 			rule.enabled = enabled;
-			const isRulingChanged = this.plugin.ruleManager.saveRule(page, rule);
+			const isRulingChanged = this.plugin.ruleManager!.saveRule(page, rule);
 			if (isRulingChanged) this.plugin.refreshManagers(page);
 		})
 		.onIconClick(() => {
 			IconPicker.openSingle(this.plugin, rule, (newIcon, newColor) => {
 				this.iconManager.refreshIcon({
-					icon: newIcon ?? this.plugin.ruleManager.getPageIcon(page),
+					icon: newIcon ?? this.plugin.ruleManager!.getPageIcon(page),
 					color: newColor,
 				}, ruleSetting.iconEl);
 				rule.icon = newIcon;
 				rule.color = newColor;
-				const isRulingChanged = this.plugin.ruleManager.saveRule(page, rule);
+				const isRulingChanged = this.plugin.ruleManager!.saveRule(page, rule);
 				if (isRulingChanged) this.plugin.refreshManagers(page);
 			});
 		})
@@ -176,14 +180,14 @@ export default class RulePicker extends Modal {
 					rule = newRule;
 					ruleSetting.setName(newRule.name);
 					this.iconManager.refreshIcon({
-						icon: newRule.icon ?? this.plugin.ruleManager.getPageIcon(page),
+						icon: newRule.icon ?? this.plugin.ruleManager!.getPageIcon(page),
 						color: newRule.color,
 					}, ruleSetting.iconEl);
 					ruleSetting.toggle.setValue(newRule.enabled);
-					isRulingChanged = this.plugin.ruleManager.saveRule(page, newRule);
+					isRulingChanged = this.plugin.ruleManager!.saveRule(page, newRule);
 				} else {
 					settingEl.remove();
-					isRulingChanged = this.plugin.ruleManager.deleteRule(page, rule.id);
+					isRulingChanged = this.plugin.ruleManager!.deleteRule(page, rule.id);
 				}
 				if (isRulingChanged) this.plugin.refreshManagers(page);
 			})
@@ -194,7 +198,7 @@ export default class RulePicker extends Modal {
 		})
 		.onDuplicate(() => {
 			const page = this.plugin.settings.dialogState.rulePage;
-			const duplicateRule = this.plugin.ruleManager.duplicateRule(page, rule);
+			const duplicateRule = this.plugin.ruleManager!.duplicateRule(page, rule);
 			const index = this.scrollerEl.indexOf(settingEl) + 1;
 			this.insertRule(duplicateRule, index);
 		})
@@ -211,12 +215,12 @@ export default class RulePicker extends Modal {
 			} else {
 				this.scrollerEl.lastElementChild?.after(settingEl);
 			}
-			const isRulingChanged = this.plugin.ruleManager.moveRule(page, rule, toIndex);
+			const isRulingChanged = this.plugin.ruleManager!.moveRule(page, rule, toIndex);
 			if (isRulingChanged) this.plugin.refreshManagers(page);
 		})
 		.onRemove(() => {
 			settingEl.remove();
-			const isRulingChanged = this.plugin.ruleManager.deleteRule(page, rule.id);
+			const isRulingChanged = this.plugin.ruleManager!.deleteRule(page, rule.id);
 			if (isRulingChanged) this.plugin.refreshManagers(page);
 		})
 		.onDragStart((x, y) => {
@@ -254,17 +258,21 @@ export default class RulePicker extends Modal {
 			const index = this.scrollerEl.indexOf(settingEl);
 			// If ghost is dragged into rule above, swap the rules
 			const prevRuleEl = this.scrollerEl.children[index - 1];
-			const prevOverdrag = prevRuleEl?.clientHeight * 0.25 || 0;
-			if (prevRuleEl && y < prevRuleEl.getBoundingClientRect().bottom - prevOverdrag) {
-				navigator.vibrate?.(100); // Not supported on iOS
-				prevRuleEl.before(settingEl);
+			if (prevRuleEl) {
+				const prevOverdrag = prevRuleEl.clientHeight * 0.25;
+				if (y < prevRuleEl.getBoundingClientRect().bottom - prevOverdrag) {
+					navigator.vibrate?.(100); // Not supported on iOS
+					prevRuleEl.before(settingEl);
+				}
 			}
 			// If ghost is dragged into rule below, swap the rules
 			const nextRuleEl = this.scrollerEl.children[index + 1];
-			const nextOverdrag = nextRuleEl?.clientHeight * 0.25 || 0;
-			if (nextRuleEl && y > nextRuleEl.getBoundingClientRect().top + nextOverdrag) {
-				navigator.vibrate?.(100); // Not supported on iOS
-				nextRuleEl.after(settingEl);
+			if (nextRuleEl) {
+				const nextOverdrag = nextRuleEl?.clientHeight * 0.25;
+				if (y > nextRuleEl.getBoundingClientRect().top + nextOverdrag) {
+					navigator.vibrate?.(100); // Not supported on iOS
+					nextRuleEl.after(settingEl);
+				}
 			}
 		})
 		.onDragEnd(() => {
@@ -275,7 +283,7 @@ export default class RulePicker extends Modal {
 			// Save rule position
 			const toIndex = this.scrollerEl.indexOf(settingEl);
 			if (toIndex > -1) {
-				const isRulingChanged = this.plugin.ruleManager.moveRule(page, rule, toIndex);
+				const isRulingChanged = this.plugin.ruleManager!.moveRule(page, rule, toIndex);
 				if (isRulingChanged) this.plugin.refreshManagers(page);
 			}
 		});
@@ -291,10 +299,10 @@ export default class RulePicker extends Modal {
 	 */
 	private newRule(index?: number): void {
 		const page = this.plugin.settings.dialogState.rulePage;
-		const newRule = this.plugin.ruleManager.newRule(page);
+		const newRule = this.plugin.ruleManager!.newRule(page);
 
 		if (index !== undefined && index >= 0) {
-			this.plugin.ruleManager.moveRule(page, newRule, index);
+			this.plugin.ruleManager!.moveRule(page, newRule, index);
 			this.insertRule(newRule, index, true);
 		} else {
 			index = this.scrollerEl.childElementCount;

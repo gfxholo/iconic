@@ -1,6 +1,7 @@
-import { ExtraButtonComponent, normalizePath, Platform, PluginSettingTab, SettingGroup } from 'obsidian';
-import IconicPlugin, { STRINGS } from 'src/IconicPlugin';
-import RulePicker from 'src/dialogs/RulePicker';
+import { ExtraButtonComponent, Platform, PluginSettingTab, SettingGroup } from 'obsidian';
+import IconicPlugin, { FileItem, STRINGS } from 'src/IconicPlugin.js';
+import RulePicker from 'src/dialogs/RulePicker.js';
+import UsageChecker from 'src/dialogs/UsageChecker.js';
 
 /**
  * Exposes UI settings for the plugin.
@@ -36,7 +37,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 			.setName(STRINGS.settings.rulebook.name)
 			.setDesc(STRINGS.settings.rulebook.desc)
 			.addButton(button => { button
-				.setButtonText(STRINGS.settings.rulebook.manage)
+				.setButtonText(STRINGS.settings.manage)
 				.onClick(() => {
 					// Silently no-op if rulebook hasn't finished loading
 					if (!this.plugin.ruleManager) return;
@@ -302,7 +303,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 			})
 		);
 
-		// SETTING: Max search results
+		// SETTING: Maximum search results
 		groupIconPicker.addSetting(setting => setting
 			.setName(STRINGS.settings.maxSearchResults.name)
 			.setDesc(STRINGS.settings.maxSearchResults.desc)
@@ -425,15 +426,21 @@ export default class IconicSettingTab extends PluginSettingTab {
 			)
 		);
 
-		// SETTING: Remember icons of deleted items
+		// SETTING: View unused icons
 		groupAdvanced.addSetting(setting => setting
-			.setName(STRINGS.settings.rememberDeletedItems.name)
-			.setDesc(STRINGS.settings.rememberDeletedItems.desc)
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.rememberDeletedItems)
-				.onChange(value => {
-					this.plugin.settings.rememberDeletedItems = value;
-					this.plugin.saveSettings();
+			.setName(STRINGS.settings.viewUnusedIcons.name)
+			.setDesc(STRINGS.settings.viewUnusedIcons.desc)
+			.addButton(button => button
+				.setButtonText(STRINGS.settings.manage)
+				.onClick(async () => {
+					const unusedIcons: FileItem[] = [];
+					for (const fileId of Object.keys(this.plugin.settings.fileIcons)) {
+						if (!await this.app.vault.adapter.exists(fileId)) {
+							const file = this.plugin.getFileItem(fileId);
+							unusedIcons.push(file);
+						}
+					}
+					UsageChecker.open(this.plugin, unusedIcons);
 				})
 			)
 		);
@@ -445,33 +452,36 @@ export default class IconicSettingTab extends PluginSettingTab {
 			.then(setting => {
 				if (Platform.isDesktop) setting.addExtraButton(button => button
 					.setIcon('lucide-folder-open')
+					.setTooltip(STRINGS.settings.maxBackups.openPluginFolder)
 					// @ts-expect-error (Private API)
-					.onClick(() => this.app.openWithDefaultApp(normalizePath(this.app.vault.configDir + '/plugins/iconic')))
+					.onClick(() => this.app.openWithDefaultApp(this.plugin.manifest.dir ?? ''))
 				)
 			})
 			.addDropdown(dropdown => dropdown
-			.addOption('0', STRINGS.settings.values.none)
-			.addOption('1', '1')
-			.addOption('2', '2')
-			.addOption('3', '3')
-			.addOption('4', '4')
-			.addOption('5', '5')
-			.addOption('6', '6')
-			.addOption('7', '7')
-			.addOption('8', '8')
-			.addOption('9', '9')
-			.setValue(this.plugin.settings.maxBackups.toString())
-			.onChange(value => {
-				this.plugin.settings.maxBackups = Number(value) || 0;
-				this.plugin.saveSettings();
-			})
-		));
+				.addOption('0', STRINGS.settings.values.none)
+				.addOption('1', '1')
+				.addOption('2', '2')
+				.addOption('3', '3')
+				.addOption('4', '4')
+				.addOption('5', '5')
+				.addOption('6', '6')
+				.addOption('7', '7')
+				.addOption('8', '8')
+				.addOption('9', '9')
+				.setValue(this.plugin.settings.maxBackups.toString())
+				.onChange(value => {
+					this.plugin.settings.maxBackups = Number(value) || 0;
+					this.plugin.saveSettings();
+				})
+			)
+		);
 	}
 
 	/**
 	 * Change a dropdown indicator icon.
 	 */
-	private refreshIndicator(indicator: ExtraButtonComponent, value: string): void {
+	private refreshIndicator(indicator: ExtraButtonComponent | undefined, value: string): void {
+		if (!indicator) return;
 		switch (value) {
 			case 'desktop': indicator.setIcon('lucide-monitor'); break;
 			case 'mobile': indicator.setIcon('lucide-tablet-smartphone'); break;

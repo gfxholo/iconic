@@ -54,6 +54,10 @@
 			"gray": "Abu-abu"
 		}
 	},
+	"usageChecker": {
+		"unusedIcons": "Ikon yang tidak digunakan",
+		"noUnusedIconsFound": "Tidak ditemukan ikon yang tidak digunakan."
+	},
 	"categories": {
 		"item": "Item",
 		"items": "Item",
@@ -123,7 +127,7 @@
 			"icon": "Ikon",
 			"color": "Warna",
 			"name": "Nama",
-			"filename": "Nama berkas",
+			"filename": "Nama lengkap file",
 			"extension": "Ekstensi",
 			"tree": "Pohon folder",
 			"path": "Jalur dalam brankas",
@@ -132,8 +136,8 @@
 			"embeds": "Sematan",
 			"tags": "Tag",
 			"properties": "Properti...",
-			"created": "Tanggal dibuat",
-			"modified": "Tanggal diubah",
+			"created": "Waktu dibuat",
+			"modified": "Waktu modifikasi",
 			"clock": "Jam sistem"
 		},
 		"operator": {
@@ -170,10 +174,10 @@
 			"!isTrue": "tidak benar",
 			"isFalse": "salah",
 			"!isFalse": "tidak salah",
-			"equals": "sama dengan",
-			"!equals": "tidak sama dengan",
-			"isLess": "kurang dari",
-			"isMore": "lebih dari",
+			"equals": "=",
+			"!equals": "≠",
+			"isLess": "<",
+			"isMore": ">",
 			"isDivisible": "dapat dibagi oleh",
 			"!isLess": "tidak kurang dari",
 			"!isMore": "tidak lebih dari",
@@ -270,8 +274,7 @@
 		"folderMatch": "1 folder yang cocok",
 		"filesMatch": "{#} file yang cocok",
 		"foldersMatch": "{#} folder yang cocok",
-		"highlight": "Sorot",
-		"headingMatches": "Cocok"
+		"highlight": "Sorot"
 	},
 	"commands": {
 		"openRulebook": "Buka buku aturan",
@@ -294,6 +297,7 @@
 		"changeIconCurrentFile": "Ubah ikon file saat ini"
 	},
 	"settings": {
+		"manage": "Kelola",
 		"values": {
 			"on": "Aktif",
 			"off": "Nonaktif",
@@ -305,8 +309,7 @@
 		},
 		"rulebook": {
 			"name": "Buku aturan",
-			"desc": "Siapkan aturan otomatis untuk ikon berkas dan folder.",
-			"manage": "Kelola"
+			"desc": "Siapkan aturan otomatis untuk ikon berkas dan folder."
 		},
 		"biggerIcons": {
 			"name": "Ikon yang lebih besar",
@@ -401,13 +404,14 @@
 			"name": "Tombol ribbon tanpa warna",
 			"desc": "Nonaktifkan warna ikon untuk akses cepat tombol ribbon di ponsel."
 		},
-		"rememberDeletedItems": {
-			"name": "Ingat ikon item yang dihapus",
-			"desc": "Ikon khusus apa pun akan muncul kembali ketika itemnya ada lagi."
+		"viewUnusedIcons": {
+			"name": "Lihat ikon yang tidak digunakan",
+			"desc": "Bersihkan ikon yang ditugaskan ke file atau folder yang tidak lagi ada di brankas Anda."
 		},
 		"maxBackups": {
 			"name": "Jumlah maksimum cadangan otomatis",
-			"desc": "Pilih berapa banyak cadangan pengaturan ikon yang ingin Anda simpan. Cadangan disimpan dengan jarak 3 jam."
+			"desc": "Pilih berapa banyak cadangan pengaturan ikon yang ingin Anda simpan. Cadangan disimpan dengan jarak 3 jam.",
+			"openPluginFolder": "Buka folder plugin"
 		}
 	},
 	"backups": {

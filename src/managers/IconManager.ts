@@ -1,6 +1,6 @@
 import { App, setIcon } from 'obsidian';
-import IconicPlugin, { Item, Icon, ICONS, EMOJIS } from 'src/IconicPlugin';
-import ColorUtils from 'src/ColorUtils';
+import IconicPlugin, { Item, Icon, ICONS, EMOJIS } from 'src/IconicPlugin.js';
+import ColorUtils from 'src/ColorUtils.js';
 
 /**
  * Base class for all icon managers.
@@ -9,7 +9,8 @@ export default abstract class IconManager {
 	protected readonly app: App;
 	protected readonly plugin: IconicPlugin;
 	private readonly eventListeners = new Map<string, Map<HTMLElement, {
-		listener: EventListener, options?: boolean | AddEventListenerOptions
+		listener: (this: HTMLElement, event: any) => any,
+		options?: boolean | AddEventListenerOptions,
 	}>>();
 	private readonly mutationObservers = new Map<HTMLElement, MutationObserver>();
 

@@ -1,12 +1,12 @@
 import { ButtonComponent, Modal, Platform, Setting, TextComponent } from 'obsidian';
-import IconicPlugin, { Category, Icon, Item, FileItem, STRINGS } from 'src/IconicPlugin';
-import { RuleItem, ConditionItem } from 'src/managers/RuleManager';
-import IconManager from 'src/managers/IconManager';
-import RuleChecker from 'src/dialogs/RuleChecker';
-import IconPicker from 'src/dialogs/IconPicker';
-import ConditionSetting from 'src/components/ConditionSetting';
-import ConditionValueSuggest from 'src/components/ConditionValueSuggest';
-import RuleNameSuggest from 'src/components/RuleNameSuggest';
+import IconicPlugin, { Category, Icon, Item, FileItem, STRINGS } from 'src/IconicPlugin.js';
+import { RuleItem, ConditionItem } from 'src/managers/RuleManager.js';
+import IconManager from 'src/managers/IconManager.js';
+import RuleChecker from 'src/dialogs/RuleChecker.js';
+import IconPicker from 'src/dialogs/IconPicker.js';
+import ConditionSetting from 'src/components/ConditionSetting.js';
+import ConditionValueSuggest from 'src/components/ConditionValueSuggest.js';
+import RuleNameSuggest from 'src/components/RuleNameSuggest.js';
 
 export type OperatorValueType = 'text' | 'regex' | 'number' | 'datetime' | 'date' | 'time' | 'weekday' | 'month' | 'color' | 'hex';
 
@@ -479,9 +479,9 @@ export default class RuleEditor extends Modal {
 	private matches: FileItem[] = [];
 
 	// Components
-	private scrollerEl: HTMLElement;
-	private nameField: TextComponent;
-	private matchesButton: ButtonComponent;
+	private scrollerEl!: HTMLElement;
+	private nameField!: TextComponent;
+	private matchesButton!: ButtonComponent;
 
 	private constructor(plugin: IconicPlugin, page: Category, rule: RuleItem, callback: RuleEditorCallback | null) {
 		super(plugin.app);
@@ -505,7 +505,8 @@ export default class RuleEditor extends Modal {
 	 * Open a dialog to edit a single rule.
 	 */
 	static open(plugin: IconicPlugin, page: Category, rule: RuleItem, callback: RuleEditorCallback): void {
-		new RuleEditor(plugin, page, rule, callback).open();
+		// Silently no-op if rulebook hasn't finished loading
+		if (plugin.ruleManager) new RuleEditor(plugin, page, rule, callback).open();
 	}
 
 	/**
@@ -525,18 +526,18 @@ export default class RuleEditor extends Modal {
 
 		// BUTTON: Rule icon
 		nameSetting.addExtraButton(button => { button
-			.setIcon(this.rule.icon ?? this.plugin.ruleManager.getPageIcon(this.page))
+			.setIcon(this.rule.icon ?? this.plugin.ruleManager!.getPageIcon(this.page))
 			.setTooltip(STRINGS.iconPicker.changeIcon)
 			.onClick(() => IconPicker.openSingle(this.plugin, this.rule, (newIcon, newColor) => {
 				this.iconManager.refreshIcon({
-					icon: newIcon ?? this.plugin.ruleManager.getPageIcon(this.page),
+					icon: newIcon ?? this.plugin.ruleManager!.getPageIcon(this.page),
 					color: newColor,
 				}, button.extraSettingsEl);
 				this.rule.icon = newIcon;
 				this.rule.color = newColor;
 			}));
 			this.iconManager.refreshIcon({
-				icon: this.rule.icon ?? this.plugin.ruleManager.getPageIcon(this.page),
+				icon: this.rule.icon ?? this.plugin.ruleManager!.getPageIcon(this.page),
 				color: this.rule.color,
 			}, button.extraSettingsEl);
 		});
@@ -713,8 +714,11 @@ export default class RuleEditor extends Modal {
 			if (propSources.includes(setting.condition.source)) {
 				setting.srcDropdown.setValue(setting.condition.source);
 			} else {
-				setting.condition.source = propSources[0];
-				setting.srcDropdown.setValue(propSources[0]);
+				const firstPropSource = propSources.first();
+				if (firstPropSource) {
+					setting.condition.source = firstPropSource;
+					setting.srcDropdown.setValue(firstPropSource);
+				}
 			}
 		} else {
 			// Get sources based on rule page
@@ -733,8 +737,11 @@ export default class RuleEditor extends Modal {
 			if (sources.includes(setting.condition.source)) {
 				setting.srcDropdown.setValue(setting.condition.source);
 			} else {
-				setting.condition.source = sources[0];
-				setting.srcDropdown.setValue(sources[0]);
+				const firstSource = sources.first();
+				if (firstSource) {
+					setting.condition.source = firstSource;
+					setting.srcDropdown.setValue(firstSource);
+				}
 			}
 		}
 	}
@@ -762,7 +769,7 @@ export default class RuleEditor extends Modal {
 				case 'tags': operators = LIST_OPERATORS; break;
 			}
 		} else {
-			operators = SOURCE_OPERATORS[setting.condition.source];
+			operators = SOURCE_OPERATORS[setting.condition.source] ?? [];
 		}
 
 		// Populate operator dropdown
@@ -776,8 +783,11 @@ export default class RuleEditor extends Modal {
 		if (operators.includes(setting.condition.operator)) {
 			setting.opDropdown.setValue(setting.condition.operator);
 		} else {
-			setting.condition.operator = operators[0];
-			setting.opDropdown.setValue(operators[0]);
+			const firstOperator = operators.first();
+			if (firstOperator) {
+				setting.condition.operator = firstOperator;
+				setting.opDropdown.setValue(firstOperator);
+			}
 		}
 
 		// If value type has changed, empty the condition value
@@ -822,7 +832,7 @@ export default class RuleEditor extends Modal {
 				break;
 			}
 			case 'datetime': {
-				inputType = 'datetime_local';
+				inputType = 'datetime-local';
 				inputPlaceholder = '';
 				break;
 			}
@@ -860,7 +870,7 @@ export default class RuleEditor extends Modal {
 			setting.valInput.setValue(setting.condition.value);
 			// Insert element if not present
 			if (!setting.ctrlContainerEl.contains(setting.valInput.inputEl)) {
-				setting.ctrlContainerEl.append(setting.valInput.inputEl);
+				setting.ctrlContainerEl.insertBefore(setting.valInput.inputEl, setting.removeEl);
 			}
 		} else {
 			// Remove element
@@ -872,22 +882,25 @@ export default class RuleEditor extends Modal {
 		if (dropdownValues && dropdownLabels) {
 			for (const value of dropdownValues) {
 				const label = dropdownLabels[value as keyof typeof dropdownLabels];
-				setting.valDropdown.addOption(value.toString(), label);
+				setting.valDropdown.addOption(value.toString(), label ?? '');
 			}
 			if (dropdownValues.includes(setting.condition.value)) {
 				setting.valDropdown.setValue(setting.condition.value);
 			}
 			// Insert element if not present
 			if (!setting.ctrlContainerEl.contains(setting.valDropdown.selectEl)) {
-				setting.ctrlContainerEl.append(setting.valDropdown.selectEl);
+				setting.ctrlContainerEl.insertBefore(setting.valDropdown.selectEl, setting.removeEl);
 			}
 
 			// Preserve the selected value if possible
 			if (dropdownValues.includes(setting.condition.value)) {
 				setting.valDropdown.setValue(setting.condition.value);
 			} else {
-				setting.condition.value = dropdownValues[0].toString();
-				setting.valDropdown.setValue(dropdownValues[0].toString());
+				const firstValue = dropdownValues.first();
+				if (firstValue) {
+					setting.condition.value = firstValue.toString();
+					setting.valDropdown.setValue(firstValue.toString());
+				}
 			}
 		} else {
 			// Remove element
@@ -973,18 +986,22 @@ export default class RuleEditor extends Modal {
 
 		// If ghost is dragged into condition above, swap the conditions
 		const prevCondEl = this.scrollerEl.children[index - 1];
-		const prevOverdrag = prevCondEl?.clientHeight * 0.25 || 0;
-		if (prevCondEl && y < prevCondEl.getBoundingClientRect().bottom - prevOverdrag) {
-			navigator.vibrate?.(100); // Not supported on iOS
-			prevCondEl.before(settingEl);
+		if (prevCondEl) {
+			const prevOverdrag = prevCondEl.clientHeight * 0.25;
+			if (y < prevCondEl.getBoundingClientRect().bottom - prevOverdrag) {
+				navigator.vibrate?.(100); // Not supported on iOS
+				prevCondEl.before(settingEl);
+			}
 		}
 
 		// If ghost is dragged into condition below, swap the conditions
 		const nextCondEl = this.scrollerEl.children[index + 1];
-		const nextOverdrag = nextCondEl?.clientHeight * 0.25 || 0;
-		if (nextCondEl && y > nextCondEl.getBoundingClientRect().top + nextOverdrag) {
-			navigator.vibrate?.(100); // Not supported on iOS
-			nextCondEl.after(settingEl);
+		if (nextCondEl) {
+			const nextOverdrag = nextCondEl.clientHeight * 0.25 || 0;
+			if (y > nextCondEl.getBoundingClientRect().top + nextOverdrag) {
+				navigator.vibrate?.(100); // Not supported on iOS
+				nextCondEl.after(settingEl);
+			}
 		}
 	}
 
@@ -1026,8 +1043,8 @@ export default class RuleEditor extends Modal {
 
 		// Update matches
 		switch (this.page) {
-			case 'file': this.matches = this.plugin.ruleManager.judgeFiles(this.rule, new Date(), true); break;
-			case 'folder': this.matches = this.plugin.ruleManager.judgeFolders(this.rule, new Date(), true); break;
+			case 'file': this.matches = this.plugin.ruleManager!.judgeFiles(this.rule, new Date(), true); break;
+			case 'folder': this.matches = this.plugin.ruleManager!.judgeFolders(this.rule, new Date(), true); break;
 		}
 		this.modalEl.win.clearTimeout(timeoutId);
 
@@ -1067,6 +1084,5 @@ export default class RuleEditor extends Modal {
 		for (const ghostEl of this.modalEl.doc.body.findAll(':scope > .iconic-condition-dragger')) {
 			ghostEl.remove();
 		}
-
 	}
 }

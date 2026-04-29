@@ -1,6 +1,6 @@
 import { DropdownComponent, ExtraButtonComponent, Platform, Setting, TextComponent } from 'obsidian';
-import { STRINGS } from 'src/IconicPlugin';
-import { ConditionItem } from 'src/managers/RuleManager';
+import { STRINGS } from 'src/IconicPlugin.js';
+import { ConditionItem } from 'src/managers/RuleManager.js';
 
 /**
  * Setting for displaying a condition item.
@@ -19,6 +19,7 @@ export default class ConditionSetting extends Setting {
 	// Elements
 	readonly gripEl: HTMLElement;
 	ghostEl: HTMLElement | null = null;
+	readonly removeEl: HTMLElement;
 
 	// Callbacks
 	private sourceChangeCallback: ((source: string) => any) | null = null;
@@ -66,11 +67,11 @@ export default class ConditionSetting extends Setting {
 			.onChange(value => this.valueChangeCallback?.(value));
 
 		// BUTTON: Remove condition
-		this.addExtraButton(button => button
+		this.removeEl = new ExtraButtonComponent(this.controlEl)
 			.setIcon('lucide-trash-2')
 			.setTooltip(STRINGS.ruleEditor.removeCondition)
 			.onClick(() => this.removeCallback?.())
-		);
+			.extraSettingsEl;
 
 		// Drag & drop (mouse)
 		this.gripEl.addEventListener('pointerdown', () => {
@@ -88,12 +89,12 @@ export default class ConditionSetting extends Setting {
 		this.gripEl.addEventListener('touchstart', event => {
 			event.preventDefault(); // Prevent dragstart
 			const touch = event.targetTouches[0];
-			this.dragStartCallback?.(touch.clientX, touch.clientY);
+			if (touch) this.dragStartCallback?.(touch.clientX, touch.clientY);
 		});
 		this.gripEl.addEventListener('touchmove', event => {
 			event.preventDefault(); // Prevent scrolling
 			const touch = event.targetTouches[0];
-			this.dragCallback?.(touch.clientX, touch.clientY);
+			if (touch) this.dragCallback?.(touch.clientX, touch.clientY);
 		});
 		this.gripEl.addEventListener('touchend', () => this.dragEndCallback?.());
 		this.gripEl.addEventListener('touchcancel', () => this.dragEndCallback?.());

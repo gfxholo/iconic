@@ -1,6 +1,6 @@
 import { ExtraButtonComponent, Menu, Setting, ToggleComponent } from 'obsidian';
-import { STRINGS } from 'src/IconicPlugin';
-import { RuleItem } from 'src/managers/RuleManager';
+import { STRINGS } from 'src/IconicPlugin.js';
+import { RuleItem } from 'src/managers/RuleManager.js';
 
 /**
  * Setting for displaying a rule item.
@@ -95,12 +95,12 @@ export default class RuleSetting extends Setting {
 		this.gripEl.addEventListener('touchstart', event => {
 			event.preventDefault(); // Prevent dragstart
 			const touch = event.targetTouches[0];
-			this.dragStartCallback?.(touch.clientX, touch.clientY);
+			if (touch) this.dragStartCallback?.(touch.clientX, touch.clientY);
 		});
 		this.gripEl.addEventListener('touchmove', event => {
 			event.preventDefault(); // Prevent scrolling
 			const touch = event.targetTouches[0];
-			this.dragCallback?.(touch.clientX, touch.clientY);
+			if (touch) this.dragCallback?.(touch.clientX, touch.clientY);
 		});
 		this.gripEl.addEventListener('touchend', () => this.dragEndCallback?.());
 		this.gripEl.addEventListener('touchcancel', () => this.dragEndCallback?.());

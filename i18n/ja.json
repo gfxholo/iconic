@@ -54,6 +54,10 @@
 			"gray": "灰色"
 		}
 	},
+	"usageChecker": {
+		"unusedIcons": "未使用アイコン",
+		"noUnusedIconsFound": "未使用アイコンは見つかりませんでした。"
+	},
 	"categories": {
 		"item": "項目",
 		"items": "項目",
@@ -133,7 +137,7 @@
 			"tags": "タグ",
 			"properties": "プロパティ…",
 			"created": "作成日時",
-			"modified": "変更日時",
+			"modified": "更新日時",
 			"clock": "システムクロック"
 		},
 		"operator": {
@@ -170,10 +174,10 @@
 			"!isTrue": "真ではない",
 			"isFalse": "偽",
 			"!isFalse": "偽ではない",
-			"equals": "等しい",
-			"!equals": "等しくない",
-			"isLess": "より小さい",
-			"isMore": "より大きい",
+			"equals": "=",
+			"!equals": "≠",
+			"isLess": "<",
+			"isMore": ">",
 			"isDivisible": "割り切れる",
 			"!isLess": "より小さくない",
 			"!isMore": "より大きくない",
@@ -270,8 +274,7 @@
 		"folderMatch": "一致するフォルダ 1 件",
 		"filesMatch": "一致するファイル {#} 件",
 		"foldersMatch": "一致するフォルダ {#} 件",
-		"highlight": "ハイライト",
-		"headingMatches": "一致"
+		"highlight": "ハイライト"
 	},
 	"commands": {
 		"openRulebook": "ルールブックを開く",
@@ -294,6 +297,7 @@
 		"changeIconCurrentFile": "現在のファイルのアイコンを変更する"
 	},
 	"settings": {
+		"manage": "管理",
 		"values": {
 			"on": "オン",
 			"off": "オフ",
@@ -305,8 +309,7 @@
 		},
 		"rulebook": {
 			"name": "ルールブック",
-			"desc": "ファイルとフォルダのアイコンの自動ルールを設定します。",
-			"manage": "管理"
+			"desc": "ファイルとフォルダのアイコンの自動ルールを設定します。"
 		},
 		"biggerIcons": {
 			"name": "大きいアイコン",
@@ -401,13 +404,14 @@
 			"name": "無色のリボン ボタン",
 			"desc": "モバイルのクイック アクセス リボン ボタンのアイコンの色を無効にします。"
 		},
-		"rememberDeletedItems": {
-			"name": "削除したアイテムのアイコンを記憶する",
-			"desc": "カスタムアイコンは、そのアイテムが再び存在するときに再表示されます。"
+		"viewUnusedIcons": {
+			"name": "未使用のアイコンを表示",
+			"desc": "保管庫に存在しなくなったファイルやフォルダに割り当てられていたアイコンを整理します。"
 		},
 		"maxBackups": {
 			"name": "自動バックアップの最大数",
-			"desc": "アイコン設定のバックアップを何個保存するか選択してください。バックアップは3時間間隔で保存されます。"
+			"desc": "アイコン設定のバックアップを何個保存するか選択してください。バックアップは3時間間隔で保存されます。",
+			"openPluginFolder": "プラグインのフォルダを開く"
 		}
 	},
 	"backups": {

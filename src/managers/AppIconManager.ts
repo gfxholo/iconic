@@ -1,8 +1,8 @@
 import { Menu, Platform } from 'obsidian';
-import IconicPlugin, { STRINGS, AppItemId } from 'src/IconicPlugin';
-import ColorUtils from 'src/ColorUtils';
-import IconManager from 'src/managers/IconManager';
-import IconPicker from 'src/dialogs/IconPicker';
+import IconicPlugin, { STRINGS, AppItemId } from 'src/IconicPlugin.js';
+import ColorUtils from 'src/ColorUtils.js';
+import IconManager from 'src/managers/IconManager.js';
+import IconPicker from 'src/dialogs/IconPicker.js';
 
 const SVG_INFO = { attr: { 'aria-hidden': false, width: 12, height: 12, viewBox: '0 0 12 12' } };
 const MINIMIZE_RECT = { attr: { fill: 'currentColor', width: 10, height: 1, x: 1, y: 6 } };
@@ -16,14 +16,14 @@ const CLOSE_PATH_2 = { attr: { fill: 'currentColor', 'fill-rule': 'evenodd', d: 
  * Handles icons of system buttons in the window frame and vault switcher.
  */
 export default class AppIconManager extends IconManager {
-	private helpEl: HTMLElement | null;
-	private settingsEl: HTMLElement | null;
+	private helpEl: HTMLElement | null = null;
+	private settingsEl: HTMLElement | null = null;
 	private pinEls: HTMLElement[] = [];
 	private sidebarLeftEls: HTMLElement[] = [];
-	private sidebarRightEl: HTMLElement | null;
-	private minimizeEl: HTMLElement | null;
-	private maximizeEl: HTMLElement | null;
-	private closeEl: HTMLElement | null;
+	private sidebarRightEl: HTMLElement | null = null;
+	private minimizeEl: HTMLElement | null = null;
+	private maximizeEl: HTMLElement | null = null;
+	private closeEl: HTMLElement | null = null;
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
@@ -248,15 +248,15 @@ export default class AppIconManager extends IconManager {
 	private onContextMenu(appItemId: AppItemId, event: MouseEvent): void {
 		navigator.vibrate?.(100); // Not supported on iOS
 
-		this.plugin.menuManager.closeAndFlush();
+		this.plugin.menuManager?.closeAndFlush();
 		const appItem = this.plugin.getAppItem(appItemId);
 		const menu = appItemId.startsWith('sidebar') && !Platform.isPhone
 			? this.plugin.menuManager
 			: new Menu();
-		if (appItemId.startsWith('sidebar')) menu.addSeparator();
+		if (appItemId.startsWith('sidebar')) menu?.addSeparator();
 
 		// Change icon
-		menu.addItem(menuItem => menuItem
+		menu?.addItem(menuItem => menuItem
 			.setTitle(STRINGS.menu.changeIcon)
 			.setIcon('lucide-image-plus')
 			.onClick(() => IconPicker.openSingle(this.plugin, appItem, (newIcon, newColor) => {
@@ -267,7 +267,7 @@ export default class AppIconManager extends IconManager {
 
 		// Remove icon / Reset color
 		if (appItem.icon || appItem.color) {
-			menu.addItem(menuItem => menuItem
+			menu?.addItem(menuItem => menuItem
 				.setTitle(appItem.icon ? STRINGS.menu.removeIcon : STRINGS.menu.resetColor)
 				.setIcon(appItem.icon ? 'lucide-image-minus' : 'lucide-rotate-ccw')
 				.onClick(() => {

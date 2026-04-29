@@ -1,24 +1,32 @@
 {
-  "compilerOptions": {
-    "baseUrl": ".",
-    "inlineSourceMap": true,
-    "inlineSources": true,
-    "module": "ESNext",
-    "target": "ES2021",
-    "allowJs": true,
-    "noImplicitAny": true,
-    "moduleResolution": "node",
-    "importHelpers": true,
-    "isolatedModules": true,
-    "resolveJsonModule": true,
-	  "strictNullChecks": true,
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ES2021"
-    ]
-  },
-  "include": [
-    "**/*.ts"
-  ]
+	"compilerOptions": {
+		"paths": {
+			"*": ["./*"]
+		},
+		"inlineSourceMap": true,
+		"inlineSources": true,
+		"module": "node16",
+		"target": "es2021",
+		"allowJs": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"noImplicitReturns": true,
+		"moduleResolution": "node16",
+		"importHelpers": true,
+		"noUncheckedIndexedAccess": true,
+		"isolatedModules": true,
+		"resolveJsonModule": true,
+		"strictNullChecks": true,
+		"strictBindCallApply": true,
+		"allowSyntheticDefaultImports": true,
+		"useUnknownInCatchVariables": true,
+		"lib": [
+			"DOM",
+			"DOM.Iterable",
+			"ES2021"
+		]
+	},
+	"include": [
+		"src/**/*.ts"
+	]
 }

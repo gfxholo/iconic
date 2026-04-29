@@ -1,8 +1,8 @@
 import { Menu, Platform } from 'obsidian';
-import IconicPlugin, { RibbonItem, STRINGS } from 'src/IconicPlugin';
-import MenuManager from 'src/managers/MenuManager';
-import IconManager from 'src/managers/IconManager';
-import IconPicker from 'src/dialogs/IconPicker';
+import IconicPlugin, { RibbonItem, STRINGS } from 'src/IconicPlugin.js';
+import MenuManager from 'src/managers/MenuManager.js';
+import IconManager from 'src/managers/IconManager.js';
+import IconPicker from 'src/dialogs/IconPicker.js';
 
 /**
  * Handles icons in the app ribbon.
@@ -28,13 +28,13 @@ export default class RibbonIconManager extends IconManager {
 		);
 		if (ribbonEl) this.setEventListener(ribbonEl, 'contextmenu', () => {
 			const ribbonItems = this.plugin.getRibbonItems();
-			this.plugin.menuManager.forSection('order', item => {
-				const ribbonItem = ribbonItems[0];
+			this.plugin.menuManager?.forSection('order', item => {
+				const firstItem = ribbonItems.first();
 				// @ts-expect-error (Private API)
-				if (ribbonItem && item.iconEl.childElementCount > 0) { // Ribbon Divider compatibility
-					item.setIcon(ribbonItem.icon);
+				if (firstItem && item.iconEl.childElementCount > 0) { // Ribbon Divider compatibility
+					item.setIcon(firstItem.icon);
 					// @ts-expect-error (Private API)
-					this.refreshIcon(ribbonItem, item.iconEl);
+					this.refreshIcon(firstItem, item.iconEl);
 					ribbonItems.shift();
 				}
 			});
@@ -67,14 +67,14 @@ export default class RibbonIconManager extends IconManager {
 			// @ts-expect-error (Private API)
 			const quickItemId = this.app.vault.getConfig('mobileQuickRibbonItem');
 			const ribbonButtonListener = () => {
-				const ribbonItems = this.plugin.getRibbonItems().filter(item => !item.isHidden);
-				this.plugin.menuManager.forSection('', item => {
-					const ribbonItem = ribbonItems[0];
+				const firstRibItem = this.plugin.getRibbonItems().filter(item => !item.isHidden);
+				this.plugin.menuManager?.forSection('', item => {
+					const ribbonItem = firstRibItem[0];
 					if (ribbonItem) {
 						item.setIcon(ribbonItem.icon);
 						// @ts-expect-error (Private API)
 						this.refreshIcon(ribbonItem, item.iconEl);
-						ribbonItems.shift();
+						firstRibItem.shift();
 					}
 				});
 			}
@@ -86,27 +86,27 @@ export default class RibbonIconManager extends IconManager {
 				this.setEventListener(ribbonButtonEl, 'click', ribbonButtonListener);
 			}
 			this.setEventListener(ribbonButtonEl, 'contextmenu', ribbonButtonListener);
-		} else {
-			const ribbonItems = this.plugin.getRibbonItems(unloading);
-			for (const ribbonItem of ribbonItems) {
-				const iconEl = ribbonItem.iconEl;
-				if (!iconEl || iconEl.hasClass('ribbon-divider')) { // Ribbon Divider compatibility
-					continue;
-				}
-				if (ribbonItem.isHidden) {
-					ribbonItem.icon = null;
-					ribbonItem.iconDefault = null;
-				}
-				this.refreshIcon(ribbonItem, iconEl);
+		}
 
-				// Add context menu
-				if (this.plugin.settings.showMenuActions) {
-					this.setEventListener(iconEl, 'contextmenu', event => {
-						this.onContextMenu(ribbonItem.id, event);
-					}, { capture: true });
-				} else {
-					this.stopEventListener(iconEl, 'contextmenu');
-				}
+		const ribbonItems = this.plugin.getRibbonItems(unloading);
+		for (const ribbonItem of ribbonItems) {
+			const iconEl = ribbonItem.iconEl;
+			if (!iconEl || iconEl.hasClass('ribbon-divider')) { // Ribbon Divider compatibility
+				continue;
+			}
+			if (ribbonItem.isHidden) {
+				ribbonItem.icon = null;
+				ribbonItem.iconDefault = null;
+			}
+			this.refreshIcon(ribbonItem, iconEl);
+
+			// Add context menu
+			if (this.plugin.settings.showMenuActions) {
+				this.setEventListener(iconEl, 'contextmenu', event => {
+					this.onContextMenu(ribbonItem.id, event);
+				}, { capture: true });
+			} else {
+				this.stopEventListener(iconEl, 'contextmenu');
 			}
 		}
 	}
@@ -174,20 +174,20 @@ export default class RibbonIconManager extends IconManager {
 	 */
 	private onContextMenu(ribbonItemId: string, event: MouseEvent): void {
 		navigator.vibrate?.(100); // Not supported on iOS
-		this.plugin.menuManager.closeAndFlush();
+		this.plugin.menuManager?.closeAndFlush();
 		const ribbonItem = this.plugin.getRibbonItem(ribbonItemId);
 
 		// Menu compatibility with Periodic Notes plugin
-		let menu: Menu | MenuManager;
+		let menu: Menu | MenuManager | undefined;
 		if (ribbonItemId.startsWith('periodic-notes:')) {
 			menu = this.plugin.menuManager;
-			menu.forSection('', menuItem => menuItem.setSection('open'));
+			menu?.forSection('', menuItem => menuItem.setSection('open'));
 		} else {
 			menu = new Menu();
 		}
 
 		// Change icon
-		menu.addItem(menuItem => menuItem
+		menu?.addItem(menuItem => menuItem
 			.setTitle(STRINGS.menu.changeIcon)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')
@@ -199,7 +199,7 @@ export default class RibbonIconManager extends IconManager {
 
 		// Remove icon / Reset color
 		if (ribbonItem.icon || ribbonItem.color) {
-			menu.addItem(menuItem => menuItem
+			menu?.addItem(menuItem => menuItem
 				.setTitle(ribbonItem.icon ? STRINGS.menu.removeIcon : STRINGS.menu.resetColor)
 				.setIcon(ribbonItem.icon ? 'lucide-image-minus' : 'lucide-rotate-ccw')
 				.setSection('icon')

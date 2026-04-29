@@ -1,18 +1,18 @@
 import { WorkspaceLeaf } from 'obsidian';
-import IconicPlugin, { FileItem, STRINGS } from 'src/IconicPlugin';
-import IconManager from 'src/managers/IconManager';
-import RuleEditor from 'src/dialogs/RuleEditor';
-import IconPicker from 'src/dialogs/IconPicker';
+import IconicPlugin, { FileItem, STRINGS } from 'src/IconicPlugin.js';
+import IconManager from 'src/managers/IconManager.js';
+import RuleEditor from 'src/dialogs/RuleEditor.js';
+import IconPicker from 'src/dialogs/IconPicker.js';
 
 /**
  * Handles icons in the Files pane.
  */
 export default class FileIconManager extends IconManager {
-	private containerEl: HTMLElement;
+	private containerEl: HTMLElement | null = null;
 	/**
 	 * Tracks pending refresh operations to prevent multiple rapid refreshes when expanding folders.
 	 */
-	private refreshTimerId: number;
+	private refreshTimerId?: number;
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin);
@@ -84,7 +84,7 @@ export default class FileIconManager extends IconManager {
 
 			// Check for an icon ruling
 			const page = file.items ? 'folder' : 'file';
-			const rule = this.plugin.ruleManager.checkRuling(page, file.id, unloading) ?? file;
+			const rule = this.plugin.ruleManager?.checkRuling(page, file.id, unloading) ?? file;
 
 			if (file.items) {
 				// Refresh children immediately if folder is expanded
@@ -146,7 +146,7 @@ export default class FileIconManager extends IconManager {
 
 			if (file.items) {
 				// Toggle default icon based on expand/collapse state
-				if (file.iconDefault) file.iconDefault = iconEl.hasClass('is-collapsed')
+				if (rule.iconDefault) rule.iconDefault = iconEl.hasClass('is-collapsed')
 					? 'lucide-folder-closed'
 					: 'lucide-folder-open';
 			}
@@ -210,8 +210,9 @@ export default class FileIconManager extends IconManager {
 	 * When user context-clicks a file, or opens a file pane menu, add custom items to the menu.
 	 */
 	private onContextMenu(...fileIds: string[]): void {
-		this.plugin.menuManager.closeAndFlush();
+		this.plugin.menuManager?.closeAndFlush();
 		const files: FileItem[] = [];
+		const firstFile = files.first();
 		for (const fileId of fileIds) {
 			files.push(this.plugin.getFileItem(fileId));
 		}
@@ -220,14 +221,14 @@ export default class FileIconManager extends IconManager {
 		const changeTitle = files.length === 1
 			? STRINGS.menu.changeIcon
 			: STRINGS.menu.changeIcons.replace('{#}', files.length.toString());
-		this.plugin.menuManager.addItemAfter(['action-primary', 'close', 'open'], item => item
+		this.plugin.menuManager?.addItemAfter(['action-primary', 'close', 'open'], item => item
 			.setTitle(changeTitle)
 			.setIcon('lucide-image-plus')
 			.setSection('icon')
 			.onClick(() => {
-				if (files.length === 1) {
-					IconPicker.openSingle(this.plugin, files[0], (newIcon, newColor) => {
-						this.plugin.saveFileIcon(files[0], newIcon, newColor);
+				if (files.length === 1 && firstFile) {
+					IconPicker.openSingle(this.plugin, firstFile, (newIcon, newColor) => {
+						this.plugin.saveFileIcon(firstFile, newIcon, newColor);
 						this.plugin.refreshManagers('file', 'folder');
 					});
 				} else {
@@ -242,22 +243,25 @@ export default class FileIconManager extends IconManager {
 		// Remove icon(s) / Reset color(s)
 		const anyIcons = files.some(file => file.icon);
 		const anyColors = files.some(file => file.color);
-		const removalTitle = files.length === 1
-			? files[0].icon
+		let removalTitle: string;
+		if (files.length === 1 && firstFile) {
+			removalTitle = firstFile.icon
 				? STRINGS.menu.removeIcon
 				: STRINGS.menu.resetColor
-			: anyIcons
+		} else {
+			removalTitle = anyIcons
 				? STRINGS.menu.removeIcons.replace('{#}', files.length.toString())
-				: STRINGS.menu.resetColors.replace('{#}', files.length.toString())
+				: STRINGS.menu.resetColors.replace('{#}', files.length.toString());
+		}
 		const removalIcon = anyIcons ? 'lucide-image-minus' : 'lucide-rotate-ccw';
 		if (anyIcons || anyColors) {
-			this.plugin.menuManager.addItem(item => item
+			this.plugin.menuManager?.addItem(item => item
 				.setTitle(removalTitle)
 				.setIcon(removalIcon)
 				.setSection('icon')
 				.onClick(() => {
-					if (files.length === 1) {
-						this.plugin.saveFileIcon(files[0], null, null);
+					if (files.length === 1 && firstFile) {
+						this.plugin.saveFileIcon(firstFile, null, null);
 					} else {
 						this.plugin.saveFileIcons(files, null, null);
 					}
@@ -267,18 +271,18 @@ export default class FileIconManager extends IconManager {
 		}
 
 		// Edit rule
-		if (files.length === 1) {
-			const page = files[0].items ? 'folder' : 'file';
-			const rule = this.plugin.ruleManager.checkRuling(page, files[0].id);
+		if (files.length === 1 && firstFile) {
+			const page = firstFile.items ? 'folder' : 'file';
+			const rule = this.plugin.ruleManager?.checkRuling(page, firstFile.id);
 			if (rule) {
-				this.plugin.menuManager.addItem(item => { item
+				this.plugin.menuManager?.addItem(item => { item
 					.setTitle(STRINGS.menu.editRule)
 					.setIcon('lucide-image-play')
 					.setSection('icon')
 					.onClick(() => RuleEditor.open(this.plugin, page, rule, newRule => {
 						const isRulingChanged = newRule
-							? this.plugin.ruleManager.saveRule(page, newRule)
-							: this.plugin.ruleManager.deleteRule(page, rule.id);
+							? this.plugin.ruleManager?.saveRule(page, newRule)
+							: this.plugin.ruleManager?.deleteRule(page, rule.id);
 						if (isRulingChanged) {
 							this.refreshIcons();
 							this.plugin.refreshManagers(page);

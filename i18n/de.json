@@ -40,8 +40,8 @@
 		"icons": "Symbole",
 		"emojis": "Emojis",
 		"mixed": "Gemischt",
-		"cancel": "Entfernen",
-		"save": "Abbrechen",
+		"cancel": "Abbrechen",
+		"save": "Speichern",
 		"colors": {
 			"red": "Rot",
 			"orange": "Orange",
@@ -53,6 +53,10 @@
 			"pink": "Rosa",
 			"gray": "Grau"
 		}
+	},
+	"usageChecker": {
+		"unusedIcons": "Nicht verwendete Symbole",
+		"noUnusedIconsFound": "Keine nicht verwendeten Symbole gefunden."
 	},
 	"categories": {
 		"item": "Element",
@@ -124,16 +128,16 @@
 			"color": "Farbe",
 			"name": "Name",
 			"filename": "Dateiname",
-			"extension": "Erweiterung",
+			"extension": "Dateiendung",
 			"tree": "Ordnerbaum",
-			"path": "Pfad im Tresor",
+			"path": "Dateipfad",
 			"headings": "Überschriften",
-			"links": "Links",
-			"embeds": "Einbettungen",
-			"tags": "Tags",
-			"properties": "Eigenschaften...",
-			"created": "Erstellungsdatum",
-			"modified": "Änderungsdatum",
+			"links": "Dateiverknüpfungen",
+			"embeds": "Dateieinbettungen",
+			"tags": "Datei-Tags",
+			"properties": "Dateieinbettungen...",
+			"created": "Erstellt",
+			"modified": "Geändert",
 			"clock": "Systemuhr"
 		},
 		"operator": {
@@ -170,10 +174,10 @@
 			"!isTrue": "ist nicht wahr",
 			"isFalse": "ist falsch",
 			"!isFalse": "ist nicht falsch",
-			"equals": "gleich",
-			"!equals": "ist nicht gleich",
-			"isLess": "ist kleiner als",
-			"isMore": "ist größer als",
+			"equals": "=",
+			"!equals": "≠",
+			"isLess": "<",
+			"isMore": ">",
 			"isDivisible": "ist teilbar durch",
 			"!isLess": "ist nicht kleiner als",
 			"!isMore": "ist nicht größer als",
@@ -270,8 +274,7 @@
 		"folderMatch": "1 passender Ordner",
 		"filesMatch": "{#} passende Dateien",
 		"foldersMatch": "{#} passende Ordner",
-		"highlight": "Hervorheben",
-		"headingMatches": "Übereinstimmungen"
+		"highlight": "Hervorheben"
 	},
 	"commands": {
 		"openRulebook": "Regelbuch öffnen",
@@ -294,6 +297,7 @@
 		"changeIconCurrentFile": "Symbol der aktuellen Datei ändern"
 	},
 	"settings": {
+		"manage": "Verwalten",
 		"values": {
 			"on": "Ein",
 			"off": "Aus",
@@ -305,8 +309,7 @@
 		},
 		"rulebook": {
 			"name": "Regelbuch",
-			"desc": "Automatisierte Regeln für Datei- und Ordnersymbole einrichten.",
-			"manage": "Verwalten"
+			"desc": "Automatisierte Regeln für Datei- und Ordnersymbole einrichten."
 		},
 		"biggerIcons": {
 			"name": "Größere Symbole",
@@ -401,13 +404,14 @@
 			"name": "Farblose Ribbon-Schaltfläche",
 			"desc": "Symbolfarbe deaktivieren, für die Schnellzugriff zu Ribbon-Schaltfläche auf Mobilgeräten."
 		},
-		"rememberDeletedItems": {
-			"name": "Symbole gelöschter Elemente merken",
-			"desc": "Alle benutzerdefinierten Symbole werden wieder angezeigt, wenn ihr Element wieder existiert."
+		"viewUnusedIcons": {
+			"name": "Nicht verwendete Symbole anzeigen",
+			"desc": "Symbole entfernen, die Dateien oder Ordnern zugewiesen sind, die sich nicht mehr in Ihrem Tresor befinden."
 		},
 		"maxBackups": {
 			"name": "Maximale Anzahl automatischer Backups",
-			"desc": "Wählen Sie, wie viele Backups Ihrer Symboleinstellungen gespeichert werden sollen. Backups werden im Abstand von 3 Stunden erstellt."
+			"desc": "Wählen Sie, wie viele Backups Ihrer Symboleinstellungen gespeichert werden sollen. Backups werden im Abstand von 3 Stunden erstellt.",
+			"openPluginFolder": "Ordner für Erweiterung öffnen"
 		}
 	},
 	"backups": {

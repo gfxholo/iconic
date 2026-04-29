@@ -1,5 +1,7 @@
 import { ButtonComponent, Modal, Setting } from 'obsidian';
-import IconicPlugin, { Category, FileItem, STRINGS } from 'src/IconicPlugin';
+import IconicPlugin, { Category, FileItem, STRINGS } from 'src/IconicPlugin.js';
+import PathListComponent from 'src/components/PathListComponent.js';
+import IconPicker from 'src/dialogs/IconPicker.js';
 
 /**
  * Dialog for previewing the items matched by a rule.
@@ -36,6 +38,10 @@ export default class RuleChecker extends Modal {
 	 * @override
 	 */
 	onOpen(): void {
+		this.containerEl.addClass('mod-confirmation');
+		this.modalEl.addClass('iconic-rule-checker');
+		this.contentEl.addClass('iconic-highlight-tree');
+
 		switch (this.page) {
 			case 'file': {
 				this.setTitle(this.matches.length === 1
@@ -51,8 +57,6 @@ export default class RuleChecker extends Modal {
 				);
 			}
 		}
-		this.containerEl.addClass('mod-confirmation');
-		this.contentEl.addClass('iconic-highlight-tree');
 
 		// BUTTONS: Highlight
 		const buttons: ButtonComponent[] = [];
@@ -90,20 +94,25 @@ export default class RuleChecker extends Modal {
 				buttons.push(button);
 			});
 
-		// HEADING: Matches
-		new Setting(this.contentEl).setHeading().setName(STRINGS.ruleChecker.headingMatches);
-
 		// LIST: Matches
-		const listEl = this.contentEl.createEl('ol', { cls: 'iconic-matches' });
+		const pathList = new PathListComponent(this.contentEl);
+		const defaultIcon = this.page === 'folder' ? 'lucide-folder' : 'lucide-file';
 		for (const match of this.matches) {
 			const { tree, basename, extension } = this.plugin.splitFilePath(match.id);
-			const liEl = listEl.createEl('li', { cls: 'iconic-match' });
-			if (tree) liEl.createSpan({ cls: 'iconic-match-tree', text: tree });
-			if (basename) liEl.createSpan({ cls: 'iconic-match-name', text: basename });
-			if (extension) {
-				liEl.createSpan({ text: '.' });
-				liEl.createSpan({ cls: 'iconic-match-extension', text: extension });
-			}
+			const rule = this.plugin.ruleManager?.checkRuling(this.page, match.id) ?? match;
+			pathList.addPath(path => path
+				.setPathText(tree, basename, extension)
+				.setIcon(rule.icon ?? defaultIcon)
+				.setIconColor(rule.color ?? null)
+				.setIconTooltip(STRINGS.iconPicker.changeIcon)
+				.onIconClick(() => IconPicker.openSingle(this.plugin, match, (newIcon, newColor) => {
+					this.plugin.saveFileIcon(match, newIcon, newColor);
+					match.icon = newIcon;
+					match.color = newColor;
+					path.setIcon(newIcon ?? defaultIcon);
+					path.setIconColor(newColor);
+				}))
+			);
 		}
 	}
 }

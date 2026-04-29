@@ -54,6 +54,10 @@
 			"gray": "Gris"
 		}
 	},
+	"usageChecker": {
+		"unusedIcons": "Íconos sin usar",
+		"noUnusedIconsFound": "No se encontraron íconos sin usar."
+	},
 	"categories": {
 		"item": "Elemento",
 		"items": "Elementos",
@@ -126,14 +130,14 @@
 			"filename": "Nombre de archivo",
 			"extension": "Extensión",
 			"tree": "Árbol de carpetas",
-			"path": "Ruta en el almacén",
+			"path": "Ruta",
 			"headings": "Encabezados",
 			"links": "Enlaces",
 			"embeds": "Adjuntos",
 			"tags": "Etiquetas",
 			"properties": "Propiedades...",
-			"created": "Fecha de creación",
-			"modified": "Fecha de modificación",
+			"created": "Creado",
+			"modified": "Modificado",
 			"clock": "Reloj del sistema"
 		},
 		"operator": {
@@ -170,10 +174,10 @@
 			"!isTrue": "no es verdadero",
 			"isFalse": "es falso",
 			"!isFalse": "no es falso",
-			"equals": "es igual a",
-			"!equals": "no es igual a",
-			"isLess": "es menor que",
-			"isMore": "es mayor que",
+			"equals": "=",
+			"!equals": "≠",
+			"isLess": "<",
+			"isMore": ">",
 			"isDivisible": "es divisible entre",
 			"!isLess": "no es menor que",
 			"!isMore": "no es mayor que",
@@ -270,8 +274,7 @@
 		"folderMatch": "1 carpeta coincidente",
 		"filesMatch": "{#} archivos coincidentes",
 		"foldersMatch": "{#} carpetas coincidentes",
-		"highlight": "Resaltar",
-		"headingMatches": "Coincidencias"
+		"highlight": "Resaltar"
 	},
 	"commands": {
 		"openRulebook": "Abrir libro de reglas",
@@ -294,6 +297,7 @@
 		"changeIconCurrentFile": "Cambiar el ícono del archivo actual"
 	},
 	"settings": {
+		"manage": "Administrar",
 		"values": {
 			"on": "Activado",
 			"off": "Desactivado",
@@ -305,8 +309,7 @@
 		},
 		"rulebook": {
 			"name": "Libro de reglas",
-			"desc": "Configurar reglas automatizadas para los íconos de archivos y carpetas",
-			"manage": "Administrar"
+			"desc": "Configurar reglas automatizadas para los íconos de archivos y carpetas"
 		},
 		"biggerIcons": {
 			"name": "Íconos más grandes",
@@ -401,13 +404,14 @@
 			"name": "Botón de cinta incolora",
 			"desc": "Desactivar el color del ícono para el botón de cinta de acceso rápido en móvile."
 		},
-		"rememberDeletedItems": {
-			"name": "Recordar íconos de elementos eliminados",
-			"desc": "Cualquier ícono personalizado reaparecerá cuando su elemento vuelva a existir."
+		"viewUnusedIcons": {
+			"name": "Ver íconos no utilizados",
+			"desc": "Eliminar los íconos asignados a archivos o carpetas que ya no se encuentran en su bóveda."
 		},
 		"maxBackups": {
 			"name": "Copias de seguridad automáticas máximas",
-			"desc": "Elige cuántas copias de seguridad quieres conservar de la configuración de tus íconos. Las copias de seguridad se realizan con un intervalo de 3 horas."
+			"desc": "Elige cuántas copias de seguridad quieres conservar de la configuración de tus íconos. Las copias de seguridad se realizan con un intervalo de 3 horas.",
+			"openPluginFolder": "Abrir la carpeta de complemento"
 		}
 	},
 	"backups": {

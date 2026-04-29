@@ -64,15 +64,15 @@ export default class Strings {
 			name: 'Name',
 			filename: 'Filename',
 			extension: 'Extension',
-			tree: 'Folder tree',
-			path: 'Path in vault',
+			path: 'Path',
+			tree: 'Folder path',
 			headings: 'Headings',
 			links: 'Links',
 			embeds: 'Embeds',
 			tags: 'Tags',
 			properties: 'Properties...',
-			created: 'Date created',
-			modified: 'Date modified',
+			created: 'Created time',
+			modified: 'Modified time',
 			clock: 'System clock',
 		},
 		operator: {
@@ -109,14 +109,18 @@ export default class Strings {
 			'!isTrue': 'is not true',
 			isFalse: 'is false',
 			'!isFalse': 'is not false',
-			equals: 'equals',
-			'!equals': 'does not equal',
-			isLess: 'is less than',
-			isMore: 'is more than',
+			equals: '=',
+			'!equals': '≠',
+			isLess: '<',
+			isMore: '>',
 			isDivisible: 'is divisible by',
-			'!isLess': 'is not less than',
-			'!isMore': 'is not more than',
+			'!isLess': '≥',
+			'!isMore': '≤',
 			'!isDivisible': 'is not divisible by',
+			datetimeIs: 'is',
+			'!datetimeIs': 'is not',
+			datetimeIsBefore: 'is before',
+			datetimeIsAfter: 'is after',
 			isBefore: 'is before',
 			isAfter: 'is after',
 			isNow: 'is now',
@@ -210,7 +214,6 @@ export default class Strings {
 		filesMatch: '{#} matching files',
 		foldersMatch: '{#} matching folders',
 		highlight: 'Highlight',
-		headingMatches: 'Matches',
 	};
 	static iconPicker = {
 		changeIcon: 'Change icon',
@@ -246,6 +249,10 @@ export default class Strings {
 			pink: 'Pink',
 			gray: 'Gray',
 		},
+	};
+	static usageChecker = {
+		unusedIcons: 'Unused icons',
+		noUnusedIconsFound: 'No unused icons found.',
 	};
 	static categories = {
 		item: 'Item',
@@ -296,6 +303,7 @@ export default class Strings {
 		changeIconCurrentFile: 'Change icon of the current file',
 	};
 	static settings = {
+		manage: 'Manage',
 		values: {
 			on: 'On',
 			off: 'Off',
@@ -308,7 +316,6 @@ export default class Strings {
 		rulebook: {
 			name: 'Rulebook',
 			desc: 'Set up automated rules for file and folder icons.',
-			manage: 'Manage',
 		},
 		biggerIcons: {
 			name: 'Bigger icons',
@@ -403,13 +410,14 @@ export default class Strings {
 			name: 'Colorless ribbon button',
 			desc: 'Disable icon color for the quick access ribbon button on mobile.',
 		},
-		rememberDeletedItems: {
-			name: 'Remember icons of deleted items',
-			desc: 'Any custom icons will reappear when their item exists again.',
+		viewUnusedIcons: {
+			name: 'View unused icons',
+			desc: 'Clean up icons assigned to files or folders that are no longer in your vault.',
 		},
 		maxBackups: {
 			name: 'Maximum automatic backups',
 			desc: 'Choose how many backups to keep of your icon settings. Backups are spaced 3 hours apart.',
+			openPluginFolder: 'Open plugin folder',
 		},
 	};
 	static backups = {
