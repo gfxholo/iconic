@@ -297,7 +297,8 @@
 		"toggleSuggestionIcons": "Toggle suggestion icons",
 		"toggleQuickSwitcherIcons": "Toggle quick switcher icons",
 		"toggleMoveFileIcons": "Toggle “Move file” dialog icons",
-		"changeIconCurrentFile": "Change icon of the current file"
+		"changeIconCurrentFile": "Change icon of the current file",
+		"toggleAutoIcons": "Toggle auto icons"
 	},
 	"settings": {
 		"manage": "Manage",
@@ -323,6 +324,51 @@
 			"nameMobile": "Tappable icons",
 			"descDesktop": "Click an icon to open the icon picker.",
 			"descMobile": "Tap an icon to open the icon picker."
+		},
+		"headingAutoIcons": "Auto icons",
+		"autoIcons": {
+			"name": "Automatic icons",
+			"desc": "Infer icons for files and folders from their names, tags, and file types. Your own icons and your rules always take priority."
+		},
+		"autoIconMode": {
+			"name": "Mode",
+			"desc": "Choose how icons are decided.",
+			"type": "File type",
+			"smart": "Smart (read names)"
+		},
+		"autoIconSource": {
+			"name": "Icon source",
+			"desc": "Choose which icon sets can be inferred.",
+			"icons": "Icons",
+			"emojis": "Emojis",
+			"both": "Icons & emojis"
+		},
+		"autoIconAccuracy": {
+			"name": "Confidence",
+			"desc": "Choose how sure a match must be. Stricter settings label fewer items.",
+			"loose": "Loose",
+			"balanced": "Balanced",
+			"strict": "Strict"
+		},
+		"autoIconFiles": {
+			"name": "Label files",
+			"desc": "Infer icons for files."
+		},
+		"autoIconFolders": {
+			"name": "Label folders",
+			"desc": "Infer icons for folders."
+		},
+		"autoIconTags": {
+			"name": "Read tags",
+			"desc": "Let the tags inside a note influence its icon."
+		},
+		"autoIconParent": {
+			"name": "Read parent folder",
+			"desc": "Let the name of the parent folder influence a file icon."
+		},
+		"autoIconExtensions": {
+			"name": "Fall back to file type",
+			"desc": "When a name gives no clues, use an icon based on the file extension."
 		},
 		"headingSidebarsAndTabs": "Sidebars & tabs",
 		"showAllFileIcons": {
