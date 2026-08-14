@@ -37,6 +37,30 @@ You can also choose one of nine named colors per icon. These color tones are det
 
 The icon picker will also display a warning if a rule in your rulebook is overruling its icon. To learn about that feature, see the sections below.
 
+### Automatic icons
+
+If you'd rather not pick every icon by hand, turn on `Automatic icons` in the plugin settings (or run the `Toggle auto icons` command). There are two modes.
+
+**File type** (the default) works the way a code editor does. Every folder is a folder, every `.md` is a document, and every source file is code — `main.py`, `server.go`, and `Component.vue` all become a code file, `deploy.sh` becomes a terminal file, `package.json` and `docker-compose.yml` become a braces file, `.env` becomes a key file, and anything unrecognized becomes a plain file. Nothing depends on what you named things, so a folder tree stays consistent and predictable.
+
+**Smart** reads the name of each file & folder, the tags inside your notes, and the file type, then picks a matching icon from the same 1,700+ icons and 1,900+ emojis you'd choose from yourself. `Meeting Notes.md` becomes 👥, `Recipes/Pasta.md` becomes 🧑‍🍳, `Budget 2026.md` becomes 👛, and `Invoice.pdf` becomes a receipt. Names written in Indonesian, Spanish, German, or French are matched too, so `Resep Rendang.md` also lands on 🧑‍🍳. Notes it can't place confidently are left alone, and source files still follow their type.
+
+Smart mode suits vaults of prose. If your vault is full of technical or jargon-heavy filenames, the file-type mode will look far tidier.
+
+> ⤿ Obsidian only lists files it recognizes. To see code files in the sidebar at all, turn on `Detect all file extensions` in `Settings → Files and links`.
+
+This runs entirely on your device. There's no AI service, no API key, and no network request — it's the icon picker's own search index, used in reverse.
+
+`Label files` and `Label folders` limit which of the two get icons. Smart mode adds a few more knobs:
+
+- `Icon source` chooses between icons, emojis, or both
+- `Confidence` decides how sure a match must be. `Strict` labels fewer items, `Loose` labels more
+- `Read tags` lets the tags in a note steer its icon
+- `Read parent folder` lets a folder name fill in when the filename says nothing, which is what gives dated daily notes a calendar. It also makes every file in a folder tend to share one icon
+- `Fall back to file type` uses the extension. Turn it off to judge every file by its name alone
+
+Automatic icons are only ever a visual default. They're never saved to your settings, they never replace an icon you picked yourself, and a matching rule from your rulebook always wins — so if you have a rule covering every file, turn it off before expecting automatic icons to show.
+
 ### Setting up rules
 
 You can set up a rulebook to automate your file & folder icons based on a variety of conditions, like their name, their extension, their parent folder, their tags, their property values, the date you've created or modified them, and even the current time of day. Automated icons never remove your custom icons — only replace them visually — so you can be as experimental as you want.
