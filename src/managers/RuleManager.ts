@@ -4,6 +4,9 @@ import ObsidianUtils from 'src/utils/ObsidianUtils.js';
 
 const BASE62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
+/** Identifier used by the synthetic ruling that carries an auto icon. */
+export const AUTO_RULE_ID = 'auto';
+
 export type RuleTrigger = 'icon' | 'color' | 'rename' | 'move' | 'tag' | 'property' | 'modify' | 'date' | 'time';
 
 export interface RuleItem extends Item {
@@ -11,6 +14,11 @@ export interface RuleItem extends Item {
 	match: 'all' | 'any' | 'none';
 	conditions: ConditionItem[];
 	enabled: boolean;
+	/**
+	 * True for the synthetic ruling produced by auto icons. Such a ruling has no
+	 * entry in the rulebook, so it must never be passed to the rule editor.
+	 */
+	isAuto?: boolean;
 }
 export interface ConditionItem {
 	source: string;
@@ -278,15 +286,57 @@ export default class RuleManager {
 	}
 
 	/**
-	 * Check the ruling for a given item.
+	 * Check the effective ruling for a given item, including the synthetic ruling
+	 * produced by auto icons. Use {@link checkRule} instead when you need a real
+	 * rule from the rulebook.
 	 */
 	checkRuling(page: Category, itemId: string, unloading?: boolean): RuleItem | null {
+		const rule = this.checkRule(page, itemId, unloading);
+		if (rule) return rule;
+		return this.checkAutoRuling(page, itemId, unloading);
+	}
+
+	/**
+	 * Check whether an item is affected by a rule from the rulebook.
+	 */
+	checkRule(page: Category, itemId: string, unloading?: boolean): RuleItem | null {
 		if (unloading) return null;
 		switch (page) {
 			case 'file': return this.fileRulings.get(itemId) ?? null;
 			case 'folder': return this.folderRulings.get(itemId) ?? null;
 			default: return null;
 		}
+	}
+
+	/**
+	 * Build a throwaway ruling from an auto-generated icon. Skipped when the user
+	 * has already chosen an icon, so their choice always takes priority.
+	 */
+	private checkAutoRuling(page: Category, itemId: string, unloading?: boolean): RuleItem | null {
+		if (unloading) return null;
+		const autoIconManager = this.plugin.autoIconManager;
+		if (!autoIconManager?.isEnabled(page)) return null;
+
+		const fileIcon = this.plugin.settings.fileIcons[itemId] ?? {};
+		if (fileIcon.icon) return null;
+
+		const iconId = autoIconManager.checkAutoIcon(page, itemId);
+		if (!iconId) return null;
+
+		return {
+			id: AUTO_RULE_ID,
+			name: STRINGS.settings.autoIcons.name,
+			category: 'rule',
+			// Left null so folder icons aren't swapped for a collapse arrow
+			iconDefault: null,
+			icon: iconId,
+			// Preserve a color the user set without choosing an icon
+			color: fileIcon.color ?? null,
+			match: 'all',
+			conditions: [],
+			enabled: true,
+			isAuto: true,
+		};
 	}
 
 	/**

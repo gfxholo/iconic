@@ -149,6 +149,13 @@ export default class FileIconManager extends IconManager {
 				if (rule.iconDefault) rule.iconDefault = iconEl.hasClass('is-collapsed')
 					? 'lucide-folder-closed'
 					: 'lucide-folder-open';
+
+				// An auto folder icon follows the same open/closed convention
+				if ('isAuto' in rule && rule.isAuto && rule.icon === 'lucide-folder-closed') {
+					rule.icon = itemEl.hasClass('is-collapsed')
+						? 'lucide-folder-closed'
+						: 'lucide-folder-open';
+				}
 			}
 
 			let folderIconEl = selfEl.find(':scope > .iconic-sidekick:not(.tree-item-icon)');
@@ -273,7 +280,7 @@ export default class FileIconManager extends IconManager {
 		// Edit rule
 		if (files.length === 1 && firstFile) {
 			const page = firstFile.items ? 'folder' : 'file';
-			const rule = this.plugin.ruleManager?.checkRuling(page, firstFile.id);
+			const rule = this.plugin.ruleManager?.checkRule(page, firstFile.id);
 			if (rule) {
 				this.plugin.menuManager?.addItem(item => { item
 					.setTitle(STRINGS.menu.editRule)

@@ -433,17 +433,18 @@ export default class IconPicker extends Modal {
 		let page: Category;
 		let rule: RuleItem | null = null;
 
-		// Determine which rule to display
+		// Determine which rule to display. Auto icons are excluded, because a
+		// custom icon always takes priority over one that was inferred.
 		if (this.items.length > 1) {
 			for (const item of this.items) {
-				rule = this.plugin.ruleManager?.checkRuling(item.category, item.id) ?? null;
+				rule = this.plugin.ruleManager?.checkRule(item.category, item.id) ?? null;
 				page = item.category;
 				if (rule) break;
 			}
 		} else {
 			const item = this.items.first();
 			if (item) {
-				rule = this.plugin.ruleManager?.checkRuling(item.category, item.id) ?? null;
+				rule = this.plugin.ruleManager?.checkRule(item.category, item.id) ?? null;
 				page = item.category;
 			}
 		}
