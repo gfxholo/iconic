@@ -297,7 +297,8 @@
 		"toggleSuggestionIcons": "Vorschlagsymbole umschalten",
 		"toggleQuickSwitcherIcons": "Schnellauswahlsymbole umschalten",
 		"toggleMoveFileIcons": "\"Datei verschieben\"-Symbole umschalten",
-		"changeIconCurrentFile": "Symbol der aktuellen Datei ändern"
+		"changeIconCurrentFile": "Symbol der aktuellen Datei ändern",
+		"toggleAutoIcons": "Automatische Symbole umschalten"
 	},
 	"settings": {
 		"manage": "Verwalten",
@@ -323,6 +324,51 @@
 			"nameMobile": "Tippbare Symbole",
 			"descDesktop": "Klicken Sie auf ein Symbol, um die Symbolauswahl zu öffnen.",
 			"descMobile": "Tippen Sie auf ein Symbol, um die Symbolauswahl zu öffnen."
+		},
+		"headingAutoIcons": "Automatische Symbole",
+		"autoIcons": {
+			"name": "Automatische Symbole",
+			"desc": "Symbole für Dateien und Ordner aus deren Namen, Tags und Dateitypen ableiten. Eigene Symbole und Regeln haben immer Vorrang."
+		},
+		"autoIconMode": {
+			"name": "Modus",
+			"desc": "Wähle, wie Symbole bestimmt werden.",
+			"type": "Dateityp",
+			"smart": "Intelligent (Namen lesen)"
+		},
+		"autoIconSource": {
+			"name": "Symbolquelle",
+			"desc": "Wähle, welche Symbolsätze abgeleitet werden dürfen.",
+			"icons": "Symbole",
+			"emojis": "Emojis",
+			"both": "Symbole & Emojis"
+		},
+		"autoIconAccuracy": {
+			"name": "Sicherheit",
+			"desc": "Wähle, wie sicher eine Übereinstimmung sein muss. Strengere Werte betreffen weniger Elemente.",
+			"loose": "Locker",
+			"balanced": "Ausgewogen",
+			"strict": "Streng"
+		},
+		"autoIconFiles": {
+			"name": "Dateien kennzeichnen",
+			"desc": "Symbole für Dateien ableiten."
+		},
+		"autoIconFolders": {
+			"name": "Ordner kennzeichnen",
+			"desc": "Symbole für Ordner ableiten."
+		},
+		"autoIconTags": {
+			"name": "Tags lesen",
+			"desc": "Die Tags in einer Notiz beeinflussen deren Symbol."
+		},
+		"autoIconParent": {
+			"name": "Übergeordneten Ordner lesen",
+			"desc": "Der Name des übergeordneten Ordners beeinflusst das Dateisymbol."
+		},
+		"autoIconExtensions": {
+			"name": "Auf Dateityp zurückgreifen",
+			"desc": "Wenn der Name keine Hinweise gibt, ein Symbol anhand der Dateiendung verwenden."
 		},
 		"headingSidebarsAndTabs": "Seitenleisten und Registerkarten",
 		"showAllFileIcons": {

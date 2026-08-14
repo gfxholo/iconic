@@ -261,7 +261,7 @@ export default class TabIconManager extends IconManager {
 		}
 
 		// Edit rule
-		const rule = this.plugin.ruleManager?.checkRuling('file', file.id);
+		const rule = this.plugin.ruleManager?.checkRule('file', file.id);
 		if (rule) {
 			this.plugin.menuManager?.addItem(item => { item
 				.setTitle(STRINGS.menu.editRule)

@@ -297,7 +297,8 @@
 		"toggleSuggestionIcons": "切换建议图标",
 		"toggleQuickSwitcherIcons": "切换快速切换图标",
 		"toggleMoveFileIcons": "切换「将文件移动」图标",
-		"changeIconCurrentFile": "更改当前文件的图标"
+		"changeIconCurrentFile": "更改当前文件的图标",
+		"toggleAutoIcons": "切换自动图标"
 	},
 	"settings": {
 		"manage": "管理",
@@ -323,6 +324,51 @@
 			"nameMobile": "可触摸图标",
 			"descDesktop": "单击图标以打开图标选择器。",
 			"descMobile": "点击图标以打开图标选择器。"
+		},
+		"headingAutoIcons": "自动图标",
+		"autoIcons": {
+			"name": "自动图标",
+			"desc": "根据名称、标签和文件类型推断文件与文件夹的图标。你自己设置的图标和规则始终优先。"
+		},
+		"autoIconMode": {
+			"name": "模式",
+			"desc": "选择图标的判定方式。",
+			"type": "文件类型",
+			"smart": "智能（读取名称）"
+		},
+		"autoIconSource": {
+			"name": "图标来源",
+			"desc": "选择可用于推断的图标集。",
+			"icons": "图标",
+			"emojis": "表情符号",
+			"both": "图标与表情符号"
+		},
+		"autoIconAccuracy": {
+			"name": "置信度",
+			"desc": "选择匹配需要多确定。越严格，被赋予图标的项目越少。",
+			"loose": "宽松",
+			"balanced": "均衡",
+			"strict": "严格"
+		},
+		"autoIconFiles": {
+			"name": "标记文件",
+			"desc": "为文件推断图标。"
+		},
+		"autoIconFolders": {
+			"name": "标记文件夹",
+			"desc": "为文件夹推断图标。"
+		},
+		"autoIconTags": {
+			"name": "读取标签",
+			"desc": "让笔记中的标签影响其图标。"
+		},
+		"autoIconParent": {
+			"name": "读取父文件夹",
+			"desc": "让父文件夹的名称影响文件图标。"
+		},
+		"autoIconExtensions": {
+			"name": "回退到文件类型",
+			"desc": "当名称没有线索时，根据扩展名选择图标。"
 		},
 		"headingSidebarsAndTabs": "侧边栏和标签页标题",
 		"showAllFileIcons": {

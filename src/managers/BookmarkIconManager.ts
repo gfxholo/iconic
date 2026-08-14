@@ -261,7 +261,7 @@ export default class BookmarkIconManager extends IconManager {
 		// Edit rule
 		if (selectedBmarks.length < 2) {
 			const rule = clickedBmark.category === 'file' || clickedBmark.category === 'folder'
-				? this.plugin.ruleManager?.checkRuling(clickedBmark.category, clickedBmark.id)
+				? this.plugin.ruleManager?.checkRule(clickedBmark.category, clickedBmark.id)
 				: null;
 			if (rule) {
 				this.plugin.menuManager?.addItem(item => { item

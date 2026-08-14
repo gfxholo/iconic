@@ -297,7 +297,8 @@
 		"toggleSuggestionIcons": "Alternar íconos de sugerencias",
 		"toggleQuickSwitcherIcons": "Alternar íconos de selector rápido",
 		"toggleMoveFileIcons": "Alternar los íconos de “Mover archivo”",
-		"changeIconCurrentFile": "Cambiar el ícono del archivo actual"
+		"changeIconCurrentFile": "Cambiar el ícono del archivo actual",
+		"toggleAutoIcons": "Alternar iconos automáticos"
 	},
 	"settings": {
 		"manage": "Administrar",
@@ -323,6 +324,51 @@
 			"nameMobile": "Íconos que se pueden tocar",
 			"descDesktop": "Haga clic en un ícono para abrir el selector de íconos.",
 			"descMobile": "Toque un ícono para abrir el selector de íconos."
+		},
+		"headingAutoIcons": "Iconos automáticos",
+		"autoIcons": {
+			"name": "Iconos automáticos",
+			"desc": "Deducir los iconos de archivos y carpetas a partir de sus nombres, etiquetas y tipos de archivo. Tus iconos y tus reglas siempre tienen prioridad."
+		},
+		"autoIconMode": {
+			"name": "Modo",
+			"desc": "Elige cómo se deciden los iconos.",
+			"type": "Tipo de archivo",
+			"smart": "Inteligente (leer nombres)"
+		},
+		"autoIconSource": {
+			"name": "Fuente de iconos",
+			"desc": "Elige qué conjuntos de iconos se pueden deducir.",
+			"icons": "Iconos",
+			"emojis": "Emojis",
+			"both": "Iconos y emojis"
+		},
+		"autoIconAccuracy": {
+			"name": "Confianza",
+			"desc": "Elige cuán segura debe ser una coincidencia. Los ajustes más estrictos afectan a menos elementos.",
+			"loose": "Flexible",
+			"balanced": "Equilibrada",
+			"strict": "Estricta"
+		},
+		"autoIconFiles": {
+			"name": "Etiquetar archivos",
+			"desc": "Deducir iconos para los archivos."
+		},
+		"autoIconFolders": {
+			"name": "Etiquetar carpetas",
+			"desc": "Deducir iconos para las carpetas."
+		},
+		"autoIconTags": {
+			"name": "Leer etiquetas",
+			"desc": "Permitir que las etiquetas de una nota influyan en su icono."
+		},
+		"autoIconParent": {
+			"name": "Leer carpeta principal",
+			"desc": "Permitir que el nombre de la carpeta principal influya en el icono del archivo."
+		},
+		"autoIconExtensions": {
+			"name": "Recurrir al tipo de archivo",
+			"desc": "Cuando el nombre no da pistas, usar un icono según la extensión del archivo."
 		},
 		"headingSidebarsAndTabs": "Barras laterales y pestañas",
 		"showAllFileIcons": {

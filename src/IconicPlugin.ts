@@ -4,6 +4,7 @@ import ObsidianUtils, { ObsidianBookmark, ObsidianTag, ObsidianProperty, Obsidia
 import ResourceUtils from 'src/utils/ResourceUtils.js';
 import MenuManager from 'src/managers/MenuManager.js';
 import RuleManager, { RuleTrigger } from 'src/managers/RuleManager.js';
+import AutoIconManager from 'src/managers/AutoIconManager.js';
 import IconManager from 'src/managers/IconManager.js';
 import AppIconManager from 'src/managers/AppIconManager.js';
 import TabIconManager from 'src/managers/TabIconManager.js';
@@ -84,6 +85,15 @@ export interface RibbonItem extends Item {
 interface IconicSettings {
 	biggerIcons: string;
 	clickableIcons: string;
+	autoIcons: boolean;
+	autoIconMode: string;
+	autoIconFiles: boolean;
+	autoIconFolders: boolean;
+	autoIconSource: string;
+	autoIconAccuracy: string;
+	autoIconTags: boolean;
+	autoIconParent: boolean;
+	autoIconExtensions: boolean;
 	showAllFileIcons: boolean,
 	showAllFolderIcons: boolean,
 	minimalFolderIcons: boolean;
@@ -147,6 +157,15 @@ interface IconicSettings {
 const DEFAULT_SETTINGS: IconicSettings = {
 	biggerIcons: 'mobile',
 	clickableIcons: 'desktop',
+	autoIcons: false,
+	autoIconMode: 'type',
+	autoIconFiles: true,
+	autoIconFolders: true,
+	autoIconSource: 'icons',
+	autoIconAccuracy: 'balanced',
+	autoIconTags: true,
+	autoIconParent: true,
+	autoIconExtensions: true,
 	showAllFileIcons: false,
 	showAllFolderIcons: false,
 	minimalFolderIcons: true,
@@ -190,6 +209,7 @@ export default class IconicPlugin extends Plugin {
 	settings: IconicSettings = DEFAULT_SETTINGS;
 	menuManager?: MenuManager;
 	ruleManager?: RuleManager;
+	autoIconManager?: AutoIconManager;
 	appIconManager?: AppIconManager;
 	tabIconManager?: TabIconManager;
 	fileIconManager?: FileIconManager;
@@ -216,6 +236,7 @@ export default class IconicPlugin extends Plugin {
 
 			this.registerEvent(this.app.vault.on('create', tAbstractFile => {
 				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+				this.autoIconManager?.clearCache(tAbstractFile.path);
 				// If a created file/folder triggers a new ruling, refresh icons
 				if (this.ruleManager?.triggerRulings(page, 'rename', 'move', 'modify')) {
 					this.refreshManagers(page);
@@ -233,6 +254,12 @@ export default class IconicPlugin extends Plugin {
 				const { filename, tree } = this.splitFilePath(path);
 				const { filename: oldFilename, tree: oldTree } = this.splitFilePath(oldPath);
 				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+				// A rename or move changes the words an auto icon is inferred from.
+				// Descendants inherit a renamed folder path, so drop every result.
+				if (this.autoIconManager?.isEnabled(page)) {
+					this.autoIconManager.reset();
+					this.refreshManagers(page);
+				}
 				// If a renamed file/folder triggers a new ruling, refresh icons
 				if (filename !== oldFilename && this.ruleManager?.triggerRulings(page, 'rename')) {
 					this.refreshManagers(page);
@@ -253,9 +280,10 @@ export default class IconicPlugin extends Plugin {
 				const { path } = tAbstractFile;
 				delete this.settings.fileIcons[path];
 				void this.saveSettings();
+				this.autoIconManager?.clearCache(path);
 				// If a deleted file/folder was associated with a ruling, update rulings
 				const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
-				if (this.ruleManager?.checkRuling(page, path)) {
+				if (this.ruleManager?.checkRule(page, path)) {
 					this.ruleManager.updateRulings(page);
 				}
 			}));
@@ -320,6 +348,18 @@ export default class IconicPlugin extends Plugin {
 				void this.saveSettings();
 				this.refreshManagers();
 				this.refreshBody();
+			}
+		}));
+
+		// COMMAND: Toggle auto icons
+		this.dialogCommands.push(this.addCommand({
+			id: 'toggle-auto-icons',
+			name: STRINGS.commands.toggleAutoIcons,
+			callback: () => {
+				this.settings.autoIcons = !this.settings.autoIcons;
+				void this.saveSettings();
+				this.autoIconManager?.reset();
+				this.refreshManagers('file', 'folder');
 			}
 		}));
 
@@ -467,6 +507,11 @@ export default class IconicPlugin extends Plugin {
 	 */
 	private onFileModify(tAbstractFile: TAbstractFile): void {
 		const page = tAbstractFile instanceof TFile ? 'file' : 'folder';
+		// Editing a note can add or remove the tags an auto icon is inferred from
+		if (this.settings.autoIconTags && this.autoIconManager?.isEnabled(page)) {
+			this.autoIconManager.clearCache(tAbstractFile.path);
+			this.refreshManagers(page);
+		}
 		// If a modified file/folder triggers a new ruling, refresh icons
 		if (this.ruleManager?.triggerRulings(page, 'modify')) {
 			this.refreshManagers(page);
@@ -478,6 +523,7 @@ export default class IconicPlugin extends Plugin {
 	 */
 	private startManagers(): void {
 		this.menuManager = new MenuManager();
+		this.autoIconManager = new AutoIconManager(this);
 		this.ruleManager = new RuleManager(this);
 		try { this.appIconManager = new AppIconManager(this) } catch (e) { console.error(e) }
 		try { this.tabIconManager = new TabIconManager(this) } catch (e) { console.error(e) }
