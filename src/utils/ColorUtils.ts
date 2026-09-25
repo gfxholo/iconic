@@ -185,10 +185,38 @@ export default class ColorUtils {
 	private static readonly convertEl = createDiv();
 
 	/**
+	 * Results of {@link toRgb}, keyed by input color.
+	 * Resolving a theme color reads a CSS variable with getComputedStyle(),
+	 * which forces a full style recalculation whenever the DOM is dirty
+	 * (e.g. on every keystroke), so results are reused until the CSS changes.
+	 */
+	private static readonly rgbCache = new Map<string, string>();
+
+	/**
+	 * Forget cached colors. Call whenever theme or CSS variables may have changed.
+	 */
+	static clearCache(): void {
+		this.rgbCache.clear();
+	}
+
+	/**
 	 * Convert color into rgb/rgba() string.
 	 * @param color a color name, or a specific CSS color
 	 */
 	static toRgb(color: string | null | undefined): string {
+		const key = color ?? '';
+		let rgb = this.rgbCache.get(key);
+		if (rgb === undefined) {
+			rgb = this.computeRgb(color);
+			this.rgbCache.set(key, rgb);
+		}
+		return rgb;
+	}
+
+	/**
+	 * Uncached implementation of {@link toRgb}.
+	 */
+	private static computeRgb(color: string | null | undefined): string {
 		let cssVar = '--icon-color';
 		let cssColor = RGB_FALLBACK;
 		if (!color) {

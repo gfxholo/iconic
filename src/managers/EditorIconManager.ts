@@ -16,8 +16,11 @@ export default class EditorIconManager extends IconManager {
 
 		// Style hashtags in reading mode
 		this.plugin.registerMarkdownPostProcessor(sectionEl => {
-			const tags = this.plugin.getTagItems();
 			const tagEls = sectionEl.findAll('a.tag');
+			// getTagItems() walks every tag in the vault, so skip it for the
+			// many rendered sections (and embedded snippets) that have no hashtags
+			if (tagEls.length === 0) return;
+			const tags = this.plugin.getTagItems();
 			this.refreshReadingModeHashtags(tags, tagEls);
 		});
 

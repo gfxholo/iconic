@@ -1,6 +1,7 @@
 import { Command, Notice, Platform, Plugin, TAbstractFile, TFile, TFolder, View, WorkspaceFloating, WorkspaceLeaf, WorkspaceRoot, getIconIds, getLanguage, normalizePath } from 'obsidian';
 import IconicSettingTab from 'src/IconicSettingTab.js';
 import ObsidianUtils, { ObsidianBookmark, ObsidianTag, ObsidianProperty, ObsidianRibbonItem } from 'src/utils/ObsidianUtils.js';
+import ColorUtils from 'src/utils/ColorUtils.js';
 import ResourceUtils from 'src/utils/ResourceUtils.js';
 import MenuManager from 'src/managers/MenuManager.js';
 import RuleManager, { RuleTrigger } from 'src/managers/RuleManager.js';
@@ -262,6 +263,7 @@ export default class IconicPlugin extends Plugin {
 		});
 
 		this.registerEvent(this.app.workspace.on('css-change', () => {
+			ColorUtils.clearCache();
 			this.refreshManagers();
 			this.refreshBody();
 		}));
