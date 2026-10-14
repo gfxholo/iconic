@@ -39,7 +39,7 @@ The icon picker will also display a warning if a rule in your rulebook is overru
 
 ### Importing external libraries
 
-In addition to the icons bundled with Obsidian, Iconic can import icons from external icon libraries, such as [Lucide Lab](https://lucide.dev/icons/), which hosts experimental icons that aren't part of the core set.
+In addition to the icons bundled with Obsidian, Iconic can import icons from external icon libraries, such as [Lucide Lab](https://lucide.dev/icons/), which hosts experimental icons that aren't part of the core set, and [Phosphor Icons](https://phosphoricons.com/), a family of icons, imported in its regular weight.
 
 Open the plugin settings, enable **External libraries**, then toggle on the libraries you want to import. External icons are fetched from the internet while their library is enabled, appear in the icon picker alongside the built-in icons, and are searchable by name and keywords like any other icon. If a library is turned off, icons assigned to it revert to the default.
 

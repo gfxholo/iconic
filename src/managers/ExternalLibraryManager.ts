@@ -61,6 +61,32 @@ export interface ExternalLibrary {
 }
 
 /**
+ * Parse an Iconify icon set into icon entries. Iconify stores each icon's inner
+ * SVG markup in `icons[name].body`. Sets that ship several weights or styles
+ * store them as name suffixes (such as Phosphor's `-thin`, `-light`, `-bold`,
+ * `-fill`, and `-duotone`); the set's `suffixes` field lists them.
+ * @param regularWeightOnly Keep only the suffix-less "regular" variants.
+ */
+function parseIconify(data: unknown, regularWeightOnly = false): Record<string, ExternalIconData | string> {
+	const icons: Record<string, ExternalIconData | string> = {};
+	const set = typeof data === 'object' && data !== null ? data as Record<string, unknown> : {};
+	const setIcons = set.icons;
+	if (typeof setIcons !== 'object' || setIcons === null) return icons;
+	const suffixes = regularWeightOnly && typeof set.suffixes === 'object' && set.suffixes !== null
+		? Object.keys(set.suffixes as Record<string, unknown>).filter(suffix => suffix !== '')
+		: [];
+	for (const [iconName, rawIcon] of Object.entries(setIcons as Record<string, unknown>)) {
+		if (typeof rawIcon !== 'object' || rawIcon === null) continue;
+		const icon = rawIcon as Record<string, unknown>;
+		if (icon.hidden === true) continue;
+		if (typeof icon.body !== 'string') continue;
+		if (suffixes.some(suffix => iconName.endsWith('-' + suffix))) continue;
+		icons[iconName] = { markup: icon.body };
+	}
+	return icons;
+}
+
+/**
  * The catalog of supported external libraries. The mechanism is data-driven:
  * adding a new entry here is enough to make it selectable in the settings.
  *
@@ -85,6 +111,23 @@ export const EXTERNAL_LIBRARIES: ExternalLibrary[] = [
 			'https://lucide.dev/api/lab/icon-details',
 			'https://unpkg.com/@lucide/lab@latest/icon-nodes.json',
 		],
+	},
+	{
+		id: 'phosphor',
+		name: 'Phosphor',
+		// Phosphor publishes six weights (thin, light, regular, bold, fill,
+		// duotone); Iconify bundles them as name suffixes in a single set, and
+		// only the regular (suffix-less) variants are imported.
+		style: {
+			viewBox: '0 0 256 256',
+			fill: 'currentColor',
+			stroke: 'none',
+		},
+		sources: [
+			'https://cdn.jsdelivr.net/gh/iconify/icon-sets@master/json/ph.json',
+			'https://raw.githubusercontent.com/iconify/icon-sets/master/json/ph.json',
+		],
+		parse: data => parseIconify(data, true),
 	},
 ];
 
