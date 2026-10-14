@@ -8,6 +8,7 @@ import IconColorResetComponent from 'src/components/IconColorResetComponent.js';
 import IconSearchComponent, { IconSearchResult } from 'src/components/IconSearchComponent.js';
 import IconSearchResultsSetting from 'src/components/IconSearchResultsSetting.js';
 import ToggleButtonComponent from 'src/components/ToggleButtonComponent.js';
+import ExternalLibraryManager from 'src/managers/ExternalLibraryManager.js';
 
 /**
  * Callback for setting icon & color of a single item.
@@ -281,8 +282,8 @@ export default class IconPicker extends Modal {
 				.onSearch((query, results) => {
 					// If query is blank, just show the current icon
 					if (!query && this.icon) {
-						const [name] = ICONS.get(this.icon) ?? [this.icon];
-						void this.resultsSetting.setResults([[this.icon, name, [], 0]]);
+						const iconName = ICONS.get(this.icon)?.[0] ?? ExternalLibraryManager.getName(this.icon) ?? this.icon;
+						void this.resultsSetting.setResults([[this.icon, iconName, [], 0]]);
 						return;
 					}
 					void this.resultsSetting.setResults(results);
@@ -324,6 +325,9 @@ export default class IconPicker extends Modal {
 			} else if (EMOJIS.has(this.icon)) {
 				dialogState.emojiMode = true;
 				this.searchField.setValue(EMOJIS.get(this.icon)?.[0] ?? '');
+			} else if (ExternalLibraryManager.isExternalIcon(this.icon)) {
+				dialogState.iconMode = true;
+				this.searchField.setValue(ExternalLibraryManager.getName(this.icon) ?? this.icon);
 			} else {
 				this.searchField.setValue(this.icon);
 			}

@@ -226,6 +226,7 @@ export default class SuggestionDialogIconManager extends IconManager {
 		if (SuggestModal.prototype.setInstructions === this.setInstructionsProxy) {
 			SuggestModal.prototype.setInstructions = this.setInstructionsOriginal;
 		}
+		super.unload();
 	}
 }
 

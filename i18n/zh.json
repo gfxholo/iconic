@@ -390,6 +390,11 @@
 			"descDesktop": "当您双击颜色气泡时显示。",
 			"descMobile": "当您按住颜色气泡时显示。"
 		},
+		"headingExternalLibraries": "外部库",
+		"enableExternalLibraries": {
+			"name": "启用外部库",
+			"desc": "除了 Obsidian 内置的图标外，还从外部图标库导入图标。"
+		},
 		"headingAdvanced": "高级",
 		"uncolorHover": {
 			"name": "无色悬停",
@@ -423,5 +428,8 @@
 		"backupMinutesAgo": "您的图标已从 {#} 分钟前保存的备份中恢复。",
 		"backupHoursAgo": "您的图标已从 {#} 小时前保存的备份中恢复。",
 		"backupDate": "您的图标已从 {#} 日保存的备份中恢复。"
+	},
+	"externalLibraries": {
+		"loadFailed": "Iconic 无法从“{#}”库加载图标。"
 	}
 }

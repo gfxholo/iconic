@@ -1,7 +1,8 @@
-import { ExtraButtonComponent, Platform, PluginSettingTab, SettingDefinitionGroup, SettingDefinitionItem, SettingGroup } from 'obsidian';
+import { ExtraButtonComponent, Platform, PluginSettingTab, Setting, SettingDefinitionGroup, SettingDefinitionItem, SettingGroup, ToggleComponent } from 'obsidian';
 import IconicPlugin, { FileItem, STRINGS } from 'src/IconicPlugin.js';
 import RulePicker from 'src/dialogs/RulePicker.js';
 import UsageChecker from 'src/dialogs/UsageChecker.js';
+import ExternalLibraryManager from 'src/managers/ExternalLibraryManager.js';
 
 /**
  * Exposes UI settings for the plugin.
@@ -17,6 +18,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 	private useSearchKeywordsIndicator?: ExtraButtonComponent;
 	private colorPickerIndicator1?: ExtraButtonComponent;
 	private colorPickerIndicator2?: ExtraButtonComponent;
+	private externalLibraryToggles: ToggleComponent[] = [];
 
 	constructor(plugin: IconicPlugin) {
 		super(plugin.app, plugin);
@@ -400,6 +402,30 @@ export default class IconicSettingTab extends PluginSettingTab {
 			},
 		});
 
+		// GROUP: External libraries
+		this.externalLibraryToggles = [];
+		const groupExternalLibraries: SettingDefinitionGroup = {
+			type: 'group',
+			heading: STRINGS.settings.headingExternalLibraries,
+			items: [],
+		};
+
+		// SETTING: Enable external libraries
+		groupExternalLibraries.items?.push({
+			name: STRINGS.settings.enableExternalLibraries.name,
+			desc: STRINGS.settings.enableExternalLibraries.desc,
+			render: setting => { setting
+				.addToggle(toggle => this.bindExternalLibrariesMasterToggle(toggle));
+			},
+		});
+
+		// SETTING: Imported libraries
+		groupExternalLibraries.items?.push({
+			name: STRINGS.settings.headingExternalLibraries,
+			aliases: ExternalLibraryManager.getLibraries().map(library => library.name),
+			render: setting => this.renderExternalLibraryGrid(setting),
+		});
+
 		// GROUP: Advanced
 		const groupAdvanced: SettingDefinitionGroup = {
 			type: 'group',
@@ -535,6 +561,7 @@ export default class IconicSettingTab extends PluginSettingTab {
 			groupEditor,
 			groupMenusAndDialogs,
 			groupIconPicker,
+			groupExternalLibraries,
 			groupAdvanced,
 		];
 	}
@@ -893,6 +920,21 @@ export default class IconicSettingTab extends PluginSettingTab {
 			});
 		});
 
+		// GROUP: External libraries
+		this.externalLibraryToggles = [];
+		const groupExternalLibraries = new SettingGroup(this.containerEl)
+			.setHeading(STRINGS.settings.headingExternalLibraries);
+
+		// SETTING: Enable external libraries
+		groupExternalLibraries.addSetting(setting => { setting
+			.setName(STRINGS.settings.enableExternalLibraries.name)
+			.setDesc(STRINGS.settings.enableExternalLibraries.desc)
+			.addToggle(toggle => this.bindExternalLibrariesMasterToggle(toggle));
+		});
+
+		// SETTING: Imported libraries
+		groupExternalLibraries.addSetting(setting => this.renderExternalLibraryGrid(setting));
+
 		// GROUP: Advanced
 		const groupAdvanced = new SettingGroup(this.containerEl)
 			.setHeading(STRINGS.settings.headingAdvanced);
@@ -1021,5 +1063,60 @@ export default class IconicSettingTab extends PluginSettingTab {
 			default: indicator.extraSettingsEl.hide(); return;
 		}
 		indicator.extraSettingsEl.show();
+	}
+
+	/**
+	 * Render the list of supported external libraries as a grid of toggle
+	 * cells, each cell holding a single library's name and enable toggle.
+	 */
+	private renderExternalLibraryGrid(setting: Setting): void {
+		setting.setClass('iconic-library-row');
+		setting.infoEl.hide();
+		setting.controlEl.hide();
+		const grid = setting.settingEl.createDiv({ cls: 'iconic-library-grid' });
+		for (const library of ExternalLibraryManager.getLibraries()) {
+			const cell = grid.createDiv({ cls: 'iconic-library-cell' });
+			cell.createSpan({ cls: 'iconic-library-name', text: library.name });
+			this.bindExternalLibraryToggle(new ToggleComponent(cell), library.id);
+		}
+	}
+
+	/**
+	 * Bind the master toggle for external libraries, which enables or
+	 * disables support for all external libraries at once.
+	 */
+	private bindExternalLibrariesMasterToggle(toggle: ToggleComponent): void {
+		toggle
+			.setValue(this.plugin.settings.enableExternalLibraries)
+			.onChange(value => {
+				this.plugin.settings.enableExternalLibraries = value;
+				void this.plugin.saveSettings();
+				void ExternalLibraryManager.refresh(this.plugin);
+				for (const libraryToggle of this.externalLibraryToggles) {
+					libraryToggle.setDisabled(!value);
+				}
+			});
+	}
+
+	/**
+	 * Bind the toggle of a single external library, which controls whether
+	 * that library's icons are imported.
+	 */
+	private bindExternalLibraryToggle(toggle: ToggleComponent, libraryId: string): void {
+		toggle
+			.setValue(this.plugin.settings.externalLibraries.includes(libraryId))
+			.setDisabled(!this.plugin.settings.enableExternalLibraries)
+			.onChange(value => {
+				if (value) {
+					if (!this.plugin.settings.externalLibraries.includes(libraryId)) {
+						this.plugin.settings.externalLibraries.push(libraryId);
+					}
+				} else {
+					this.plugin.settings.externalLibraries = this.plugin.settings.externalLibraries.filter(id => id !== libraryId);
+				}
+				void this.plugin.saveSettings();
+				void ExternalLibraryManager.refresh(this.plugin);
+			});
+		this.externalLibraryToggles.push(toggle);
 	}
 }

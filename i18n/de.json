@@ -390,6 +390,11 @@
 			"descDesktop": "Erscheint, wenn Sie mit der rechten Maustaste auf die Farbblase klicken.",
 			"descMobile": "Erscheint, wenn Sie die Farbblase gedrückt halten."
 		},
+		"headingExternalLibraries": "Externe Bibliotheken",
+		"enableExternalLibraries": {
+			"name": "Externe Bibliotheken aktivieren",
+			"desc": "Importiert Symbole aus externen Symbolbibliotheken, zusätzlich zu den in Obsidian enthaltenen Symbolen."
+		},
 		"headingAdvanced": "Erweitert",
 		"uncolorHover": {
 			"name": "Farbloses Hovern",
@@ -423,5 +428,8 @@
 		"backupMinutesAgo": "Ihre Symbole wurden aus einer Sicherung wiederhergestellt, die vor {#} Minuten gespeichert wurde.",
 		"backupHoursAgo": "Ihre Symbole wurden aus einer Sicherung wiederhergestellt, die vor {#} Stunden gespeichert wurde.",
 		"backupDate": "Ihre Symbole wurden aus einer Sicherung wiederhergestellt, die am {#} gespeichert wurde."
+	},
+	"externalLibraries": {
+		"loadFailed": "Iconic konnte die Symbole aus der Bibliothek „{#}“ nicht laden."
 	}
 }

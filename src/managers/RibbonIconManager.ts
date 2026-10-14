@@ -223,5 +223,6 @@ export default class RibbonIconManager extends IconManager {
 	 */
 	unload(): void {
 		this.refreshIcons(true);
+		super.unload();
 	}
 }

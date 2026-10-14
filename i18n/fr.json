@@ -390,6 +390,11 @@
 			"descDesktop": "Apparaît lorsque vous cliquez avec le bouton droit sur la bulle de couleur.",
 			"descMobile": "Apparaît lorsque vous appuyez et maintenez la bulle de couleur."
 		},
+		"headingExternalLibraries": "Bibliothèques externes",
+		"enableExternalLibraries": {
+			"name": "Activer les bibliothèques externes",
+			"desc": "Importez des icônes de bibliothèques d’icônes externes, en plus des icônes incluses dans Obsidian."
+		},
 		"headingAdvanced": "Avancé",
 		"uncolorHover": {
 			"name": "Survol incolore",
@@ -423,5 +428,8 @@
 		"backupMinutesAgo": "Vos icônes ont été restaurées à partir d'une sauvegarde effectuée il y a {#} minutes.",
 		"backupHoursAgo": "Vos icônes ont été restaurées à partir d'une sauvegarde effectuée il y a {#} heures.",
 		"backupDate": "Vos icônes ont été restaurées à partir d'une sauvegarde effectuée le {#}."
+	},
+	"externalLibraries": {
+		"loadFailed": "Iconic n’a pas pu charger les icônes de la bibliothèque « {#} »."
 	}
 }

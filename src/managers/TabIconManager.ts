@@ -284,5 +284,6 @@ export default class TabIconManager extends IconManager {
 	 */
 	unload(): void {
 		this.refreshIcons(true);
+		super.unload();
 	}
 }

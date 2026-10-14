@@ -390,6 +390,11 @@
 			"descDesktop": "Aparece cuando haces clic secundario en la burbuja de color.",
 			"descMobile": "Aparece cuando mantienes presionada la burbuja de color."
 		},
+		"headingExternalLibraries": "Bibliotecas externas",
+		"enableExternalLibraries": {
+			"name": "Activar bibliotecas externas",
+			"desc": "Importa iconos de bibliotecas de iconos externas, además de los iconos incluidos en Obsidian."
+		},
 		"headingAdvanced": "Avanzado",
 		"uncolorHover": {
 			"name": "Flotador incoloro",
@@ -423,5 +428,8 @@
 		"backupMinutesAgo": "Sus íconos se han restaurado a partir de una copia de seguridad guardada hace {#} minutos.",
 		"backupHoursAgo": "Sus íconos se han restaurado a partir de una copia de seguridad guardada hace {#} horas.",
 		"backupDate": "Sus íconos se han restaurado a partir de una copia de seguridad guardada el {#}."
+	},
+	"externalLibraries": {
+		"loadFailed": "Iconic no pudo cargar los iconos de la biblioteca «{#}»."
 	}
 }

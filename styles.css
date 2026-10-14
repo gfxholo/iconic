@@ -659,6 +659,33 @@ body[data-theme="Sanctum"] .workspace-leaf-content[data-type="file-explorer"] .n
 	display: none;
 }
 
+/* Settings: external library grid */
+.setting-item.iconic-library-row {
+	padding: 0;
+}
+.setting-item.iconic-library-row > .iconic-library-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: var(--size-4-2);
+	width: 100%;
+	padding-block: var(--size-4-2);
+}
+.setting-item.iconic-library-row > .iconic-library-grid > .iconic-library-cell {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--size-4-2);
+	padding-block: var(--size-4-2);
+	padding-inline-start: var(--size-4-3);
+	padding-inline-end: var(--size-4-3);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+}
+.setting-item.iconic-library-row > .iconic-library-grid > .iconic-library-cell > .iconic-library-name {
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-medium);
+}
+
 /* Theme: Shiba Inu */
 body[data-theme="Shiba Inu"].theme-light:not(.default-light-theme, .lily-light, .ivory-light, .sky-light, .stone-light) {
 	--color-red: rgb(240, 68, 114);

@@ -1,6 +1,7 @@
 import { ExtraButtonComponent, TooltipOptions, displayTooltip, setIcon } from 'obsidian';
 import ColorUtils from 'src/utils/ColorUtils.js';
 import { ICONS, EMOJIS } from 'src/IconicPlugin.js';
+import ExternalLibraryManager from 'src/managers/ExternalLibraryManager.js';
 
 const DEFAULT_ICON = 'lucide-file';
 
@@ -41,6 +42,13 @@ export default class IconButtonComponent extends ExtraButtonComponent {
 			this.iconEl = null;
 			this.extraSettingsEl.empty();
 			this.emojiEl = this.extraSettingsEl.createDiv({ cls: 'iconic-emoji', text: iconId });
+		} else if (ExternalLibraryManager.isExternalIcon(iconId)) {
+			this.emojiEl = null;
+			if (ExternalLibraryManager.setIcon(this.extraSettingsEl, iconId)) {
+				this.iconEl = this.extraSettingsEl.find('.svg-icon');
+			} else {
+				this.iconEl = null;
+			}
 		}
 		if (this.color) this.setColor(this.color);
 		return this;

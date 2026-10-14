@@ -15,6 +15,7 @@ import EditorIconManager from 'src/managers/EditorIconManager.js';
 import RibbonIconManager from 'src/managers/RibbonIconManager.js';
 import SuggestionIconManager from 'src/managers/SuggestionIconManager.js';
 import SuggestionDialogIconManager from 'src/managers/SuggestionDialogIconManager.js';
+import ExternalLibraryManager from 'src/managers/ExternalLibraryManager.js';
 import IconPicker from 'src/dialogs/IconPicker.js';
 import RulePicker from 'src/dialogs/RulePicker.js';
 
@@ -104,6 +105,8 @@ interface IconicSettings {
 	uncolorSelect: boolean;
 	uncolorQuick: boolean;
 	maxBackups: number;
+	enableExternalLibraries: boolean;
+	externalLibraries: string[];
 	dialogState: {
 		iconMode: boolean;
 		emojiMode: boolean;
@@ -167,6 +170,8 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	uncolorSelect: false,
 	uncolorQuick: false,
 	maxBackups: 2,
+	enableExternalLibraries: false,
+	externalLibraries: [],
 	dialogState: {
 		iconMode: true,
 		emojiMode: false,
@@ -208,6 +213,7 @@ export default class IconicPlugin extends Plugin {
 	 */
 	async onload(): Promise<void> {
 		await this.loadSettings();
+		void ExternalLibraryManager.refresh(this);
 		this.addSettingTab(new IconicSettingTab(this));
 
 		this.app.workspace.onLayoutReady(() => {
@@ -458,6 +464,7 @@ export default class IconicPlugin extends Plugin {
 	 */
 	async onExternalSettingsChange(): Promise<void> {
 		await this.loadSettings();
+		await ExternalLibraryManager.refresh(this);
 		this.refreshManagers();
 		this.refreshBody();
 	}
@@ -1220,6 +1227,15 @@ export default class IconicPlugin extends Plugin {
 
 		// Load `data.json`
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+
+		// Normalize external library settings: older versions stored a map of
+		// library IDs to booleans, while newer versions store an array of IDs.
+		if (!Array.isArray(this.settings.externalLibraries)) {
+			const legacyLibraries = this.settings.externalLibraries as unknown as Record<string, boolean> | undefined;
+			this.settings.externalLibraries = Object.entries(legacyLibraries ?? {})
+				.filter(([, enabled]) => enabled === true)
+				.map(([libraryId]) => libraryId);
+		}
 	}
 
 	/**
