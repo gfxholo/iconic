@@ -3,7 +3,7 @@
 - res/lucide-names.json
 - res/lucide-keywords.json
 
-Version `1.25.0`
+Version `1.59.0`
 ISC License
 Copyright (c) 2026 Lucide Icons and Contributors
 https://github.com/lucide-icons/lucide/blob/main/LICENSE
