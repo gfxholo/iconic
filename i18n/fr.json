@@ -297,7 +297,8 @@
 		"toggleSuggestionIcons": "Basculer les icônes des suggestions",
 		"toggleQuickSwitcherIcons": "Basculer les icônes de sélecteur rapide",
 		"toggleMoveFileIcons": "Basculer les icônes de « Déplacer le fichier »",
-		"changeIconCurrentFile": "Changer l'icône du fichier actuel"
+		"changeIconCurrentFile": "Changer l'icône du fichier actuel",
+		"toggleAutoIcons": "Activer les icônes automatiques"
 	},
 	"settings": {
 		"manage": "Gérer",
@@ -323,6 +324,51 @@
 			"nameMobile": "Icônes tactiles",
 			"descDesktop": "Cliquez sur une icône pour ouvrir le sélecteur d'icônes.",
 			"descMobile": "Appuyez sur une icône pour ouvrir le sélecteur d'icônes."
+		},
+		"headingAutoIcons": "Icônes automatiques",
+		"autoIcons": {
+			"name": "Icônes automatiques",
+			"desc": "Déduire les icônes des fichiers et dossiers à partir de leurs noms, étiquettes et types de fichier. Vos icônes et vos règles restent prioritaires."
+		},
+		"autoIconMode": {
+			"name": "Mode",
+			"desc": "Choisissez comment les icônes sont déterminées.",
+			"type": "Type de fichier",
+			"smart": "Intelligent (lire les noms)"
+		},
+		"autoIconSource": {
+			"name": "Source des icônes",
+			"desc": "Choisissez les jeux d’icônes pouvant être déduits.",
+			"icons": "Icônes",
+			"emojis": "Émojis",
+			"both": "Icônes et émojis"
+		},
+		"autoIconAccuracy": {
+			"name": "Confiance",
+			"desc": "Choisissez le degré de certitude requis. Un réglage plus strict concerne moins d’éléments.",
+			"loose": "Souple",
+			"balanced": "Équilibrée",
+			"strict": "Stricte"
+		},
+		"autoIconFiles": {
+			"name": "Étiqueter les fichiers",
+			"desc": "Déduire les icônes des fichiers."
+		},
+		"autoIconFolders": {
+			"name": "Étiqueter les dossiers",
+			"desc": "Déduire les icônes des dossiers."
+		},
+		"autoIconTags": {
+			"name": "Lire les étiquettes",
+			"desc": "Laisser les étiquettes d’une note influencer son icône."
+		},
+		"autoIconParent": {
+			"name": "Lire le dossier parent",
+			"desc": "Laisser le nom du dossier parent influencer l’icône du fichier."
+		},
+		"autoIconExtensions": {
+			"name": "Se rabattre sur le type de fichier",
+			"desc": "Si le nom ne donne aucun indice, utiliser une icône basée sur l’extension."
 		},
 		"headingSidebarsAndTabs": "Barres latérales et onglets",
 		"showAllFileIcons": {

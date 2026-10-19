@@ -1,4 +1,4 @@
-import { ExtraButtonComponent, Platform, PluginSettingTab, SettingDefinitionGroup, SettingDefinitionItem, SettingGroup } from 'obsidian';
+import { ExtraButtonComponent, Platform, PluginSettingTab, Setting, SettingDefinitionGroup, SettingDefinitionItem, SettingDefinitionRender, SettingGroup } from 'obsidian';
 import IconicPlugin, { FileItem, STRINGS } from 'src/IconicPlugin.js';
 import RulePicker from 'src/dialogs/RulePicker.js';
 import UsageChecker from 'src/dialogs/UsageChecker.js';
@@ -108,6 +108,17 @@ export default class IconicSettingTab extends PluginSettingTab {
 				});
 			},
 		});
+
+		// GROUP: Auto icons
+		const groupAutoIcons: SettingDefinitionGroup = {
+			type: 'group',
+			heading: STRINGS.settings.headingAutoIcons,
+			items: [],
+		};
+
+		for (const definition of this.getAutoIconDefinitions()) {
+			groupAutoIcons.items?.push(definition);
+		}
 
 		// GROUP: Sidebars & tabs
 		const groupSidebarsAndTabs: SettingDefinitionGroup = {
@@ -531,11 +542,151 @@ export default class IconicSettingTab extends PluginSettingTab {
 
 		return [
 			groupTop,
+			groupAutoIcons,
 			groupSidebarsAndTabs,
 			groupEditor,
 			groupMenusAndDialogs,
 			groupIconPicker,
 			groupAdvanced,
+		];
+	}
+
+	/**
+	 * Build the auto icon settings. Shared by {@link getSettingDefinitions} and
+	 * the {@link display} fallback, so both stay in sync.
+	 */
+	private getAutoIconDefinitions(): SettingDefinitionRender[] {
+		const { settings } = this.plugin;
+
+		/** Rebuild inferred icons after a setting changes their outcome. */
+		const apply = (reset: boolean): void => {
+			void this.plugin.saveSettings();
+			if (reset) this.plugin.autoIconManager?.reset();
+			this.plugin.refreshManagers('file', 'folder');
+		};
+
+		/** Only the smart mode reads names, tags, and folders. */
+		const isSmart = (): boolean => settings.autoIconMode === 'smart';
+
+		/** Attach a toggle bound to a boolean setting. */
+		const toggle = (setting: Setting, getValue: () => boolean, setValue: (value: boolean) => void): void => {
+			setting.addToggle(component => { component
+				.setValue(getValue())
+				.onChange(value => {
+					setValue(value);
+					apply(true);
+				});
+			});
+		};
+
+		/** Attach a dropdown bound to a string setting. */
+		const dropdown = (setting: Setting, options: Record<string, string>, getValue: () => string, setValue: (value: string) => void, rerender?: true): void => {
+			setting.addDropdown(component => { component
+				.addOptions(options)
+				.setValue(getValue())
+				.onChange(value => {
+					setValue(value);
+					apply(true);
+					// Some settings only apply to one mode, so re-evaluate what shows
+					if (rerender) {
+						// update() arrived in Obsidian 1.13
+						if (typeof this.update === 'function') this.update();
+						else this.display();
+					}
+				});
+			});
+		};
+
+		return [
+			{
+				name: STRINGS.settings.autoIcons.name,
+				desc: STRINGS.settings.autoIcons.desc,
+				render: setting => toggle(setting,
+					() => settings.autoIcons,
+					value => settings.autoIcons = value,
+				),
+			},
+			{
+				name: STRINGS.settings.autoIconMode.name,
+				desc: STRINGS.settings.autoIconMode.desc,
+				render: setting => dropdown(setting, {
+					type: STRINGS.settings.autoIconMode.type,
+					smart: STRINGS.settings.autoIconMode.smart,
+				},
+					() => settings.autoIconMode,
+					value => settings.autoIconMode = value,
+					true,
+				),
+			},
+			{
+				name: STRINGS.settings.autoIconFiles.name,
+				desc: STRINGS.settings.autoIconFiles.desc,
+				render: setting => toggle(setting,
+					() => settings.autoIconFiles,
+					value => settings.autoIconFiles = value,
+				),
+			},
+			{
+				name: STRINGS.settings.autoIconFolders.name,
+				desc: STRINGS.settings.autoIconFolders.desc,
+				render: setting => toggle(setting,
+					() => settings.autoIconFolders,
+					value => settings.autoIconFolders = value,
+				),
+			},
+			{
+				name: STRINGS.settings.autoIconSource.name,
+				desc: STRINGS.settings.autoIconSource.desc,
+				visible: isSmart,
+				render: setting => dropdown(setting, {
+					icons: STRINGS.settings.autoIconSource.icons,
+					emojis: STRINGS.settings.autoIconSource.emojis,
+					both: STRINGS.settings.autoIconSource.both,
+				},
+					() => settings.autoIconSource,
+					value => settings.autoIconSource = value,
+				),
+			},
+			{
+				name: STRINGS.settings.autoIconAccuracy.name,
+				desc: STRINGS.settings.autoIconAccuracy.desc,
+				visible: isSmart,
+				render: setting => dropdown(setting, {
+					loose: STRINGS.settings.autoIconAccuracy.loose,
+					balanced: STRINGS.settings.autoIconAccuracy.balanced,
+					strict: STRINGS.settings.autoIconAccuracy.strict,
+				},
+					() => settings.autoIconAccuracy,
+					value => settings.autoIconAccuracy = value,
+				),
+			},
+			{
+				name: STRINGS.settings.autoIconTags.name,
+				desc: STRINGS.settings.autoIconTags.desc,
+				visible: isSmart,
+				render: setting => toggle(setting,
+					() => settings.autoIconTags,
+					value => settings.autoIconTags = value,
+				),
+			},
+			{
+				name: STRINGS.settings.autoIconParent.name,
+				desc: STRINGS.settings.autoIconParent.desc,
+				visible: isSmart,
+				render: setting => toggle(setting,
+					() => settings.autoIconParent,
+					value => settings.autoIconParent = value,
+				),
+			},
+			{
+				name: STRINGS.settings.autoIconExtensions.name,
+				desc: STRINGS.settings.autoIconExtensions.desc,
+				visible: isSmart,
+				render: setting => toggle(setting,
+					() => settings.autoIconExtensions,
+					value => settings.autoIconExtensions = value,
+				),
+			},
 		];
 	}
 
@@ -622,6 +773,24 @@ export default class IconicSettingTab extends PluginSettingTab {
 				this.refreshIndicator(this.clickableIconsIndicator, dropdown.getValue());
 			});
 		});
+
+		// GROUP: Auto icons
+		const groupAutoIcons = new SettingGroup(this.containerEl)
+			.setHeading(STRINGS.settings.headingAutoIcons);
+
+		for (const definition of this.getAutoIconDefinitions()) {
+			// Honour the same visibility rules as the newer settings API
+			const visible = typeof definition.visible === 'function'
+				? definition.visible()
+				: definition.visible ?? true;
+			if (!visible) continue;
+
+			groupAutoIcons.addSetting(setting => {
+				setting.setName(definition.name);
+				if (definition.desc) setting.setDesc(definition.desc);
+				definition.render(setting, groupAutoIcons);
+			});
+		}
 
 		// GROUP: Sidebars & tabs
 		const groupSidebarsAndTabs = new SettingGroup(this.containerEl)

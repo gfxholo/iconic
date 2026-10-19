@@ -297,7 +297,8 @@
 		"toggleSuggestionIcons": "Beralih ikon saran",
 		"toggleQuickSwitcherIcons": "Beralih ikon peralih cepat",
 		"toggleMoveFileIcons": "Beralih ikon “Pindahkan berkas”",
-		"changeIconCurrentFile": "Ubah ikon file saat ini"
+		"changeIconCurrentFile": "Ubah ikon file saat ini",
+		"toggleAutoIcons": "Alihkan ikon otomatis"
 	},
 	"settings": {
 		"manage": "Kelola",
@@ -323,6 +324,51 @@
 			"nameMobile": "Ikon yang dapat diketuk",
 			"descDesktop": "Klik ikon untuk membuka pemilih ikon.",
 			"descMobile": "Ketuk ikon untuk membuka pemilih ikon."
+		},
+		"headingAutoIcons": "Ikon otomatis",
+		"autoIcons": {
+			"name": "Ikon otomatis",
+			"desc": "Tentukan ikon file dan folder dari namanya, tagnya, dan jenis filenya. Ikon pilihan Anda dan aturan Anda selalu diprioritaskan."
+		},
+		"autoIconMode": {
+			"name": "Mode",
+			"desc": "Pilih cara icon ditentukan.",
+			"type": "Jenis file",
+			"smart": "Cerdas (baca nama)"
+		},
+		"autoIconSource": {
+			"name": "Sumber ikon",
+			"desc": "Pilih kumpulan ikon yang boleh dipakai.",
+			"icons": "Ikon",
+			"emojis": "Emoji",
+			"both": "Ikon & emoji"
+		},
+		"autoIconAccuracy": {
+			"name": "Tingkat keyakinan",
+			"desc": "Pilih seberapa yakin sebuah kecocokan harus terjadi. Semakin ketat, semakin sedikit item yang diberi ikon.",
+			"loose": "Longgar",
+			"balanced": "Seimbang",
+			"strict": "Ketat"
+		},
+		"autoIconFiles": {
+			"name": "Beri ikon file",
+			"desc": "Tentukan ikon untuk file."
+		},
+		"autoIconFolders": {
+			"name": "Beri ikon folder",
+			"desc": "Tentukan ikon untuk folder."
+		},
+		"autoIconTags": {
+			"name": "Baca tag",
+			"desc": "Biarkan tag di dalam catatan memengaruhi ikonnya."
+		},
+		"autoIconParent": {
+			"name": "Baca folder induk",
+			"desc": "Biarkan nama folder induk memengaruhi ikon file."
+		},
+		"autoIconExtensions": {
+			"name": "Cadangan jenis file",
+			"desc": "Jika nama tidak memberi petunjuk, pakai ikon berdasarkan ekstensi file."
 		},
 		"headingSidebarsAndTabs": "Bilah sisi dan tab",
 		"showAllFileIcons": {

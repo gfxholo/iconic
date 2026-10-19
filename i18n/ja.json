@@ -297,7 +297,8 @@
 		"toggleSuggestionIcons": "サジェストアイコンをトグル",
 		"toggleQuickSwitcherIcons": "クイックスイッチャーアイコンをトグル",
 		"toggleMoveFileIcons": "「ファイルを移動」のアイコンをトグル",
-		"changeIconCurrentFile": "現在のファイルのアイコンを変更する"
+		"changeIconCurrentFile": "現在のファイルのアイコンを変更する",
+		"toggleAutoIcons": "自動アイコンを切り替え"
 	},
 	"settings": {
 		"manage": "管理",
@@ -323,6 +324,51 @@
 			"nameMobile": "タップ可能なアイコン",
 			"descDesktop": "アイコンをクリックするとアイコンピッカーが開きます。",
 			"descMobile": "アイコンをタップするとアイコンピッカーが開きます。"
+		},
+		"headingAutoIcons": "自動アイコン",
+		"autoIcons": {
+			"name": "自動アイコン",
+			"desc": "ファイル名・タグ・ファイル形式からファイルとフォルダのアイコンを推測します。自分で設定したアイコンとルールが常に優先されます。"
+		},
+		"autoIconMode": {
+			"name": "モード",
+			"desc": "アイコンの決め方を選びます。",
+			"type": "ファイル形式",
+			"smart": "スマート（名前を読む）"
+		},
+		"autoIconSource": {
+			"name": "アイコンの種類",
+			"desc": "推測に使うアイコンセットを選びます。",
+			"icons": "アイコン",
+			"emojis": "絵文字",
+			"both": "アイコンと絵文字"
+		},
+		"autoIconAccuracy": {
+			"name": "確度",
+			"desc": "一致にどれだけの確かさを求めるかを選びます。厳しくすると対象が少なくなります。",
+			"loose": "ゆるい",
+			"balanced": "ふつう",
+			"strict": "厳しい"
+		},
+		"autoIconFiles": {
+			"name": "ファイルに付ける",
+			"desc": "ファイルのアイコンを推測します。"
+		},
+		"autoIconFolders": {
+			"name": "フォルダに付ける",
+			"desc": "フォルダのアイコンを推測します。"
+		},
+		"autoIconTags": {
+			"name": "タグを読む",
+			"desc": "ノート内のタグをアイコンの判断に使います。"
+		},
+		"autoIconParent": {
+			"name": "親フォルダを読む",
+			"desc": "親フォルダの名前をファイルアイコンの判断に使います。"
+		},
+		"autoIconExtensions": {
+			"name": "ファイル形式で代替",
+			"desc": "名前から判断できない場合は拡張子に応じたアイコンを使います。"
 		},
 		"headingSidebarsAndTabs": "サイドバーとタブ",
 		"showAllFileIcons": {

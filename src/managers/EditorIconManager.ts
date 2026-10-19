@@ -299,7 +299,7 @@ export default class EditorIconManager extends IconManager {
 						this.plugin.refreshManagers('file');
 					})
 				);
-				const rule = this.plugin.ruleManager?.checkRuling('file', file.id);
+				const rule = this.plugin.ruleManager?.checkRule('file', file.id);
 				if (rule) menu.addItem(item => { item
 					.setTitle('Edit rule...')
 					.setIcon('lucide-image-play')
