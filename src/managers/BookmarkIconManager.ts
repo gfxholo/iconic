@@ -286,5 +286,6 @@ export default class BookmarkIconManager extends IconManager {
 	 */
 	unload(): void {
 		this.refreshIcons(true);
+		super.unload();
 	}
 }

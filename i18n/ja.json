@@ -390,6 +390,11 @@
 			"descDesktop": "カラー バブルをセカンダリ クリックすると表示されます。",
 			"descMobile": "カラー バブルを長押しすると表示されます。"
 		},
+		"headingExternalLibraries": "外部ライブラリ",
+		"enableExternalLibraries": {
+			"name": "外部ライブラリを有効化",
+			"desc": "Obsidian に同梱のアイコンに加えて、外部アイコンライブラリからアイコンを読み込みます。"
+		},
 		"headingAdvanced": "詳細",
 		"uncolorHover": {
 			"name": "無色のホバー",
@@ -423,5 +428,8 @@
 		"backupMinutesAgo": "アイコンは {#} 分前に保存したバックアップから復元されました。",
 		"backupHoursAgo": "アイコンは {#} 時間前に保存したバックアップから復元されました。",
 		"backupDate": "アイコンは {#} に保存したバックアップから復元されました。"
+	},
+	"externalLibraries": {
+		"loadFailed": "Iconic はライブラリ「{#}」からアイコンを読み込めませんでした。"
 	}
 }

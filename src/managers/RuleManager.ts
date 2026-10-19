@@ -1,6 +1,7 @@
 import { TFile } from 'obsidian';
 import IconicPlugin, { Category, Item, FileItem, ICONS, EMOJIS, STRINGS } from 'src/IconicPlugin.js';
 import ObsidianUtils from 'src/utils/ObsidianUtils.js';
+import ExternalLibraryManager from 'src/managers/ExternalLibraryManager.js';
 
 const BASE62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
@@ -594,6 +595,8 @@ export default class RuleManager {
 						source = ICONS.get(file.icon)?.[0] ?? null;
 					} else if (EMOJIS.get(file.icon)) {
 						source = EMOJIS.get(file.icon)?.[0] ?? null;
+					} else if (ExternalLibraryManager.isExternalIcon(file.icon)) {
+						source = ExternalLibraryManager.getName(file.icon);
 					}
 					break;
 				}

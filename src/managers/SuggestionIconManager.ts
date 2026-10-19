@@ -176,6 +176,7 @@ export default class SuggestionIconManager extends IconManager {
 			// @ts-expect-error (Private API)
 			EditorSuggest.prototype.showSuggestions = this.showEditorSuggestionsOriginal;
 		}
+		super.unload();
 	}
 }
 

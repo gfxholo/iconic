@@ -390,6 +390,11 @@
 			"descDesktop": "Muncul saat Anda mengklik kedua gelembung warna.",
 			"descMobile": "Muncul saat Anda menekan & menahan gelembung warna."
 		},
+		"headingExternalLibraries": "Pustaka eksternal",
+		"enableExternalLibraries": {
+			"name": "Aktifkan pustaka eksternal",
+			"desc": "Impor ikon dari pustaka ikon eksternal, selain ikon yang disertakan dalam Obsidian."
+		},
 		"headingAdvanced": "Lanjutan",
 		"uncolorHover": {
 			"name": "Arahkan tanpa warna",
@@ -423,5 +428,8 @@
 		"backupMinutesAgo": "Ikon Anda telah dipulihkan dari cadangan yang disimpan {#} menit yang lalu.",
 		"backupHoursAgo": "Ikon Anda telah dipulihkan dari cadangan yang disimpan {#} jam yang lalu.",
 		"backupDate": "Ikon Anda telah dipulihkan dari cadangan yang disimpan pada {#}."
+	},
+	"externalLibraries": {
+		"loadFailed": "Iconic gagal memuat ikon dari pustaka “{#}”."
 	}
 }

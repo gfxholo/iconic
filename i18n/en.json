@@ -390,6 +390,11 @@
 			"descDesktop": "Appears when you secondary-click the color bubble.",
 			"descMobile": "Appears when you press & hold the color bubble."
 		},
+		"headingExternalLibraries": "External libraries",
+		"enableExternalLibraries": {
+			"name": "Enable external libraries",
+			"desc": "Import icons from external icon libraries, in addition to the icons bundled with Obsidian."
+		},
 		"headingAdvanced": "Advanced",
 		"uncolorHover": {
 			"name": "Colorless hover",
@@ -423,5 +428,8 @@
 		"backupMinutesAgo": "Your icons have been restored from a backup saved {#} minutes ago.",
 		"backupHoursAgo": "Your icons have been restored from a backup saved {#} hours ago.",
 		"backupDate": "Your icons have been restored from a backup saved on {#}."
+	},
+	"externalLibraries": {
+		"loadFailed": "Iconic failed to load icons from the “{#}” library."
 	}
 }

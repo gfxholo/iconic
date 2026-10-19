@@ -2,7 +2,7 @@
 
 A plugin for iconophiles, designed to blend seamlessly with vanilla Obsidian.
 
-Click almost any icon on a tab, sidebar, ribbon, or the title bar to swap in one of the 1,700+ [Lucide icons](https://lucide.dev/) included in the app, or one of the 1,900+ [emojis](https://www.unicode.org/emoji/charts/full-emoji-list.html) that your device supports.
+Click almost any icon on a tab, sidebar, ribbon, or the title bar to swap in one of the 1,700+ [Lucide icons](https://lucide.dev/) included in the app, one of the 1,900+ [emojis](https://www.unicode.org/emoji/charts/full-emoji-list.html) that your device supports, or any icons you [import from external libraries](#importing-external-libraries).
 
 ![Banner](banner.webp)
 
@@ -36,6 +36,12 @@ You can also choose one of nine named colors per icon. These color tones are det
 ![Icon picker](icon-picker.webp)
 
 The icon picker will also display a warning if a rule in your rulebook is overruling its icon. To learn about that feature, see the sections below.
+
+### Importing external libraries
+
+In addition to the icons bundled with Obsidian, Iconic can import icons from external icon libraries, such as [Lucide Lab](https://lucide.dev/icons/), which hosts experimental icons that aren't part of the core set, and [Phosphor Icons](https://phosphoricons.com/), a family of icons, imported in its regular weight.
+
+Open the plugin settings, enable **External libraries**, then toggle on the libraries you want to import. External icons are fetched from the internet while their library is enabled, appear in the icon picker alongside the built-in icons, and are searchable by name and keywords like any other icon. If a library is turned off, icons assigned to it revert to the default.
 
 ### Setting up rules
 

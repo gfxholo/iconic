@@ -1,6 +1,7 @@
 import { ExtraButtonComponent, Menu, Setting, ToggleComponent } from 'obsidian';
 import { STRINGS } from 'src/IconicPlugin.js';
 import { RuleItem } from 'src/managers/RuleManager.js';
+import IconButtonComponent from 'src/components/IconButtonComponent.js';
 
 /**
  * Setting for displaying a rule item.
@@ -42,7 +43,7 @@ export default class RuleSetting extends Setting {
 		this.settingEl.prepend(this.gripEl);
 
 		// BUTTON: Rule icon
-		this.iconEl = new ExtraButtonComponent(this.settingEl)
+		this.iconEl = new IconButtonComponent(this.settingEl)
 			.setIcon(rule.icon ?? rule.iconDefault ?? 'lucide-file')
 			.setTooltip(STRINGS.iconPicker.changeIcon)
 			.onClick(() => this.iconClickCallback?.())

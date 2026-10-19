@@ -1,5 +1,6 @@
 import { prepareFuzzySearch, SearchComponent } from 'obsidian';
 import { ICONS, ICON_KEYWORDS, EMOJIS, EMOJI_KEYWORDS, STRINGS } from 'src/IconicPlugin.js';
+import ExternalLibraryManager from 'src/managers/ExternalLibraryManager.js';
 
 type IconSearchModes = { iconMode?: boolean, emojiMode?: boolean, keywordMode?: boolean };
 export type IconSearchResult = [id: string, name: string, keywords: string[], score: number];
@@ -65,10 +66,12 @@ export default class IconSearchComponent extends SearchComponent {
 		const fuzzySearch = prepareFuzzySearch(query);
 		const allIconEntries = [
 			...(this.iconMode ? ICONS : []),
+			...(this.iconMode ? ExternalLibraryManager.getIcons() : []),
 			...(this.emojiMode ? EMOJIS : []),
 		];
 		const allKeywords = new Set<string>([
 			...(this.iconMode ? ICON_KEYWORDS : []),
+			...(this.iconMode ? ExternalLibraryManager.getKeywords() : []),
 			...(this.emojiMode ? EMOJI_KEYWORDS : []),
 		]);
 		const allKeywordScores = new Map<string, number>();
