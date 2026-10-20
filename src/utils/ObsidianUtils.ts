@@ -56,8 +56,7 @@ export default class ObsidianUtils {
 		return typeof nameLowercase === 'string'
 			&& this.isObject(property)
 			&& typeof property.name === 'string'
-			&& typeof property.widget === 'string'
-			&& typeof property.occurrences === 'number';
+			&& typeof property.widget === 'string';
 	}
 
 	/**
@@ -216,7 +215,6 @@ export type ObsidianProperty = [
 	property: {
 		name: string;
 		widget: string;
-		occurrences: number;
 	}
 ];
 
