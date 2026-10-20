@@ -530,6 +530,10 @@ export default class IconicPlugin extends Plugin {
 
 		managers.delete(undefined);
 		for (const manager of managers) manager?.refreshIcons();
+
+		if (categories.includes('tab') || categories.includes('file')) {
+			this.app.workspace.trigger('vertical-tabs:request-icon-refresh');
+		}
 	}
 
 	/**
@@ -652,6 +656,13 @@ export default class IconicPlugin extends Plugin {
 			}
 		});
 		return tab;
+	}
+
+	/**
+	 * Get tab definition from a workspace leaf.
+	 */
+	getTabItemFromLeaf(leaf: WorkspaceLeaf, unloading?: boolean): TabItem {
+		return this.defineTabItem(leaf, unloading);
 	}
 
 	/**
@@ -1054,6 +1065,34 @@ export default class IconicPlugin extends Plugin {
 	saveTabIcon(tab: TabItem, icon: string | null, color: string | null): void {
 		this.updateIconSetting(this.settings.tabIcons, tab.id, icon, color);
 		void this.saveSettings();
+	}
+
+	/**
+	 * Save multiple tab icon changes to settings.
+	 * @param icon If undefined, leave icons unchanged
+	 * @param color If undefined, leave colors unchanged
+	 */
+	saveTabIcons(tabs: TabItem[], icon: string | null | undefined, color: string | null | undefined): void {
+		const triggers: Set<RuleTrigger> = new Set();
+		for (const tab of tabs) {
+			if (icon !== undefined) tab.icon = icon;
+			if (color !== undefined) tab.color = color;
+			switch (tab.category) {
+				case 'file': {
+					const fileBase = this.settings.fileIcons[tab.id];
+					if (icon !== fileBase?.icon) triggers.add('icon');
+					if (color !== fileBase?.color) triggers.add('color');
+					this.updateIconSetting(this.settings.fileIcons, tab.id, tab.icon, tab.color);
+					break;
+				}
+				default: {
+					this.updateIconSetting(this.settings.tabIcons, tab.id, tab.icon, tab.color);
+					break;
+				}
+			}
+		}
+		void this.saveSettings();
+		this.ruleManager?.triggerRulings('file', ...triggers);
 	}
 
 	/**
