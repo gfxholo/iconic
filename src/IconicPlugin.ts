@@ -89,6 +89,7 @@ interface IconicSettings {
 	minimalFolderIcons: boolean;
 	showMarkdownTabIcons: boolean;
 	showTitleIcons: boolean;
+	showLinkIcons: boolean;
 	showTagPillIcons: boolean;
 	showMenuActions: boolean;
 	showSuggestionIcons: boolean;
@@ -152,6 +153,7 @@ const DEFAULT_SETTINGS: IconicSettings = {
 	minimalFolderIcons: true,
 	showMarkdownTabIcons: true,
 	showTitleIcons: true,
+	showLinkIcons: true,
 	showTagPillIcons: false,
 	showMenuActions: true,
 	showSuggestionIcons: false,
@@ -377,6 +379,17 @@ export default class IconicPlugin extends Plugin {
 				this.refreshManagers('file');
 			}
 		}));
+
+		// COMMAND: Toggle link icons
+		this.addCommand({
+			id: 'toggle-link-icons',
+			name: STRINGS.commands.toggleLinkIcons,
+			callback: () => {
+				this.settings.showLinkIcons = !this.settings.showLinkIcons;
+				void this.saveSettings();
+				this.refreshManagers('file');
+			}
+		});
 
 		// COMMAND: Toggle tag pill icons
 		this.addCommand({

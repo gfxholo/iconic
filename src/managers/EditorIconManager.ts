@@ -1,11 +1,58 @@
-import { Editor, MarkdownView, Menu } from 'obsidian';
-import { EditorView, ViewPlugin, ViewUpdate } from '@codemirror/view';
+import { Editor, MarkdownView, Menu, editorInfoField, editorLivePreviewField, getLinkpath } from 'obsidian';
+import { Range, StateEffect } from '@codemirror/state';
+import { Decoration, DecorationSet, EditorView, ViewPlugin, ViewUpdate, WidgetType } from '@codemirror/view';
 import { syntaxTree } from '@codemirror/language';
-import IconicPlugin, { TagItem, PropertyItem, STRINGS } from 'src/IconicPlugin.js';
+import IconicPlugin, { Icon, TagItem, PropertyItem, STRINGS } from 'src/IconicPlugin.js';
 import ColorUtils from 'src/utils/ColorUtils.js';
 import IconManager from 'src/managers/IconManager.js';
 import RuleEditor from 'src/dialogs/RuleEditor.js';
 import IconPicker from 'src/dialogs/IconPicker.js';
+
+/**
+ * Tells a live preview editor to redraw its link icons.
+ */
+const refreshLinkIconsEffect = StateEffect.define<null>();
+
+/**
+ * Get linktext from the destination of a Markdown link, unless it's an external link.
+ */
+function getMarkdownLinktext(destination: string): string | null {
+	const linktext = destination.replace(/^<(.*)>$/, '$1');
+	if (/^[a-z][a-z\d+.-]*:/i.test(linktext)) return null;
+	try {
+		return decodeURIComponent(linktext);
+	} catch (_) {
+		return linktext;
+	}
+}
+
+/**
+ * Icon displayed in front of an internal link in live preview.
+ */
+class LinkIconWidget extends WidgetType {
+	constructor(
+		private readonly icon: Icon,
+		private readonly refreshIcon: (icon: Icon, iconEl: HTMLElement) => void,
+	) {
+		super();
+	}
+
+	/**
+	 * @override
+	 */
+	eq(widget: LinkIconWidget): boolean {
+		return widget.icon.icon === this.icon.icon && widget.icon.color === this.icon.color;
+	}
+
+	/**
+	 * @override
+	 */
+	toDOM(): HTMLElement {
+		const iconEl = createSpan({ cls: 'iconic-link-icon' });
+		this.refreshIcon(this.icon, iconEl);
+		return iconEl;
+	}
+}
 
 /**
  * Handles icons in the editor window of Markdown tabs.
@@ -19,6 +66,12 @@ export default class EditorIconManager extends IconManager {
 			const tags = this.plugin.getTagItems();
 			const tagEls = sectionEl.findAll('a.tag');
 			this.refreshReadingModeHashtags(tags, tagEls);
+		});
+
+		// Show icons beside links in reading mode
+		this.plugin.registerMarkdownPostProcessor((sectionEl, context) => {
+			const linkEls = sectionEl.findAll('a.internal-link');
+			this.refreshReadingModeLinks(linkEls, context.sourcePath);
 		});
 
 		// Make methods accessible inside ViewPlugin
@@ -52,6 +105,88 @@ export default class EditorIconManager extends IconManager {
 					refreshTag(endEl, tag, onContextMenu);
 				}})
 			}
+		}));
+
+		// Make methods accessible inside ViewPlugin
+		const getLinkIcon = this.getLinkIcon.bind(this);
+		const refreshIcon = this.refreshIcon.bind(this);
+
+		// Show icons beside links in live preview
+		this.plugin.registerEditorExtension(ViewPlugin.fromClass(class {
+			decorations: DecorationSet;
+
+			constructor(view: EditorView) {
+				this.decorations = this.getDecorations(view);
+			}
+
+			update(update: ViewUpdate): void {
+				if (update.docChanged
+					|| update.viewportChanged
+					|| syntaxTree(update.startState) !== syntaxTree(update.state)
+					|| update.startState.field(editorLivePreviewField, false) !== update.state.field(editorLivePreviewField, false)
+					|| update.transactions.some(tr => tr.effects.some(effect => effect.is(refreshLinkIconsEffect)))
+				) {
+					this.decorations = this.getDecorations(update.view);
+				}
+			}
+
+			getDecorations(view: EditorView): DecorationSet {
+				const { state } = view;
+				if (!plugin.settings.showLinkIcons || !state.field(editorLivePreviewField, false)) {
+					return Decoration.none;
+				}
+				const sourcePath = state.field(editorInfoField, false)?.file?.path ?? '';
+				const tree = syntaxTree(state);
+				const widgets: Range<Decoration>[] = [];
+				const linkPositions = new Set<number>();
+
+				for (const { from, to } of view.visibleRanges) {
+					tree.iterate({ from, to, enter: (nodeRef) => {
+						const isWikilink = nodeRef.name.includes('hmd-internal-link');
+						const isDestination = nodeRef.name.includes('url') && !nodeRef.name.includes('formatting');
+						if (!isWikilink && !isDestination) return;
+
+						const line = state.doc.lineAt(nodeRef.from);
+						const nodeStart = nodeRef.from - line.from;
+						let linkStart: number;
+						let linktext: string | null;
+
+						if (isWikilink) {
+							// [[Wikilink]]: Find the brackets around this node, and drop the alias
+							linkStart = line.text.lastIndexOf('[[', nodeStart);
+							const linkEnd = line.text.indexOf(']]', nodeStart);
+							if (linkStart < 0 || linkEnd < 0) return;
+							linktext = line.text.substring(linkStart + 2, linkEnd).split(/\\?\|/)[0] ?? null;
+						} else {
+							// [Markdown link](destination): This node is the destination
+							if (line.text.substring(nodeStart - 2, nodeStart) !== '](') return;
+							linkStart = line.text.lastIndexOf('[', nodeStart - 2);
+							if (linkStart < 0) return;
+							linktext = getMarkdownLinktext(state.sliceDoc(nodeRef.from, nodeRef.to));
+						}
+
+						// A wikilink with an alias has several nodes, but only needs one icon
+						const linkPos = line.from + linkStart;
+						if (linkPositions.has(linkPos)) return;
+						linkPositions.add(linkPos);
+
+						// Embeds display the file itself
+						if (!linktext || line.text[linkStart - 1] === '!') return;
+
+						const icon = getLinkIcon(linktext, sourcePath);
+						if (!icon) return;
+
+						widgets.push(Decoration.widget({
+							widget: new LinkIconWidget(icon, refreshIcon),
+							side: -1,
+						}).range(linkPos));
+					}});
+				}
+
+				return Decoration.set(widgets, true);
+			}
+		}, {
+			decorations: viewPlugin => viewPlugin.decorations,
 		}));
 
 		// Initialize MarkdownViews as they open
@@ -210,6 +345,11 @@ export default class EditorIconManager extends IconManager {
 		// Refresh hashtags
 		const tagEls = view.containerEl.findAll('a.tag');
 		this.refreshReadingModeHashtags(tags, tagEls, unloading);
+
+		// Refresh links
+		const linkEls = view.containerEl.findAll('a.internal-link');
+		this.refreshReadingModeLinks(linkEls, view.file?.path ?? '', unloading);
+
 		this.refreshLivePreviewMode(view.editor);
 	}
 
@@ -381,12 +521,59 @@ export default class EditorIconManager extends IconManager {
 	}
 
 	/**
+	 * Refresh all link elements in reading mode.
+	 */
+	private refreshReadingModeLinks(linkEls: HTMLElement[], sourcePath: string, unloading?: boolean): void {
+		for (const linkEl of linkEls) {
+			const linktext = linkEl.getAttribute('data-href') ?? linkEl.getAttribute('href');
+			const icon = linktext ? this.getLinkIcon(linktext, sourcePath) : null;
+			this.refreshLink(linkEl, icon, unloading);
+		}
+	}
+
+	/**
 	 * Refresh the entire live preview editor.
 	 */
 	private refreshLivePreviewMode(editor: Editor): void {
 		// @ts-expect-error (Private API)
 		const cm = editor.cm;
-		if (cm instanceof EditorView) cm.dispatch();
+		if (cm instanceof EditorView) cm.dispatch({ effects: refreshLinkIconsEffect.of(null) });
+	}
+
+	/**
+	 * Get the icon of the file that a given link points to, if it has one.
+	 */
+	private getLinkIcon(linktext: string, sourcePath: string): Icon | null {
+		const tFile = this.app.metadataCache.getFirstLinkpathDest(getLinkpath(linktext), sourcePath);
+		if (!tFile) return null;
+
+		// Get file and/or rule icon
+		const file = this.plugin.getFileItem(tFile.path);
+		const rule = this.plugin.ruleManager?.checkRuling('file', file.id) ?? file;
+		return rule.icon ? rule : null;
+	}
+
+	/**
+	 * Refresh a given link element.
+	 */
+	private refreshLink(linkEl: HTMLElement, icon: Icon | null, unloading?: boolean): void {
+		// Remove icon if necessary
+		if (!this.plugin.settings.showLinkIcons || !icon || unloading) {
+			linkEl.find(':scope > .iconic-link-icon')?.remove();
+			return;
+		}
+
+		const iconEl = linkEl.find(':scope > .iconic-link-icon')
+			?? linkEl.createSpan({ cls: 'iconic-link-icon', prepend: true });
+
+		// Links are refreshed whenever a file is modified, so skip any icon that's
+		// already displayed. Colors are always refreshed, in case the theme changed.
+		const iconState = `${icon.icon} ${icon.color ?? ''}`;
+		if (iconEl.dataset.icon === iconState && !icon.color) return;
+		iconEl.dataset.icon = iconState;
+
+		// Set icon
+		this.refreshIcon(icon, iconEl);
 	}
 
 	/**

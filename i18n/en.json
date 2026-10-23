@@ -292,6 +292,7 @@
 		"toggleMinimalFolderIcons": "Toggle minimal folder icons",
 		"toggleMarkdownTabIcons": "Toggle Markdown tab icons",
 		"toggleTitleIcons": "Toggle title icons",
+		"toggleLinkIcons": "Toggle link icons",
 		"toggleTagPillIcons": "Toggle tag pill icons",
 		"toggleMenuActions": "Toggle menu actions",
 		"toggleSuggestionIcons": "Toggle suggestion icons",
@@ -345,6 +346,10 @@
 		"showTitleIcons": {
 			"name": "Show title icons",
 			"desc": "Show icons in note titles, if inline titles are enabled."
+		},
+		"showLinkIcons": {
+			"name": "Show link icons",
+			"desc": "Show file icons beside links to other notes."
 		},
 		"showTagPillIcons": {
 			"name": "Show tag pill icons",

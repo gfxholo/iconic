@@ -292,6 +292,7 @@
 		"toggleMinimalFolderIcons": "Minimale Ordnersymbole umschalten",
 		"toggleMarkdownTabIcons": "Markdown-Tabsymbole umschalten",
 		"toggleTitleIcons": "Titelsymbole umschalten",
+		"toggleLinkIcons": "Linksymbole umschalten",
 		"toggleTagPillIcons": "Tag-Pillensymbole umschalten",
 		"toggleMenuActions": "Menüaktionen umschalten",
 		"toggleSuggestionIcons": "Vorschlagsymbole umschalten",
@@ -345,6 +346,10 @@
 		"showTitleIcons": {
 			"name": "Titelsymbole anzeigen",
 			"desc": "Symbole in Notiztiteln anzeigen, wenn Titel in Notiz aktiviert sind."
+		},
+		"showLinkIcons": {
+			"name": "Linksymbole anzeigen",
+			"desc": "Dateisymbole neben Links zu anderen Notizen anzeigen."
 		},
 		"showTagPillIcons": {
 			"name": "Tag-Pillensymbole anzeigen",

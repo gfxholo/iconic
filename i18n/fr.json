@@ -292,6 +292,7 @@
 		"toggleMinimalFolderIcons": "Basculer les icônes de dossier minimales",
 		"toggleMarkdownTabIcons": "Basculer les icônes d'onglets Markdown",
 		"toggleTitleIcons": "Basculer les icônes de titre",
+		"toggleLinkIcons": "Basculer les icônes des liens",
 		"toggleTagPillIcons": "Basculer les icônes des pastilles de mots-clé",
 		"toggleMenuActions": "Basculer les actions du menu",
 		"toggleSuggestionIcons": "Basculer les icônes des suggestions",
@@ -345,6 +346,10 @@
 		"showTitleIcons": {
 			"name": "Afficher les icônes de titre",
 			"desc": "Afficher les icônes dans les titres de note, si l'option titre comme entête est activée."
+		},
+		"showLinkIcons": {
+			"name": "Afficher les icônes des liens",
+			"desc": "Afficher les icônes de fichiers à côté des liens vers d'autres notes."
 		},
 		"showTagPillIcons": {
 			"name": "Afficher les icônes des pastilles de mots-clé",

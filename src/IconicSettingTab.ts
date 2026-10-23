@@ -187,6 +187,22 @@ export default class IconicSettingTab extends PluginSettingTab {
 			},
 		});
 
+		// SETTING: Show link icons
+		groupEditor.items?.push({
+			name: STRINGS.settings.showLinkIcons.name,
+			desc: STRINGS.settings.showLinkIcons.desc,
+			render: setting => { setting
+				.addToggle(toggle => { toggle
+					.setValue(this.plugin.settings.showLinkIcons)
+					.onChange(value => {
+						this.plugin.settings.showLinkIcons = value;
+						void this.plugin.saveSettings();
+						this.plugin.refreshManagers('file');
+					});
+				});
+			},
+		});
+
 		// SETTING: Show tag pill icons
 		groupEditor.items?.push({
 			name: STRINGS.settings.showTagPillIcons.name,
@@ -695,6 +711,20 @@ export default class IconicSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.showTitleIcons)
 				.onChange(value => {
 					this.plugin.settings.showTitleIcons = value;
+					void this.plugin.saveSettings();
+					this.plugin.refreshManagers('file');
+				});
+			});
+		});
+
+		// SETTING: Show link icons
+		groupEditor.addSetting(setting => { setting
+			.setName(STRINGS.settings.showLinkIcons.name)
+			.setDesc(STRINGS.settings.showLinkIcons.desc)
+			.addToggle(toggle => { toggle
+				.setValue(this.plugin.settings.showLinkIcons)
+				.onChange(value => {
+					this.plugin.settings.showLinkIcons = value;
 					void this.plugin.saveSettings();
 					this.plugin.refreshManagers('file');
 				});

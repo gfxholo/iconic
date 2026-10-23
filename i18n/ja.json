@@ -292,6 +292,7 @@
 		"toggleMinimalFolderIcons": "最小限のフォルダアイコンをトグル",
 		"toggleMarkdownTabIcons": "マークダウンタブアイコンをトグル",
 		"toggleTitleIcons": "タイトルアイコンをトグル",
+		"toggleLinkIcons": "リンクアイコンをトグル",
 		"toggleTagPillIcons": "タグピルアイコンをトグル",
 		"toggleMenuActions": "メニューアクションをトグル",
 		"toggleSuggestionIcons": "サジェストアイコンをトグル",
@@ -345,6 +346,10 @@
 		"showTitleIcons": {
 			"name": "タイトルアイコンを表示する",
 			"desc": "ノートタイトルのアイコンを表示します（インラインタイトルが有効な場合）。"
+		},
+		"showLinkIcons": {
+			"name": "リンクアイコンを表示する",
+			"desc": "他のノートへのリンクの横にファイルアイコンを表示します。"
 		},
 		"showTagPillIcons": {
 			"name": "タグピルアイコンを表示する",

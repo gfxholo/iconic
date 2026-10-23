@@ -116,6 +116,14 @@ a.tag {
 	filter: contrast(200%);
 }
 
+/* Links */
+.iconic-link-icon {
+	--icon-size: 1.1em;
+	display: inline-flex;
+	vertical-align: text-bottom;
+	margin-inline-end: 0.25em;
+}
+
 /* Editor title */
 .iconic-title-wrapper {
 	display: none;

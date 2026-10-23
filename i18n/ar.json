@@ -292,6 +292,7 @@
 		"toggleMinimalFolderIcons": "تبديل أيقونات المجلد البسيطة",
 		"toggleMarkdownTabIcons": "تبديل أيقونات علامات تبويب Markdown",
 		"toggleTitleIcons": "تبديل أيقونات العنوان",
+		"toggleLinkIcons": "تبديل أيقونات الروابط",
 		"toggleTagPillIcons": "تبديل أيقونات حبوب الوسوم",
 		"toggleMenuActions": "تبديل إجراءات القائمة",
 		"toggleSuggestionIcons": "تبديل أيقونات الاقتراحات",
@@ -345,6 +346,10 @@
 		"showTitleIcons": {
 			"name": "إظهار أيقونات العنوان",
 			"desc": "إظهار الأيقونات في عناوين الملاحظات إذا تم تمكين العناوين."
+		},
+		"showLinkIcons": {
+			"name": "إظهار أيقونات الروابط",
+			"desc": "إظهار أيقونات الملفات بجانب الروابط إلى الملاحظات الأخرى."
 		},
 		"showTagPillIcons": {
 			"name": "إظهار أيقونات حبوب الوسوم",

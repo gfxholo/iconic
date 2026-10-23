@@ -292,6 +292,7 @@
 		"toggleMinimalFolderIcons": "Beralih ikon folder minimal",
 		"toggleMarkdownTabIcons": "Beralih ikon tab Markdown",
 		"toggleTitleIcons": "Beralih ikon judul",
+		"toggleLinkIcons": "Beralih ikon tautan",
 		"toggleTagPillIcons": "Beralih ikon pil tag",
 		"toggleMenuActions": "Beralih tindakan menu",
 		"toggleSuggestionIcons": "Beralih ikon saran",
@@ -345,6 +346,10 @@
 		"showTitleIcons": {
 			"name": "Tampilkan ikon judul",
 			"desc": "Tampilkan ikon di judul catatan jika judul sebaris diaktifkan."
+		},
+		"showLinkIcons": {
+			"name": "Tampilkan ikon tautan",
+			"desc": "Tampilkan ikon berkas di samping tautan ke catatan lain."
 		},
 		"showTagPillIcons": {
 			"name": "Tampilkan ikon pil tag",

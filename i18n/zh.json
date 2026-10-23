@@ -292,6 +292,7 @@
 		"toggleMinimalFolderIcons": "切换极简文件夹图标",
 		"toggleMarkdownTabIcons": "切换 Markdown 标签图标",
 		"toggleTitleIcons": "切换标题图标",
+		"toggleLinkIcons": "切换链接图标",
 		"toggleTagPillIcons": "切换标签胶囊图标",
 		"toggleMenuActions": "切换菜单操作",
 		"toggleSuggestionIcons": "切换建议图标",
@@ -345,6 +346,10 @@
 		"showTitleIcons": {
 			"name": "显示标题图标",
 			"desc": "如果启用了页内标题，则显示笔记标题中的图标。"
+		},
+		"showLinkIcons": {
+			"name": "显示链接图标",
+			"desc": "在指向其他笔记的链接旁显示文件图标。"
 		},
 		"showTagPillIcons": {
 			"name": "显示标签胶囊图标",

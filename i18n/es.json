@@ -292,6 +292,7 @@
 		"toggleMinimalFolderIcons": "Alternar íconos de carpeta mínimos",
 		"toggleMarkdownTabIcons": "Alternar íconos de pestañas de Markdown",
 		"toggleTitleIcons": "Alternar íconos de título",
+		"toggleLinkIcons": "Alternar íconos de enlaces",
 		"toggleTagPillIcons": "Alternar íconos de píldoras de etiquetas",
 		"toggleMenuActions": "Alternar acciones de menú",
 		"toggleSuggestionIcons": "Alternar íconos de sugerencias",
@@ -345,6 +346,10 @@
 		"showTitleIcons": {
 			"name": "Mostrar íconos de título",
 			"desc": "Mostrar íconos en títulos de notas, si los títulos en una línea están activados."
+		},
+		"showLinkIcons": {
+			"name": "Mostrar íconos de enlaces",
+			"desc": "Mostrar íconos de archivos junto a los enlaces a otras notas."
 		},
 		"showTagPillIcons": {
 			"name": "Mostrar íconos de píldoras de etiquetas",
